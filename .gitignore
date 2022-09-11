@@ -1,0 +1,9 @@
+**/.DS_Store
+**/node_modules
+**/dist
+.env
+**/mongo/database
+.vscode
+**/coverage
+yarn-error.log
+back/front
