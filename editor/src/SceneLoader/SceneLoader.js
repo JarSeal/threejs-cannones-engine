@@ -3,6 +3,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 import { setSceneParam, getSceneParam } from '../sceneParams/sceneParams';
 import { getScreenResolution } from '../utils/utils';
+import ObjectLoader from './ObjectLoader';
 
 class SceneLoader {
   constructor(scene) {
@@ -14,8 +15,9 @@ class SceneLoader {
   _createScene = (scene) => {
     this.scene = new THREE.Scene();
     this._createCameras(scene.cameras, scene);
-    this._createAxesHelper(scene);
     this._createLights(scene.lights);
+    this._createAxesHelper(scene);
+    this._createObjects(scene.objects);
     setSceneParam('scene', this.scene);
   };
 
@@ -31,6 +33,7 @@ class SceneLoader {
         const near = c.near || 0.1;
         const far = c.far || 256;
         camera = new THREE.PerspectiveCamera(fov, aspectRatio, near, far);
+        camera.userData = c;
         camera.userData.id = c.id || 'camera' + i;
       }
       // TODO: define ortographic camera
@@ -61,6 +64,7 @@ class SceneLoader {
         const color = l.color || 0xffffff;
         const intensity = l.intensity || 1;
         const light = new THREE.AmbientLight(color, intensity);
+        light.userData = l;
         light.userData.id = l.id || 'ligth' + i;
         this.scene.add(light);
         continue;
@@ -71,11 +75,39 @@ class SceneLoader {
         const intensity = l.intensity || 0.78;
         const pos = l.position ? l.position : [0, 0, 0];
         const light = new THREE.HemisphereLight(colorTop, colorBottom, intensity);
-        light.position.set(pos[0], pos[1], [2]);
+        light.position.set(pos[0], pos[1], pos[2]);
+        light.userData = l;
         light.userData.id = l.id || 'ligth' + i;
         this.scene.add(light);
         continue;
       }
+      if (l.type === 'point') {
+        const color = l.color || 0xffffff;
+        const intensity = l.intensity || 1;
+        const distance = l.distance || 10;
+        const decay = l.decay || 5;
+        const light = new THREE.PointLight(color, intensity, distance, decay);
+        const pos = l.position ? l.position : [0, 0, 0];
+        light.position.set(pos[0], pos[1], pos[2]);
+        light.userData = l;
+        light.userData.id = l.id || 'ligth' + i;
+        if (l.castShadow) light.castShadow = true;
+        this.scene.add(light);
+        if (l.showHelper) {
+          const helper = new THREE.PointLightHelper(light, 0.1);
+          this.scene.add(helper);
+          console.log('HERE');
+        }
+        continue;
+      }
+    }
+  };
+
+  _createObjects = (objects) => {
+    for (let i = 0; i < objects.length; i++) {
+      const objLoader = new ObjectLoader(objects[i]);
+      const obj = objLoader.getObject();
+      if (obj) this.scene.add(obj);
     }
   };
 

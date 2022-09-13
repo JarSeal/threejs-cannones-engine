@@ -4,7 +4,8 @@ import * as Stats from 'stats.js';
 import { getSceneParams, setSceneParam } from './sceneParams/sceneParams';
 import { getScreenResolution } from './utils/utils';
 import SceneLoader from './SceneLoader/SceneLoader';
-import { scenes } from '../data';
+import UIWorld from './UI/UIWorld';
+import { scenes } from '../../data';
 
 class Root {
   constructor() {
@@ -17,10 +18,17 @@ class Root {
   }
 
   _initApp = () => {
+    // Get scene data
+    const curScene = scenes.scene1;
+
     // Setup renderer
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
     });
+    if (curScene.shadowType !== undefined) {
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE[curScene.shadowType];
+    }
     renderer.setClearColor('#000000');
     renderer.debug.checkShaderErrors = true; // Disable this for production (performance gain), TODO: create an env variable to control this
     renderer.domElement.id = this.sceneParams.rendererElemId;
@@ -28,7 +36,17 @@ class Root {
     setSceneParam('renderer', renderer);
 
     // Create scene
-    const scene = new SceneLoader(scenes.scene1);
+    const scene = new SceneLoader(curScene);
+
+    // Create UI
+    const app = new UIWorld({ id: 'ui-world', parentId: 'root' });
+    app.draw();
+
+    // Create grid
+    const size = curScene.gridSize || 100;
+    const grid = new THREE.GridHelper(size, size);
+    if (!curScene.grid) grid.visible = false;
+    scene.add(grid);
 
     // Stats
     const renderStats = new Stats();
@@ -37,11 +55,7 @@ class Root {
 
     this._resize();
 
-    const cube = new THREE.Mesh(
-      new THREE.BoxGeometry(1, 1, 1),
-      new THREE.MeshBasicMaterial({ color: 0xff0000 })
-    );
-    scene.add(cube);
+    console.log('SCENE', scene);
 
     // Start the show...
     this._renderLoop();
