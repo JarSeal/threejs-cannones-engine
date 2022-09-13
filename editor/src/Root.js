@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import * as Stats from 'stats.js';
 
-import { getSceneParams, setSceneParam } from './sceneParams/sceneParams';
+import { getSceneParams, getSceneParam, setSceneParam } from './sceneParams/sceneParams';
 import { getScreenResolution } from './utils/utils';
 import SceneLoader from './SceneLoader/SceneLoader';
 import UIWorld from './UI/UIWorld';
@@ -39,8 +39,8 @@ class Root {
     const scene = new SceneLoader(curScene);
 
     // Create UI
-    const app = new UIWorld({ id: 'ui-world', parentId: 'root' });
-    app.draw();
+    const uiWorld = new UIWorld({ id: 'ui-world', parentId: 'root' });
+    uiWorld.draw();
 
     // Create grid
     const size = curScene.gridSize || 100;
@@ -54,6 +54,8 @@ class Root {
     setSceneParam('renderStats', renderStats);
 
     this._resize();
+    setSceneParam('resizers', [this._resize]);
+    this._initResizer();
 
     console.log('SCENE', scene);
 
@@ -82,6 +84,21 @@ class Root {
     setSceneParam('screenResolution', reso);
     setSceneParam('pixelRatio', pixelRatio);
     setSceneParam('aspectRatio', aspectRatio);
+  };
+
+  _initResizer = () => {
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        let i;
+        const fns = getSceneParam('resizers'),
+          fnsLength = fns.length;
+        for (i = 0; i < fnsLength; i++) {
+          fns[i](this.sceneState);
+        }
+      }, 500);
+    });
   };
 }
 

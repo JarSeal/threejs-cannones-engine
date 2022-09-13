@@ -1,0 +1,28 @@
+@import '../sass/variables';
+
+.uiPanelWorld {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: $rightPanelWidth;
+  height: 100vh;
+  background: $colorPanelBack;
+  transition: transform 0.2s ease-in-out;
+  transform: translate3d(100%, 0, 0);
+  :global(.panelTogglerButton) {
+    width: $rightPanelButtonWidth;
+    height: $rightPanelButtonHeight;
+    position: absolute;
+    right: 100%;
+    border-radius: 0.4rem 0 0 0.4rem;
+    border: none;
+    background: $colorPanelBack;
+    cursor: pointer;
+    color: $font-color;
+    outline: none;
+  }
+}
+
+.showPanel {
+  transform: translate3d(0, 0, 0);
+}
