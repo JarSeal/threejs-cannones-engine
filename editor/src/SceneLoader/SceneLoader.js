@@ -1,30 +1,35 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
-import { setSceneParam, getSceneParam } from '../sceneParams/sceneParams';
+import { setSceneParam } from '../sceneData/sceneParams';
+import { setSceneItem, getSceneItem } from '../sceneData/sceneItems';
 import { getScreenResolution } from '../utils/utils';
-import ObjectLoader from './ObjectLoader';
+import ElementLoader from './ElementLoader';
+import { saveCameraState } from './SceneEditorState';
 
 class SceneLoader {
-  constructor(scene) {
+  constructor(scene, isEditor) {
     this.scene;
+    this.isEditor = isEditor;
     if (scene) this._createScene(scene);
     return this.scene;
   }
 
-  _createScene = (scene) => {
+  _createScene = (sceneParams) => {
     this.scene = new THREE.Scene();
-    this._createCameras(scene.cameras, scene);
-    this._createLights(scene.lights);
-    this._createAxesHelper(scene);
-    this._createObjects(scene.objects);
-    setSceneParam('scene', this.scene);
+    this._createCameras(sceneParams.cameras, sceneParams);
+    this._createLights(sceneParams.lights);
+    this._createGrid(sceneParams);
+    this._createAxesHelper(sceneParams);
+    this._createObjects(sceneParams.elements);
+    setSceneItem('scene', this.scene);
   };
 
-  _createCameras = (camerasA, scene) => {
+  _createCameras = (camerasA, sceneParams) => {
     const reso = getScreenResolution();
     const aspectRatio = reso.x / reso.y;
     const allCameras = [];
+    let curCameraQuaternion, curCameraTarget;
     for (let i = 0; i < camerasA.length; i++) {
       const c = camerasA[i];
       let camera;
@@ -37,24 +42,48 @@ class SceneLoader {
         camera.userData.id = c.id || 'camera' + i;
       }
       // TODO: define ortographic camera
+
       const pos = c.position ? c.position : [5, 5, 5];
-      const lookAt = c.lookAt ? c.lookAt : [0, 0, 0];
       camera.position.set(pos[0], pos[1], pos[2]);
-      camera.lookAt(new THREE.Vector3(lookAt[0], lookAt[1], lookAt[2]));
+      if (c.quaternion) {
+        camera.quaternion.set(...c.quaternion);
+      } else {
+        const lookAt = c.lookAt ? c.lookAt : [0, 0, 0];
+        camera.lookAt(new THREE.Vector3(lookAt[0], lookAt[1], lookAt[2]));
+      }
       allCameras.push(camera);
-      if (i === scene.curCameraIndex) {
-        setSceneParam('camera', camera);
+      if (
+        i === sceneParams.cameraIndex ||
+        ((sceneParams.cameraIndex === null || sceneParams.cameraIndex === undefined) && i === 0)
+      ) {
+        setSceneItem('curCamera', camera);
+        if (sceneParams.cameraIndex === null || sceneParams.cameraIndex === undefined)
+          setSceneParam('cameraIndex', 0);
+        if (c.quaternion) curCameraQuaternion = [...c.quaternion];
+        if (c.target) curCameraTarget = [...c.target];
       }
     }
-    setSceneParam('allCameras', allCameras);
-    if (scene.orbitControls) {
-      const controls = new OrbitControls(
-        allCameras[scene.curCameraIndex],
-        getSceneParam('renderer').domElement
-      ); // Disable this for production (performance gain), TODO: create an env variable to control this
-      controls.update(); // Disable this for production (performance gain), TODO: create an env variable to control this
-      setSceneParam('cameraControls', controls); // Disable this for production (performance gain), TODO: create an env variable to control this
+    setSceneItem('allCameras', allCameras);
+
+    // Editor Orbit Controls
+    // TODO: Later rewrite your own orbit controls
+    const controls = new OrbitControls(
+      allCameras[sceneParams.curCameraIndex],
+      getSceneItem('renderer').domElement
+    );
+    if (curCameraQuaternion) {
+      allCameras[sceneParams.curCameraIndex].quaternion.set(...curCameraQuaternion);
     }
+    if (curCameraTarget) {
+      controls.target = new THREE.Vector3(...curCameraTarget);
+    }
+    setSceneItem('cameraControls', controls);
+    controls.addEventListener('end', () => {
+      const quaternion = allCameras[sceneParams.curCameraIndex].quaternion;
+      const position = allCameras[sceneParams.curCameraIndex].position;
+      const target = controls.target;
+      saveCameraState({ index: sceneParams.curCameraIndex, quaternion, position, target });
+    });
   };
 
   _createLights = (lightsA) => {
@@ -93,10 +122,9 @@ class SceneLoader {
         light.userData.id = l.id || 'ligth' + i;
         if (l.castShadow) light.castShadow = true;
         this.scene.add(light);
-        if (l.showHelper) {
+        if (this.isEditor && l.showHelper) {
           const helper = new THREE.PointLightHelper(light, 0.1);
           this.scene.add(helper);
-          console.log('HERE');
         }
         continue;
       }
@@ -105,18 +133,26 @@ class SceneLoader {
 
   _createObjects = (objects) => {
     for (let i = 0; i < objects.length; i++) {
-      const objLoader = new ObjectLoader(objects[i]);
+      const objLoader = new ElementLoader(objects[i]);
       const obj = objLoader.getObject();
       if (obj) this.scene.add(obj);
     }
   };
 
-  _createAxesHelper = (scene) => {
-    if (scene.axesHelper) {
-      const axesHelperLength = scene.axesHelperLength || 100;
-      const axesHelper = new THREE.AxesHelper(axesHelperLength);
-      this.scene.add(axesHelper);
-    }
+  _createGrid = (sceneParams) => {
+    if (!this.isEditor) return;
+    const size = sceneParams.gridSize || 100;
+    const grid = new THREE.GridHelper(size, size);
+    if (!sceneParams.grid) grid.visible = false;
+    this.scene.add(grid);
+  };
+
+  _createAxesHelper = (sceneParams) => {
+    if (!this.isEditor) return;
+    const axesHelperLength = sceneParams.axesHelperLength || 100;
+    const axesHelper = new THREE.AxesHelper(axesHelperLength);
+    if (!sceneParams.axesHelper) axesHelper.visible = false;
+    this.scene.add(axesHelper);
   };
 }
 

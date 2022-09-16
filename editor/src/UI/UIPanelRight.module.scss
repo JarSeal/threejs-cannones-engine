@@ -1,6 +1,10 @@
 @import '../sass/variables';
 
-.uiPanelWorld {
+@function buttonPlacement($orderNr) {
+  @return ($orderNr - 1) * ($rightPanelButtonGap + $rightPanelButtonHeight) + $rightPanelButtonGap;
+}
+
+.uiPanelRight {
   position: fixed;
   top: 0;
   right: 0;
@@ -20,9 +24,27 @@
     cursor: pointer;
     color: $font-color;
     outline: none;
+    font-size: 1.4rem;
+    font-weight: 700;
+  }
+  :global(h3.panelTitle) {
+    width: 100%;
+    text-align: center;
+    font-size: 1.1rem;
+    display: inline-block;
+    width: 100%;
+    padding: 0.6rem 1rem 0.4rem;
+    background: lighten($colorPanelBack, 10%);
+    margin: 0 0 0.4rem 0;
   }
 }
 
 .showPanel {
   transform: translate3d(0, 0, 0);
+}
+
+.uiPanelWorld {
+  :global(.panelTogglerButton) {
+    top: buttonPlacement(1);
+  }
 }

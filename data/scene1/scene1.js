@@ -1,7 +1,12 @@
 export const scene1 = {
-  id: 'scene1',
+  sceneId: 'scene1',
+  name: 'Test scene 1',
+  dateCreated: 1663229534337,
+  dateSaved: null,
   axesHelper: true,
   axesHelperLength: 100,
+  rendererClearColor: '#cccccc',
+  rendererAntialias: true,
   grid: true,
   gridSize: 26,
   orbitControls: true,
@@ -34,19 +39,17 @@ export const scene1 = {
   ],
   cameras: [
     {
-      id: 'main',
+      id: 'editor-main',
       type: 'perspective',
       fov: 45,
-      near: 1,
+      near: 0,
       far: 256,
       position: [5, 5, 5],
       lookAt: [0, 0, 0],
     },
-    // TODO: Add ortographic camera type
   ],
-  allCameras: [], // This is set in the SceneLoader
   curCameraIndex: 0,
-  objects: [
+  elements: [
     {
       type: 'shape',
       id: 'my-blue-box',

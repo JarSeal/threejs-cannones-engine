@@ -8,7 +8,7 @@ import * as THREE from 'three';
 // - material: Object (three.js material params, defined in _createMaterial)
 // - position: Number[] ([x, y, z])
 // }
-class ObjectLoader {
+class ElementLoader {
   constructor(obj) {
     this.obj;
     if (obj) this._createObj(obj);
@@ -62,4 +62,4 @@ class ObjectLoader {
   };
 }
 
-export default ObjectLoader;
+export default ElementLoader;

@@ -1,0 +1,60 @@
+@import '../../sass/variables';
+
+.settingsPanel {
+  background: darken($colorPanelBack, 2%);
+  margin-bottom: 0.4rem;
+  h4 {
+    font-size: 1.1rem;
+    margin: 0;
+    padding: 0.4rem 1rem 0.3rem;
+    text-align: center;
+    background: darken($colorPanelBack, 5%);
+    border-bottom: 0.1rem solid #555;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+    transition: background 0.2s ease-in-out;
+    &:hover {
+      background: darken($colorPanelBack, 10%);
+    }
+    &:before,
+    &:after {
+      display: block;
+      content: '';
+      width: 0.6rem;
+      height: 0.2rem;
+      background: #fff;
+      position: absolute;
+      top: 1rem;
+      transition: transform 0.2s ease-in-out;
+    }
+    &:before {
+      transform: rotate(45deg);
+      right: 1.7rem;
+    }
+    &:after {
+      transform: rotate(-45deg);
+      right: 1.3rem;
+    }
+  }
+  &:global(.closed) {
+    .settingsPanelContent {
+      display: none;
+    }
+    h4 {
+      &:before {
+        transform: rotate(-45deg);
+      }
+      &:after {
+        transform: rotate(45deg);
+      }
+    }
+  }
+}
+
+.settingsPanelContent {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.1rem;
+  text-align: right;
+}
