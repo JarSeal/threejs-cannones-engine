@@ -12,7 +12,7 @@ import { getScreenResolution } from './utils/utils';
 import SceneLoader from './SceneLoader/SceneLoader';
 import UIWorld from './UI/UIWorld';
 import { scenes } from '../../data';
-import { getSceneStates, saveSceneId } from './SceneLoader/SceneEditorState';
+import { getSceneStates, saveSceneId } from './sceneData/saveSession';
 
 class Root {
   constructor() {
@@ -25,10 +25,10 @@ class Root {
     this._initApp();
   }
 
-  _initApp = () => {
+  _initApp = async () => {
     // Load data from LocalStorage
     // If not found, show project picker UI view
-    const sessionParams = getSceneStates();
+    const sessionParams = await getSceneStates();
 
     // Load scene data from file
     let curScene = scenes.scene1; // TODO: Create File System where to load via an API

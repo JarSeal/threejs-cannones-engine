@@ -1,5 +1,7 @@
 import { Component } from '../../../LIGHTER';
 import styles from './SettingsPanel.module.scss';
+import { saveEditorState } from '../../sceneData/saveSession';
+import { getSceneParamR, setSceneParamR } from '../../sceneData/sceneParams';
 
 class SettingsPanel extends Component {
   constructor(data) {
@@ -7,7 +9,8 @@ class SettingsPanel extends Component {
     data.class = [styles.settingsPanel, data.panelClosed ? 'closed' : null];
     this.title = data.title;
     this.contentId = data.contentId;
-    this.panelClosed = data.panelClosed || false;
+    if (data.showPanel === undefined) data.showPanel = true;
+    this.showPanel = getSceneParamR(`editor.show.${this.id}`, data.showPanel);
   }
 
   addListeners = () => {
@@ -16,12 +19,10 @@ class SettingsPanel extends Component {
       target: document.getElementById('settings-panel-title-' + this.id),
       type: 'click',
       fn: () => {
-        if (this.panelClosed) {
-          this.elem.classList.remove('closed');
-        } else {
-          this.elem.classList.add('closed');
-        }
-        this.panelClosed = !this.panelClosed;
+        this.showPanel = !this.showPanel;
+        this._setPanelClass();
+        setSceneParamR(`editor.show.${this.id}`, this.showPanel);
+        saveEditorState({ show: { [this.id]: this.showPanel } });
       },
     });
   };
@@ -36,7 +37,16 @@ class SettingsPanel extends Component {
       id: this.contentId,
       class: styles.settingsPanelContent,
     });
+    this._setPanelClass();
   }
+
+  _setPanelClass = () => {
+    if (this.showPanel) {
+      this.elem.classList.remove('closed');
+    } else {
+      this.elem.classList.add('closed');
+    }
+  };
 }
 
 export default SettingsPanel;

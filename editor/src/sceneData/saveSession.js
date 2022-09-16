@@ -1,30 +1,38 @@
 import { LocalStorage } from '../../LIGHTER';
-import { getSceneParam } from '../sceneData/sceneParams';
+import { getSceneParam, getSceneParams } from './sceneParams';
 
 const LS = new LocalStorage('ft_');
 
-const LSKeysJson = ['cameras', 'editor'];
+const LSKeysJson = ['cameras', 'editor', 'sceneState'];
 const LSKeysStrings = ['sceneId'];
 
 // Get all scene state values
-export const getSceneStates = () => {
-  const states = {};
-  for (let i = 0; i < LSKeysJson.length; i++) {
-    const key = LSKeysJson[i];
-    const value = LS.getItem(key);
-    if (value) states[key] = JSON.parse(value);
-  }
-  for (let i = 0; i < LSKeysStrings.length; i++) {
-    const key = LSKeysStrings[i];
-    const value = LS.getItem(key);
-    if (value) states[key] = value;
-  }
-  return states;
-};
+export const getSceneStates = async () =>
+  Promise.resolve().then(() => {
+    let states = {};
+    for (let i = 0; i < LSKeysJson.length; i++) {
+      const key = LSKeysJson[i];
+      const value = LS.getItem(key);
+      if (!value) continue;
+      if (key === 'sceneState') {
+        const values = JSON.parse(value);
+        states = { ...states, ...values };
+      } else {
+        states[key] = JSON.parse(value);
+      }
+    }
+    for (let i = 0; i < LSKeysStrings.length; i++) {
+      const key = LSKeysStrings[i];
+      const value = LS.getItem(key);
+      if (value) states[key] = value;
+    }
+    return states;
+  });
 
 export const saveSceneId = (id) => LS.setItem('sceneId', id);
 
 export const saveCameraState = (values) => {
+  if (values === undefined) return;
   // For camera the values are: {
   // - index: number (camera index number)
   // - quaternion: THREE.Vector3
@@ -56,6 +64,7 @@ export const saveCameraState = (values) => {
 };
 
 export const saveEditorState = (values) => {
+  if (values === undefined) return;
   const editorParams = getSceneParam('editor');
   let newParams;
   if (values?.show) {
@@ -66,6 +75,21 @@ export const saveEditorState = (values) => {
       showParams = { show: values.show };
     }
     newParams = { ...editorParams, ...showParams };
+  } else {
+    // Flat object
+    newParams = { ...editorParams, ...values };
   }
   if (newParams) LS.setItem('editor', JSON.stringify(newParams));
+};
+
+export const saveSceneState = (values) => {
+  if (values === undefined) return;
+  const sceneParams = { ...getSceneParams() };
+  delete sceneParams.sceneId;
+  delete sceneParams.cameras;
+  delete sceneParams.elements;
+  delete sceneParams.lights;
+  delete sceneParams.editor;
+  const newParams = { ...sceneParams, ...values };
+  if (newParams) LS.setItem('sceneState', JSON.stringify(newParams));
 };

@@ -5,7 +5,7 @@ import { setSceneParam } from '../sceneData/sceneParams';
 import { setSceneItem, getSceneItem } from '../sceneData/sceneItems';
 import { getScreenResolution } from '../utils/utils';
 import ElementLoader from './ElementLoader';
-import { saveCameraState } from './SceneEditorState';
+import { saveCameraState } from '../sceneData/saveSession';
 
 class SceneLoader {
   constructor(scene, isEditor) {
@@ -151,6 +151,7 @@ class SceneLoader {
     if (!this.isEditor) return;
     const axesHelperLength = sceneParams.axesHelperLength || 100;
     const axesHelper = new THREE.AxesHelper(axesHelperLength);
+    axesHelper.position.set(0, 0.001, 0);
     if (!sceneParams.axesHelper) axesHelper.visible = false;
     this.scene.add(axesHelper);
   };

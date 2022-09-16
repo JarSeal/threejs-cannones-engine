@@ -1,19 +1,25 @@
+import * as THREE from 'three';
+
 import { Component } from '../../LIGHTER';
 import Button from './common/Button';
 import Checkbox from './common/form/Checbox';
 import styles from './UIPanelRight.module.scss';
-import { getSceneParam } from '../sceneData/sceneParams';
-import { getSceneItem } from '../sceneData/sceneItems';
-import { saveEditorState } from '../SceneLoader/SceneEditorState';
+import {
+  getSceneParam,
+  getSceneParamR,
+  setSceneParam,
+  setSceneParamR,
+} from '../sceneData/sceneParams';
+import { getSceneItem, removeMeshFromScene } from '../sceneData/sceneItems';
+import { saveEditorState, saveSceneState } from '../sceneData/saveSession';
 import SettingsPanel from './common/SettingsPanel';
+import NumberInput from './common/form/NumberInput';
 
 class UIWorld extends Component {
   constructor(data) {
     super(data);
     data.class = [styles.uiPanelRight, styles.uiPanelWorld];
-    this.showPanel = getSceneParam('editor')?.show
-      ? getSceneParam('editor').show[this.id] || false
-      : false;
+    this.showPanel = getSceneParamR(`editor.show.${this.id}`, false);
     if (this.showPanel) {
       data.class.push(styles.showPanel);
     }
@@ -50,12 +56,13 @@ class UIWorld extends Component {
     } else {
       this.elem.classList.remove(styles.showPanel);
     }
+    setSceneParamR(`editor.show.${this.id}`, this.showPanel);
     saveEditorState({ show: { [this.id]: this.showPanel } });
   };
 
   _basicHelpers = () => {
     const scene = getSceneItem('scene');
-    const gridHelper = scene.children.find((item) => item.type === 'GridHelper');
+    let gridHelper = scene.children.find((item) => item.type === 'GridHelper');
     const axesHelper = scene.children.find((item) => item.type === 'AxesHelper');
     const contentId = 'panel-basic-helpers-content-' + this.id;
     this.addChildDraw(
@@ -65,28 +72,63 @@ class UIWorld extends Component {
         contentId: contentId,
       })
     );
+
+    const showGridHelperId = 'grid-helper-' + this.id;
+    gridHelper.visible = getSceneParamR(`editor.show.${showGridHelperId}`, true);
     this.addChildDraw(
       new Checkbox({
-        id: 'grid-helper-' + this.id,
+        id: showGridHelperId,
         attach: contentId,
         label: 'Show grid',
         name: 'showGrid',
         hideMsg: true,
         changeFn: () => {
           gridHelper.visible = !gridHelper.visible;
+          setSceneParamR(`editor.show.${showGridHelperId}`, gridHelper.visible);
+          saveEditorState({ show: { [showGridHelperId]: gridHelper.visible } });
         },
         value: gridHelper.visible,
       })
     );
+
+    this.addChildDraw(
+      new NumberInput({
+        id: 'grid-size-' + this.id,
+        attach: contentId,
+        label: 'Grid size',
+        step: 2,
+        min: 2,
+        value: getSceneParam('gridSize'),
+        changeFn: (e, setValue) => {
+          let value = parseInt(e.target.value);
+          if (value % 2 !== 0) {
+            value += 1;
+            setValue(value, true);
+          }
+          setSceneParam('gridSize', value);
+          saveSceneState({ gridSize: value });
+          gridHelper = scene.children.find((item) => item.type === 'GridHelper');
+          removeMeshFromScene(gridHelper, scene);
+          gridHelper = new THREE.GridHelper(value, value);
+          if (!getSceneParam('grid')) gridHelper.visible = false;
+          scene.add(gridHelper);
+        },
+      })
+    );
+
+    const showAxesHelperId = 'axes-helper-' + this.id;
+    axesHelper.visible = getSceneParamR(`editor.show.${showAxesHelperId}`, true);
     this.addChildDraw(
       new Checkbox({
-        id: 'axes-helper-' + this.id,
+        id: showAxesHelperId,
         attach: contentId,
         label: 'Show axes',
         name: 'showAxes',
         hideMsg: true,
         changeFn: () => {
           axesHelper.visible = !axesHelper.visible;
+          setSceneParamR(`editor.show.${showAxesHelperId}`, axesHelper.visible);
+          saveEditorState({ show: { [showAxesHelperId]: axesHelper.visible } });
         },
         value: axesHelper.visible,
       })
