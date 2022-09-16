@@ -73,6 +73,11 @@ class NumberInput extends Component {
     if (noChangeFn) return;
     if (this.data.changeFn) this.data.changeFn({ target: inputElem });
   };
+
+  toggleDisabled = (isDisabled) => {
+    const inputElem = document.getElementById(this.inputId);
+    isDisabled ? inputElem.setAttribute('disabled', '') : inputElem.removeAttribute('disabled');
+  };
 }
 
 export default NumberInput;

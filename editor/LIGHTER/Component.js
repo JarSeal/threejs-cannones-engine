@@ -70,7 +70,7 @@ class Component {
       throw new Error('Call stack');
     }
     let data = this.data;
-    if (drawInput) data = Object.assign(this.data, drawInput);
+    if (drawInput) data = { ...this.data, ...drawInput };
     if (!this.firstDraw && data.noRedraws) {
       this.drawing = false;
       return;

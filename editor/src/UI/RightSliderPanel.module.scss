@@ -20,12 +20,18 @@
     right: 100%;
     border-radius: 0.4rem 0 0 0.4rem;
     border: none;
-    background: $colorPanelBack;
+    background: rgba($colorPanelBack, 0.8);
     cursor: pointer;
     color: $font-color;
+    text-shadow: 0 0 1rem $colorPanelBack;
     outline: none;
     font-size: 1.4rem;
     font-weight: 700;
+    transition: background 0.2s ease-in-out;
+    &:global(.current),
+    &:hover {
+      background: $colorPanelBack;
+    }
   }
   :global(h3.panelTitle) {
     width: 100%;
@@ -43,8 +49,9 @@
   transform: translate3d(0, 0, 0);
 }
 
-.uiPanelWorld {
-  :global(.panelTogglerButton) {
-    top: buttonPlacement(1);
-  }
+:global(.UIWorld.panelTogglerButton) {
+  top: buttonPlacement(1);
+}
+:global(.UICamera.panelTogglerButton) {
+  top: buttonPlacement(2);
 }

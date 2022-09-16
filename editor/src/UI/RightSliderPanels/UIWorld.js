@@ -1,39 +1,24 @@
 import * as THREE from 'three';
 
-import { Component } from '../../LIGHTER';
-import Button from './common/Button';
-import Checkbox from './common/form/Checbox';
-import styles from './UIPanelRight.module.scss';
+import { Component } from '../../../LIGHTER';
+import Checkbox from '../common/form/Checbox';
 import {
   getSceneParam,
   getSceneParamR,
   setSceneParam,
   setSceneParamR,
-} from '../sceneData/sceneParams';
-import { getSceneItem, removeMeshFromScene } from '../sceneData/sceneItems';
-import { saveEditorState, saveSceneState } from '../sceneData/saveSession';
-import SettingsPanel from './common/SettingsPanel';
-import NumberInput from './common/form/NumberInput';
+} from '../../sceneData/sceneParams';
+import { getSceneItem, removeMeshFromScene } from '../../sceneData/sceneItems';
+import { saveEditorState, saveSceneState } from '../../sceneData/saveSession';
+import SettingsPanel from '../common/SettingsPanel';
+import NumberInput from '../common/form/NumberInput';
 
 class UIWorld extends Component {
   constructor(data) {
     super(data);
-    data.class = [styles.uiPanelRight, styles.uiPanelWorld];
-    this.showPanel = getSceneParamR(`editor.show.${this.id}`, false);
-    if (this.showPanel) {
-      data.class.push(styles.showPanel);
-    }
   }
 
   paint = () => {
-    this.addChildDraw(
-      new Button({
-        id: 'btn-toggle-visiblity-' + this.id,
-        onClick: () => this.togglePanel(),
-        class: 'panelTogglerButton',
-        text: 'W',
-      })
-    );
     this.addChildDraw({
       id: 'panel-title-' + this.id,
       text: 'World settings',
@@ -41,23 +26,6 @@ class UIWorld extends Component {
       class: 'panelTitle',
     });
     this._basicHelpers();
-  };
-
-  togglePanel = (close) => {
-    if (close) {
-      this.showPanel = false;
-      this.elem.classList.remove(styles.showPanel);
-      saveEditorState({ show: { [this.id]: false } });
-      return;
-    }
-    this.showPanel = !this.showPanel;
-    if (this.showPanel) {
-      this.elem.classList.add(styles.showPanel);
-    } else {
-      this.elem.classList.remove(styles.showPanel);
-    }
-    setSceneParamR(`editor.show.${this.id}`, this.showPanel);
-    saveEditorState({ show: { [this.id]: this.showPanel } });
   };
 
   _basicHelpers = () => {
@@ -86,12 +54,13 @@ class UIWorld extends Component {
           gridHelper.visible = !gridHelper.visible;
           setSceneParamR(`editor.show.${showGridHelperId}`, gridHelper.visible);
           saveEditorState({ show: { [showGridHelperId]: gridHelper.visible } });
+          if (gridSize) gridSize.toggleDisabled(!gridHelper.visible);
         },
         value: gridHelper.visible,
       })
     );
 
-    this.addChildDraw(
+    const gridSize = this.addChildDraw(
       new NumberInput({
         id: 'grid-size-' + this.id,
         attach: contentId,
@@ -99,6 +68,7 @@ class UIWorld extends Component {
         step: 2,
         min: 2,
         value: getSceneParam('gridSize'),
+        disabled: !gridHelper.visible,
         changeFn: (e, setValue) => {
           let value = parseInt(e.target.value);
           if (value % 2 !== 0) {

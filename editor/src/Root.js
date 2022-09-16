@@ -10,7 +10,7 @@ import {
 import { getSceneItem, getSceneItems, setSceneItem, resetSceneItems } from './sceneData/sceneItems';
 import { getScreenResolution } from './utils/utils';
 import SceneLoader from './SceneLoader/SceneLoader';
-import UIWorld from './UI/UIWorld';
+import RightSidePanel from './UI/RightSliderPanel';
 import { scenes } from '../../data';
 import { getSceneStates, saveSceneId } from './sceneData/saveSession';
 
@@ -81,9 +81,8 @@ class Root {
 
     // Init UI
     if (isEditor) {
-      const uiWorld = new UIWorld({ id: 'ui-world', parentId: 'root' });
-      uiWorld.draw();
-      setSceneItem('uiWorld', uiWorld);
+      const rightSidePanel = new RightSidePanel({ id: 'right-side-panel', parentId: 'root' });
+      rightSidePanel.draw();
     }
 
     console.log('SCENE', scene);
