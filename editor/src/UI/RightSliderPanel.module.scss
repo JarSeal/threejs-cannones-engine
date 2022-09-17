@@ -13,6 +13,7 @@
   background: $colorPanelBack;
   transition: transform 0.2s ease-in-out;
   transform: translate3d(100%, 0, 0);
+  font-size: 1.1rem;
   :global(.panelTogglerButton) {
     width: $rightPanelButtonWidth;
     height: $rightPanelButtonHeight;
@@ -42,6 +43,18 @@
     padding: 0.6rem 1rem 0.4rem;
     background: lighten($colorPanelBack, 10%);
     margin: 0 0 0.4rem 0;
+  }
+  :global(.form-elem--infoField) {
+    font-size: 1.2rem;
+  }
+  :global(.form-elem--infoField .label) {
+    display: block;
+    width: 100%;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: darken(#fff, 50%);
+    margin-top: -0.2rem;
+    margin-bottom: -0.3rem;
   }
 }
 

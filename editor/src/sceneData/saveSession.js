@@ -50,14 +50,15 @@ export const saveCameraState = (values) => {
       ];
     if (values.position)
       newParams.position = [values.position.x, values.position.y, values.position.z];
-    if (values.target) newParams.target = [values.target.x, values.target.y, values.target.z];
-    newParams.lookAt = null;
+    if (values.target) {
+      newParams.target = [values.target.x, values.target.y, values.target.z];
+      newParams.lookAt = null;
+    }
+    if (values.fov) newParams.fov = values.fov;
+
     const cameraParams = getSceneParam('cameras');
-    const allCams = cameraParams.map((c, i) => {
-      if (i === values.index) return { ...c, ...newParams };
-      return c;
-    });
-    if (allCams.length) LS.setItem('cameras', JSON.stringify(allCams));
+    cameraParams[values.index] = { ...cameraParams[values.index], ...newParams };
+    if (cameraParams.length) LS.setItem('cameras', JSON.stringify(cameraParams));
   } else {
     // TODO: Add / Remove a camera
   }

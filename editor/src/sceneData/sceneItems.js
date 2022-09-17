@@ -12,7 +12,7 @@ const emptyItems = {
   uiWorld: null,
   resizers: [],
   renderStats: null,
-  cameraControls: null,
+  orbitControls: null,
   looping: false,
 };
 

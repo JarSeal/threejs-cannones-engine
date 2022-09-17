@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
-import { setSceneParam } from '../sceneData/sceneParams';
+import { getSceneParam, setSceneParam } from '../sceneData/sceneParams';
 import { setSceneItem, getSceneItem } from '../sceneData/sceneItems';
 import { getScreenResolution } from '../utils/utils';
 import ElementLoader from './ElementLoader';
@@ -30,9 +30,20 @@ class SceneLoader {
     const aspectRatio = reso.x / reso.y;
     const allCameras = [];
     let curCameraQuaternion, curCameraTarget;
+    const ids = [];
     for (let i = 0; i < camerasA.length; i++) {
       const c = camerasA[i];
+      if (!c.id) {
+        console.error('Camera must have an ID');
+        continue;
+      }
+      if (ids.includes(c.id)) {
+        console.error('Multiple cameras with the same ID: ' + c.id);
+        continue;
+      }
+      ids.push(c.id);
       let camera;
+      c.index = i;
       if (c.type === 'perspective') {
         const fov = c.fov || 45;
         const near = c.near || 0.1;
@@ -53,42 +64,47 @@ class SceneLoader {
       }
       allCameras.push(camera);
       if (
-        i === sceneParams.cameraIndex ||
-        ((sceneParams.cameraIndex === null || sceneParams.cameraIndex === undefined) && i === 0)
+        i === sceneParams.curCameraIndex ||
+        ((sceneParams.curCameraIndex === null || sceneParams.curCameraIndex === undefined) &&
+          i === 0)
       ) {
         setSceneItem('curCamera', camera);
-        if (sceneParams.cameraIndex === null || sceneParams.cameraIndex === undefined)
-          setSceneParam('cameraIndex', 0);
+        if (sceneParams.curCameraIndex === null || sceneParams.curCameraIndex === undefined) {
+          setSceneParam('curCameraIndex', 0);
+        } else {
+          setSceneParam('curCameraIndex', i);
+        }
         if (c.quaternion) curCameraQuaternion = [...c.quaternion];
         if (c.target) curCameraTarget = [...c.target];
       }
+
+      if (c.orbitControls && getSceneParam('curCameraIndex') === i) {
+        const controls = new OrbitControls(
+          allCameras[sceneParams.curCameraIndex],
+          getSceneItem('renderer').domElement
+        );
+        if (curCameraQuaternion) {
+          allCameras[sceneParams.curCameraIndex].quaternion.set(...curCameraQuaternion);
+        }
+        if (curCameraTarget) {
+          controls.target = new THREE.Vector3(...curCameraTarget);
+        }
+        controls.addEventListener('end', () => {
+          const quaternion = allCameras[sceneParams.curCameraIndex].quaternion;
+          const position = allCameras[sceneParams.curCameraIndex].position;
+          const target = controls.target;
+          saveCameraState({ index: sceneParams.curCameraIndex, quaternion, position, target });
+        });
+        setSceneItem('orbitControls', controls);
+      }
     }
     setSceneItem('allCameras', allCameras);
-
-    // Editor Orbit Controls
-    // TODO: Later rewrite your own orbit controls
-    const controls = new OrbitControls(
-      allCameras[sceneParams.curCameraIndex],
-      getSceneItem('renderer').domElement
-    );
-    if (curCameraQuaternion) {
-      allCameras[sceneParams.curCameraIndex].quaternion.set(...curCameraQuaternion);
-    }
-    if (curCameraTarget) {
-      controls.target = new THREE.Vector3(...curCameraTarget);
-    }
-    setSceneItem('cameraControls', controls);
-    controls.addEventListener('end', () => {
-      const quaternion = allCameras[sceneParams.curCameraIndex].quaternion;
-      const position = allCameras[sceneParams.curCameraIndex].position;
-      const target = controls.target;
-      saveCameraState({ index: sceneParams.curCameraIndex, quaternion, position, target });
-    });
   };
 
   _createLights = (lightsA) => {
     for (let i = 0; i < lightsA.length; i++) {
       const l = lightsA[i];
+      l.index = i;
       if (l.type === 'ambient') {
         const color = l.color || 0xffffff;
         const intensity = l.intensity || 1;

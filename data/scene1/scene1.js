@@ -9,7 +9,6 @@ export const scene1 = {
   rendererAntialias: true,
   grid: true,
   gridSize: 26,
-  orbitControls: true,
   shadowType: 'PCFSoftShadowMap',
   lights: [
     {
@@ -40,11 +39,22 @@ export const scene1 = {
   cameras: [
     {
       id: 'editor-main',
+      name: 'Editor main camera',
       type: 'perspective',
       fov: 45,
       near: 0,
       far: 256,
       position: [5, 5, 5],
+      lookAt: [0, 0, 0],
+      orbitControls: true,
+    },
+    {
+      id: 'editor-main2',
+      type: 'perspective',
+      fov: 45,
+      near: 0,
+      far: 256,
+      position: [10, 5, 10],
       lookAt: [0, 0, 0],
     },
   ],
