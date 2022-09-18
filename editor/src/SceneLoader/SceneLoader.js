@@ -1,11 +1,10 @@
 import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 import { getSceneParam, setSceneParam } from '../sceneData/sceneParams';
-import { setSceneItem, getSceneItem } from '../sceneData/sceneItems';
+import { setSceneItem } from '../sceneData/sceneItems';
 import { getScreenResolution } from '../utils/utils';
 import ElementLoader from './ElementLoader';
-import { saveCameraState } from '../sceneData/saveSession';
+import { createOrbitControls } from '../controls/orbitControls';
 
 class SceneLoader {
   constructor(scene, isEditor) {
@@ -29,7 +28,6 @@ class SceneLoader {
     const reso = getScreenResolution();
     const aspectRatio = reso.x / reso.y;
     const allCameras = [];
-    let curCameraQuaternion, curCameraTarget;
     const ids = [];
     for (let i = 0; i < camerasA.length; i++) {
       const c = camerasA[i];
@@ -58,6 +56,9 @@ class SceneLoader {
       camera.position.set(pos[0], pos[1], pos[2]);
       if (c.quaternion) {
         camera.quaternion.set(...c.quaternion);
+      } else if (c.target) {
+        const target = c.target ? c.target : [0, 0, 0];
+        camera.lookAt(new THREE.Vector3(target[0], target[1], target[2]));
       } else {
         const lookAt = c.lookAt ? c.lookAt : [0, 0, 0];
         camera.lookAt(new THREE.Vector3(lookAt[0], lookAt[1], lookAt[2]));
@@ -74,28 +75,10 @@ class SceneLoader {
         } else {
           setSceneParam('curCameraIndex', i);
         }
-        if (c.quaternion) curCameraQuaternion = [...c.quaternion];
-        if (c.target) curCameraTarget = [...c.target];
       }
 
       if (c.orbitControls && getSceneParam('curCameraIndex') === i) {
-        const controls = new OrbitControls(
-          allCameras[sceneParams.curCameraIndex],
-          getSceneItem('renderer').domElement
-        );
-        if (curCameraQuaternion) {
-          allCameras[sceneParams.curCameraIndex].quaternion.set(...curCameraQuaternion);
-        }
-        if (curCameraTarget) {
-          controls.target = new THREE.Vector3(...curCameraTarget);
-        }
-        controls.addEventListener('end', () => {
-          const quaternion = allCameras[sceneParams.curCameraIndex].quaternion;
-          const position = allCameras[sceneParams.curCameraIndex].position;
-          const target = controls.target;
-          saveCameraState({ index: sceneParams.curCameraIndex, quaternion, position, target });
-        });
-        setSceneItem('orbitControls', controls);
+        createOrbitControls();
       }
     }
     setSceneItem('allCameras', allCameras);

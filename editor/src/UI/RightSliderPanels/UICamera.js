@@ -1,10 +1,15 @@
+import * as THREE from 'three';
+
 import { Component } from '../../../LIGHTER';
-import { getSceneParam, setSceneParam, setSceneParamR } from '../../sceneData/sceneParams';
+import { getSceneParam, setSceneParam } from '../../sceneData/sceneParams';
 import SettingsPanel from '../common/SettingsPanel';
 import NumberInput from '../common/form/NumberInput';
-import { saveCameraState, saveSceneState } from '../../sceneData/saveSession';
+import { saveCameraState } from '../../sceneData/saveSession';
 import { getSceneItem } from '../../sceneData/sceneItems';
 import InfoField from '../common/form/InfoField';
+import Checkbox from '../common/form/Checbox';
+import { createOrbitControls, removeOrbitControls } from '../../controls/orbitControls';
+import ActionButtons from '../common/form/ActionButtons';
 
 class UICamera extends Component {
   constructor(data) {
@@ -52,6 +57,14 @@ class UICamera extends Component {
         );
       }
       this.addChildDraw(
+        new InfoField({
+          id: 'infoType-' + c.id + '-' + this.id,
+          label: 'Type',
+          content: c.type,
+          attach: contentId,
+        })
+      );
+      this.addChildDraw(
         new NumberInput({
           id: 'fov-' + c.id + '-' + this.id,
           attach: contentId,
@@ -60,21 +73,91 @@ class UICamera extends Component {
           min: 1,
           value: c.fov,
           changeFn: (e) => {
-            this._updateCameraProperty(e, c.index, 'fov');
+            const value = parseInt(e.target.value);
+            this._updateCameraProperty(value, c.index, 'fov');
           },
         })
+      );
+      this.addChildDraw(
+        new NumberInput({
+          id: 'near-' + c.id + '-' + this.id,
+          attach: contentId,
+          label: 'Frustum near plane',
+          step: 0.001,
+          min: 0.001,
+          value: c.near,
+          changeFn: (e) => {
+            const value = parseFloat(e.target.value);
+            this._updateCameraProperty(value, c.index, 'near');
+          },
+        })
+      );
+      this.addChildDraw(
+        new NumberInput({
+          id: 'far-' + c.id + '-' + this.id,
+          attach: contentId,
+          label: 'Frustum far plane',
+          step: 0.001,
+          min: 0.001,
+          value: c.far,
+          changeFn: (e) => {
+            const value = parseFloat(e.target.value);
+            this._updateCameraProperty(value, c.index, 'far');
+          },
+        })
+      );
+      this.addChildDraw(
+        new Checkbox({
+          id: 'orbitControls-' + c.id + '-' + this.id,
+          attach: contentId,
+          hideMsg: true,
+          label: 'Orbit controls',
+          changeFn: (e) => {
+            const isTurnedOn = e.target.checked;
+            this._updateCameraProperty(isTurnedOn, c.index, 'orbitControls');
+            if (isTurnedOn) {
+              if (c.index === getSceneParam('curCameraIndex')) createOrbitControls();
+            } else {
+              if (c.index === getSceneParam('curCameraIndex')) removeOrbitControls();
+            }
+          },
+          value: c.orbitControls,
+        })
+      );
+      const buttons = [
+        {
+          id: 'reset-cam-' + c.id + '-' + this.id,
+          text: 'Reset position',
+          onClick: () => {
+            if (c.index === getSceneParam('curCameraIndex')) {
+              removeOrbitControls();
+              createOrbitControls();
+            }
+            const pos = [5, 5, 5];
+            this._updateCameraProperty(pos, c.index, 'position');
+            const target = [0, 0, 0];
+            const cameras = getSceneItem('allCameras');
+            cameras[c.index].lookAt(...target);
+          },
+        },
+      ];
+      this.addChildDraw(
+        new ActionButtons({ id: 'actions-' + c.id + '-' + this.id, attach: contentId, buttons })
       );
     });
   };
 
-  _updateCameraProperty = (e, i, key) => {
-    const value = parseInt(e.target.value);
+  _updateCameraProperty = (value, i, key) => {
     const newCamParams = getSceneParam('cameras').map((cam, index) => {
       if (index === i) return { ...cam, [key]: value };
       return cam;
     });
     const cam = getSceneItem('allCameras')[i];
-    cam[key] = value;
+    if (key === 'position' || key === 'quaternion') {
+      cam[key].set(...value);
+    } else {
+      cam[key] = value;
+    }
     cam.updateProjectionMatrix();
     setSceneParam('cameras', newCamParams);
     saveCameraState({ index: i, [key]: value });
