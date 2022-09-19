@@ -52,6 +52,10 @@ class RightSidePanel extends Component {
     });
   };
 
+  updatePanel = () => {
+    this.rePaint();
+  };
+
   _tabs = [
     {
       id: 'UIWorld',
@@ -75,7 +79,9 @@ class RightSidePanel extends Component {
           text: 'C',
         })
       ),
-      content: this.addChild(new UICamera({ id: 'ui-tab-camera-' + this.id })),
+      content: this.addChild(
+        new UICamera({ id: 'ui-tab-camera-' + this.id, updatePanel: this.updatePanel })
+      ),
     },
   ];
 }

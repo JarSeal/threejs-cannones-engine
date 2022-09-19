@@ -14,6 +14,7 @@ import ActionButtons from '../common/form/ActionButtons';
 class UICamera extends Component {
   constructor(data) {
     super(data);
+    this.updatePanel = data.updatePanel;
   }
 
   paint = () => {
@@ -175,6 +176,38 @@ class UICamera extends Component {
             if (c.index === getSceneParam('curCameraIndex')) return;
             const cameraSelector = getSceneItem('cameraSelectorTool');
             cameraSelector.setValue(c.id);
+          },
+        },
+        {
+          id: 'delete-cam-' + c.id + '-' + this.id,
+          text: 'DEL',
+          class: 'delete-button',
+          onClick: () => {
+            const cameraItems = getSceneItem('allCameras');
+            if (cameraItems.length <= 1) return;
+            const index = c.index;
+            const cameraParams = getSceneParam('cameras').filter((cam) => cam.id !== c.id);
+            setSceneParam('cameras', cameraParams);
+            const cameraSelector = getSceneItem('cameraSelectorTool');
+            cameraItems[index].clear();
+            cameraItems[index].removeFromParent();
+            setSceneItem(
+              'allCameras',
+              cameraItems.filter((c, i) => i !== index)
+            );
+            saveCameraState({ removeIndex: index });
+            if (c.index === getSceneParam('curCameraIndex')) {
+              cameraSelector.setValue(cameraParams[0].id);
+            }
+            console.log(
+              'TADAA',
+              cameraParams.map((c) => ({ value: c.id, label: c.name || c.id }))
+            );
+            cameraSelector.setOptions(
+              cameraParams.map((c) => ({ value: c.id, label: c.name || c.id })),
+              c.id
+            );
+            this.updatePanel();
           },
         },
       ];

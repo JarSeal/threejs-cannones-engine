@@ -13,6 +13,13 @@ class Button extends Component {
     } else {
       this.template = data.template;
     }
+    if (Array.isArray(data.class)) {
+      data.class = [...data.class, 'button'];
+    } else if (data.class) {
+      data.class = [data.class, 'button'];
+    } else {
+      data.class = 'button';
+    }
     this.onClick = data.onClick;
   }
 

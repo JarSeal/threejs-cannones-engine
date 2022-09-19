@@ -79,6 +79,10 @@
       background: green;
     }
   }
+  :global(.delete-button) {
+    background: rgb(112, 27, 27);
+    color: #ccc;
+  }
 }
 
 .settingsPanelContent {

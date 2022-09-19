@@ -117,6 +117,15 @@ class Dropdown extends Component {
     return template;
   }
 
+  setOptions = (newOptions, newSelected, emptyIsAnOption) => {
+    this.options = newOptions;
+    const selectElem = document.getElementById(this.selectId);
+    if (!selectElem || !newOptions.length) return;
+    const selected = newSelected === undefined ? newSelected : this.options[0].value;
+    selectElem.innerHTML = this._createOptionsTemplate(newOptions, selected, emptyIsAnOption);
+    console.log('SELECT', newOptions);
+  };
+
   setValue(newValue, noChangeFn) {
     const selectElem = document.getElementById(this.selectId);
     const opts = selectElem.children;
