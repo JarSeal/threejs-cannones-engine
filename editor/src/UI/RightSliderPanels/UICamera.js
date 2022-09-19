@@ -138,6 +138,14 @@ class UICamera extends Component {
             const target = [0, 0, 0];
             const cameras = getSceneItem('allCameras');
             cameras[c.index].lookAt(...target);
+            const camParams = getSceneParam('cameras');
+            camParams[c.index].target = target;
+            setSceneParam('cameras', camParams);
+            saveCameraState({ index: c.index, target });
+            if (c.index === getSceneParam('curCameraIndex')) {
+              const controls = getSceneItem('orbitControls');
+              controls.target = new THREE.Vector3(...target);
+            }
           },
         },
       ];

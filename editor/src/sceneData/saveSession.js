@@ -41,16 +41,25 @@ export const saveCameraState = (values) => {
   // }
   if (values.index !== undefined) {
     const newParams = {};
-    if (values.quaternion)
+
+    if (values.quaternion && Array.isArray(values.quaternion)) {
+      newParams.quaternion = values.quaternion;
+    } else if (values.quaternion)
       newParams.quaternion = [
         values.quaternion.x,
         values.quaternion.y,
         values.quaternion.z,
         values.quaternion.w,
       ];
-    if (values.position)
+
+    if (values.position && Array.isArray(values.position)) {
+      newParams.position = values.position;
+    } else if (values.position)
       newParams.position = [values.position.x, values.position.y, values.position.z];
-    if (values.target) {
+
+    if (values.target && Array.isArray(values.target)) {
+      newParams.target = values.target;
+    } else if (values.target) {
       newParams.target = [values.target.x, values.target.y, values.target.z];
       newParams.lookAt = null;
     }
