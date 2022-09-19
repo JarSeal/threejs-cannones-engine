@@ -10,6 +10,8 @@ class RightSidePanel extends Component {
   constructor(data) {
     super(data);
     data.class = [styles.uiPanelRight];
+    this.innerContentId = this.id + '-inner-content';
+    this.innerContent = this.addChild({ id: this.innerContentId, class: styles.uiPanelRightInner });
     this.tabId = getSceneParamR('editor.show.rightPanelTab', '');
     if (this.tabId.length) {
       data.class.push(styles.showPanel);
@@ -17,11 +19,12 @@ class RightSidePanel extends Component {
   }
 
   paint = () => {
+    this.innerContent.draw();
     for (let i = 0; i < this._tabs.length; i++) {
       const tab = this._tabs[i];
       tab.btn.draw();
       if (tab.id === this.tabId) {
-        tab.content.draw();
+        tab.content.draw({ attach: this.innerContentId });
         tab.btn.elem.classList.add('current');
       }
     }
@@ -42,7 +45,7 @@ class RightSidePanel extends Component {
       tab.btn.elem.classList.remove('current');
       if (tab.id === this.tabId) {
         tab.btn.elem.classList.add('current');
-        tab.content.draw();
+        tab.content.draw({ attach: this.innerContentId });
       } else {
         tab.content.discard();
       }

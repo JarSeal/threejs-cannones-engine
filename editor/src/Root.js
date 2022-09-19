@@ -13,6 +13,7 @@ import SceneLoader from './SceneLoader/SceneLoader';
 import RightSidePanel from './UI/RightSliderPanel';
 import { scenes } from '../../data';
 import { getSceneStates, saveSceneId } from './sceneData/saveSession';
+import TopTools from './UI/TopTools';
 
 class Root {
   constructor() {
@@ -71,8 +72,11 @@ class Root {
     // Stats
     if (isEditor) {
       const renderStats = new Stats();
-      document.body.appendChild(renderStats.dom);
-      setSceneItem('renderStats', renderStats);
+      renderStats.domElement.id = 'running-stats-render';
+      renderStats.domElement.style.top = 'auto';
+      renderStats.domElement.style.bottom = 0;
+      document.getElementById('root').appendChild(renderStats.dom);
+      setSceneItem('runningRenderStats', renderStats);
     }
 
     this._resize();
@@ -83,6 +87,8 @@ class Root {
     if (isEditor) {
       const rightSidePanel = new RightSidePanel({ id: 'right-side-panel', parentId: 'root' });
       rightSidePanel.draw();
+      const topTools = new TopTools({ id: 'top-tools', parentId: 'root' });
+      topTools.draw();
     }
 
     console.log('SCENE', scene);
@@ -92,7 +98,7 @@ class Root {
     const SI = this.sceneItems;
     if (SI.looping) {
       SI.renderer.render(SI.scene, SI.curCamera);
-      SI.renderStats.update(); // Debug statistics
+      SI.runningRenderStats.update(); // Debug statistics
       requestAnimationFrame(() => {
         this._renderLoop();
       });
@@ -107,8 +113,15 @@ class Root {
     const pixelRatio = window.devicePixelRatio;
     const aspectRatio = reso.x / reso.y;
     SI.renderer.setSize((width * pixelRatio) | 0, (height * pixelRatio) | 0, false);
-    SI.curCamera.aspect = width / height;
-    SI.curCamera.updateProjectionMatrix();
+    for (let i = 0; SI.allCameras.length; i++) {
+      const camera = SI.allCameras[i];
+      if (!camera) break;
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      if (SI.cameraHelpers && SI.cameraHelpers.length && SI.cameraHelpers[i]) {
+        SI.cameraHelpers[i].update();
+      }
+    }
     setSceneParam('screenResolution', reso);
     setSceneParam('pixelRatio', pixelRatio);
     setSceneParam('aspectRatio', aspectRatio);

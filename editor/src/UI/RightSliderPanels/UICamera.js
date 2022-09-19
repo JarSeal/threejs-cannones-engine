@@ -5,7 +5,7 @@ import { getSceneParam, setSceneParam } from '../../sceneData/sceneParams';
 import SettingsPanel from '../common/SettingsPanel';
 import NumberInput from '../common/form/NumberInput';
 import { saveCameraState } from '../../sceneData/saveSession';
-import { getSceneItem } from '../../sceneData/sceneItems';
+import { getSceneItem, setSceneItem } from '../../sceneData/sceneItems';
 import InfoField from '../common/form/InfoField';
 import Checkbox from '../common/form/Checbox';
 import { createOrbitControls, removeOrbitControls } from '../../controls/orbitControls';
@@ -28,14 +28,18 @@ class UICamera extends Component {
 
   _cameras = () => {
     const cams = getSceneParam('cameras');
+    const camPanels = [];
     cams.forEach((c) => {
       const contentId = 'panel-cameras-content-' + c.index + '-' + this.id;
-      this.addChildDraw(
-        new SettingsPanel({
-          id: 'panel-cameras-' + c.id + '-' + this.id,
-          title: c.name || c.id,
-          contentId: contentId,
-        })
+      camPanels.push(
+        this.addChildDraw(
+          new SettingsPanel({
+            id: 'panel-cameras-' + c.id + '-' + this.id,
+            title: c.name || c.id,
+            contentId: contentId,
+            class: getSceneParam('curCameraIndex') === c.index ? 'highlight' : null,
+          })
+        )
       );
 
       this.addChildDraw(
@@ -110,7 +114,6 @@ class UICamera extends Component {
         new Checkbox({
           id: 'orbitControls-' + c.id + '-' + this.id,
           attach: contentId,
-          hideMsg: true,
           label: 'Orbit controls',
           changeFn: (e) => {
             const isTurnedOn = e.target.checked;
@@ -122,6 +125,27 @@ class UICamera extends Component {
             }
           },
           value: c.orbitControls,
+        })
+      );
+      this.addChildDraw(
+        new Checkbox({
+          id: 'showHelper-' + c.id + '-' + this.id,
+          attach: contentId,
+          label: 'Show helper',
+          changeFn: (e) => {
+            const isTurnedOn = e.target.checked;
+            if (c.index !== getSceneParam('curCameraIndex')) {
+              const helpers = getSceneItem('cameraHelpers');
+              if (helpers && helpers.length && helpers[c.index]) {
+                helpers[c.index].visible = isTurnedOn;
+              }
+            }
+            const cameraParams = getSceneParam('cameras');
+            cameraParams[c.index].showHelper = isTurnedOn;
+            setSceneParam('cameras', cameraParams);
+            saveCameraState({ index: c.index, showHelper: isTurnedOn });
+          },
+          value: c.showHelper || false,
         })
       );
       const buttons = [
@@ -136,16 +160,21 @@ class UICamera extends Component {
             const pos = [5, 5, 5];
             this._updateCameraProperty(pos, c.index, 'position');
             const target = [0, 0, 0];
-            const cameras = getSceneItem('allCameras');
-            cameras[c.index].lookAt(...target);
-            const camParams = getSceneParam('cameras');
-            camParams[c.index].target = target;
-            setSceneParam('cameras', camParams);
-            saveCameraState({ index: c.index, target });
+            this._updateCameraProperty(target, c.index, 'target');
+            this._updateCameraProperty(target, c.index, 'target'); // Needs to be called twice in order to make the cam helper place correctly as well
             if (c.index === getSceneParam('curCameraIndex')) {
               const controls = getSceneItem('orbitControls');
               controls.target = new THREE.Vector3(...target);
             }
+          },
+        },
+        {
+          id: 'use-this-cam-' + c.id + '-' + this.id,
+          text: 'Use this camera',
+          onClick: () => {
+            if (c.index === getSceneParam('curCameraIndex')) return;
+            const cameraSelector = getSceneItem('cameraSelectorTool');
+            cameraSelector.setValue(c.id);
           },
         },
       ];
@@ -153,6 +182,7 @@ class UICamera extends Component {
         new ActionButtons({ id: 'actions-' + c.id + '-' + this.id, attach: contentId, buttons })
       );
     });
+    setSceneItem('cameraPanels', camPanels);
   };
 
   _updateCameraProperty = (value, i, key) => {
@@ -163,12 +193,18 @@ class UICamera extends Component {
     const cam = getSceneItem('allCameras')[i];
     if (key === 'position' || key === 'quaternion') {
       cam[key].set(...value);
+    } else if (key === 'target') {
+      cam.lookAt(...value);
     } else {
       cam[key] = value;
     }
     cam.updateProjectionMatrix();
     setSceneParam('cameras', newCamParams);
     saveCameraState({ index: i, [key]: value });
+    const helpers = getSceneItem('cameraHelpers');
+    if (helpers && helpers.length && helpers[i]) {
+      helpers[i].update();
+    }
   };
 }
 

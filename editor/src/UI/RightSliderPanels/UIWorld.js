@@ -42,7 +42,6 @@ class UIWorld extends Component {
     );
 
     const showGridHelperId = 'grid-helper-' + this.id;
-    gridHelper.visible = getSceneParamR(`editor.show.${showGridHelperId}`, true);
     this.addChildDraw(
       new Checkbox({
         id: showGridHelperId,
@@ -52,8 +51,8 @@ class UIWorld extends Component {
         hideMsg: true,
         changeFn: () => {
           gridHelper.visible = !gridHelper.visible;
-          setSceneParamR(`editor.show.${showGridHelperId}`, gridHelper.visible);
-          saveEditorState({ show: { [showGridHelperId]: gridHelper.visible } });
+          setSceneParam('grid', gridHelper.visible);
+          saveSceneState();
           if (gridSize) gridSize.toggleDisabled(!gridHelper.visible);
         },
         value: gridHelper.visible,
@@ -87,7 +86,6 @@ class UIWorld extends Component {
     );
 
     const showAxesHelperId = 'axes-helper-' + this.id;
-    axesHelper.visible = getSceneParamR(`editor.show.${showAxesHelperId}`, true);
     this.addChildDraw(
       new Checkbox({
         id: showAxesHelperId,
@@ -97,8 +95,8 @@ class UIWorld extends Component {
         hideMsg: true,
         changeFn: () => {
           axesHelper.visible = !axesHelper.visible;
-          setSceneParamR(`editor.show.${showAxesHelperId}`, axesHelper.visible);
-          saveEditorState({ show: { [showAxesHelperId]: axesHelper.visible } });
+          setSceneParam('axesHelper', axesHelper.visible);
+          saveSceneState();
         },
         value: axesHelper.visible,
       })

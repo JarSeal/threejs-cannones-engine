@@ -25,6 +25,7 @@ export const createOrbitControls = () => {
     if (quaternion) saveState.quaternion = quaternion;
     saveCameraState(saveState);
   });
+  controls.update();
   setSceneItem('orbitControls', controls);
 };
 

@@ -1,0 +1,13 @@
+@import '../sass/variables';
+
+.topTools {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  background: transparent;
+  :global(.form-elem__label) {
+    font-size: 1.1rem;
+    color: #000;
+    text-shadow: 0.1rem 0.1rem 0 #fff;
+  }
+}

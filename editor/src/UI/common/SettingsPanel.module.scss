@@ -3,6 +3,7 @@
 .settingsPanel {
   background: darken($colorPanelBack, 2%);
   margin-bottom: 0.4rem;
+  position: relative;
   h4 {
     font-size: 1.1rem;
     margin: 0;
@@ -65,6 +66,18 @@
   }
   :global(.form-elem__number-input) {
     width: 8rem;
+  }
+  &:global(.highlight) {
+    &:before {
+      display: block;
+      content: '';
+      position: absolute;
+      height: 100%;
+      width: 0.3rem;
+      left: 0;
+      top: 0;
+      background: green;
+    }
   }
 }
 

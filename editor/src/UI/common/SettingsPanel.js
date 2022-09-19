@@ -6,7 +6,14 @@ import { getSceneParamR, setSceneParamR } from '../../sceneData/sceneParams';
 class SettingsPanel extends Component {
   constructor(data) {
     super(data);
-    data.class = [styles.settingsPanel, data.panelClosed ? 'closed' : null];
+    let classNames = [styles.settingsPanel];
+    if (data.class && Array.isArray(data.class)) {
+      classNames = [...classNames, ...data.class];
+    } else if (data.class) {
+      classNames = [...classNames, data.class];
+    }
+    if (data.panelClosed) classNames.push('closed');
+    data.class = classNames;
     this.title = data.title;
     this.contentId = data.contentId;
     if (data.showPanel === undefined) data.showPanel = true;

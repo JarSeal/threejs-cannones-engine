@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 import { getSceneParam, setSceneParam } from '../sceneData/sceneParams';
-import { setSceneItem } from '../sceneData/sceneItems';
+import { getSceneItem, setSceneItem } from '../sceneData/sceneItems';
 import { getScreenResolution } from '../utils/utils';
 import ElementLoader from './ElementLoader';
 import { createOrbitControls } from '../controls/orbitControls';
@@ -28,6 +28,7 @@ class SceneLoader {
     const reso = getScreenResolution();
     const aspectRatio = reso.x / reso.y;
     const allCameras = [];
+    const helpers = [];
     const ids = [];
     for (let i = 0; i < camerasA.length; i++) {
       const c = camerasA[i];
@@ -75,6 +76,15 @@ class SceneLoader {
         } else {
           setSceneParam('curCameraIndex', i);
         }
+        helpers.push(null);
+      } else {
+        // Create camera helpers
+        const helper = new THREE.CameraHelper(camera);
+        if (!c.showHelper) helper.visible = false;
+        helpers.push(helper);
+        helper.update();
+        this.scene.add(helper);
+        camera.updateWorldMatrix();
       }
 
       if (c.orbitControls && getSceneParam('curCameraIndex') === i) {
@@ -82,6 +92,7 @@ class SceneLoader {
       }
     }
     setSceneItem('allCameras', allCameras);
+    setSceneItem('cameraHelpers', helpers);
   };
 
   _createLights = (lightsA) => {

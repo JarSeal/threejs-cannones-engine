@@ -47,6 +47,7 @@ export const scene1 = {
       position: [5, 5, 5],
       lookAt: [0, 0, 0],
       orbitControls: true,
+      showHelper: true,
     },
     {
       id: 'editor-main2',
@@ -56,6 +57,7 @@ export const scene1 = {
       far: 256,
       position: [10, 5, 10],
       lookAt: [0, 0, 0],
+      showHelper: true,
     },
   ],
   curCameraIndex: 0,
