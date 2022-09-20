@@ -2,14 +2,9 @@ import * as THREE from 'three';
 
 import { Component } from '../../../LIGHTER';
 import Checkbox from '../common/form/Checbox';
-import {
-  getSceneParam,
-  getSceneParamR,
-  setSceneParam,
-  setSceneParamR,
-} from '../../sceneData/sceneParams';
+import { getSceneParam, setSceneParam } from '../../sceneData/sceneParams';
 import { getSceneItem, removeMeshFromScene } from '../../sceneData/sceneItems';
-import { saveEditorState, saveSceneState } from '../../sceneData/saveSession';
+import { saveSceneState } from '../../sceneData/saveSession';
 import SettingsPanel from '../common/SettingsPanel';
 import NumberInput from '../common/form/NumberInput';
 

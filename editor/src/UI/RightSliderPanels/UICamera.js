@@ -184,6 +184,7 @@ class UICamera extends Component {
               const controls = getSceneItem('orbitControls');
               controls.target = new THREE.Vector3(...target);
             }
+            this.rePaint();
           },
         },
         {
@@ -197,7 +198,7 @@ class UICamera extends Component {
         },
         {
           id: 'delete-cam-' + c.id + '-' + this.id,
-          text: 'DEL',
+          text: 'Destroy!',
           class: 'delete-button',
           onClick: () => {
             const cameraItems = getSceneItem('allCameras');
