@@ -57,6 +57,47 @@
     margin-bottom: -0.3rem;
     text-align: left;
   }
+  :global(.form-elem--vector-input) {
+    position: relative;
+    > :global(.form-elem__label) {
+      position: absolute;
+      left: 0;
+      top: -0.2rem;
+      color: darken(#fff, 50%);
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+    :global(.form-elem__fields) {
+      margin-top: 0.7rem;
+      :global(.form-elem__label:before) {
+        display: inline-block;
+        content: '•';
+        margin-right: 0.5rem;
+        font-size: 2rem;
+        line-height: 1rem;
+        vertical-align: middle;
+      }
+      :global(.form-elem:nth-child(1) .form-elem__label:before) {
+        color: red;
+      }
+      :global(.form-elem:nth-child(2) .form-elem__label:before) {
+        color: green;
+      }
+      :global(.form-elem:nth-child(3) .form-elem__label:before) {
+        color: blue;
+      }
+      :global(.form-elem:nth-child(4) .form-elem__label:before) {
+        color: #fff;
+      }
+      :global(.form-elem + .form-elem) {
+        border-top: none;
+        margin-top: 0;
+      }
+    }
+    input {
+      width: 18rem;
+    }
+  }
 }
 
 .uiPanelRightInner {

@@ -24,6 +24,8 @@ export const createOrbitControls = () => {
     const saveState = { index: sceneParams.curCameraIndex, position, target };
     if (quaternion) saveState.quaternion = quaternion;
     saveCameraState(saveState);
+    const rightSidePanel = getSceneItem('rightSidePanel');
+    rightSidePanel.updatePanel('UICamera');
   });
   controls.update();
   setSceneItem('orbitControls', controls);

@@ -87,8 +87,10 @@ class Root {
     if (isEditor) {
       const rightSidePanel = new RightSidePanel({ id: 'right-side-panel', parentId: 'root' });
       rightSidePanel.draw();
+      setSceneItem('rightSidePanel', rightSidePanel);
       const topTools = new TopTools({ id: 'top-tools', parentId: 'root' });
       topTools.draw();
+      setSceneItem('topTools', topTools);
     }
 
     console.log('SCENE', scene);

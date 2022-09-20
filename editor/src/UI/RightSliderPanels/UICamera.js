@@ -10,6 +10,7 @@ import InfoField from '../common/form/InfoField';
 import Checkbox from '../common/form/Checbox';
 import { createOrbitControls, removeOrbitControls } from '../../controls/orbitControls';
 import ActionButtons from '../common/form/ActionButtons';
+import VectorInput from '../common/form/VectorInput';
 
 class UICamera extends Component {
   constructor(data) {
@@ -112,6 +113,22 @@ class UICamera extends Component {
         })
       );
       this.addChildDraw(
+        new VectorInput({
+          id: 'cam-pos-' + c.id + '-' + this.id,
+          attach: contentId,
+          label: 'Camera position',
+          inputLabels: ['x', 'y', 'z'],
+          values: c.position,
+          onChange: (e, index) => {
+            const curPos = getSceneParam('cameras')[c.index].position;
+            const curTarget = getSceneParam('cameras')[c.index].target;
+            curPos[index] = parseFloat(e.target.value);
+            this._updateCameraProperty(curPos, c.index, 'position');
+            this._updateCameraProperty(curTarget, c.index, 'target');
+          },
+        })
+      );
+      this.addChildDraw(
         new Checkbox({
           id: 'orbitControls-' + c.id + '-' + this.id,
           attach: contentId,
@@ -199,10 +216,6 @@ class UICamera extends Component {
             if (c.index === getSceneParam('curCameraIndex')) {
               cameraSelector.setValue(cameraParams[0].id);
             }
-            console.log(
-              'TADAA',
-              cameraParams.map((c) => ({ value: c.id, label: c.name || c.id }))
-            );
             cameraSelector.setOptions(
               cameraParams.map((c) => ({ value: c.id, label: c.name || c.id })),
               c.id
@@ -231,6 +244,7 @@ class UICamera extends Component {
     } else {
       cam[key] = value;
     }
+    cam.updateMatrixWorld();
     cam.updateProjectionMatrix();
     setSceneParam('cameras', newCamParams);
     saveCameraState({ index: i, [key]: value });

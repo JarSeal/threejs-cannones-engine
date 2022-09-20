@@ -49,6 +49,15 @@ class NumberInput extends Component {
         if (data.changeFn) data.changeFn(e, this.setValue);
       },
     });
+    this.addListener({
+      id: this.inputId + '-focus',
+      target: document.getElementById(this.inputId),
+      type: 'focus',
+      fn: (e) => {
+        if (data.doNotSelectOnFocus) return;
+        e.target.select();
+      },
+    });
   }
 
   error(err) {
