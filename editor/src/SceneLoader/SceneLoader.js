@@ -55,12 +55,14 @@ class SceneLoader {
 
       const pos = c.position ? c.position : [5, 5, 5];
       camera.position.set(pos[0], pos[1], pos[2]);
+
       if (c.quaternion) {
         camera.quaternion.set(...c.quaternion);
-      } else if (c.target) {
+      }
+      if (c.target) {
         const target = c.target ? c.target : [0, 0, 0];
         camera.lookAt(new THREE.Vector3(target[0], target[1], target[2]));
-      } else {
+      } else if (c.lookAt) {
         const lookAt = c.lookAt ? c.lookAt : [0, 0, 0];
         camera.lookAt(new THREE.Vector3(lookAt[0], lookAt[1], lookAt[2]));
       }

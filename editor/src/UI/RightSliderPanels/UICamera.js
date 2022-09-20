@@ -122,9 +122,37 @@ class UICamera extends Component {
           onChange: (e, index) => {
             const curPos = getSceneParam('cameras')[c.index].position;
             const curTarget = getSceneParam('cameras')[c.index].target;
+            const curQuat = getSceneItem('allCameras')[c.index].quaternion;
             curPos[index] = parseFloat(e.target.value);
             this._updateCameraProperty(curPos, c.index, 'position');
             this._updateCameraProperty(curTarget, c.index, 'target');
+            this._updateCameraProperty(
+              [curQuat.x, curQuat.y, curQuat.z, curQuat.w],
+              c.index,
+              'quaternion'
+            );
+          },
+        })
+      );
+      this.addChildDraw(
+        new VectorInput({
+          id: 'cam-target-' + c.id + '-' + this.id,
+          attach: contentId,
+          label: 'Camera target',
+          inputLabels: ['x', 'y', 'z'],
+          values: c.target,
+          onChange: (e, index) => {
+            const curPos = getSceneParam('cameras')[c.index].position;
+            const curTarget = getSceneParam('cameras')[c.index].target;
+            const curQuat = getSceneItem('allCameras')[c.index].quaternion;
+            curPos[index] = parseFloat(e.target.value);
+            this._updateCameraProperty(curPos, c.index, 'position');
+            this._updateCameraProperty(curTarget, c.index, 'target');
+            this._updateCameraProperty(
+              [curQuat.x, curQuat.y, curQuat.z, curQuat.w],
+              c.index,
+              'quaternion'
+            );
           },
         })
       );
