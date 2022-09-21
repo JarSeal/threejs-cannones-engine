@@ -24,7 +24,7 @@ class RightSidePanel extends Component {
       id: this.id + '-panel-scroll-listener',
       type: 'scroll',
       fn: (e) => {
-        const currentTab = getSceneParamR('editor.show.rightPanelTab', null);
+        const currentTab = getSceneParamR('editor.show.rightPanelTab', this.tabId);
         if (currentTab) {
           const scrollPos = e.target.scrollTop;
           setSceneParamR('editor.rightPanelScrollTop.' + currentTab, scrollPos);

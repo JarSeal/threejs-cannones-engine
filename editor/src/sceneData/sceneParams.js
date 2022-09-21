@@ -34,17 +34,17 @@ export const getSceneParamR = (keys, defaultValue) => {
 
 export const setSceneParam = (key, value) => (sceneParams[key] = value);
 export const setSceneParamR = (keys, value) => {
+  if (!keys) return;
   const pKeys = keys.split('.');
-  let node = sceneParams[pKeys[0]];
-  if (node === undefined) node = { [pKeys[0]]: undefined };
-  for (let i = 1; i < pKeys.length; i++) {
-    if (node === undefined) node = { [pKeys[i]]: undefined };
-    if (i + 1 === pKeys.length) {
-      node[pKeys[i]] = value;
-    } else {
-      node = node[pKeys[i]];
+  pKeys.reduce((obj, level, index) => {
+    if (index + 1 === pKeys.length) {
+      obj[level] = value;
+      return false;
     }
-  }
+    const result = obj && obj[level];
+    if (result === undefined) obj[level] = { [pKeys[index + 1]]: undefined };
+    return obj[level];
+  }, sceneParams);
 };
 
 export const setSceneParams = (params) => (sceneParams = params);
