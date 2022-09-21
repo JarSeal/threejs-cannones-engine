@@ -1,7 +1,7 @@
 import { Component } from '../../LIGHTER';
 import Button from './common/Button';
 import styles from './RightSliderPanel.module.scss';
-import { getSceneParamR, setSceneParamR } from '../sceneData/sceneParams';
+import { getSceneParamR, getSceneParam, setSceneParamR } from '../sceneData/sceneParams';
 import { saveEditorState } from '../sceneData/saveSession';
 import UIWorld from './RightSliderPanels/UIWorld';
 import UICamera from './RightSliderPanels/UICamera';
@@ -26,10 +26,9 @@ class RightSidePanel extends Component {
       fn: (e) => {
         const currentTab = getSceneParamR('editor.show.rightPanelTab', null);
         if (currentTab) {
-          console.log('FIRTES');
           const scrollPos = e.target.scrollTop;
-          setSceneParamR('editor.rightPanelScroll_' + currentTab, scrollPos);
-          saveEditorState({ ['editor.rightPanelScroll_' + currentTab]: scrollPos });
+          setSceneParamR('editor.rightPanelScrollTop.' + currentTab, scrollPos);
+          saveEditorState({ editor: { rightPanelScrollTop: { [currentTab]: scrollPos } } });
         }
       },
     });
@@ -42,7 +41,7 @@ class RightSidePanel extends Component {
       }
     }
     this.innerContent.elem.scrollTop = getSceneParamR(
-      'editor.rightPanelScroll_' + getSceneParamR('editor.show.rightPanelTab', ''),
+      'editor.rightPanelScrollTop.' + getSceneParamR('editor.show.rightPanelTab', '_'),
       0
     );
   };
@@ -63,7 +62,7 @@ class RightSidePanel extends Component {
       if (tab.id === this.tabId) {
         tab.btn.elem.classList.add('current');
         tab.content.draw({ attach: this.innerContentId });
-        this.innerContent.elem.scrollTop = getSceneParamR('editor.rightPanelScroll_' + tabId, 0);
+        this.innerContent.elem.scrollTop = getSceneParamR('editor.rightPanelScrollTop.' + tabId, 0);
       } else {
         tab.content.discard();
       }

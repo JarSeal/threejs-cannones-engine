@@ -1,5 +1,5 @@
 {
   "targets": {
-    "app": "./app/src/.env"
+    "app": "./editor/src/.env"
   }
 }

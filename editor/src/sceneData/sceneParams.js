@@ -24,10 +24,13 @@ export const getSceneParam = (key, defaultValue) =>
 export const getSceneParamR = (keys, defaultValue) => {
   const pKeys = keys.split('.');
   let value = sceneParams[pKeys[0]];
+  console.log('RECURSIVE-0', value);
   if (value === undefined) return defaultValue;
   for (let i = 1; i < pKeys.length; i++) {
+    console.log('RECURSIVE-' + i, value);
     if (value[pKeys[i]] === undefined) return defaultValue;
     value = value[pKeys[i]];
+    console.log('RECURSIVE-' + i, value);
   }
   return value;
 };

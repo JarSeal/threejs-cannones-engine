@@ -90,6 +90,16 @@ export const saveEditorState = (values) => {
       showParams = { show: values.show };
     }
     newParams = { ...editorParams, ...showParams };
+  } else if (values?.rightPanelScrollTop) {
+    let scrollParams;
+    if (editorParams?.rightPanelScrollTop) {
+      scrollParams = {
+        rightPanelScrollTop: { ...editorParams.rightPanelScrollTop, ...values.rightPanelScrollTop },
+      };
+    } else {
+      scrollParams = { rightPanelScrollTop: values.rightPanelScrollTop };
+    }
+    newParams = { ...editorParams, ...scrollParams };
   } else {
     // Flat object
     newParams = { ...editorParams, ...values };

@@ -112,7 +112,7 @@ class Root {
     const reso = getScreenResolution();
     const width = reso.x;
     const height = reso.y;
-    const pixelRatio = window.devicePixelRatio;
+    const pixelRatio = 1;
     const aspectRatio = reso.x / reso.y;
     SI.renderer.setSize((width * pixelRatio) | 0, (height * pixelRatio) | 0, false);
     for (let i = 0; SI.allCameras.length; i++) {
