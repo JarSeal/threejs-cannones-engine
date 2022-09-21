@@ -103,6 +103,9 @@
       width: 18rem;
     }
   }
+  :global(.collapsable-panel h4) {
+    border-top: 0.5rem dotted lighten($colorPanelBack, 30%);
+  }
   :global(.collapsable-panel .collapsable-panel) {
     border-bottom: 0.1rem solid lighten($colorPanelBack, 5%);
     border-top: 0.1rem solid lighten($colorPanelBack, 5%);
@@ -110,6 +113,7 @@
     padding-top: 0.4rem;
     h4 {
       background: #555;
+      border-top: none;
     }
     :global(.collapsable-panel__content) {
       padding-left: 1rem;
