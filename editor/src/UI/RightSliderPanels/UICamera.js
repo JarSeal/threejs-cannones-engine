@@ -165,6 +165,7 @@ class UICamera extends Component {
           },
         })
       );
+      // TODO: Add Euler rotation (angles in degrees)
       this.addChildDraw(
         new VectorInput({
           id: 'cam-quaternion-' + c.id + '-' + this.id,
@@ -173,14 +174,14 @@ class UICamera extends Component {
           inputLabels: ['x', 'y', 'z', 'w'],
           values: c.quaternion,
           onChange: (e, index) => {
-            const curQuat = getSceneItem('allCameras')[c.index].quaternion;
+            const curQuats = getSceneItem('allCameras')[c.index].quaternion;
             // TODO: how to calculate the new target?
-            curQuat[index] = parseFloat(e.target.value);
-            this._updateCameraProperty(
-              [curQuat.x, curQuat.y, curQuat.z, curQuat.w],
-              c.index,
-              'quaternion'
-            );
+            // 1. Get the length from camera position to target position
+            const quatsToUpdate = [curQuats.x, curQuats.y, curQuats.z, curQuats.w];
+            quatsToUpdate[index] = parseFloat(e.target.value);
+            this._updateCameraProperty(quatsToUpdate, c.index, 'quaternion');
+            // 2. Travel a distance of the target distance to the new target (which way the camera is facing)
+            // 3. Find the position at the end of this distance
           },
         })
       );

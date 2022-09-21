@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
-import { getSceneParam, setSceneParam } from '../sceneData/sceneParams';
-import { getSceneItem, setSceneItem } from '../sceneData/sceneItems';
+import { getSceneParam, setSceneParam, setSceneParams } from '../sceneData/sceneParams';
+import { setSceneItem } from '../sceneData/sceneItems';
 import { getScreenResolution } from '../utils/utils';
 import ElementLoader from './ElementLoader';
 import { createOrbitControls } from '../controls/orbitControls';
@@ -62,9 +62,16 @@ class SceneLoader {
       if (c.target) {
         const target = c.target ? c.target : [0, 0, 0];
         camera.lookAt(new THREE.Vector3(target[0], target[1], target[2]));
-      } else if (c.lookAt) {
-        const lookAt = c.lookAt ? c.lookAt : [0, 0, 0];
-        camera.lookAt(new THREE.Vector3(lookAt[0], lookAt[1], lookAt[2]));
+      } else {
+        console.error('Camera must have a target defined');
+      }
+      if (!c.quaternion) {
+        c.quaternion = [
+          camera.quaternion.x,
+          camera.quaternion.y,
+          camera.quaternion.z,
+          camera.quaternion.w,
+        ];
       }
       allCameras.push(camera);
       if (
