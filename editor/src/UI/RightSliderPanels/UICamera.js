@@ -112,10 +112,19 @@ class UICamera extends Component {
           },
         })
       );
+      const transformsId = 'panel-cam-transforms-content-' + c.index + '-' + this.id;
+      this.addChildDraw(
+        new SettingsPanel({
+          id: 'panel-cam-transforms-' + c.id + '-' + this.id,
+          title: 'Transforms',
+          contentId: transformsId,
+          attach: contentId,
+        })
+      );
       this.addChildDraw(
         new VectorInput({
           id: 'cam-pos-' + c.id + '-' + this.id,
-          attach: contentId,
+          attach: transformsId,
           label: 'Camera position',
           inputLabels: ['x', 'y', 'z'],
           values: c.position,
@@ -137,7 +146,7 @@ class UICamera extends Component {
       this.addChildDraw(
         new VectorInput({
           id: 'cam-target-' + c.id + '-' + this.id,
-          attach: contentId,
+          attach: transformsId,
           label: 'Camera target',
           inputLabels: ['x', 'y', 'z'],
           values: c.target,
@@ -145,9 +154,28 @@ class UICamera extends Component {
             const curPos = getSceneParam('cameras')[c.index].position;
             const curTarget = getSceneParam('cameras')[c.index].target;
             const curQuat = getSceneItem('allCameras')[c.index].quaternion;
-            curPos[index] = parseFloat(e.target.value);
+            curTarget[index] = parseFloat(e.target.value);
             this._updateCameraProperty(curPos, c.index, 'position');
             this._updateCameraProperty(curTarget, c.index, 'target');
+            this._updateCameraProperty(
+              [curQuat.x, curQuat.y, curQuat.z, curQuat.w],
+              c.index,
+              'quaternion'
+            );
+          },
+        })
+      );
+      this.addChildDraw(
+        new VectorInput({
+          id: 'cam-quaternion-' + c.id + '-' + this.id,
+          attach: transformsId,
+          label: 'Camera quaternion',
+          inputLabels: ['x', 'y', 'z', 'w'],
+          values: c.quaternion,
+          onChange: (e, index) => {
+            const curQuat = getSceneItem('allCameras')[c.index].quaternion;
+            // TODO: how to calculate the new target?
+            curQuat[index] = parseFloat(e.target.value);
             this._updateCameraProperty(
               [curQuat.x, curQuat.y, curQuat.z, curQuat.w],
               c.index,

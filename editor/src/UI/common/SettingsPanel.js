@@ -6,7 +6,7 @@ import { getSceneParamR, setSceneParamR } from '../../sceneData/sceneParams';
 class SettingsPanel extends Component {
   constructor(data) {
     super(data);
-    let classNames = [styles.settingsPanel];
+    let classNames = [styles.settingsPanel, 'collapsable-panel'];
     if (data.class && Array.isArray(data.class)) {
       classNames = [...classNames, ...data.class];
     } else if (data.class) {
@@ -42,7 +42,7 @@ class SettingsPanel extends Component {
     });
     this.addChildDraw({
       id: this.contentId,
-      class: styles.settingsPanelContent,
+      class: [styles.settingsPanelContent, 'collapsable-panel__content'],
     });
     this._setPanelClass();
   }

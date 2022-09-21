@@ -20,6 +20,19 @@ class RightSidePanel extends Component {
 
   paint = () => {
     this.innerContent.draw();
+    this.innerContent.addListener({
+      id: this.id + '-panel-scroll-listener',
+      type: 'scroll',
+      fn: (e) => {
+        const currentTab = getSceneParamR('editor.show.rightPanelTab', null);
+        if (currentTab) {
+          console.log('FIRTES');
+          const scrollPos = e.target.scrollTop;
+          setSceneParamR('editor.rightPanelScroll_' + currentTab, scrollPos);
+          saveEditorState({ ['editor.rightPanelScroll_' + currentTab]: scrollPos });
+        }
+      },
+    });
     for (let i = 0; i < this._tabs.length; i++) {
       const tab = this._tabs[i];
       tab.btn.draw();
@@ -28,6 +41,10 @@ class RightSidePanel extends Component {
         tab.btn.elem.classList.add('current');
       }
     }
+    this.innerContent.elem.scrollTop = getSceneParamR(
+      'editor.rightPanelScroll_' + getSceneParamR('editor.show.rightPanelTab', ''),
+      0
+    );
   };
 
   togglePanel = (tabId) => {
@@ -46,6 +63,7 @@ class RightSidePanel extends Component {
       if (tab.id === this.tabId) {
         tab.btn.elem.classList.add('current');
         tab.content.draw({ attach: this.innerContentId });
+        this.innerContent.elem.scrollTop = getSceneParamR('editor.rightPanelScroll_' + tabId, 0);
       } else {
         tab.content.discard();
       }

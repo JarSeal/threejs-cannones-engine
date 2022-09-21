@@ -1,5 +1,5 @@
 import { LocalStorage } from '../../LIGHTER';
-import { getSceneParam, getSceneParams, setSceneParam, setSceneParams } from './sceneParams';
+import { getSceneParam, getSceneParams, setSceneParam } from './sceneParams';
 
 const LS = new LocalStorage('ft_');
 

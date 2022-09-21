@@ -69,13 +69,18 @@
     }
     :global(.form-elem__fields) {
       margin-top: 0.7rem;
-      :global(.form-elem__label:before) {
-        display: inline-block;
-        content: '•';
-        margin-right: 0.5rem;
-        font-size: 2rem;
-        line-height: 1rem;
-        vertical-align: middle;
+      :global(.form-elem__label) {
+        position: relative;
+        width: 2.1rem;
+        &:before {
+          display: block;
+          content: '•';
+          font-size: 2rem;
+          line-height: 1rem;
+          position: absolute;
+          left: 0;
+          top: 0.3rem;
+        }
       }
       :global(.form-elem:nth-child(1) .form-elem__label:before) {
         color: red;
@@ -96,6 +101,23 @@
     }
     input {
       width: 18rem;
+    }
+  }
+  :global(.collapsable-panel .collapsable-panel) {
+    border-bottom: 0.1rem solid lighten($colorPanelBack, 5%);
+    border-top: 0.1rem solid lighten($colorPanelBack, 5%);
+    margin-top: 0.2rem;
+    padding-top: 0.4rem;
+    h4 {
+      background: #555;
+    }
+    :global(.collapsable-panel__content) {
+      padding-left: 1rem;
+      padding-right: 1rem;
+      background: lighten($colorPanelBack, 2%);
+    }
+    :global(.form-elem__fields input) {
+      width: 16.8rem;
     }
   }
 }
