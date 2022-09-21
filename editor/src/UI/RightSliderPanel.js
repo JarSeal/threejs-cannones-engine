@@ -28,7 +28,7 @@ class RightSidePanel extends Component {
         if (currentTab) {
           const scrollPos = e.target.scrollTop;
           setSceneParamR('editor.rightPanelScrollTop.' + currentTab, scrollPos);
-          saveEditorState({ editor: { rightPanelScrollTop: { [currentTab]: scrollPos } } });
+          saveEditorState({ rightPanelScrollTop: { [currentTab]: scrollPos } });
         }
       },
     });
