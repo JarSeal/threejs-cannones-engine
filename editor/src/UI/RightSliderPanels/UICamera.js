@@ -125,13 +125,14 @@ class UICamera extends Component {
         new VectorInput({
           id: 'cam-pos-' + c.id + '-' + this.id,
           attach: transformsId,
-          label: 'Camera position',
+          label: 'Position',
           inputLabels: ['x', 'y', 'z'],
           values: c.position,
           onChange: (e, index) => {
+            const cam = getSceneItem('allCameras')[c.index];
             const curPos = getSceneParam('cameras')[c.index].position;
             const curTarget = getSceneParam('cameras')[c.index].target;
-            const curQuat = getSceneItem('allCameras')[c.index].quaternion;
+            const curQuat = cam.quaternion;
             curPos[index] = parseFloat(e.target.value);
             this._updateCameraProperty(curPos, c.index, 'position');
             this._updateCameraProperty(curTarget, c.index, 'target');
@@ -140,20 +141,22 @@ class UICamera extends Component {
               c.index,
               'quaternion'
             );
+            rotationComponent.setValues([cam.rotation.x, cam.rotation.y, cam.rotation.z], true);
           },
         })
       );
-      this.addChildDraw(
+      const targetComponent = this.addChildDraw(
         new VectorInput({
           id: 'cam-target-' + c.id + '-' + this.id,
           attach: transformsId,
-          label: 'Camera target',
+          label: 'Target',
           inputLabels: ['x', 'y', 'z'],
           values: c.target,
           onChange: (e, index) => {
+            const cam = getSceneItem('allCameras')[c.index];
             const curPos = getSceneParam('cameras')[c.index].position;
             const curTarget = getSceneParam('cameras')[c.index].target;
-            const curQuat = getSceneItem('allCameras')[c.index].quaternion;
+            const curQuat = cam.quaternion;
             curTarget[index] = parseFloat(e.target.value);
             this._updateCameraProperty(curPos, c.index, 'position');
             this._updateCameraProperty(curTarget, c.index, 'target');
@@ -162,26 +165,51 @@ class UICamera extends Component {
               c.index,
               'quaternion'
             );
+            if (c.index === getSceneParam('curCameraIndex')) {
+              getSceneItem('orbitControls').target = new THREE.Vector3(...curTarget);
+            }
+            rotationComponent.setValues([cam.rotation.x, cam.rotation.y, cam.rotation.z], true);
           },
         })
       );
       // TODO: Add Euler rotation (angles in degrees)
-      this.addChildDraw(
+      const rot = getSceneItem('allCameras')[c.index].rotation;
+      const rotationComponent = this.addChildDraw(
         new VectorInput({
-          id: 'cam-quaternion-' + c.id + '-' + this.id,
+          id: 'cam-rot-' + c.id + '-' + this.id,
           attach: transformsId,
-          label: 'Camera quaternion',
-          inputLabels: ['x', 'y', 'z', 'w'],
-          values: c.quaternion,
+          label: 'Rotation (rad)',
+          inputLabels: ['x', 'y', 'z'],
+          step: Math.PI / 16,
+          values: [rot.x, rot.y, rot.z],
           onChange: (e, index) => {
-            const curQuats = getSceneItem('allCameras')[c.index].quaternion;
-            // TODO: how to calculate the new target?
+            const cam = getSceneItem('allCameras')[c.index];
+            const rotationA = [cam.rotation.x, cam.rotation.y, cam.rotation.z];
+            rotationA[index] = parseFloat(e.target.value);
+
             // 1. Get the length from camera position to target position
-            const quatsToUpdate = [curQuats.x, curQuats.y, curQuats.z, curQuats.w];
-            quatsToUpdate[index] = parseFloat(e.target.value);
-            this._updateCameraProperty(quatsToUpdate, c.index, 'quaternion');
-            // 2. Travel a distance of the target distance to the new target (which way the camera is facing)
-            // 3. Find the position at the end of this distance
+            const targetDistance = cam.position.distanceTo(new THREE.Vector3(...c.target));
+
+            cam.rotation.set(...rotationA);
+            cam.updateProjectionMatrix();
+            const curQuats = [
+              cam.quaternion.x,
+              cam.quaternion.y,
+              cam.quaternion.z,
+              cam.quaternion.w,
+            ];
+            this._updateCameraProperty(curQuats, c.index, 'quaternion');
+
+            // 2. Find the position at the end of this distance
+            const newTarget = new THREE.Vector3();
+            const camDirection = cam.getWorldDirection(new THREE.Vector3());
+            newTarget.addVectors(cam.position, camDirection.multiplyScalar(targetDistance));
+            const newTargetA = [newTarget.x, newTarget.y, newTarget.z];
+            targetComponent.setValues(newTargetA, true);
+            this._updateCameraProperty(newTargetA, c.index, 'target');
+            if (c.index === getSceneParam('curCameraIndex')) {
+              getSceneItem('orbitControls').target = newTarget;
+            }
           },
         })
       );

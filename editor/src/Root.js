@@ -112,13 +112,13 @@ class Root {
     const reso = getScreenResolution();
     const width = reso.x;
     const height = reso.y;
-    const pixelRatio = window.devicePixelRatio || 1;
-    const aspectRatio = reso.x / reso.y;
+    const pixelRatio = window.devicePixelRatio || 1; // TODO: This needs to be a setting (editor, editor play, and final app) and default to 1, more info: https://stackoverflow.com/questions/60500710/how-to-enable-retina-resolution-render-setsize-on-iphone-with-threejs
+    const aspectRatio = width / height;
     SI.renderer.setSize((width * pixelRatio) | 0, (height * pixelRatio) | 0, false);
     for (let i = 0; SI.allCameras.length; i++) {
       const camera = SI.allCameras[i];
       if (!camera) break;
-      camera.aspect = width / height;
+      camera.aspect = aspectRatio;
       camera.updateProjectionMatrix();
       if (SI.cameraHelpers && SI.cameraHelpers.length && SI.cameraHelpers[i]) {
         SI.cameraHelpers[i].update();

@@ -7,13 +7,26 @@ html {
   line-height: 1.4;
 }
 
+html,
 body {
-  overflow: hidden;
-  margin: 0;
-  padding: 0;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: #010101;
+}
+
+body {
   font-size: 1.6rem;
   font-weight: 400;
-  background: #010101;
+}
+
+body > canvas,
+#main-stage {
+  width: 100% !important;
+  height: 100% !important;
+  display: block !important;
 }
 
 *,

@@ -6,6 +6,7 @@ import NumberInput from './NumberInput';
 // - fieldLabels = fields' labels [String[]]
 // - values = input value numbers [Number[] | String[]]
 // - disabled = whether the fields are disabled or not [Boolean]
+// - step = number input step amount [Number]
 class VectorInput extends Component {
   constructor(data) {
     super(data);
@@ -17,44 +18,43 @@ class VectorInput extends Component {
               <div class="form-elem__fields" id="${this.fieldsId}"></div>
             </div>
         `;
+    this.step = data.step;
     this.values = data.values;
     this.labels = data.inputLabels;
+    this.inputComponents = [];
   }
 
   paint = () => {
+    this.inputComponents = [];
     for (let i = 0; i < this.values.length; i++) {
-      this.addChildDraw(
-        new NumberInput({
-          id: this.inputFieldIdPrefix + i,
-          attach: this.fieldsId,
-          label: this.labels[i],
-          step: 0.1,
-          value: this.values[i],
-          changeFn: (e) => {
-            this.data.onChange(e, i);
-          },
-        })
+      this.inputComponents.push(
+        this.addChildDraw(
+          new NumberInput({
+            id: this.inputFieldIdPrefix + i,
+            attach: this.fieldsId,
+            label: this.labels[i],
+            step: this.step || 0.1,
+            value: this.values[i].toFixed(12),
+            changeFn: (e) => {
+              this.data.onChange(e, i);
+            },
+          })
+        )
       );
     }
   };
 
   setValue = (newValue, index, noChangeFn) => {
-    const inputElem = document.getElementById(this.inputFieldIdPrefix + index);
     this.values[index] = newValue;
     this.data.values = this.values;
-    inputElem.value = newValue;
-    if (noChangeFn) return;
-    if (this.data.onChange) this.data.onChange({ target: { value: newValue } }, index);
+    this.inputComponents[index].setValue(newValue[index], noChangeFn);
   };
 
   setValues = (newValues, noChangeFn) => {
     this.values = newValues;
     this.data.values = this.values;
     for (let i = 0; i < this.values.length; i++) {
-      const inputElem = document.getElementById(this.inputFieldIdPrefix + i);
-      inputElem.value = newValues[i];
-      if (!noChangeFn && this.data.onChange)
-        this.data.onChange({ target: { value: newValues[i] } }, i);
+      this.inputComponents[i].setValue(newValues[i], noChangeFn);
     }
   };
 }
