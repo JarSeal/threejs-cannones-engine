@@ -126,6 +126,7 @@ class UICamera extends Component {
           id: 'cam-pos-' + c.id + '-' + this.id,
           attach: transformsId,
           label: 'Position',
+          step: 0.5,
           inputLabels: ['x', 'y', 'z'],
           values: c.position,
           onChange: (e, index) => {
@@ -150,6 +151,7 @@ class UICamera extends Component {
           id: 'cam-target-' + c.id + '-' + this.id,
           attach: transformsId,
           label: 'Target',
+          step: 0.5,
           inputLabels: ['x', 'y', 'z'],
           values: c.target,
           onChange: (e, index) => {

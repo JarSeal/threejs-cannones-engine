@@ -22,6 +22,7 @@
     border-radius: 0.4rem 0 0 0.4rem;
     border: none;
     background: rgba($colorPanelBack, 0.8);
+    user-select: none;
     cursor: pointer;
     color: $font-color;
     text-shadow: 0 0 1rem $colorPanelBack;

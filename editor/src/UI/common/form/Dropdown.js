@@ -63,7 +63,7 @@ class Dropdown extends Component {
         if (newVal === this.value) return;
         this.value = e.target.value;
         this.data.value = this.data.selected = this.value;
-        if (data.changeFn) data.changeFn(e);
+        if (data.changeFn) data.changeFn(e, this);
       },
     });
   }

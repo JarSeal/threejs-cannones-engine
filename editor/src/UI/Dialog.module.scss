@@ -1,0 +1,170 @@
+@import '../sass/variables.scss';
+$sidePadding: 4rem;
+
+.dialog {
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0);
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition-property: background-color;
+  transition-timing-function: ease-in-out;
+
+  .dialogBox {
+    width: 96%;
+    max-width: 80rem;
+    max-height: 96vh;
+    min-height: 20rem;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-top: -5rem;
+    transform: translate3d(-50%, -50%, 0);
+    background-color: #cbcbcb;
+    opacity: 0;
+    transition-property: opacity, margin-top;
+    transition-timing-function: ease-in-out;
+    color: #333;
+    padding: 2rem 0 0;
+    a,
+    :global(.link) {
+      color: $font-color-dialog;
+      &:before,
+      &:after {
+        border-bottom-color: $font-color-dialog;
+      }
+    }
+  }
+
+  .innerScroller {
+    width: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    transform: translateY(-0.2rem);
+  }
+
+  .innerBox {
+    padding: $sidePadding;
+    form {
+      width: auto;
+      display: inline-block;
+      position: relative;
+      left: 50%;
+      transform: translate3d(-50%, 0, 0);
+      min-width: 50rem;
+      :global(.form-elem__label) {
+        width: 26rem;
+        max-width: none;
+      }
+      @media only screen and (max-width: 740px) {
+        min-width: none;
+        width: 100%;
+        :global(.form-elem__label) {
+          width: auto;
+          max-width: 26rem;
+        }
+      }
+    }
+    :global(.form-divider) {
+      background-color: #999;
+    }
+    :global(.form-elem--submit),
+    :global(.confirm-button),
+    :global(.extra-button),
+    :global(.cancel-button) {
+      background-color: #999;
+      &:hover {
+        background-color: #666;
+        color: #fff;
+      }
+    }
+    .saveButton {
+      background-color: #666;
+      color: #fff;
+      &:hover {
+        background-color: #333;
+      }
+    }
+    .confirmButtonDelete {
+      background-color: $dialog-button-alert-bolor;
+      color: #fff;
+      &:hover {
+        background-color: darken($dialog-button-alert-bolor, 10%);
+      }
+    }
+    p:first-child {
+      margin-top: 0;
+    }
+    .confirmButton,
+    .cancelButton {
+      margin-top: 2rem;
+    }
+    .confirmButton,
+    .confirmationDialog :global(.spinner-icon) {
+      float: right;
+    }
+    .confirmationDialog :global(.spinner-icon) {
+      margin-top: 2.4rem;
+      margin-right: 2rem;
+    }
+  }
+  &.hasTitle .innerBox {
+    padding-top: 1rem;
+  }
+
+  .mainTitle {
+    width: 100%;
+    margin: 0;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 10;
+    padding: 2rem ($sidePadding + 2rem) 2rem $sidePadding;
+  }
+
+  .closeButton {
+    width: 4rem;
+    height: 4rem;
+    border: none;
+    background-color: rgba(0, 0, 0, 0.3);
+    transition: background-color 0.2s ease-in-out;
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 20;
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.7);
+    }
+  }
+
+  &.appear {
+    background-color: rgba(0, 0, 0, 0.5);
+    .dialogBox {
+      opacity: 1;
+      margin-top: 0;
+    }
+  }
+}
+
+.dialogLocked {
+  button,
+  a,
+  input,
+  textarea,
+  select,
+  form {
+    pointer-events: none;
+  }
+  .confirmButton,
+  .cancelButton {
+    opacity: 0.7;
+  }
+}
+
+.confirmationForm {
+  :global(.form-main-description) {
+    margin-bottom: 7rem;
+  }
+}

@@ -15,6 +15,7 @@ class TopTools extends Component {
   }
 
   paint = () => {
+    this._addDropDown();
     this._cameraSelector();
   };
 
@@ -70,6 +71,36 @@ class TopTools extends Component {
       })
     );
     setSceneItem('cameraSelectorTool', cameraSelector);
+  };
+
+  _addDropDown = () => {
+    this.addChildDraw(
+      new Dropdown({
+        id: 'add-to-scene',
+        label: '',
+        value: 'add',
+        options: [
+          { value: 'add', label: '[Add]' },
+          { value: 'camera', label: 'Camera' },
+        ],
+        changeFn: (e, self) => {
+          self.setValue('add', true);
+          e.target.blur();
+          this._newCameraDialog();
+        },
+      })
+    );
+  };
+
+  _newCameraDialog = () => {
+    getSceneItem('dialog').appear({
+      component: Component,
+      componentData: {
+        id: 'new-camera-dialog',
+        text: 'New camera form here',
+      },
+      title: 'Add new camera',
+    });
   };
 }
 

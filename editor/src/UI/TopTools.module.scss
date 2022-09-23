@@ -5,6 +5,13 @@
   top: 1rem;
   left: 1rem;
   background: transparent;
+  user-select: none;
+  :global(.form-elem) {
+    display: inline-block;
+    + :global(.form-elem) {
+      margin-left: 2rem;
+    }
+  }
   :global(.form-elem__label) {
     font-size: 1.1rem;
     color: #000;
