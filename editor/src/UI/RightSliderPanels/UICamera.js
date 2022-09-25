@@ -11,6 +11,7 @@ import Checkbox from '../common/form/Checbox';
 import { createOrbitControls, removeOrbitControls } from '../../controls/orbitControls';
 import ActionButtons from '../common/form/ActionButtons';
 import VectorInput from '../common/form/VectorInput';
+import ConfirmationDialog from '../dialogs/Confirmation';
 
 class UICamera extends Component {
   constructor(data) {
@@ -314,40 +315,56 @@ class UICamera extends Component {
           class: 'delete-button',
           onClick: () => {
             // TODO: add dialog confirmation for destroying a camera
-            const cameraItems = getSceneItem('allCameras');
-            if (cameraItems.length <= 1) return;
-            const index = c.index;
-            const cameraParams = getSceneParam('cameras')
-              .filter((cam) => cam.id !== c.id)
-              .map((c, i) => {
-                c.index = i;
-                return c;
-              });
-            console.log('CAM PARAMS', cameraParams);
-            setSceneParam('cameras', cameraParams);
-            cameraItems[index].clear();
-            cameraItems[index].removeFromParent();
-            setSceneItem(
-              'allCameras',
-              cameraItems.filter((c, i) => i !== index)
-            );
-            const helpers = getSceneItem('cameraHelpers');
-            getSceneItem('scene').remove(helpers[c.index]);
-            setSceneItem(
-              'helpers',
-              helpers.filter((c, i) => i !== index)
-            );
-            saveCameraState({ removeIndex: index });
-            if (c.index === getSceneParam('curCameraIndex')) {
-              cameraSelector.setValue(cameraParams[0].id);
-              setSceneParam('curCameraIndex', 0);
-            }
-            const cameraSelector = getSceneItem('cameraSelectorTool');
-            cameraSelector.setOptions(
-              cameraParams.map((c) => ({ value: c.id, label: c.name || c.id })),
-              c.id
-            );
-            this.updatePanel();
+            const destoryCamera = () => {
+              const cameraItems = getSceneItem('allCameras');
+              if (cameraItems.length <= 1) return;
+              const index = c.index;
+              const cameraParams = getSceneParam('cameras')
+                .filter((cam) => cam.id !== c.id)
+                .map((c, i) => {
+                  c.index = i;
+                  return c;
+                });
+              setSceneParam('cameras', cameraParams);
+              cameraItems[index].clear();
+              cameraItems[index].removeFromParent();
+              setSceneItem(
+                'allCameras',
+                cameraItems.filter((c, i) => i !== index)
+              );
+              const helpers = getSceneItem('cameraHelpers');
+              if (helpers[c.index]) {
+                getSceneItem('scene').remove(helpers[c.index]);
+                setSceneItem(
+                  'cameraHelpers',
+                  helpers.filter((c, i) => i !== index)
+                );
+              }
+              saveCameraState({ removeIndex: index });
+              if (c.index === getSceneParam('curCameraIndex')) {
+                cameraSelector.setValue(cameraParams[0].id);
+                setSceneParam('curCameraIndex', 0);
+              }
+              const cameraSelector = getSceneItem('cameraSelectorTool');
+              cameraSelector.setOptions(
+                cameraParams.map((c) => ({ value: c.id, label: c.name || c.id })),
+                c.id
+              );
+              this.updatePanel();
+            };
+            const cameraTextToDestroy = c.name ? `${c.name} (${c.id})` : c.id;
+            getSceneItem('dialog').appear({
+              component: ConfirmationDialog,
+              componentData: {
+                id: 'delete-cam-conf-dialog-' + c.id + '-' + this.id,
+                message: 'Are you sure you want remove this camera: ' + cameraTextToDestroy + '?',
+                confirmButtonFn: () => {
+                  destoryCamera();
+                  getSceneItem('dialog').disappear();
+                },
+              },
+              title: 'Are you sure?',
+            });
           },
         },
       ];
