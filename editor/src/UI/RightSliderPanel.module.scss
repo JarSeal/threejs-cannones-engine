@@ -34,6 +34,20 @@
     &:hover {
       background: $colorPanelBack;
     }
+    &:global(.current) {
+      &:before {
+        display: block;
+        content: '';
+        width: 0.8rem;
+        height: 0.8rem;
+        border-radius: 50%;
+        background: #fff;
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translate3d(-50%, -50%, 0);
+      }
+    }
   }
   :global(h3.panelTitle) {
     width: 100%;

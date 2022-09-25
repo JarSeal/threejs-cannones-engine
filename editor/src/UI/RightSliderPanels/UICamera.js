@@ -32,6 +32,7 @@ class UICamera extends Component {
     const cams = getSceneParam('cameras');
     const camPanels = [];
     cams.forEach((c) => {
+      // Camera panel
       const contentId = 'panel-cameras-content-' + c.index + '-' + this.id;
       camPanels.push(
         this.addChildDraw(
@@ -44,6 +45,7 @@ class UICamera extends Component {
         )
       );
 
+      // ID
       this.addChildDraw(
         new InfoField({
           id: 'infoId-' + c.id + '-' + this.id,
@@ -52,6 +54,8 @@ class UICamera extends Component {
           attach: contentId,
         })
       );
+
+      // Name
       if (c.name) {
         this.addChildDraw(
           new InfoField({
@@ -62,6 +66,8 @@ class UICamera extends Component {
           })
         );
       }
+
+      // Type
       this.addChildDraw(
         new InfoField({
           id: 'infoType-' + c.id + '-' + this.id,
@@ -70,6 +76,8 @@ class UICamera extends Component {
           attach: contentId,
         })
       );
+
+      // Field of view (FOV)
       this.addChildDraw(
         new NumberInput({
           id: 'fov-' + c.id + '-' + this.id,
@@ -84,6 +92,8 @@ class UICamera extends Component {
           },
         })
       );
+
+      // Frustum near plane
       this.addChildDraw(
         new NumberInput({
           id: 'near-' + c.id + '-' + this.id,
@@ -98,6 +108,8 @@ class UICamera extends Component {
           },
         })
       );
+
+      // Frustum far plane
       this.addChildDraw(
         new NumberInput({
           id: 'far-' + c.id + '-' + this.id,
@@ -112,6 +124,8 @@ class UICamera extends Component {
           },
         })
       );
+
+      // Transforms
       const transformsId = 'panel-cam-transforms-content-' + c.index + '-' + this.id;
       this.addChildDraw(
         new SettingsPanel({
@@ -121,6 +135,8 @@ class UICamera extends Component {
           attach: contentId,
         })
       );
+
+      // Position
       this.addChildDraw(
         new VectorInput({
           id: 'cam-pos-' + c.id + '-' + this.id,
@@ -146,6 +162,8 @@ class UICamera extends Component {
           },
         })
       );
+
+      // Target
       const targetComponent = this.addChildDraw(
         new VectorInput({
           id: 'cam-target-' + c.id + '-' + this.id,
@@ -174,7 +192,8 @@ class UICamera extends Component {
           },
         })
       );
-      // TODO: Add Euler rotation (angles in degrees)
+
+      // Rotation
       const rot = getSceneItem('allCameras')[c.index].rotation;
       const rotationComponent = this.addChildDraw(
         new VectorInput({
@@ -215,6 +234,8 @@ class UICamera extends Component {
           },
         })
       );
+
+      // Orbit controls
       this.addChildDraw(
         new Checkbox({
           id: 'orbitControls-' + c.id + '-' + this.id,
@@ -232,6 +253,8 @@ class UICamera extends Component {
           value: c.orbitControls,
         })
       );
+
+      // Show helper
       this.addChildDraw(
         new Checkbox({
           id: 'showHelper-' + c.id + '-' + this.id,
@@ -253,6 +276,8 @@ class UICamera extends Component {
           value: c.showHelper || false,
         })
       );
+
+      // Action buttons
       const buttons = [
         {
           id: 'reset-cam-' + c.id + '-' + this.id,

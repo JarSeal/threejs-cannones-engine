@@ -2,6 +2,7 @@ import { Component } from '../../../LIGHTER';
 import styles from './SettingsPanel.module.scss';
 import { saveEditorState } from '../../sceneData/saveSession';
 import { getSceneParamR, setSceneParamR } from '../../sceneData/sceneParams';
+import { getSceneItem } from '../../sceneData/sceneItems';
 
 class SettingsPanel extends Component {
   constructor(data) {
@@ -52,6 +53,17 @@ class SettingsPanel extends Component {
       this.elem.classList.remove('closed');
     } else {
       this.elem.classList.add('closed');
+    }
+    // TODO: Move findParentClass to helper functions
+    const findParentClass = (elem, className) => {
+      while (elem.parentNode) {
+        elem = elem.parentNode;
+        if (elem.classList?.contains(className)) return elem;
+      }
+      return null;
+    };
+    if (findParentClass(this.elem, 'dialog')) {
+      getSceneItem('dialog').onResize();
     }
   };
 }

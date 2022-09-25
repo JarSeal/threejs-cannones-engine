@@ -6,6 +6,7 @@ import { saveSceneState } from '../sceneData/saveSession';
 import { getSceneItem, setSceneItem } from '../sceneData/sceneItems';
 import { getSceneParam, setSceneParam } from '../sceneData/sceneParams';
 import Dropdown from './common/form/Dropdown';
+import NewCamera from './dialogs/NewCamera';
 import styles from './TopTools.module.scss';
 
 class TopTools extends Component {
@@ -94,11 +95,7 @@ class TopTools extends Component {
 
   _newCameraDialog = () => {
     getSceneItem('dialog').appear({
-      component: Component,
-      componentData: {
-        id: 'new-camera-dialog',
-        text: 'New camera form here',
-      },
+      component: NewCamera,
       title: 'Add new camera',
     });
   };
