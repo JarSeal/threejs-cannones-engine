@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-import { getSceneParam, setSceneParam, setSceneParams } from '../sceneData/sceneParams';
+import { getSceneParam, setSceneParam } from '../sceneData/sceneParams';
 import { setSceneItem } from '../sceneData/sceneItems';
 import { getScreenResolution } from '../utils/utils';
 import ElementLoader from './ElementLoader';
@@ -76,6 +76,7 @@ class SceneLoader {
       allCameras.push(camera);
       if (
         i === sceneParams.curCameraIndex ||
+        camerasA.length <= sceneParams.curCameraIndex ||
         ((sceneParams.curCameraIndex === null || sceneParams.curCameraIndex === undefined) &&
           i === 0)
       ) {

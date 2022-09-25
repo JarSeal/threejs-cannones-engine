@@ -313,22 +313,36 @@ class UICamera extends Component {
           text: 'Destroy!',
           class: 'delete-button',
           onClick: () => {
+            // TODO: add dialog confirmation for destroying a camera
             const cameraItems = getSceneItem('allCameras');
             if (cameraItems.length <= 1) return;
             const index = c.index;
-            const cameraParams = getSceneParam('cameras').filter((cam) => cam.id !== c.id);
+            const cameraParams = getSceneParam('cameras')
+              .filter((cam) => cam.id !== c.id)
+              .map((c, i) => {
+                c.index = i;
+                return c;
+              });
+            console.log('CAM PARAMS', cameraParams);
             setSceneParam('cameras', cameraParams);
-            const cameraSelector = getSceneItem('cameraSelectorTool');
             cameraItems[index].clear();
             cameraItems[index].removeFromParent();
             setSceneItem(
               'allCameras',
               cameraItems.filter((c, i) => i !== index)
             );
+            const helpers = getSceneItem('cameraHelpers');
+            getSceneItem('scene').remove(helpers[c.index]);
+            setSceneItem(
+              'helpers',
+              helpers.filter((c, i) => i !== index)
+            );
             saveCameraState({ removeIndex: index });
             if (c.index === getSceneParam('curCameraIndex')) {
               cameraSelector.setValue(cameraParams[0].id);
+              setSceneParam('curCameraIndex', 0);
             }
+            const cameraSelector = getSceneItem('cameraSelectorTool');
             cameraSelector.setOptions(
               cameraParams.map((c) => ({ value: c.id, label: c.name || c.id })),
               c.id

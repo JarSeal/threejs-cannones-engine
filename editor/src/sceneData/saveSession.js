@@ -70,12 +70,15 @@ export const saveCameraState = (values) => {
     if (cameraParams.length) LS.setItem('cameras', JSON.stringify(cameraParams));
   } else if (values.removeIndex !== undefined) {
     // Remove a camera
-    const newCameras = getSceneParam('cameras').filter((c) => c.index !== values.removeIndex);
-    setSceneParam('cameras', newCameras);
-    if (newCameras.length) LS.setItem('cameras', JSON.stringify(newCameras));
+    const cameras = getSceneParam('cameras');
+    LS.setItem('cameras', JSON.stringify(cameras && cameras.length ? cameras : []));
   } else {
     // TODO: add camera
   }
+};
+
+export const saveAllCamerasState = (cameras) => {
+  if (cameras?.length) LS.setItem('cameras', JSON.stringify(cameras));
 };
 
 export const saveEditorState = (values) => {

@@ -1,5 +1,10 @@
+import * as THREE from 'three';
+
 import { Component } from '../../../LIGHTER';
-import { getSceneItem } from '../../sceneData/sceneItems';
+import { saveAllCamerasState } from '../../sceneData/saveSession';
+import { getSceneItem, setSceneItem } from '../../sceneData/sceneItems';
+import { getSceneParam } from '../../sceneData/sceneParams';
+import { getScreenResolution } from '../../utils/utils';
 import Button from '../common/Button';
 import Checkbox from '../common/form/Checbox';
 import Dropdown from '../common/form/Dropdown';
@@ -11,6 +16,20 @@ import SettingsPanel from '../common/SettingsPanel';
 class NewCamera extends Component {
   constructor() {
     super({ id: 'new-camera-dialog' });
+    // Defalt values
+    this.newCameraParams = {
+      id: 'new-id', // TODO: Use UUIDv4 for this
+      name: '',
+      type: 'perspective',
+      fov: 45,
+      near: 0.001,
+      far: 256,
+      position: [5, 5, 5],
+      target: [0, 0, 0],
+      rotation: [0, 0, 0],
+      orbitControls: false,
+      showHelper: true,
+    };
   }
 
   paint = () => {
@@ -19,9 +38,10 @@ class NewCamera extends Component {
       new TextInput({
         id: this.id + '-id',
         label: 'ID',
-        value: '',
-        changeFn: () => {
-          console.log('TUUT ID');
+        value: this.newCameraParams.id,
+        changeFn: (e) => {
+          // TODO: add General id validation here
+          this.newCameraParams.id = e.target.value;
         },
       })
     );
@@ -31,9 +51,9 @@ class NewCamera extends Component {
       new TextInput({
         id: this.id + '-name',
         label: 'Name',
-        value: '',
-        changeFn: () => {
-          console.log('TUUT name');
+        value: this.newCameraParams.name,
+        changeFn: (e) => {
+          this.newCameraParams.name = e.target.value;
         },
       })
     );
@@ -43,10 +63,10 @@ class NewCamera extends Component {
       new Dropdown({
         id: this.id + '-type',
         label: 'Type',
-        value: 'Perspective',
-        options: [{ value: 'Perspective', label: 'Perspective' }],
-        changeFn: () => {
-          console.log('TUUT type');
+        value: this.newCameraParams.type,
+        options: [{ value: 'perspective', label: 'Perspective' }],
+        changeFn: (e) => {
+          this.newCameraParams.type = e.target.value;
         },
       })
     );
@@ -58,9 +78,9 @@ class NewCamera extends Component {
         label: 'Field of view',
         step: 1,
         min: 1,
-        value: 45,
+        value: this.newCameraParams.fov,
         changeFn: (e) => {
-          console.log('TUUT FOV', e.target.value);
+          this.newCameraParams.fov = parseInt(e.target.value);
         },
       })
     );
@@ -72,9 +92,9 @@ class NewCamera extends Component {
         label: 'Frustum near plane',
         step: 0.001,
         min: 0.001,
-        value: 0.001,
+        value: this.newCameraParams.near,
         changeFn: (e) => {
-          console.log('TUUT near plane', e.target.value);
+          this.newCameraParams.near = parseFloat(e.target.value);
         },
       })
     );
@@ -86,9 +106,9 @@ class NewCamera extends Component {
         label: 'Frustum far plane',
         step: 0.001,
         min: 0.001,
-        value: 256,
+        value: this.newCameraParams.far,
         changeFn: (e) => {
-          console.log('TUUT far plane', e.target.value);
+          this.newCameraParams.far = parseFloat(e.target.value);
         },
       })
     );
@@ -112,9 +132,9 @@ class NewCamera extends Component {
         label: 'Position',
         step: 0.5,
         inputLabels: ['x', 'y', 'z'],
-        values: [5, 5, 5],
+        values: this.newCameraParams.position,
         onChange: (e, index) => {
-          console.log('TUUT position', e.target.value, index);
+          this.newCameraParams.position[index] = parseFloat(e.target.value);
         },
       })
     );
@@ -127,9 +147,9 @@ class NewCamera extends Component {
         label: 'Target',
         step: 0.5,
         inputLabels: ['x', 'y', 'z'],
-        values: [0, 0, 0],
+        values: this.newCameraParams.target,
         onChange: (e, index) => {
-          console.log('TUUT target', e.target.value, index);
+          this.newCameraParams.target[index] = parseFloat(e.target.value);
         },
       })
     );
@@ -139,10 +159,10 @@ class NewCamera extends Component {
       new Checkbox({
         id: 'new-cam-orbitControls-' + this.id,
         label: 'Orbit controls',
+        value: this.newCameraParams.orbitControls,
         changeFn: (e) => {
-          console.log('TUUT orbit controls', e.target.value);
+          this.newCameraParams.orbitControls = e.target.checked;
         },
-        value: false,
       })
     );
 
@@ -151,10 +171,10 @@ class NewCamera extends Component {
       new Checkbox({
         id: 'new-cam-showHelper-' + this.id,
         label: 'Show helper',
+        value: this.newCameraParams.showHelper,
         changeFn: (e) => {
-          console.log('TUUT show helper', e.target.value);
+          this.newCameraParams.showHelper = e.target.checked;
         },
-        value: true,
       })
     );
 
@@ -175,7 +195,50 @@ class NewCamera extends Component {
         id: 'new-cam-create-' + this.id,
         text: 'Create',
         onClick: () => {
-          // Create the camera here (add to sceneParams, saveCameraStates, createThreeJSCamera)
+          // Create three.js camera and helper
+          const reso = getScreenResolution();
+          const aspectRatio = reso.x / reso.y;
+          const camera = new THREE.PerspectiveCamera(
+            this.newCameraParams.fov,
+            aspectRatio,
+            this.newCameraParams.near,
+            this.newCameraParams.far
+          );
+          camera.position.set(...this.newCameraParams.position);
+          camera.lookAt(new THREE.Vector3(...this.newCameraParams.target));
+          const helpers = getSceneItem('cameraHelpers');
+          const helper = new THREE.CameraHelper(camera);
+          if (!this.newCameraParams.showHelper) helper.visible = false;
+          helpers.push(helper);
+          helper.update();
+          getSceneItem('scene').add(helper);
+          camera.updateWorldMatrix();
+          camera.userData = this.newCameraParams;
+
+          let allCameras = getSceneItem('allCameras');
+          if (allCameras && Array.isArray(allCameras)) {
+            allCameras.push(camera);
+          } else {
+            allCameras = [camera];
+          }
+          setSceneItem('allCameras', allCameras);
+          const cameraParams = getSceneParam('cameras');
+          const nextIndex = cameraParams.length;
+          this.newCameraParams.index = nextIndex;
+          if (cameraParams && Array.isArray(cameraParams)) {
+            cameraParams.push(this.newCameraParams);
+          } else {
+            allCameras = [this.newCameraParams];
+          }
+          saveAllCamerasState(cameraParams);
+
+          const cameraSelector = getSceneItem('cameraSelectorTool');
+          cameraSelector.setOptions(
+            cameraParams.map((c) => ({ value: c.id, label: c.name || c.id })),
+            allCameras[getSceneParam('curCameraIndex')].id
+          );
+          getSceneItem('rightSidePanel').updatePanel('UICamera');
+
           getSceneItem('dialog').disappear();
         },
       })
