@@ -7,6 +7,7 @@ import {
   setSceneParam,
   resetSceneParams,
   setSceneParams,
+  getSceneParam,
 } from './sceneData/sceneParams';
 import { getSceneItem, getSceneItems, setSceneItem, resetSceneItems } from './sceneData/sceneItems';
 import { getScreenResolution } from './utils/utils';
@@ -118,6 +119,7 @@ class Root {
 
   _resize = () => {
     const SI = this.sceneItems;
+    const camParams = getSceneParam('cameras');
     const reso = getScreenResolution();
     const width = reso.x;
     const height = reso.y;
@@ -127,6 +129,13 @@ class Root {
     for (let i = 0; SI.allCameras.length; i++) {
       const camera = SI.allCameras[i];
       if (!camera) break;
+      if (camParams[i] && camParams[i].type === 'orthographic') {
+        const viewSize = camParams[i].orthoViewSize;
+        camera.left = -viewSize * aspectRatio;
+        camera.right = viewSize * aspectRatio;
+        camera.top = viewSize;
+        camera.bottom = -viewSize;
+      }
       camera.aspect = aspectRatio;
       camera.updateProjectionMatrix();
       if (SI.cameraHelpers && SI.cameraHelpers.length && SI.cameraHelpers[i]) {

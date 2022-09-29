@@ -24,6 +24,7 @@ class NewCamera extends Component {
       id: THREE.MathUtils.generateUUID(),
       name: '',
       type: 'perspective',
+      orthoViewSize: 1,
       fov: 45,
       near: 0.001,
       far: 256,
@@ -65,26 +66,46 @@ class NewCamera extends Component {
         id: this.id + '-type',
         label: 'Type',
         value: this.newCameraParams.type,
-        options: [{ value: 'perspective', label: 'Perspective' }],
+        options: [
+          { value: 'perspective', label: 'Perspective' },
+          { value: 'orthographic', label: 'Orthographic' },
+        ],
         changeFn: (e) => {
           this.newCameraParams.type = e.target.value;
+          this.reDrawSelf();
         },
       })
     );
 
-    // Field of view (FOV)
-    this.addChildDraw(
-      new NumberInput({
-        id: 'new-cam-fov-' + this.id,
-        label: 'Field of view',
-        step: 1,
-        min: 1,
-        value: this.newCameraParams.fov,
-        changeFn: (e) => {
-          this.newCameraParams.fov = parseInt(e.target.value);
-        },
-      })
-    );
+    if (this.newCameraParams.type === 'perspective') {
+      // Field of view (FOV) (Only for perspective camera)
+      this.addChildDraw(
+        new NumberInput({
+          id: 'new-cam-fov-' + this.id,
+          label: 'Field of view',
+          step: 1,
+          min: 1,
+          value: this.newCameraParams.fov,
+          changeFn: (e) => {
+            this.newCameraParams.fov = parseInt(e.target.value);
+          },
+        })
+      );
+    } else if (this.newCameraParams.type === 'orthographic') {
+      // View size (Only for orthographic camera)
+      this.addChildDraw(
+        new NumberInput({
+          id: 'new-cam-view-size-' + this.id,
+          label: 'View size',
+          step: 0.01,
+          min: 0.00001,
+          value: this.newCameraParams.orthoViewSize,
+          changeFn: (e) => {
+            this.newCameraParams.orthoViewSize = parseFloat(e.target.value);
+          },
+        })
+      );
+    }
 
     // Frustum near plane
     this.addChildDraw(
@@ -208,12 +229,29 @@ class NewCamera extends Component {
           // Create three.js camera and helper
           const reso = getScreenResolution();
           const aspectRatio = reso.x / reso.y;
-          const camera = new THREE.PerspectiveCamera(
-            this.newCameraParams.fov,
-            aspectRatio,
-            this.newCameraParams.near,
-            this.newCameraParams.far
-          );
+          let camera;
+          if (this.newCameraParams.type === 'perspective') {
+            camera = new THREE.PerspectiveCamera(
+              this.newCameraParams.fov,
+              aspectRatio,
+              this.newCameraParams.near,
+              this.newCameraParams.far
+            );
+          } else if (this.newCameraParams.type === 'orthographic') {
+            const viewSize = this.newCameraParams.orthoViewSize;
+            camera = new THREE.OrthographicCamera(
+              -viewSize * aspectRatio,
+              viewSize * aspectRatio,
+              viewSize,
+              -viewSize,
+              this.newCameraParams.near,
+              this.newCameraParams.far
+            );
+          }
+          if (!camera) {
+            console.error('Camera type invalid');
+            return;
+          }
 
           camera.position.set(...this.newCameraParams.position);
           camera.lookAt(new THREE.Vector3(...this.newCameraParams.target));

@@ -9,7 +9,7 @@ export const createOrbitControls = () => {
   const sceneParams = getSceneParams();
   const cameras = sceneParams.cameras;
   const curCamera = cameras[sceneParams.curCameraIndex];
-  if (!curCamera.orbitControls) return;
+  if (!curCamera || !curCamera.orbitControls) return;
 
   const rootElem = document.getElementById('root');
   rootElem.style.transitionProperty = 'opacity';
@@ -36,6 +36,11 @@ export const createOrbitControls = () => {
     const target = controls.target;
     const saveState = { index: sceneParams.curCameraIndex, position, target };
     if (quaternion) saveState.quaternion = quaternion;
+    // TODO: Make the zoom handling update the view size in stead (keep the zoom always 1 when scrolling the wheel)
+    // if (curCamera && curCamera.type === 'orthographic') {
+    //   console.log('CUR CAM', curCameraItem);
+    //   saveState.orthoViewSize = curCameraItem.top + curCameraItem.bottom;
+    // }
     saveCameraState(saveState);
     const rightSidePanel = getSceneItem('rightSidePanel');
     rightSidePanel.updatePanel('UICamera');
@@ -45,6 +50,10 @@ export const createOrbitControls = () => {
     editorIcons[sceneParams.curCameraIndex].cameraIcon.visible = true;
     editorIcons[sceneParams.curCameraIndex].update(curCameraItem);
   });
+  // TODO: remove this when the view size scrolling is enabled
+  if (curCamera && curCamera.type === 'orthographic') {
+    controls.enableZoom = false;
+  }
   controls.update();
   setSceneItem('orbitControls', controls);
 };

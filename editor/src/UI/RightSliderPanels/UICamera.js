@@ -14,6 +14,7 @@ import VectorInput from '../common/form/VectorInput';
 import ConfirmationDialog from '../dialogs/Confirmation';
 import TextInput from '../common/form/TextInput';
 import SimpleIDInput from '../common/form/SimpleIDInput';
+import { getScreenResolution } from '../../utils/utils';
 
 class UICamera extends Component {
   constructor(data) {
@@ -84,20 +85,37 @@ class UICamera extends Component {
       );
 
       // Field of view (FOV)
-      this.addChildDraw(
-        new NumberInput({
-          id: 'fov-' + c.id + '-' + this.id,
-          attach: contentId,
-          label: 'Field of view',
-          step: 1,
-          min: 1,
-          value: c.fov,
-          changeFn: (e) => {
-            const value = parseInt(e.target.value);
-            this._updateCameraProperty(value, c.index, 'fov');
-          },
-        })
-      );
+      if (c.type === 'perspective') {
+        this.addChildDraw(
+          new NumberInput({
+            id: 'fov-' + c.id + '-' + this.id,
+            attach: contentId,
+            label: 'Field of view',
+            step: 1,
+            min: 1,
+            value: c.fov,
+            changeFn: (e) => {
+              const value = parseInt(e.target.value);
+              this._updateCameraProperty(value, c.index, 'fov');
+            },
+          })
+        );
+      } else if (c.type === 'orthographic') {
+        this.addChildDraw(
+          new NumberInput({
+            id: 'view-size-' + c.id + '-' + this.id,
+            attach: contentId,
+            label: 'View size',
+            step: 0.01,
+            min: 0.00001,
+            value: c.orthoViewSize,
+            changeFn: (e) => {
+              const value = parseInt(e.target.value);
+              this._updateCameraProperty(value, c.index, 'orthoViewSize');
+            },
+          })
+        );
+      }
 
       // Frustum near plane
       this.addChildDraw(
@@ -355,11 +373,11 @@ class UICamera extends Component {
                 );
               }
               saveCameraState({ removeIndex: index });
+              const cameraSelector = getSceneItem('cameraSelectorTool');
               if (c.index === getSceneParam('curCameraIndex')) {
                 cameraSelector.setValue(cameraParams[0].id);
                 setSceneParam('curCameraIndex', 0);
               }
-              const cameraSelector = getSceneItem('cameraSelectorTool');
               cameraSelector.setOptions(
                 cameraParams.map((c) => ({ value: c.id, label: c.name || c.id })),
                 c.id
@@ -401,6 +419,13 @@ class UICamera extends Component {
       cam[key].set(...value);
     } else if (key === 'target') {
       cam.lookAt(...value);
+    } else if (key === 'orthoViewSize') {
+      const reso = getScreenResolution();
+      const aspectRatio = reso.x / reso.y;
+      cam.left = -value * aspectRatio;
+      cam.right = value * aspectRatio;
+      cam.top = value;
+      cam.bottom = -value;
     } else {
       cam[key] = value;
     }
