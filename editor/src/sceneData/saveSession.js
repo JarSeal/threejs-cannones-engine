@@ -38,19 +38,21 @@ export const saveCameraState = (values) => {
   // - quaternion: THREE.Vector3
   // - position: THREE.Vector3
   // - target: THREE.Vector3 (if the camera has orbitControls)
+  // - orthoViewSize: number (if the camera is an orthographic camera)
   // }
   if (values.index !== undefined) {
     const newParams = {};
 
     if (values.quaternion && Array.isArray(values.quaternion)) {
       newParams.quaternion = values.quaternion;
-    } else if (values.quaternion)
+    } else if (values.quaternion) {
       newParams.quaternion = [
         values.quaternion.x,
         values.quaternion.y,
         values.quaternion.z,
         values.quaternion.w,
       ];
+    }
 
     if (values.position && Array.isArray(values.position)) {
       newParams.position = values.position;

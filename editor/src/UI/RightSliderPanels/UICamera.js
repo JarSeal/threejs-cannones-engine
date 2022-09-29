@@ -4,7 +4,7 @@ import { Component } from '../../../LIGHTER';
 import { getSceneParam, setSceneParam } from '../../sceneData/sceneParams';
 import SettingsPanel from '../common/SettingsPanel';
 import NumberInput from '../common/form/NumberInput';
-import { saveCameraState } from '../../sceneData/saveSession';
+import { saveAllCamerasState, saveCameraState } from '../../sceneData/saveSession';
 import { getSceneItem, setSceneItem } from '../../sceneData/sceneItems';
 import InfoField from '../common/form/InfoField';
 import Checkbox from '../common/form/Checbox';
@@ -14,6 +14,7 @@ import VectorInput from '../common/form/VectorInput';
 import ConfirmationDialog from '../dialogs/Confirmation';
 import TextInput from '../common/form/TextInput';
 import SimpleIDInput from '../common/form/SimpleIDInput';
+import { getScreenResolution } from '../../utils/utils';
 
 class UICamera extends Component {
   constructor(data) {
@@ -84,20 +85,37 @@ class UICamera extends Component {
       );
 
       // Field of view (FOV)
-      this.addChildDraw(
-        new NumberInput({
-          id: 'fov-' + c.id + '-' + this.id,
-          attach: contentId,
-          label: 'Field of view',
-          step: 1,
-          min: 1,
-          value: c.fov,
-          changeFn: (e) => {
-            const value = parseInt(e.target.value);
-            this._updateCameraProperty(value, c.index, 'fov');
-          },
-        })
-      );
+      if (c.type === 'perspective') {
+        this.addChildDraw(
+          new NumberInput({
+            id: 'fov-' + c.id + '-' + this.id,
+            attach: contentId,
+            label: 'Field of view',
+            step: 1,
+            min: 1,
+            value: c.fov,
+            changeFn: (e) => {
+              const value = parseInt(e.target.value);
+              this._updateCameraProperty(value, c.index, 'fov');
+            },
+          })
+        );
+      } else if (c.type === 'orthographic') {
+        this.addChildDraw(
+          new NumberInput({
+            id: 'view-size-' + c.id + '-' + this.id,
+            attach: contentId,
+            label: 'View size',
+            step: 0.01,
+            min: 0.00001,
+            value: c.orthoViewSize,
+            changeFn: (e) => {
+              const value = parseInt(e.target.value);
+              this._updateCameraProperty(value, c.index, 'orthoViewSize');
+            },
+          })
+        );
+      }
 
       // Frustum near plane
       this.addChildDraw(
@@ -248,6 +266,58 @@ class UICamera extends Component {
         })
       );
 
+      // Transforms (DEFAULTS)
+      const defaultTransformsId = 'panel-cam-default-transforms-content-' + c.index + '-' + this.id;
+      this.addChildDraw(
+        new SettingsPanel({
+          id: 'panel-cam-default-transforms-' + c.id + '-' + this.id,
+          title: 'Default transforms',
+          contentId: defaultTransformsId,
+          attach: contentId,
+          showPanel: false,
+        })
+      );
+
+      // Default Position
+      this.addChildDraw(
+        new VectorInput({
+          id: 'cam-default-pos-' + c.id + '-' + this.id,
+          attach: defaultTransformsId,
+          label: 'Position',
+          step: 0.5,
+          inputLabels: ['x', 'y', 'z'],
+          values: c.defaultPosition || c.position || [5, 5, 5],
+          onChange: (e, index) => {
+            const cameraParams = getSceneParam('cameras');
+            if (!cameraParams[c.index].defaultPosition)
+              cameraParams[c.index].defaultPosition = [5, 5, 5];
+            cameraParams[c.index].defaultPosition[index] = parseFloat(e.target.value);
+            setSceneParam('cameras', cameraParams);
+            saveAllCamerasState(cameraParams);
+          },
+        })
+      );
+
+      // Default Target
+      this.addChildDraw(
+        new VectorInput({
+          id: 'cam-default-target-' + c.id + '-' + this.id,
+          attach: defaultTransformsId,
+          label: 'Target',
+          step: 0.5,
+          inputLabels: ['x', 'y', 'z'],
+          values: c.defaultTarget || c.target || [0, 0, 0],
+          onChange: (e, index) => {
+            const cameraParams = getSceneParam('cameras');
+            if (!cameraParams[c.index].defaultTarget)
+              cameraParams[c.index].defaultTarget = [0, 0, 0];
+            cameraParams[c.index].defaultTarget[index] = parseFloat(e.target.value);
+            setSceneParam('cameras', cameraParams);
+            saveAllCamerasState(cameraParams);
+          },
+        })
+      );
+
       // Orbit controls
       this.addChildDraw(
         new Checkbox({
@@ -300,9 +370,9 @@ class UICamera extends Component {
               removeOrbitControls();
               createOrbitControls();
             }
-            const pos = [5, 5, 5];
+            const pos = c.defaultPosition || [5, 5, 5];
             this._updateCameraProperty(pos, c.index, 'position');
-            const target = [0, 0, 0];
+            const target = c.defaultTarget || [0, 0, 0];
             this._updateCameraProperty(target, c.index, 'target');
             this._updateCameraProperty(target, c.index, 'target'); // Needs to be called twice in order to make the cam helper place correctly as well
             if (c.index === getSceneParam('curCameraIndex')) {
@@ -355,11 +425,11 @@ class UICamera extends Component {
                 );
               }
               saveCameraState({ removeIndex: index });
+              const cameraSelector = getSceneItem('cameraSelectorTool');
               if (c.index === getSceneParam('curCameraIndex')) {
                 cameraSelector.setValue(cameraParams[0].id);
                 setSceneParam('curCameraIndex', 0);
               }
-              const cameraSelector = getSceneItem('cameraSelectorTool');
               cameraSelector.setOptions(
                 cameraParams.map((c) => ({ value: c.id, label: c.name || c.id })),
                 c.id
@@ -401,6 +471,13 @@ class UICamera extends Component {
       cam[key].set(...value);
     } else if (key === 'target') {
       cam.lookAt(...value);
+    } else if (key === 'orthoViewSize') {
+      const reso = getScreenResolution();
+      const aspectRatio = reso.x / reso.y;
+      cam.left = -value * aspectRatio;
+      cam.right = value * aspectRatio;
+      cam.top = value;
+      cam.bottom = -value;
     } else {
       cam[key] = value;
     }

@@ -44,15 +44,24 @@ class SceneLoader {
       ids.push(c.id);
       let camera;
       c.index = i;
+      const near = c.near || 0.1;
+      const far = c.far || 256;
       if (c.type === 'perspective') {
         const fov = c.fov || 45;
-        const near = c.near || 0.1;
-        const far = c.far || 256;
         camera = new THREE.PerspectiveCamera(fov, aspectRatio, near, far);
         camera.userData = c;
         camera.userData.id = c.id || 'camera' + i;
+      } else if (c.type === 'orthographic') {
+        const viewSize = c.viewSize || 1;
+        camera = new THREE.OrthographicCamera(
+          -viewSize * aspectRatio,
+          viewSize * aspectRatio,
+          viewSize,
+          -viewSize,
+          near,
+          far
+        );
       }
-      // TODO: define ortographic camera
 
       const pos = c.position ? c.position : [5, 5, 5];
       camera.position.set(pos[0], pos[1], pos[2]);
@@ -105,6 +114,7 @@ class SceneLoader {
     }
     setSceneItem('allCameras', allCameras);
     setSceneItem('cameraHelpers', helpers);
+    setSceneParam('cameras', camerasA);
   };
 
   _createLights = (lightsA) => {
