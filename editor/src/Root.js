@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import * as Stats from 'stats.js';
 
+import { Component } from '../LIGHTER';
 import {
   getSceneParams,
   setSceneParam,
@@ -14,6 +15,7 @@ import RightSidePanel from './UI/RightSliderPanel';
 import { scenes } from '../../data';
 import { getSceneStates, saveSceneId } from './sceneData/saveSession';
 import TopTools from './UI/TopTools';
+import Dialog from './UI/Dialog';
 
 class Root {
   constructor() {
@@ -88,9 +90,16 @@ class Root {
       const rightSidePanel = new RightSidePanel({ id: 'right-side-panel', parentId: 'root' });
       rightSidePanel.draw();
       setSceneItem('rightSidePanel', rightSidePanel);
+
       const topTools = new TopTools({ id: 'top-tools', parentId: 'root' });
       topTools.draw();
       setSceneItem('topTools', topTools);
+
+      new Component({ id: 'overlays', parentId: 'root' }).draw();
+      const dialog = new Dialog({ id: 'dialog', parentId: 'overlays' });
+      dialog.draw();
+      dialog.disappear();
+      setSceneItem('dialog', dialog);
     }
 
     console.log('SCENE', scene);

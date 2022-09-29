@@ -2,6 +2,7 @@ import { Component } from '../../../LIGHTER';
 import styles from './SettingsPanel.module.scss';
 import { saveEditorState } from '../../sceneData/saveSession';
 import { getSceneParamR, setSceneParamR } from '../../sceneData/sceneParams';
+import { getSceneItem } from '../../sceneData/sceneItems';
 
 class SettingsPanel extends Component {
   constructor(data) {
@@ -18,6 +19,7 @@ class SettingsPanel extends Component {
     this.contentId = data.contentId;
     if (data.showPanel === undefined) data.showPanel = true;
     this.showPanel = getSceneParamR(`editor.show.${this.id}`, data.showPanel);
+    this.panelTitleId = 'settings-panel-title-' + this.id;
   }
 
   addListeners = () => {
@@ -36,7 +38,7 @@ class SettingsPanel extends Component {
 
   paint() {
     this.addChildDraw({
-      id: 'settings-panel-title-' + this.id,
+      id: this.panelTitleId,
       tag: 'h4',
       text: this.title,
     });
@@ -53,6 +55,22 @@ class SettingsPanel extends Component {
     } else {
       this.elem.classList.add('closed');
     }
+    // TODO: Move findParentClass to helper functions
+    const findParentClass = (elem, className) => {
+      while (elem.parentNode) {
+        elem = elem.parentNode;
+        if (elem.classList?.contains(className)) return elem;
+      }
+      return null;
+    };
+    if (findParentClass(this.elem, 'dialog')) {
+      getSceneItem('dialog').onResize();
+    }
+  };
+
+  updateTitle = (newTitle) => {
+    const elem = document.getElementById(this.panelTitleId);
+    elem.textContent = newTitle;
   };
 }
 

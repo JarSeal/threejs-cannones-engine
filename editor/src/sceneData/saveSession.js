@@ -1,5 +1,5 @@
 import { LocalStorage } from '../../LIGHTER';
-import { getSceneParam, getSceneParams, setSceneParam } from './sceneParams';
+import { getSceneParam, getSceneParams } from './sceneParams';
 
 const LS = new LocalStorage('ft_');
 
@@ -70,12 +70,15 @@ export const saveCameraState = (values) => {
     if (cameraParams.length) LS.setItem('cameras', JSON.stringify(cameraParams));
   } else if (values.removeIndex !== undefined) {
     // Remove a camera
-    const newCameras = getSceneParam('cameras').filter((c) => c.index !== values.removeIndex);
-    setSceneParam('cameras', newCameras);
-    if (newCameras.length) LS.setItem('cameras', JSON.stringify(newCameras));
+    const cameras = getSceneParam('cameras');
+    LS.setItem('cameras', JSON.stringify(cameras && cameras.length ? cameras : []));
   } else {
     // TODO: add camera
   }
+};
+
+export const saveAllCamerasState = (cameras) => {
+  if (cameras?.length) LS.setItem('cameras', JSON.stringify(cameras));
 };
 
 export const saveEditorState = (values) => {
@@ -117,4 +120,8 @@ export const saveSceneState = (values) => {
   delete sceneParams.editor;
   const newParams = { ...sceneParams, ...values };
   if (newParams) LS.setItem('sceneState', JSON.stringify(newParams));
+};
+
+export const saveStateByKey = (key, values) => {
+  if (LSKeysJson.includes(key)) LS.setItem(key, JSON.stringify(values));
 };

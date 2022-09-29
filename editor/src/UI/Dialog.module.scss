@@ -1,0 +1,332 @@
+@import '../sass/variables.scss';
+$sidePadding: 4rem;
+
+.dialog {
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0);
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition-property: background-color;
+  transition-timing-function: ease-in-out;
+
+  .dialogBox {
+    width: 96%;
+    max-width: 80rem;
+    max-height: 96vh;
+    min-height: 20rem;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-top: -5rem;
+    transform: translate3d(-50%, -50%, 0);
+    background-color: #cbcbcb;
+    opacity: 0;
+    transition-property: opacity, margin-top;
+    transition-timing-function: ease-in-out;
+    color: #333;
+    padding: 2rem 0 0;
+    box-shadow: 0 0.2rem 2rem rgba(0, 0, 0, 0.8);
+    a,
+    :global(.link) {
+      color: $font-color-dialog;
+      &:before,
+      &:after {
+        border-bottom-color: $font-color-dialog;
+      }
+    }
+  }
+
+  .innerScroller {
+    width: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    transform: translateY(-0.2rem);
+  }
+
+  .innerBox {
+    padding: $sidePadding;
+    :global(.form-divider) {
+      background-color: #999;
+    }
+    :global(.confirmButtonDelete) {
+      background-color: $dialog-button-alert-bolor;
+      color: #fff;
+      &:hover {
+        background-color: darken($dialog-button-alert-bolor, 10%);
+      }
+    }
+    :global(p:first-child) {
+      margin-top: 0;
+    }
+    :global(.button) {
+      display: flex;
+      border-radius: 0.5rem;
+      padding: 1rem 1.5rem;
+      background-color: #aaa;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-weight: 400;
+      transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+      &:global(.saveButton) {
+        background-color: #777;
+        padding: 1rem 3rem;
+      }
+      &:hover {
+        background-color: #f8f8f8;
+        color: #333;
+      }
+    }
+  }
+  &.hasTitle .innerBox {
+    padding-top: 1rem;
+  }
+
+  .mainTitle {
+    width: 100%;
+    margin: 0;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 10;
+    padding: 2rem ($sidePadding + 2rem) 2rem $sidePadding;
+  }
+
+  .closeButton {
+    width: 4rem;
+    height: 4rem;
+    border: none;
+    background-color: rgba(0, 0, 0, 0.3);
+    transition: background-color 0.2s ease-in-out;
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 20;
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  &.appear {
+    background-color: rgba(0, 0, 0, 0.85);
+    .dialogBox {
+      opacity: 1;
+      margin-top: 0;
+    }
+  }
+}
+
+.dialogLocked {
+  button,
+  a,
+  input,
+  textarea,
+  select,
+  form {
+    pointer-events: none;
+  }
+  .saveButton,
+  .cancelButton {
+    opacity: 0.7;
+  }
+}
+
+// Form elems
+:global(.dialog) {
+  :global(.buttons) {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-top: 3.2rem;
+  }
+  :global(.form-elem) {
+    display: flex;
+    justify-content: flex-end;
+    justify-self: center;
+    margin-bottom: 2rem;
+    :global(.form-elem) {
+      margin-bottom: 0;
+    }
+  }
+  label {
+    display: flex;
+    width: auto;
+    justify-content: flex-end;
+    align-items: flex-start;
+    gap: 1rem;
+    &:hover {
+      input,
+      select {
+        border-color: #fff;
+      }
+    }
+  }
+  :global(.form-elem__label) {
+    display: flex;
+    text-align: right;
+    justify-content: flex-end;
+    width: auto;
+    margin-top: 0.7rem;
+  }
+  input,
+  select {
+    display: flex;
+    transition: border-color 0.1s ease-in-out;
+  }
+  :global(.form-elem--text-input) input,
+  :global(.form-elem--number-input) input,
+  :global(.form-elem--dropdown) select {
+    padding: 0.8rem 0.6rem;
+    border: 0.2rem solid rgba(0, 0, 0, 0.3);
+    border-radius: 0.5rem;
+    box-shadow: 0 0.1rem 0.8rem rgba(0, 0, 0, 0.28) inset;
+    width: 32rem;
+  }
+  :global(.form-elem--text-input) {
+    position: relative;
+    :global(.form-elem__error-msg) {
+      position: absolute;
+      bottom: -1.6rem;
+      right: 0;
+      font-size: 1.2rem;
+    }
+  }
+  :global(.collapsable-panel) {
+    margin-bottom: 2rem;
+    background: transparent;
+    h4 {
+      background: darken(#cbcbcb, 20%);
+      border-bottom-color: darken(#cbcbcb, 30%);
+      border-radius: 0.5rem 0.5rem 0 0;
+      padding-top: 0.7rem;
+      padding-bottom: 0.6rem;
+      font-size: 1.6rem;
+      font-weight: 400;
+      color: #fff;
+      &:before,
+      &:after {
+        top: 1.8rem;
+      }
+      &:hover {
+        background: darken(#cbcbcb, 30%);
+      }
+    }
+    &:global(.closed h4) {
+      border-radius: 0.5rem;
+    }
+    :global(.collapsable-panel__content) {
+      background: darken(#cbcbcb, 10%);
+      border-radius: 0 0 0.5rem 0.5rem;
+    }
+    :global(.form-elem--vector-input) {
+      position: relative;
+      margin-bottom: 0.1rem;
+      > :global(.form-elem__label) {
+        display: block;
+        position: absolute;
+        left: 0;
+        top: 0;
+        font-size: 1.4rem;
+      }
+      :global(.form-elem--number-input) {
+        :global(.form-elem__label) {
+          font-size: 1.6rem;
+          margin-top: 0.7rem;
+        }
+        input {
+          border-color: rgba(0, 0, 0, 0.4);
+        }
+      }
+      :global(.form-elem) {
+        margin-bottom: 0;
+        + :global(.form-elem) {
+          margin-bottom: 0;
+          margin-top: 1rem;
+          border-top: none;
+        }
+      }
+      + :global(.form-elem--vector-input) {
+        border-top: 0.1rem solid darken(#cbcbcb, 20%);
+      }
+      label:hover {
+        input {
+          border-color: #fff;
+        }
+      }
+    }
+  }
+
+  :global(.form-elem--checkbox) {
+    label {
+      position: relative;
+      cursor: pointer;
+      &:hover {
+        :global(.form-elem__label) {
+          &:before {
+            border-color: #fff;
+          }
+        }
+      }
+      &:before,
+      &:after {
+        display: block;
+        content: '';
+        width: 0;
+        height: 0.5rem;
+        background: #444;
+        transition: width 0.1s ease-in-out, top 0.1s ease-in-out, right 0.1s ease-in-out;
+        position: absolute;
+        z-index: 20;
+        border-radius: 0.2rem;
+      }
+      &:before {
+        top: 1.1rem;
+        right: 1rem;
+        transform: rotate(45deg);
+      }
+      &:after {
+        top: 1.2rem;
+        right: 1.2rem;
+        transform: rotate(-45deg);
+      }
+    }
+    :global(.form-elem__label) {
+      margin-top: 0.2rem;
+      user-select: none;
+      &:before {
+        display: block;
+        content: '';
+        width: 2.6rem;
+        height: 2.6rem;
+        border: 0.2rem solid rgba(0, 0, 0, 0.3);
+        border-radius: 0.5rem;
+        box-shadow: 0 0.1rem 0.8rem rgba(0, 0, 0, 0.28) inset;
+        background: #fff;
+        position: absolute;
+        top: 0;
+        right: 0;
+      }
+    }
+    &:global(.form-elem--checked) {
+      label {
+        &:before,
+        &:after {
+          width: 2rem;
+        }
+        &:before {
+          width: 1rem;
+          top: 1.2rem;
+          right: 1.2rem;
+        }
+        &:after {
+          width: 1.6rem;
+          top: 1rem;
+          right: 0.2rem;
+        }
+      }
+    }
+  }
+}

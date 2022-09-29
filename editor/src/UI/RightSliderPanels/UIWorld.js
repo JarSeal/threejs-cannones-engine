@@ -7,6 +7,7 @@ import { getSceneItem, removeMeshFromScene } from '../../sceneData/sceneItems';
 import { saveSceneState } from '../../sceneData/saveSession';
 import SettingsPanel from '../common/SettingsPanel';
 import NumberInput from '../common/form/NumberInput';
+import TextInput from '../common/form/TextInput';
 
 class UIWorld extends Component {
   constructor(data) {
@@ -27,12 +28,12 @@ class UIWorld extends Component {
     const scene = getSceneItem('scene');
     let gridHelper = scene.children.find((item) => item.type === 'GridHelper');
     const axesHelper = scene.children.find((item) => item.type === 'AxesHelper');
-    const contentId = 'panel-basic-helpers-content-' + this.id;
+    const helpersContentId = 'panel-basic-helpers-content-' + this.id;
     this.addChildDraw(
       new SettingsPanel({
         id: 'panel-basic-helpers-' + this.id,
         title: 'Helpers',
-        contentId: contentId,
+        contentId: helpersContentId,
       })
     );
 
@@ -40,7 +41,7 @@ class UIWorld extends Component {
     this.addChildDraw(
       new Checkbox({
         id: showGridHelperId,
-        attach: contentId,
+        attach: helpersContentId,
         label: 'Show grid',
         name: 'showGrid',
         hideMsg: true,
@@ -57,7 +58,7 @@ class UIWorld extends Component {
     const gridSize = this.addChildDraw(
       new NumberInput({
         id: 'grid-size-' + this.id,
-        attach: contentId,
+        attach: helpersContentId,
         label: 'Grid size',
         step: 2,
         min: 2,
@@ -84,7 +85,7 @@ class UIWorld extends Component {
     this.addChildDraw(
       new Checkbox({
         id: showAxesHelperId,
-        attach: contentId,
+        attach: helpersContentId,
         label: 'Show axes',
         name: 'showAxes',
         hideMsg: true,
@@ -94,6 +95,31 @@ class UIWorld extends Component {
           saveSceneState();
         },
         value: axesHelper.visible,
+      })
+    );
+
+    // Environment
+    const envContentId = 'panel-environment-content-' + this.id;
+    this.addChildDraw(
+      new SettingsPanel({
+        id: 'panel-environement-' + this.id,
+        title: 'Environment',
+        contentId: envContentId,
+      })
+    );
+    this.addChildDraw(
+      new TextInput({
+        id: 'env-clearcolor-' + this.id,
+        attach: envContentId,
+        label: 'Background color:',
+        value: getSceneParam('rendererClearColor'),
+        blurOnEnter: true,
+        onBlur: (e) => {
+          const val = e.target.value;
+          setSceneParam('rendererClearColor', val);
+          getSceneItem('renderer').setClearColor(val);
+          saveSceneState();
+        },
       })
     );
   };

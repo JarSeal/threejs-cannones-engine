@@ -1,7 +1,7 @@
 import { Component } from '../../LIGHTER';
 import Button from './common/Button';
 import styles from './RightSliderPanel.module.scss';
-import { getSceneParamR, getSceneParam, setSceneParamR } from '../sceneData/sceneParams';
+import { getSceneParamR, setSceneParamR } from '../sceneData/sceneParams';
 import { saveEditorState } from '../sceneData/saveSession';
 import UIWorld from './RightSliderPanels/UIWorld';
 import UICamera from './RightSliderPanels/UICamera';

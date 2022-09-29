@@ -22,6 +22,7 @@
     border-radius: 0.4rem 0 0 0.4rem;
     border: none;
     background: rgba($colorPanelBack, 0.8);
+    user-select: none;
     cursor: pointer;
     color: $font-color;
     text-shadow: 0 0 1rem $colorPanelBack;
@@ -32,6 +33,20 @@
     &:global(.current),
     &:hover {
       background: $colorPanelBack;
+    }
+    &:global(.current) {
+      &:before {
+        display: block;
+        content: '';
+        width: 0.8rem;
+        height: 0.8rem;
+        border-radius: 50%;
+        background: #fff;
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translate3d(-50%, -50%, 0);
+      }
     }
   }
   :global(h3.panelTitle) {
@@ -47,7 +62,8 @@
   :global(.form-elem--infoField) {
     font-size: 1.2rem;
   }
-  :global(.form-elem--infoField .label) {
+  :global(.form-elem--infoField .label),
+  :global(.form-elem--text-input .form-elem__label) {
     display: block;
     width: 100%;
     font-size: 0.8rem;
@@ -103,8 +119,29 @@
       width: 18rem;
     }
   }
-  :global(.collapsable-panel h4) {
-    border-top: 0.5rem dotted lighten($colorPanelBack, 30%);
+  :global(.form-elem--text-input .form-elem__input) {
+    width: 100%;
+    margin-top: 0.5rem;
+    text-align: right;
+    padding-right: 0.8rem;
+  }
+  :global(.form-elem--text-input input),
+  :global(.form-elem__number-input) {
+    border-radius: 0.4rem;
+    padding: 0.5rem 0.5rem 0.3rem 0.6rem;
+    background: #666;
+    color: #fff;
+    box-shadow: 0 0.1rem 0.5rem rgba(0, 0, 0, 0.8) inset;
+    border: 0.1rem solid rgba(0, 0, 0, 0.3);
+    transition: border-color 0.05s ease-in-out;
+    &:hover {
+      border-color: #fff;
+    }
+  }
+  :global(.collapsable-panel) {
+    h4 {
+      border-top: 0.5rem dashed lighten($colorPanelBack, 30%);
+    }
   }
   :global(.collapsable-panel .collapsable-panel) {
     border-bottom: 0.1rem solid lighten($colorPanelBack, 5%);
@@ -114,14 +151,115 @@
     h4 {
       background: #555;
       border-top: none;
+      border-radius: 0.5rem 0.5rem 0 0;
+      &:hover {
+        background: darken(#555, 5%);
+      }
+    }
+    &:global(.closed h4) {
+      border-radius: 0.5rem;
+      margin-bottom: 0.4rem;
     }
     :global(.collapsable-panel__content) {
       padding-left: 1rem;
       padding-right: 1rem;
       background: lighten($colorPanelBack, 2%);
+      border-radius: 0 0 0.5rem 0.5rem;
+      margin-bottom: 0.4rem;
     }
     :global(.form-elem__fields input) {
       width: 16.8rem;
+    }
+  }
+  :global(.form-elem--action-buttons button) {
+    border: none;
+    padding: 0.4rem 0.5rem;
+    border-radius: 0.3rem;
+    background: #eaeaea;
+    cursor: pointer;
+    transition: background 0.2s ease-in-out;
+    + :global(button) {
+      margin-left: 0.3rem;
+    }
+    &:hover {
+      background: darken(#eaeaea, 20%);
+    }
+    &:global(.delete-button) {
+      background: rgb(112, 27, 27);
+      color: #ccc;
+      &:hover {
+        background: darken(rgb(112, 27, 27), 5%);
+      }
+    }
+  }
+  :global(.form-elem--checkbox) {
+    overflow: hidden;
+    input {
+      visibility: hidden;
+    }
+    label {
+      position: relative;
+      cursor: pointer;
+      &:hover {
+        :global(.form-elem__label) {
+          &:before {
+            border-color: #fff;
+          }
+        }
+      }
+      &:before,
+      &:after {
+        display: block;
+        content: '';
+        width: 0;
+        height: 0.3rem;
+        background: #fff;
+        transition: width 0.1s ease-in-out, top 0.1s ease-in-out, right 0.1s ease-in-out;
+        position: absolute;
+        z-index: 20;
+        border-radius: 0.2rem;
+      }
+      &:before {
+        top: 0.4rem;
+        right: 0.8rem;
+        transform: rotate(45deg);
+      }
+      &:after {
+        top: 0.4rem;
+        right: 0.7rem;
+        transform: rotate(-45deg);
+      }
+    }
+    :global(.form-elem__label) {
+      user-select: none;
+      &:before {
+        display: block;
+        content: '';
+        width: 1.6rem;
+        height: 1.6rem;
+        border: 0.1rem solid rgba(0, 0, 0, 0.3);
+        border-radius: 0.5rem;
+        box-shadow: 0 0.1rem 0.8rem rgba(0, 0, 0, 0.28) inset;
+        background: #666;
+        box-shadow: 0 0.1rem 0.5rem rgba(0, 0, 0, 0.8) inset;
+        position: absolute;
+        top: -0.4rem;
+        right: 0;
+      }
+    }
+    &:global(.form-elem--checked) {
+      label {
+        &:before {
+          width: 0.6rem;
+          top: 0.4rem;
+          right: 0.8rem;
+        }
+        &:after {
+          width: 1rem;
+          top: 0.3rem;
+          right: 0.2rem;
+        }
+      }
     }
   }
 }

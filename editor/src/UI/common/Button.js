@@ -6,7 +6,7 @@ class Button extends Component {
   constructor(data) {
     super(data);
     if (!data.onClick) {
-      console.error('Button must have a clickFn declared.', this.id);
+      console.error('Button must have a onClick declared.', this.id);
     }
     if (!data.template) {
       this.template = '<button type="button"></button>';

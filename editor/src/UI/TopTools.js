@@ -6,6 +6,7 @@ import { saveSceneState } from '../sceneData/saveSession';
 import { getSceneItem, setSceneItem } from '../sceneData/sceneItems';
 import { getSceneParam, setSceneParam } from '../sceneData/sceneParams';
 import Dropdown from './common/form/Dropdown';
+import NewCamera from './dialogs/NewCamera';
 import styles from './TopTools.module.scss';
 
 class TopTools extends Component {
@@ -15,6 +16,7 @@ class TopTools extends Component {
   }
 
   paint = () => {
+    this._addDropDown();
     this._cameraSelector();
   };
 
@@ -70,6 +72,32 @@ class TopTools extends Component {
       })
     );
     setSceneItem('cameraSelectorTool', cameraSelector);
+  };
+
+  _addDropDown = () => {
+    this.addChildDraw(
+      new Dropdown({
+        id: 'add-to-scene',
+        label: '',
+        value: 'add',
+        options: [
+          { value: 'add', label: '[Add]' },
+          { value: 'camera', label: 'Camera' },
+        ],
+        changeFn: (e, self) => {
+          self.setValue('add', true);
+          e.target.blur();
+          this._newCameraDialog();
+        },
+      })
+    );
+  };
+
+  _newCameraDialog = () => {
+    getSceneItem('dialog').appear({
+      component: NewCamera,
+      title: 'Add new camera',
+    });
   };
 }
 

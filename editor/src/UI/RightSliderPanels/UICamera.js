@@ -11,6 +11,9 @@ import Checkbox from '../common/form/Checbox';
 import { createOrbitControls, removeOrbitControls } from '../../controls/orbitControls';
 import ActionButtons from '../common/form/ActionButtons';
 import VectorInput from '../common/form/VectorInput';
+import ConfirmationDialog from '../dialogs/Confirmation';
+import TextInput from '../common/form/TextInput';
+import SimpleIDInput from '../common/form/SimpleIDInput';
 
 class UICamera extends Component {
   constructor(data) {
@@ -32,6 +35,7 @@ class UICamera extends Component {
     const cams = getSceneParam('cameras');
     const camPanels = [];
     cams.forEach((c) => {
+      // Camera panel
       const contentId = 'panel-cameras-content-' + c.index + '-' + this.id;
       camPanels.push(
         this.addChildDraw(
@@ -44,24 +48,32 @@ class UICamera extends Component {
         )
       );
 
+      // ID
       this.addChildDraw(
-        new InfoField({
-          id: 'infoId-' + c.id + '-' + this.id,
-          label: 'ID',
-          content: c.id,
+        new SimpleIDInput({
+          id: 'camId-' + c.id + '-' + this.id,
+          label: 'ID:',
           attach: contentId,
+          curId: c.id,
         })
       );
-      if (c.name) {
-        this.addChildDraw(
-          new InfoField({
-            id: 'infoName-' + c.id + '-' + this.id,
-            label: 'Name',
-            content: c.name,
-            attach: contentId,
-          })
-        );
-      }
+
+      // Name
+      this.addChildDraw(
+        new TextInput({
+          id: 'cam-name' + c.id + '-' + this.id,
+          label: 'Name:',
+          attach: contentId,
+          value: c.name,
+          onBlur: (e) => {
+            const value = e.target.value;
+            this._updateCameraProperty(value, c.index, 'name');
+            camPanels[c.index].updateTitle(value || c.id);
+          },
+        })
+      );
+
+      // Type
       this.addChildDraw(
         new InfoField({
           id: 'infoType-' + c.id + '-' + this.id,
@@ -70,6 +82,8 @@ class UICamera extends Component {
           attach: contentId,
         })
       );
+
+      // Field of view (FOV)
       this.addChildDraw(
         new NumberInput({
           id: 'fov-' + c.id + '-' + this.id,
@@ -84,6 +98,8 @@ class UICamera extends Component {
           },
         })
       );
+
+      // Frustum near plane
       this.addChildDraw(
         new NumberInput({
           id: 'near-' + c.id + '-' + this.id,
@@ -98,6 +114,8 @@ class UICamera extends Component {
           },
         })
       );
+
+      // Frustum far plane
       this.addChildDraw(
         new NumberInput({
           id: 'far-' + c.id + '-' + this.id,
@@ -112,6 +130,8 @@ class UICamera extends Component {
           },
         })
       );
+
+      // Transforms
       const transformsId = 'panel-cam-transforms-content-' + c.index + '-' + this.id;
       this.addChildDraw(
         new SettingsPanel({
@@ -119,13 +139,17 @@ class UICamera extends Component {
           title: 'Transforms',
           contentId: transformsId,
           attach: contentId,
+          showPanel: false,
         })
       );
+
+      // Position
       this.addChildDraw(
         new VectorInput({
           id: 'cam-pos-' + c.id + '-' + this.id,
           attach: transformsId,
           label: 'Position',
+          step: 0.5,
           inputLabels: ['x', 'y', 'z'],
           values: c.position,
           onChange: (e, index) => {
@@ -142,14 +166,19 @@ class UICamera extends Component {
               'quaternion'
             );
             rotationComponent.setValues([cam.rotation.x, cam.rotation.y, cam.rotation.z], true);
+            const editorIcons = getSceneItem('editorIcons');
+            editorIcons[c.index].update(cam);
           },
         })
       );
+
+      // Target
       const targetComponent = this.addChildDraw(
         new VectorInput({
           id: 'cam-target-' + c.id + '-' + this.id,
           attach: transformsId,
           label: 'Target',
+          step: 0.5,
           inputLabels: ['x', 'y', 'z'],
           values: c.target,
           onChange: (e, index) => {
@@ -169,10 +198,13 @@ class UICamera extends Component {
               getSceneItem('orbitControls').target = new THREE.Vector3(...curTarget);
             }
             rotationComponent.setValues([cam.rotation.x, cam.rotation.y, cam.rotation.z], true);
+            const editorIcons = getSceneItem('editorIcons');
+            editorIcons[c.index].update(cam);
           },
         })
       );
-      // TODO: Add Euler rotation (angles in degrees)
+
+      // Rotation
       const rot = getSceneItem('allCameras')[c.index].rotation;
       const rotationComponent = this.addChildDraw(
         new VectorInput({
@@ -210,9 +242,13 @@ class UICamera extends Component {
             if (c.index === getSceneParam('curCameraIndex')) {
               getSceneItem('orbitControls').target = newTarget;
             }
+            const editorIcons = getSceneItem('editorIcons');
+            editorIcons[c.index].update(cam);
           },
         })
       );
+
+      // Orbit controls
       this.addChildDraw(
         new Checkbox({
           id: 'orbitControls-' + c.id + '-' + this.id,
@@ -230,6 +266,8 @@ class UICamera extends Component {
           value: c.orbitControls,
         })
       );
+
+      // Show helper
       this.addChildDraw(
         new Checkbox({
           id: 'showHelper-' + c.id + '-' + this.id,
@@ -251,6 +289,8 @@ class UICamera extends Component {
           value: c.showHelper || false,
         })
       );
+
+      // Action buttons
       const buttons = [
         {
           id: 'reset-cam-' + c.id + '-' + this.id,
@@ -270,6 +310,8 @@ class UICamera extends Component {
               controls.target = new THREE.Vector3(...target);
             }
             this.rePaint();
+            const editorIcons = getSceneItem('editorIcons');
+            editorIcons[c.index].update(getSceneItem('allCameras')[c.index]);
           },
         },
         {
@@ -286,27 +328,59 @@ class UICamera extends Component {
           text: 'Destroy!',
           class: 'delete-button',
           onClick: () => {
-            const cameraItems = getSceneItem('allCameras');
-            if (cameraItems.length <= 1) return;
-            const index = c.index;
-            const cameraParams = getSceneParam('cameras').filter((cam) => cam.id !== c.id);
-            setSceneParam('cameras', cameraParams);
-            const cameraSelector = getSceneItem('cameraSelectorTool');
-            cameraItems[index].clear();
-            cameraItems[index].removeFromParent();
-            setSceneItem(
-              'allCameras',
-              cameraItems.filter((c, i) => i !== index)
-            );
-            saveCameraState({ removeIndex: index });
-            if (c.index === getSceneParam('curCameraIndex')) {
-              cameraSelector.setValue(cameraParams[0].id);
-            }
-            cameraSelector.setOptions(
-              cameraParams.map((c) => ({ value: c.id, label: c.name || c.id })),
-              c.id
-            );
-            this.updatePanel();
+            // TODO: add dialog confirmation for destroying a camera
+            const destoryCamera = () => {
+              const cameraItems = getSceneItem('allCameras');
+              if (cameraItems.length <= 1) return;
+              const index = c.index;
+              const cameraParams = getSceneParam('cameras')
+                .filter((cam) => cam.id !== c.id)
+                .map((c, i) => {
+                  c.index = i;
+                  return c;
+                });
+              setSceneParam('cameras', cameraParams);
+              cameraItems[index].clear();
+              cameraItems[index].removeFromParent();
+              setSceneItem(
+                'allCameras',
+                cameraItems.filter((c, i) => i !== index)
+              );
+              const helpers = getSceneItem('cameraHelpers');
+              if (helpers[c.index]) {
+                getSceneItem('scene').remove(helpers[c.index]);
+                setSceneItem(
+                  'cameraHelpers',
+                  helpers.filter((c, i) => i !== index)
+                );
+              }
+              saveCameraState({ removeIndex: index });
+              if (c.index === getSceneParam('curCameraIndex')) {
+                cameraSelector.setValue(cameraParams[0].id);
+                setSceneParam('curCameraIndex', 0);
+              }
+              const cameraSelector = getSceneItem('cameraSelectorTool');
+              cameraSelector.setOptions(
+                cameraParams.map((c) => ({ value: c.id, label: c.name || c.id })),
+                c.id
+              );
+              const editorIcons = getSceneItem('editorIcons');
+              editorIcons[c.index].remove(c.index);
+              this.updatePanel();
+            };
+            const cameraTextToDestroy = c.name ? `${c.name} (${c.id})` : c.id;
+            getSceneItem('dialog').appear({
+              component: ConfirmationDialog,
+              componentData: {
+                id: 'delete-cam-conf-dialog-' + c.id + '-' + this.id,
+                message: 'Are you sure you want remove this camera: ' + cameraTextToDestroy + '?',
+                confirmButtonFn: () => {
+                  destoryCamera();
+                  getSceneItem('dialog').disappear();
+                },
+              },
+              title: 'Are you sure?',
+            });
           },
         },
       ];
@@ -337,6 +411,15 @@ class UICamera extends Component {
     const helpers = getSceneItem('cameraHelpers');
     if (helpers && helpers.length && helpers[i]) {
       helpers[i].update();
+    }
+    if (key === 'name') {
+      const camerasParams = getSceneParam('cameras');
+      const currentCameraId = camerasParams[getSceneParam('curCameraIndex')]?.id;
+      const cameraSelector = getSceneItem('cameraSelectorTool');
+      cameraSelector.setOptions(
+        camerasParams.map((c) => ({ value: c.id, label: c.name || c.id })),
+        currentCameraId
+      );
     }
   };
 }
