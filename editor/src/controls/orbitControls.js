@@ -27,6 +27,8 @@ export const createOrbitControls = () => {
   controls.addEventListener('start', () => {
     rootElem.style.transitionDelay = '0.5s';
     rootElem.style.opacity = 0.5;
+    const editorIcons = getSceneItem('editorIcons');
+    editorIcons[sceneParams.curCameraIndex].cameraIcon.visible = false;
   });
   controls.addEventListener('end', () => {
     const quaternion = curCameraItem.quaternion;
@@ -39,6 +41,9 @@ export const createOrbitControls = () => {
     rightSidePanel.updatePanel('UICamera');
     rootElem.style.transitionDelay = '0s';
     rootElem.style.opacity = 1;
+    const editorIcons = getSceneItem('editorIcons');
+    editorIcons[sceneParams.curCameraIndex].cameraIcon.visible = true;
+    editorIcons[sceneParams.curCameraIndex].update(curCameraItem);
   });
   controls.update();
   setSceneItem('orbitControls', controls);

@@ -5,6 +5,7 @@ import { setSceneItem } from '../sceneData/sceneItems';
 import { getScreenResolution } from '../utils/utils';
 import ElementLoader from './ElementLoader';
 import { createOrbitControls } from '../controls/orbitControls';
+import CameraMeshIcon from '../UI/icons/CameraMeshIcon';
 
 class SceneLoader {
   constructor(scene, isEditor) {
@@ -16,12 +17,12 @@ class SceneLoader {
 
   _createScene = (sceneParams) => {
     this.scene = new THREE.Scene();
+    setSceneItem('scene', this.scene);
     this._createCameras(sceneParams.cameras, sceneParams);
     this._createLights(sceneParams.lights);
     this._createGrid(sceneParams);
     this._createAxesHelper(sceneParams);
     this._createObjects(sceneParams.elements);
-    setSceneItem('scene', this.scene);
   };
 
   _createCameras = (camerasA, sceneParams) => {
@@ -74,6 +75,7 @@ class SceneLoader {
         ];
       }
       allCameras.push(camera);
+      new CameraMeshIcon(camera, c.id);
       if (
         i === sceneParams.curCameraIndex ||
         camerasA.length <= sceneParams.curCameraIndex ||

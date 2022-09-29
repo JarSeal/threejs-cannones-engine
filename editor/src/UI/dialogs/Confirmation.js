@@ -17,12 +17,15 @@ class ConfirmationDialog extends Component {
   }
 
   paint = () => {
+    const buttonDivId = 'confirmation-buttons-' + this.id;
+    this.addChildDraw({ id: buttonDivId, class: 'buttons' });
     if (!this.data.noCancelButton) {
       this.addChild(
         new Button({
           id: this.id + '-cancel-button',
           text: this.data.cancelButtonText || 'Cancel',
-          class: 'cancel-button',
+          attach: buttonDivId,
+          class: 'cancelButton',
           onClick: () => {
             if (this.Dialog.isLocked) return;
             if (this.data.cancelButtonFn) {
@@ -37,8 +40,9 @@ class ConfirmationDialog extends Component {
     this.addChild(
       new Button({
         id: this.id + '-confirm-button',
+        attach: buttonDivId,
         text: this.data.confirmButtonText || 'Confirm',
-        class: ['confirm-button', 'confirm-button--delete'],
+        class: ['saveButton'],
         onClick: () => {
           if (this.Dialog.isLocked) return;
           if (this.data.confirmButtonFn) {

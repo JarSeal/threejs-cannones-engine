@@ -8,6 +8,8 @@ import { Component } from '../../../../LIGHTER';
 // - value = input value [Number]
 // - disabled = whether the field is disabled or not [Boolean]
 // - error = an error boolean or object to tell if the field has errors {hasError:Boolean, errorMsg:String} [Boolean/Object]
+// - doNotSelectOnFocus = boolean whether to select all content or not [Boolean]
+// - doNotBlurOnEnter = boolean whether to blur from the input field when Enter key is pressed [Boolean]
 class NumberInput extends Component {
   constructor(data) {
     super(data);
@@ -41,23 +43,38 @@ class NumberInput extends Component {
   }
 
   addListeners(data) {
-    this.addListener({
-      id: this.inputId + '-number-input-change',
-      target: document.getElementById(this.inputId),
-      type: 'change',
-      fn: (e) => {
-        if (data.changeFn) data.changeFn(e, this.setValue);
-      },
-    });
-    this.addListener({
-      id: this.inputId + '-focus',
-      target: document.getElementById(this.inputId),
-      type: 'focus',
-      fn: (e) => {
-        if (data.doNotSelectOnFocus) return;
-        e.target.select();
-      },
-    });
+    const inputElem = document.getElementById(this.inputId);
+    if (data.changeFn) {
+      this.addListener({
+        id: this.inputId + '-change',
+        target: inputElem,
+        type: 'change',
+        fn: (e) => {
+          data.changeFn(e, this.setValue);
+        },
+      });
+    }
+    if (!data.doNotBlurOnEnter) {
+      this.addListener({
+        id: this.inputId + '-keyup',
+        target: inputElem,
+        type: 'keyup',
+        fn: (e) => {
+          if (e.code === 'Enter') inputElem.blur();
+        },
+      });
+    }
+    if (!data.doNotSelectOnFocus) {
+      this.addListener({
+        id: this.inputId + '-focus',
+        target: inputElem,
+        type: 'focus',
+        fn: (e) => {
+          if (data.doNotSelectOnFocus) return;
+          e.target.select();
+        },
+      });
+    }
   }
 
   error(err) {

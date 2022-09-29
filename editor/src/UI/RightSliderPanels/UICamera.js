@@ -12,6 +12,8 @@ import { createOrbitControls, removeOrbitControls } from '../../controls/orbitCo
 import ActionButtons from '../common/form/ActionButtons';
 import VectorInput from '../common/form/VectorInput';
 import ConfirmationDialog from '../dialogs/Confirmation';
+import TextInput from '../common/form/TextInput';
+import SimpleIDInput from '../common/form/SimpleIDInput';
 
 class UICamera extends Component {
   constructor(data) {
@@ -48,25 +50,28 @@ class UICamera extends Component {
 
       // ID
       this.addChildDraw(
-        new InfoField({
-          id: 'infoId-' + c.id + '-' + this.id,
-          label: 'ID',
-          content: c.id,
+        new SimpleIDInput({
+          id: 'camId-' + c.id + '-' + this.id,
+          label: 'ID:',
           attach: contentId,
+          curId: c.id,
         })
       );
 
       // Name
-      if (c.name) {
-        this.addChildDraw(
-          new InfoField({
-            id: 'infoName-' + c.id + '-' + this.id,
-            label: 'Name',
-            content: c.name,
-            attach: contentId,
-          })
-        );
-      }
+      this.addChildDraw(
+        new TextInput({
+          id: 'cam-name' + c.id + '-' + this.id,
+          label: 'Name:',
+          attach: contentId,
+          value: c.name,
+          onBlur: (e) => {
+            const value = e.target.value;
+            this._updateCameraProperty(value, c.index, 'name');
+            camPanels[c.index].updateTitle(value || c.id);
+          },
+        })
+      );
 
       // Type
       this.addChildDraw(
@@ -134,6 +139,7 @@ class UICamera extends Component {
           title: 'Transforms',
           contentId: transformsId,
           attach: contentId,
+          showPanel: false,
         })
       );
 
@@ -160,6 +166,8 @@ class UICamera extends Component {
               'quaternion'
             );
             rotationComponent.setValues([cam.rotation.x, cam.rotation.y, cam.rotation.z], true);
+            const editorIcons = getSceneItem('editorIcons');
+            editorIcons[c.index].update(cam);
           },
         })
       );
@@ -190,6 +198,8 @@ class UICamera extends Component {
               getSceneItem('orbitControls').target = new THREE.Vector3(...curTarget);
             }
             rotationComponent.setValues([cam.rotation.x, cam.rotation.y, cam.rotation.z], true);
+            const editorIcons = getSceneItem('editorIcons');
+            editorIcons[c.index].update(cam);
           },
         })
       );
@@ -232,6 +242,8 @@ class UICamera extends Component {
             if (c.index === getSceneParam('curCameraIndex')) {
               getSceneItem('orbitControls').target = newTarget;
             }
+            const editorIcons = getSceneItem('editorIcons');
+            editorIcons[c.index].update(cam);
           },
         })
       );
@@ -298,6 +310,8 @@ class UICamera extends Component {
               controls.target = new THREE.Vector3(...target);
             }
             this.rePaint();
+            const editorIcons = getSceneItem('editorIcons');
+            editorIcons[c.index].update(getSceneItem('allCameras')[c.index]);
           },
         },
         {
@@ -350,6 +364,8 @@ class UICamera extends Component {
                 cameraParams.map((c) => ({ value: c.id, label: c.name || c.id })),
                 c.id
               );
+              const editorIcons = getSceneItem('editorIcons');
+              editorIcons[c.index].remove(c.index);
               this.updatePanel();
             };
             const cameraTextToDestroy = c.name ? `${c.name} (${c.id})` : c.id;
@@ -395,6 +411,15 @@ class UICamera extends Component {
     const helpers = getSceneItem('cameraHelpers');
     if (helpers && helpers.length && helpers[i]) {
       helpers[i].update();
+    }
+    if (key === 'name') {
+      const camerasParams = getSceneParam('cameras');
+      const currentCameraId = camerasParams[getSceneParam('curCameraIndex')]?.id;
+      const cameraSelector = getSceneItem('cameraSelectorTool');
+      cameraSelector.setOptions(
+        camerasParams.map((c) => ({ value: c.id, label: c.name || c.id })),
+        currentCameraId
+      );
     }
   };
 }

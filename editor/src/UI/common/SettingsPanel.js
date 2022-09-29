@@ -19,6 +19,7 @@ class SettingsPanel extends Component {
     this.contentId = data.contentId;
     if (data.showPanel === undefined) data.showPanel = true;
     this.showPanel = getSceneParamR(`editor.show.${this.id}`, data.showPanel);
+    this.panelTitleId = 'settings-panel-title-' + this.id;
   }
 
   addListeners = () => {
@@ -37,7 +38,7 @@ class SettingsPanel extends Component {
 
   paint() {
     this.addChildDraw({
-      id: 'settings-panel-title-' + this.id,
+      id: this.panelTitleId,
       tag: 'h4',
       text: this.title,
     });
@@ -65,6 +66,11 @@ class SettingsPanel extends Component {
     if (findParentClass(this.elem, 'dialog')) {
       getSceneItem('dialog').onResize();
     }
+  };
+
+  updateTitle = (newTitle) => {
+    const elem = document.getElementById(this.panelTitleId);
+    elem.textContent = newTitle;
   };
 }
 

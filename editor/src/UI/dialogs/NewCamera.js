@@ -9,16 +9,19 @@ import Button from '../common/Button';
 import Checkbox from '../common/form/Checbox';
 import Dropdown from '../common/form/Dropdown';
 import NumberInput from '../common/form/NumberInput';
+import SimpleIDInput from '../common/form/SimpleIDInput';
 import TextInput from '../common/form/TextInput';
 import VectorInput from '../common/form/VectorInput';
 import SettingsPanel from '../common/SettingsPanel';
+import CameraMeshIcon from '../icons/CameraMeshIcon';
 
 class NewCamera extends Component {
   constructor() {
     super({ id: 'new-camera-dialog' });
+    this.formHasErrors = false;
     // Defalt values
     this.newCameraParams = {
-      id: 'new-id', // TODO: Use UUIDv4 for this
+      id: THREE.MathUtils.generateUUID(),
       name: '',
       type: 'perspective',
       fov: 45,
@@ -33,16 +36,14 @@ class NewCamera extends Component {
   }
 
   paint = () => {
-    // Change to General ID when it is implemented
     this.addChildDraw(
-      new TextInput({
+      new SimpleIDInput({
         id: this.id + '-id',
         label: 'ID',
-        value: this.newCameraParams.id,
-        changeFn: (e) => {
-          // TODO: add General id validation here
-          this.newCameraParams.id = e.target.value;
-        },
+        curId: this.newCameraParams.id,
+        newId: true,
+        onValidationErrors: () => (this.formHasErrors = true),
+        onValidationSuccess: () => (this.formHasErrors = false),
       })
     );
 
@@ -178,10 +179,15 @@ class NewCamera extends Component {
       })
     );
 
+    const buttonDivId = 'new-cam-buttons-' + this.id;
+    this.addChildDraw({ id: buttonDivId, class: 'buttons' });
+
     // Cancel button
     this.addChildDraw(
       new Button({
         id: 'new-cam-cancel-' + this.id,
+        class: ['cancelButton'],
+        attach: buttonDivId,
         text: 'Cancel',
         onClick: () => {
           getSceneItem('dialog').disappear();
@@ -193,8 +199,12 @@ class NewCamera extends Component {
     this.addChildDraw(
       new Button({
         id: 'new-cam-create-' + this.id,
+        class: ['saveButton'],
+        attach: buttonDivId,
         text: 'Create',
         onClick: () => {
+          if (this.formHasErrors) return;
+          const scene = getSceneItem('scene');
           // Create three.js camera and helper
           const reso = getScreenResolution();
           const aspectRatio = reso.x / reso.y;
@@ -204,6 +214,7 @@ class NewCamera extends Component {
             this.newCameraParams.near,
             this.newCameraParams.far
           );
+
           camera.position.set(...this.newCameraParams.position);
           camera.lookAt(new THREE.Vector3(...this.newCameraParams.target));
           const helpers = getSceneItem('cameraHelpers');
@@ -211,9 +222,11 @@ class NewCamera extends Component {
           if (!this.newCameraParams.showHelper) helper.visible = false;
           helpers.push(helper);
           helper.update();
-          getSceneItem('scene').add(helper);
+          scene.add(helper);
           camera.updateWorldMatrix();
           camera.userData = this.newCameraParams;
+
+          new CameraMeshIcon(camera, this.newCameraParams.id);
 
           let allCameras = getSceneItem('allCameras');
           if (allCameras && Array.isArray(allCameras)) {

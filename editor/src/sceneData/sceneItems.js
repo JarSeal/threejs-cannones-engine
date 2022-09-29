@@ -14,6 +14,7 @@ const emptyItems = {
   renderStats: null,
   orbitControls: null,
   looping: false,
+  editorIcons: [],
 };
 
 let sceneItems = emptyItems;

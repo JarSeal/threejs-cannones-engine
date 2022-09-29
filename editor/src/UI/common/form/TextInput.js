@@ -13,7 +13,8 @@ import { Component } from '../../../../LIGHTER';
 // - disabled = whether the field is disabled or not [Boolean]
 // - error = an error boolean or object to tell if the field has errors {hasError:Boolean, errorMsg:String} [Boolean/Object]
 // - maxlength = html max length attribute value for input elem [Number/String]
-// - blurOnEnter = if set to true, loses focus when Enter is pressed [Boolean]
+// - doNotSelectOnFocus = boolean whether to select all content or not [Boolean]
+// - doNotBlurOnEnter = boolean whether to blur from the input field when Enter key is pressed [Boolean]
 class TextInput extends Component {
   constructor(data) {
     super(data);
@@ -53,24 +54,27 @@ class TextInput extends Component {
 
   addListeners = (data) => {
     const inputElem = this.elem.querySelector('#' + this.inputId);
-    this.addListener({
-      id: this.inputId + '-keyup',
-      target: inputElem,
-      type: 'keyup',
-      fn: (e) => {
-        this.value = e.target.value;
-        this.data.value = this.value;
-        if (data.changeFn) data.changeFn(e);
-        if (this.data.blurOnEnter && e.code === 'Enter') inputElem.blur();
-      },
-    });
-    if (this.onFocus) {
+    if (data.changeFn || !data.doNotBlurOnEnter) {
+      this.addListener({
+        id: this.inputId + '-keyup',
+        target: inputElem,
+        type: 'keyup',
+        fn: (e) => {
+          this.value = e.target.value;
+          this.data.value = this.value;
+          if (data.changeFn) data.changeFn(e);
+          if (!data.doNotBlurOnEnter && e.code === 'Enter') inputElem.blur();
+        },
+      });
+    }
+    if (this.onFocus || !data.doNotSelectOnFocus) {
       this.addListener({
         id: this.inputId + '-focus',
         target: inputElem,
         type: 'focus',
         fn: (e) => {
-          this.onFocus(e);
+          if (!data.doNotSelectOnFocus) e.target.select();
+          if (this.onFocus) this.onFocus(e);
         },
       });
     }
@@ -104,15 +108,14 @@ class TextInput extends Component {
   }
 
   error(err) {
+    this.errorComp.discard();
     if (err) {
-      this.errorComp.discard();
       this.elem.classList.add('form-elem--error');
       if (err.errorMsg && !this.data.hideMsg) {
         this.elem.classList.add('form-elem--error-msg');
         this.addChild(this.errorComp).draw({ text: err.errorMsg });
       }
     } else {
-      this.errorComp.discard();
       this.elem.classList.remove('form-elem--error');
       this.elem.classList.remove('form-elem--error-msg');
     }

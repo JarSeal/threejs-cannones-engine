@@ -62,7 +62,7 @@
     vertical-align: top;
     display: inline-block;
     font-size: 1.1rem;
-    margin-top: 0.3rem;
+    margin-top: 0.6rem;
   }
   :global(.form-elem__number-input) {
     width: 8rem;
@@ -78,10 +78,6 @@
       top: 0;
       background: green;
     }
-  }
-  :global(.delete-button) {
-    background: rgb(112, 27, 27);
-    color: #ccc;
   }
 }
 
