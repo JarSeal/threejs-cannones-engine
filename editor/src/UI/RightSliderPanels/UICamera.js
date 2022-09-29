@@ -4,7 +4,7 @@ import { Component } from '../../../LIGHTER';
 import { getSceneParam, setSceneParam } from '../../sceneData/sceneParams';
 import SettingsPanel from '../common/SettingsPanel';
 import NumberInput from '../common/form/NumberInput';
-import { saveCameraState } from '../../sceneData/saveSession';
+import { saveAllCamerasState, saveCameraState } from '../../sceneData/saveSession';
 import { getSceneItem, setSceneItem } from '../../sceneData/sceneItems';
 import InfoField from '../common/form/InfoField';
 import Checkbox from '../common/form/Checbox';
@@ -266,6 +266,58 @@ class UICamera extends Component {
         })
       );
 
+      // Transforms (DEFAULTS)
+      const defaultTransformsId = 'panel-cam-default-transforms-content-' + c.index + '-' + this.id;
+      this.addChildDraw(
+        new SettingsPanel({
+          id: 'panel-cam-default-transforms-' + c.id + '-' + this.id,
+          title: 'Default transforms',
+          contentId: defaultTransformsId,
+          attach: contentId,
+          showPanel: false,
+        })
+      );
+
+      // Default Position
+      this.addChildDraw(
+        new VectorInput({
+          id: 'cam-default-pos-' + c.id + '-' + this.id,
+          attach: defaultTransformsId,
+          label: 'Position',
+          step: 0.5,
+          inputLabels: ['x', 'y', 'z'],
+          values: c.defaultPosition || c.position || [5, 5, 5],
+          onChange: (e, index) => {
+            const cameraParams = getSceneParam('cameras');
+            if (!cameraParams[c.index].defaultPosition)
+              cameraParams[c.index].defaultPosition = [5, 5, 5];
+            cameraParams[c.index].defaultPosition[index] = parseFloat(e.target.value);
+            setSceneParam('cameras', cameraParams);
+            saveAllCamerasState(cameraParams);
+          },
+        })
+      );
+
+      // Default Target
+      this.addChildDraw(
+        new VectorInput({
+          id: 'cam-default-target-' + c.id + '-' + this.id,
+          attach: defaultTransformsId,
+          label: 'Target',
+          step: 0.5,
+          inputLabels: ['x', 'y', 'z'],
+          values: c.defaultTarget || c.target || [0, 0, 0],
+          onChange: (e, index) => {
+            const cameraParams = getSceneParam('cameras');
+            if (!cameraParams[c.index].defaultTarget)
+              cameraParams[c.index].defaultTarget = [0, 0, 0];
+            cameraParams[c.index].defaultTarget[index] = parseFloat(e.target.value);
+            setSceneParam('cameras', cameraParams);
+            saveAllCamerasState(cameraParams);
+          },
+        })
+      );
+
       // Orbit controls
       this.addChildDraw(
         new Checkbox({
@@ -318,9 +370,9 @@ class UICamera extends Component {
               removeOrbitControls();
               createOrbitControls();
             }
-            const pos = [5, 5, 5];
+            const pos = c.defaultPosition || [5, 5, 5];
             this._updateCameraProperty(pos, c.index, 'position');
-            const target = [0, 0, 0];
+            const target = c.defaultTarget || [0, 0, 0];
             this._updateCameraProperty(target, c.index, 'target');
             this._updateCameraProperty(target, c.index, 'target'); // Needs to be called twice in order to make the cam helper place correctly as well
             if (c.index === getSceneParam('curCameraIndex')) {
