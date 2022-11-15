@@ -21,7 +21,7 @@ let sceneItems = emptyItems;
 
 export const getSceneItems = () => sceneItems;
 
-export const getSceneItem = (key) => sceneItems[key];
+export const getSceneItem = (key, defaultValue) => sceneItems[key] || defaultValue;
 
 export const setSceneItem = (key, value) => (sceneItems[key] = value);
 

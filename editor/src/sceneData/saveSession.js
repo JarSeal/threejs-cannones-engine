@@ -3,7 +3,7 @@ import { getSceneParam, getSceneParams } from './sceneParams';
 
 const LS = new LocalStorage('ft_');
 
-const LSKeysJson = ['cameras', 'editor', 'sceneState'];
+const LSKeysJson = ['cameras', 'editor', 'sceneState', 'elements'];
 const LSKeysStrings = ['sceneId'];
 
 // Get all scene state values

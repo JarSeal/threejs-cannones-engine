@@ -377,7 +377,7 @@ class UICamera extends Component {
             this._updateCameraProperty(target, c.index, 'target'); // Needs to be called twice in order to make the cam helper place correctly as well
             if (c.index === getSceneParam('curCameraIndex')) {
               const controls = getSceneItem('orbitControls');
-              controls.target = new THREE.Vector3(...target);
+              if (controls) controls.target = new THREE.Vector3(...target);
             }
             this.rePaint();
             const editorIcons = getSceneItem('editorIcons');

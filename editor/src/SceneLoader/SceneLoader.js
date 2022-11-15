@@ -6,6 +6,7 @@ import { getScreenResolution } from '../utils/utils';
 import ElementLoader from './ElementLoader';
 import { createOrbitControls } from '../controls/orbitControls';
 import CameraMeshIcon from '../UI/icons/CameraMeshIcon';
+import { saveStateByKey } from '../sceneData/saveSession';
 
 class SceneLoader {
   constructor(scene, isEditor) {
@@ -33,6 +34,7 @@ class SceneLoader {
     const ids = [];
     for (let i = 0; i < camerasA.length; i++) {
       const c = camerasA[i];
+      c.paramType = 'camera';
       if (!c.id) {
         console.error('Camera must have an ID');
         continue;
@@ -49,8 +51,6 @@ class SceneLoader {
       if (c.type === 'perspective') {
         const fov = c.fov || 45;
         camera = new THREE.PerspectiveCamera(fov, aspectRatio, near, far);
-        camera.userData = c;
-        camera.userData.id = c.id || 'camera' + i;
       } else if (c.type === 'orthographic') {
         const viewSize = c.viewSize || 1;
         camera = new THREE.OrthographicCamera(
@@ -63,6 +63,8 @@ class SceneLoader {
         );
       }
 
+      camera.userData = c;
+      camera.userData.id = c.id || 'camera' + i;
       const pos = c.position ? c.position : [5, 5, 5];
       camera.position.set(pos[0], pos[1], pos[2]);
 
@@ -84,7 +86,7 @@ class SceneLoader {
         ];
       }
       allCameras.push(camera);
-      new CameraMeshIcon(camera, c.id);
+      new CameraMeshIcon(camera, c);
       if (
         i === sceneParams.curCameraIndex ||
         camerasA.length <= sceneParams.curCameraIndex ||
@@ -120,13 +122,14 @@ class SceneLoader {
   _createLights = (lightsA) => {
     for (let i = 0; i < lightsA.length; i++) {
       const l = lightsA[i];
+      l.paramType = 'light';
       l.index = i;
       if (l.type === 'ambient') {
         const color = l.color || 0xffffff;
         const intensity = l.intensity || 1;
         const light = new THREE.AmbientLight(color, intensity);
         light.userData = l;
-        light.userData.id = l.id || 'ligth' + i;
+        light.userData.id = l.id || 'light' + i;
         this.scene.add(light);
         continue;
       }
@@ -138,7 +141,7 @@ class SceneLoader {
         const light = new THREE.HemisphereLight(colorTop, colorBottom, intensity);
         light.position.set(pos[0], pos[1], pos[2]);
         light.userData = l;
-        light.userData.id = l.id || 'ligth' + i;
+        light.userData.id = l.id || 'light' + i;
         this.scene.add(light);
         continue;
       }
@@ -151,7 +154,7 @@ class SceneLoader {
         const pos = l.position ? l.position : [0, 0, 0];
         light.position.set(pos[0], pos[1], pos[2]);
         light.userData = l;
-        light.userData.id = l.id || 'ligth' + i;
+        light.userData.id = l.id || 'light' + i;
         if (l.castShadow) light.castShadow = true;
         this.scene.add(light);
         if (this.isEditor && l.showHelper) {
@@ -164,11 +167,20 @@ class SceneLoader {
   };
 
   _createObjects = (objects) => {
+    const objectMeshes = [];
+    const objectParams = [];
     for (let i = 0; i < objects.length; i++) {
       const objLoader = new ElementLoader(objects[i]);
       const obj = objLoader.getObject();
+      objects[i].paramType = 'element';
+      objectParams.push(objects[i]);
+      objectMeshes.push(obj);
       if (obj) this.scene.add(obj);
     }
+    setSceneItem('elements', objectMeshes);
+    const elementsParams = objectParams;
+    setSceneParam('elements', elementsParams);
+    saveStateByKey('elements', elementsParams);
   };
 
   _createGrid = (sceneParams) => {

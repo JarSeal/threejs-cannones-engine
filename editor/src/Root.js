@@ -17,6 +17,7 @@ import { scenes } from '../../data';
 import { getSceneStates, saveSceneId } from './sceneData/saveSession';
 import TopTools from './UI/TopTools';
 import Dialog from './UI/Dialog';
+import { registerStageClick } from './controls/stageClick';
 
 class Root {
   constructor() {
@@ -79,6 +80,7 @@ class Root {
       renderStats.domElement.style.top = 'auto';
       renderStats.domElement.style.bottom = 0;
       document.getElementById('root').appendChild(renderStats.dom);
+      registerStageClick();
       setSceneItem('runningRenderStats', renderStats);
     }
 

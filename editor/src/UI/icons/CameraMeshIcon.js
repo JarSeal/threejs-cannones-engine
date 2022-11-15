@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { getSceneItem, setSceneItem } from '../../sceneData/sceneItems';
 
 class CameraMeshIcon {
-  constructor(camera, cameraId) {
+  constructor(camera, cameraParams) {
     const scene = getSceneItem('scene');
     const cameraIcon = new THREE.Group();
     // TODO: import a good camera icon
@@ -13,7 +13,7 @@ class CameraMeshIcon {
     cameraIconMesh.position.set(0, 0, 0.14);
     cameraIcon.add(cameraIconMesh);
 
-    cameraIcon.userData.cameraId = cameraId;
+    cameraIconMesh.userData = cameraParams;
 
     const newPos = [camera.position.x, camera.position.y, camera.position.z];
     const newQuat = [
