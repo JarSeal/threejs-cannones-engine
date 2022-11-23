@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 import { getSceneItem } from '../sceneData/sceneItems';
-import { getSceneParam } from '../sceneData/sceneParams';
+import { getSceneParam, setSceneParam } from '../sceneData/sceneParams';
 
 let rayClicker;
 const mouseClickStart = { x: 0, y: 0 };
@@ -54,7 +54,17 @@ const _mouseUpOnStage = (e) => {
     }
   }
 
+  const prevSelection = getSceneParam('selection');
+  if (prevSelection && prevSelection.length)
+    prevSelection.forEach((o) => (o.material.wireframe = false));
   if (selectedObject) {
-    console.log('click', selectedObject.userData.id);
+    // TODO: Add shift key addition to add multiple object and create a temp group for them
+    const selections = [selectedObject];
+    setSceneParam('selection', selections);
+    selections.forEach((o) => (o.material.wireframe = true)); // TODO: OUTLINE
+  } else {
+    setSceneParam('selection', []);
   }
+
+  console.log('selection', getSceneParam('selection'));
 };

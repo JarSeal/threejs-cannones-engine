@@ -1,4 +1,7 @@
 import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { OutlinePass } from 'three/addons/postprocessing/OutlinePass.js';
 import * as Stats from 'stats.js';
 
 import { Component } from '../LIGHTER';
@@ -59,6 +62,8 @@ class Root {
     const renderer = new THREE.WebGLRenderer({
       antialias: sceneParams.rendererAntialias,
     });
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(window.innerWidth, window.innerHeight);
     if (sceneParams.shadowType !== undefined || sceneParams.shadowType !== null) {
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE[sceneParams.shadowType];
@@ -73,8 +78,24 @@ class Root {
     // Create scene
     const scene = new SceneLoader(sceneParams, isEditor);
 
-    // Stats
     if (isEditor) {
+      // Editor post processing
+      this.editorComposer = new EffectComposer(renderer);
+      this.editorComposer.addPass(new RenderPass(scene, this.sceneItems.curCamera));
+      const reso = getScreenResolution();
+      const editorOutlinePass = new OutlinePass(
+        new THREE.Vector2(reso.x, reso.y),
+        scene,
+        this.sceneItems.curCamera
+      );
+      editorOutlinePass.edgeStrength = 3.0;
+      editorOutlinePass.edgeGlow = 0.0;
+      editorOutlinePass.edgeThickness = 1.0;
+      editorOutlinePass.selectedObjects = getSceneParams('selections');
+      setSceneItem('editorOutlinePass', editorOutlinePass);
+      this.editorComposer.addPass(editorOutlinePass);
+
+      // Stats
       const renderStats = new Stats();
       renderStats.domElement.id = 'running-stats-render';
       renderStats.domElement.style.top = 'auto';
@@ -112,10 +133,9 @@ class Root {
     const SI = this.sceneItems;
     if (SI.looping) {
       SI.renderer.render(SI.scene, SI.curCamera);
+      // this.editorComposer.render();
       SI.runningRenderStats.update(); // Debug statistics
-      requestAnimationFrame(() => {
-        this._renderLoop();
-      });
+      requestAnimationFrame(this._renderLoop);
     }
   };
 
