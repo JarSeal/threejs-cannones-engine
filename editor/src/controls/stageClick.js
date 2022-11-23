@@ -55,13 +55,13 @@ const _mouseUpOnStage = (e) => {
   }
 
   const prevSelection = getSceneParam('selection');
-  if (prevSelection && prevSelection.length)
-    prevSelection.forEach((o) => (o.material.wireframe = false));
+  const outlinePass = getSceneItem('editorOutlinePass');
+  if (prevSelection && prevSelection.length) outlinePass.selectedObjects = [];
   if (selectedObject) {
     // TODO: Add shift key addition to add multiple object and create a temp group for them
     const selections = [selectedObject];
     setSceneParam('selection', selections);
-    selections.forEach((o) => (o.material.wireframe = true)); // TODO: OUTLINE
+    outlinePass.selectedObjects = selections;
   } else {
     setSceneParam('selection', []);
   }

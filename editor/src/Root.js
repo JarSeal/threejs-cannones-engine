@@ -2,6 +2,8 @@ import * as THREE from 'three';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { OutlinePass } from 'three/addons/postprocessing/OutlinePass.js';
+import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+import { FXAAShader } from 'three/addons/shaders/FXAAShader.js';
 import * as Stats from 'stats.js';
 
 import { Component } from '../LIGHTER';
@@ -60,10 +62,12 @@ class Root {
 
     // Setup renderer
     const renderer = new THREE.WebGLRenderer({
-      antialias: sceneParams.rendererAntialias,
+      antialias: false,
     });
-    renderer.setPixelRatio(window.devicePixelRatio);
+    const pixelRatio = window.devicePixelRatio;
+    renderer.setPixelRatio(pixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.autoClear = false;
     if (sceneParams.shadowType !== undefined || sceneParams.shadowType !== null) {
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE[sceneParams.shadowType];
@@ -81,19 +85,31 @@ class Root {
     if (isEditor) {
       // Editor post processing
       this.editorComposer = new EffectComposer(renderer);
-      this.editorComposer.addPass(new RenderPass(scene, this.sceneItems.curCamera));
+      const renderPass = new RenderPass(scene, this.sceneItems.curCamera);
+      this.editorComposer.addPass(renderPass);
       const reso = getScreenResolution();
       const editorOutlinePass = new OutlinePass(
-        new THREE.Vector2(reso.x, reso.y),
+        new THREE.Vector2(reso.x * pixelRatio, reso.y * pixelRatio),
         scene,
         this.sceneItems.curCamera
       );
       editorOutlinePass.edgeStrength = 3.0;
-      editorOutlinePass.edgeGlow = 0.0;
-      editorOutlinePass.edgeThickness = 1.0;
+      editorOutlinePass.edgeGlow = 0.5;
+      editorOutlinePass.edgeThickness = 0.5;
+      editorOutlinePass.pulsePeriod = 2;
       editorOutlinePass.selectedObjects = getSceneParams('selections');
+      editorOutlinePass.visibleEdgeColor.set('#f69909');
+      editorOutlinePass.hiddenEdgeColor.set('#ff4500');
+      editorOutlinePass.overlayMaterial.blending = THREE.NormalBlending;
+      console.log('outline', editorOutlinePass);
       setSceneItem('editorOutlinePass', editorOutlinePass);
+      const effectFXAA = new ShaderPass(FXAAShader);
+      effectFXAA.uniforms['resolution'].value.set(
+        1 / (reso.x * pixelRatio),
+        1 / (reso.y * pixelRatio)
+      );
       this.editorComposer.addPass(editorOutlinePass);
+      this.editorComposer.addPass(effectFXAA);
 
       // Stats
       const renderStats = new Stats();
@@ -132,8 +148,8 @@ class Root {
   _renderLoop = () => {
     const SI = this.sceneItems;
     if (SI.looping) {
-      SI.renderer.render(SI.scene, SI.curCamera);
-      // this.editorComposer.render();
+      // SI.renderer.render(SI.scene, SI.curCamera);
+      this.editorComposer.render();
       SI.runningRenderStats.update(); // Debug statistics
       requestAnimationFrame(this._renderLoop);
     }
