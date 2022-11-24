@@ -3,7 +3,7 @@ import { getSceneParam, getSceneParams } from './sceneParams';
 
 const LS = new LocalStorage('ft_');
 
-const LSKeysJson = ['cameras', 'editor', 'sceneState'];
+const LSKeysJson = ['cameras', 'editor', 'sceneState', 'elements'];
 const LSKeysStrings = ['sceneId'];
 
 // Get all scene state values
@@ -114,7 +114,7 @@ export const saveEditorState = (values) => {
 
 export const saveSceneState = (values) => {
   if (values === undefined) values = {};
-  const sceneParams = { ...getSceneParams() };
+  const sceneParams = { ...getSceneParams() }; // New copy
   delete sceneParams.sceneId;
   delete sceneParams.cameras;
   delete sceneParams.elements;

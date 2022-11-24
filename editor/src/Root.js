@@ -1,4 +1,9 @@
 import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { OutlinePass } from 'three/addons/postprocessing/OutlinePass.js';
+import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+import { FXAAShader } from 'three/addons/shaders/FXAAShader.js';
 import * as Stats from 'stats.js';
 
 import { Component } from '../LIGHTER';
@@ -17,13 +22,13 @@ import { scenes } from '../../data';
 import { getSceneStates, saveSceneId } from './sceneData/saveSession';
 import TopTools from './UI/TopTools';
 import Dialog from './UI/Dialog';
+import { registerStageClick } from './controls/stageClick';
 
 class Root {
   constructor() {
     // Get empty scene params and items
     this.sceneParams = getSceneParams();
     this.sceneItems = getSceneItems();
-    console.log('scene params and items', this.sceneParams, this.sceneItems);
 
     // initialise the app
     this._initApp();
@@ -56,8 +61,12 @@ class Root {
 
     // Setup renderer
     const renderer = new THREE.WebGLRenderer({
-      antialias: sceneParams.rendererAntialias,
+      antialias: false,
     });
+    const pixelRatio = window.devicePixelRatio;
+    renderer.setPixelRatio(pixelRatio);
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.autoClear = false;
     if (sceneParams.shadowType !== undefined || sceneParams.shadowType !== null) {
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE[sceneParams.shadowType];
@@ -67,27 +76,50 @@ class Root {
     renderer.domElement.id = this.sceneParams.rendererElemId;
     document.body.appendChild(renderer.domElement);
     setSceneItem('renderer', renderer);
-    console.log('RENDERER', renderer);
 
     // Create scene
     const scene = new SceneLoader(sceneParams, isEditor);
 
-    // Stats
     if (isEditor) {
+      // Editor post processing (outline and FXAA)
+      this.editorComposer = new EffectComposer(renderer);
+      this.renderPass = new RenderPass(scene, this.sceneItems.curCamera);
+      this.editorComposer.addPass(this.renderPass);
+      const reso = getScreenResolution();
+      const editorOutlinePass = new OutlinePass(
+        new THREE.Vector2(reso.x * pixelRatio, reso.y * pixelRatio),
+        scene,
+        this.sceneItems.curCamera
+      );
+      editorOutlinePass.edgeStrength = 3.0;
+      editorOutlinePass.edgeGlow = 0.5;
+      editorOutlinePass.edgeThickness = 0.5;
+      editorOutlinePass.pulsePeriod = 2;
+      editorOutlinePass.selectedObjects = getSceneParams('selections');
+      editorOutlinePass.visibleEdgeColor.set('#f69909');
+      editorOutlinePass.hiddenEdgeColor.set('#ff4500');
+      editorOutlinePass.overlayMaterial.blending = THREE.NormalBlending;
+      setSceneItem('editorOutlinePass', editorOutlinePass);
+      this.editorOutlinePass = editorOutlinePass;
+      const effectFXAA = new ShaderPass(FXAAShader);
+      effectFXAA.uniforms['resolution'].value.set(
+        1 / (reso.x * pixelRatio),
+        1 / (reso.y * pixelRatio)
+      );
+      this.editorComposer.addPass(editorOutlinePass);
+      this.editorComposer.addPass(effectFXAA);
+      setSceneItem('editorComposer', this.editorComposer);
+
+      // Stats
       const renderStats = new Stats();
       renderStats.domElement.id = 'running-stats-render';
       renderStats.domElement.style.top = 'auto';
       renderStats.domElement.style.bottom = 0;
       document.getElementById('root').appendChild(renderStats.dom);
+      registerStageClick();
       setSceneItem('runningRenderStats', renderStats);
-    }
 
-    this._resize();
-    setSceneItem('resizers', [this._resize]);
-    this._initResizer();
-
-    // Init UI
-    if (isEditor) {
+      // Init UI
       const rightSidePanel = new RightSidePanel({ id: 'right-side-panel', parentId: 'root' });
       rightSidePanel.draw();
       setSceneItem('rightSidePanel', rightSidePanel);
@@ -101,19 +133,49 @@ class Root {
       dialog.draw();
       dialog.disappear();
       setSceneItem('dialog', dialog);
+
+      // Set selection(s)
+      const selectionIds = sceneParams.selection;
+      const selection = [];
+      selectionIds.forEach((id) => {
+        const editorIcons = this.sceneItems.editorIcons;
+        for (let i = 0; i < editorIcons.length; i++) {
+          if (editorIcons[i]?.iconMesh?.userData.id === id) {
+            selection.push(editorIcons[i].iconMesh);
+          }
+        }
+        const elements = this.sceneItems.elements;
+        for (let i = 0; i < elements.length; i++) {
+          if (elements[i].userData.id === id) {
+            selection.push(elements[i]);
+          }
+        }
+      });
+      this.editorOutlinePass.selectedObjects = selection;
     }
 
-    console.log('SCENE', scene);
+    this._resize();
+    setSceneItem('resizers', [this._resize]);
+    this._initResizer();
+
+    if (isEditor) {
+      console.log('SCENE PARAMS', this.sceneParams);
+      console.log('SCENE ITEMS', this.sceneItems);
+      console.log('RENDERER', renderer);
+      console.log('SCENE', scene, this.editorOutlinePass);
+    }
   };
 
   _renderLoop = () => {
     const SI = this.sceneItems;
     if (SI.looping) {
-      SI.renderer.render(SI.scene, SI.curCamera);
+      // SI.renderer.render(SI.scene, SI.curCamera);
+      this.editorComposer.camera = SI.curCamera;
+      this.editorOutlinePass.renderCamera = SI.curCamera;
+      this.renderPass.camera = SI.curCamera;
+      this.editorComposer.render();
       SI.runningRenderStats.update(); // Debug statistics
-      requestAnimationFrame(() => {
-        this._renderLoop();
-      });
+      requestAnimationFrame(this._renderLoop);
     }
   };
 

@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
-import { getSceneParams } from '../sceneData/sceneParams';
+import { getSceneParams, setSceneParam } from '../sceneData/sceneParams';
 import { setSceneItem, getSceneItem } from '../sceneData/sceneItems';
 import { saveCameraState } from '../sceneData/saveSession';
 
@@ -29,6 +29,11 @@ export const createOrbitControls = () => {
     rootElem.style.opacity = 0.5;
     const editorIcons = getSceneItem('editorIcons');
     editorIcons[sceneParams.curCameraIndex].cameraIcon.visible = false;
+    // TODO: Make this better by recording the start position of the movement and comparing
+    // at the end listener if it has moved enough
+    setTimeout(() => {
+      setSceneParam('orbiterMoving', true);
+    }, 100);
   });
   controls.addEventListener('end', () => {
     const quaternion = curCameraItem.quaternion;
@@ -49,6 +54,11 @@ export const createOrbitControls = () => {
     const editorIcons = getSceneItem('editorIcons');
     editorIcons[sceneParams.curCameraIndex].cameraIcon.visible = true;
     editorIcons[sceneParams.curCameraIndex].update(curCameraItem);
+    // TODO: Make this better by recording the start position of the movement and comparing
+    // at the end listener if it has moved enough
+    setTimeout(() => {
+      setSceneParam('orbiterMoving', false);
+    }, 200);
   });
   // TODO: remove this when the view size scrolling is enabled
   if (curCamera && curCamera.type === 'orthographic') {

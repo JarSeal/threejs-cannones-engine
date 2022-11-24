@@ -13,6 +13,7 @@ const emptyScene = {
   cameras: [],
   lights: [],
   elements: [],
+  selection: [],
 };
 
 let sceneParams = emptyScene;

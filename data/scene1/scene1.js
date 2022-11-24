@@ -80,7 +80,7 @@ export const scene1 = {
       type: 'shape',
       id: 'ground',
       shape: 'box',
-      position: [0, -0.0675, 0],
+      position: [0, -0.0625, 0],
       size: [20, 0.125, 20],
       receiveShadow: true,
       material: {

@@ -229,6 +229,7 @@ class NewCamera extends Component {
           // Create three.js camera and helper
           const reso = getScreenResolution();
           const aspectRatio = reso.x / reso.y;
+          this.newCameraParams.paramType = 'camera';
           let camera;
           if (this.newCameraParams.type === 'perspective') {
             camera = new THREE.PerspectiveCamera(
@@ -264,7 +265,7 @@ class NewCamera extends Component {
           camera.updateWorldMatrix();
           camera.userData = this.newCameraParams;
 
-          new CameraMeshIcon(camera, this.newCameraParams.id);
+          new CameraMeshIcon(camera, this.newCameraParams);
 
           let allCameras = getSceneItem('allCameras');
           if (allCameras && Array.isArray(allCameras)) {
@@ -276,8 +277,8 @@ class NewCamera extends Component {
           const cameraParams = getSceneParam('cameras');
           const nextIndex = cameraParams.length;
           this.newCameraParams.index = nextIndex;
-          this.cameraParams.defaultPosition = [...this.cameraParams.position];
-          this.cameraParams.defaultTarget = [...this.cameraParams.target];
+          this.newCameraParams.defaultPosition = [...this.newCameraParams.position];
+          this.newCameraParams.defaultTarget = [...this.newCameraParams.target];
           if (cameraParams && Array.isArray(cameraParams)) {
             cameraParams.push(this.newCameraParams);
           } else {
