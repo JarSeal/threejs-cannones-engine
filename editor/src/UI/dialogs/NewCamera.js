@@ -277,8 +277,8 @@ class NewCamera extends Component {
           const cameraParams = getSceneParam('cameras');
           const nextIndex = cameraParams.length;
           this.newCameraParams.index = nextIndex;
-          this.cameraParams.defaultPosition = [...this.cameraParams.position];
-          this.cameraParams.defaultTarget = [...this.cameraParams.target];
+          this.newCameraParams.defaultPosition = [...this.newCameraParams.position];
+          this.newCameraParams.defaultTarget = [...this.newCameraParams.target];
           if (cameraParams && Array.isArray(cameraParams)) {
             cameraParams.push(this.newCameraParams);
           } else {

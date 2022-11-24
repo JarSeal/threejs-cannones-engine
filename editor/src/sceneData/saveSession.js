@@ -114,7 +114,7 @@ export const saveEditorState = (values) => {
 
 export const saveSceneState = (values) => {
   if (values === undefined) values = {};
-  const sceneParams = { ...getSceneParams() };
+  const sceneParams = { ...getSceneParams() }; // New copy
   delete sceneParams.sceneId;
   delete sceneParams.cameras;
   delete sceneParams.elements;

@@ -4,7 +4,7 @@ import { Component } from '../../../LIGHTER';
 import { getSceneParam, setSceneParam } from '../../sceneData/sceneParams';
 import SettingsPanel from '../common/SettingsPanel';
 import NumberInput from '../common/form/NumberInput';
-import { saveAllCamerasState, saveCameraState } from '../../sceneData/saveSession';
+import { saveAllCamerasState, saveCameraState, saveSceneState } from '../../sceneData/saveSession';
 import { getSceneItem, setSceneItem } from '../../sceneData/sceneItems';
 import InfoField from '../common/form/InfoField';
 import Checkbox from '../common/form/Checbox';
@@ -398,7 +398,6 @@ class UICamera extends Component {
           text: 'Destroy!',
           class: 'delete-button',
           onClick: () => {
-            // TODO: add dialog confirmation for destroying a camera
             const destoryCamera = () => {
               const cameraItems = getSceneItem('allCameras');
               if (cameraItems.length <= 1) return;
@@ -410,6 +409,17 @@ class UICamera extends Component {
                   return c;
                 });
               setSceneParam('cameras', cameraParams);
+              const selection = getSceneParam('selection');
+              for (let i = 0; i < selection.length; i++) {
+                if (selection[i].userData.id === cameraItems[index].userData.id) {
+                  const filteredSelection = selection.filter(
+                    (sel) => sel.userData.id !== cameraItems[index].userData.id
+                  );
+                  setSceneParam('selection', filteredSelection);
+                  saveSceneState({ selection: filteredSelection.map((sel) => sel.userData.id) });
+                  break;
+                }
+              }
               cameraItems[index].clear();
               cameraItems[index].removeFromParent();
               setSceneItem(

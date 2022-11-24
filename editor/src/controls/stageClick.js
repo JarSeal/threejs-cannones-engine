@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { saveSceneState } from '../sceneData/saveSession';
 
 import { getSceneItem } from '../sceneData/sceneItems';
 import { getSceneParam, setSceneParam } from '../sceneData/sceneParams';
@@ -59,11 +60,14 @@ const _mouseUpOnStage = (e) => {
   if (prevSelection && prevSelection.length) outlinePass.selectedObjects = [];
   if (selectedObject) {
     // TODO: Add shift key addition to add multiple object and create a temp group for them
-    const selections = [selectedObject];
-    setSceneParam('selection', selections);
-    outlinePass.selectedObjects = selections;
+    const selection = [selectedObject];
+    const selectionIds = selection.map((sel) => sel.userData.id);
+    setSceneParam('selection', selection);
+    outlinePass.selectedObjects = selection;
+    saveSceneState({ selection: selectionIds });
   } else {
     setSceneParam('selection', []);
+    saveSceneState({ selection: [] });
   }
 
   console.log('selection', getSceneParam('selection'));

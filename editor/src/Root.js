@@ -29,7 +29,6 @@ class Root {
     // Get empty scene params and items
     this.sceneParams = getSceneParams();
     this.sceneItems = getSceneItems();
-    console.log('scene params and items', this.sceneParams, this.sceneItems);
 
     // initialise the app
     this._initApp();
@@ -77,16 +76,15 @@ class Root {
     renderer.domElement.id = this.sceneParams.rendererElemId;
     document.body.appendChild(renderer.domElement);
     setSceneItem('renderer', renderer);
-    console.log('RENDERER', renderer);
 
     // Create scene
     const scene = new SceneLoader(sceneParams, isEditor);
 
     if (isEditor) {
-      // Editor post processing
+      // Editor post processing (outline and FXAA)
       this.editorComposer = new EffectComposer(renderer);
-      const renderPass = new RenderPass(scene, this.sceneItems.curCamera);
-      this.editorComposer.addPass(renderPass);
+      this.renderPass = new RenderPass(scene, this.sceneItems.curCamera);
+      this.editorComposer.addPass(this.renderPass);
       const reso = getScreenResolution();
       const editorOutlinePass = new OutlinePass(
         new THREE.Vector2(reso.x * pixelRatio, reso.y * pixelRatio),
@@ -101,8 +99,8 @@ class Root {
       editorOutlinePass.visibleEdgeColor.set('#f69909');
       editorOutlinePass.hiddenEdgeColor.set('#ff4500');
       editorOutlinePass.overlayMaterial.blending = THREE.NormalBlending;
-      console.log('outline', editorOutlinePass);
       setSceneItem('editorOutlinePass', editorOutlinePass);
+      this.editorOutlinePass = editorOutlinePass;
       const effectFXAA = new ShaderPass(FXAAShader);
       effectFXAA.uniforms['resolution'].value.set(
         1 / (reso.x * pixelRatio),
@@ -110,6 +108,7 @@ class Root {
       );
       this.editorComposer.addPass(editorOutlinePass);
       this.editorComposer.addPass(effectFXAA);
+      setSceneItem('editorComposer', this.editorComposer);
 
       // Stats
       const renderStats = new Stats();
@@ -119,14 +118,8 @@ class Root {
       document.getElementById('root').appendChild(renderStats.dom);
       registerStageClick();
       setSceneItem('runningRenderStats', renderStats);
-    }
 
-    this._resize();
-    setSceneItem('resizers', [this._resize]);
-    this._initResizer();
-
-    // Init UI
-    if (isEditor) {
+      // Init UI
       const rightSidePanel = new RightSidePanel({ id: 'right-side-panel', parentId: 'root' });
       rightSidePanel.draw();
       setSceneItem('rightSidePanel', rightSidePanel);
@@ -140,15 +133,46 @@ class Root {
       dialog.draw();
       dialog.disappear();
       setSceneItem('dialog', dialog);
+
+      // Set selection(s)
+      const selectionIds = sceneParams.selection;
+      const selection = [];
+      selectionIds.forEach((id) => {
+        const editorIcons = this.sceneItems.editorIcons;
+        for (let i = 0; i < editorIcons.length; i++) {
+          if (editorIcons[i]?.iconMesh?.userData.id === id) {
+            selection.push(editorIcons[i].iconMesh);
+          }
+        }
+        const elements = this.sceneItems.elements;
+        for (let i = 0; i < elements.length; i++) {
+          if (elements[i].userData.id === id) {
+            selection.push(elements[i]);
+          }
+        }
+      });
+      this.editorOutlinePass.selectedObjects = selection;
     }
 
-    console.log('SCENE', scene);
+    this._resize();
+    setSceneItem('resizers', [this._resize]);
+    this._initResizer();
+
+    if (isEditor) {
+      console.log('SCENE PARAMS', this.sceneParams);
+      console.log('SCENE ITEMS', this.sceneItems);
+      console.log('RENDERER', renderer);
+      console.log('SCENE', scene, this.editorOutlinePass);
+    }
   };
 
   _renderLoop = () => {
     const SI = this.sceneItems;
     if (SI.looping) {
       // SI.renderer.render(SI.scene, SI.curCamera);
+      this.editorComposer.camera = SI.curCamera;
+      this.editorOutlinePass.renderCamera = SI.curCamera;
+      this.renderPass.camera = SI.curCamera;
       this.editorComposer.render();
       SI.runningRenderStats.update(); // Debug statistics
       requestAnimationFrame(this._renderLoop);

@@ -26,7 +26,7 @@ class CameraMeshIcon {
     cameraIcon.quaternion.set(...newQuat);
 
     this.cameraIcon = cameraIcon;
-    this.cameraIconMesh = cameraIconMesh;
+    this.iconMesh = cameraIconMesh;
     scene.add(cameraIcon);
     this.icon = cameraIcon;
     const editorIcons = getSceneItem('editorIcons') || [];
