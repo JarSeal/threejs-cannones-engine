@@ -1,32 +1,37 @@
 @import '../../sass/variables';
 
 .settingsPanel {
-  background: darken($colorPanelBack, 2%);
-  margin-bottom: 0.4rem;
+  margin-bottom: 1rem;
   position: relative;
+  background-color: $light-grey3;
+  border-radius: 0.5rem;
   h4 {
-    font-size: 1.1rem;
+    font-size: 1.4rem;
+    color: $light-grey8;
+    width: 100%;
+    height: 2.6rem;
     margin: 0;
     padding: 0.4rem 1rem 0.3rem;
+    border-radius: 0.5rem 0.5rem 0 0;
     text-align: center;
-    background: darken($colorPanelBack, 5%);
-    border-bottom: 0.1rem solid #555;
+    background-color: $mid-grey3;
     cursor: pointer;
     user-select: none;
     position: relative;
-    transition: background 0.2s ease-in-out;
+    transition: background-color 0.2s ease-in-out;
     &:hover {
-      background: darken($colorPanelBack, 10%);
+      background-color: $mid-grey1;
     }
     &:before,
     &:after {
       display: block;
       content: '';
-      width: 0.6rem;
-      height: 0.2rem;
-      background: #fff;
+      width: 0.9rem;
+      height: 0.3rem;
+      background-color: $white;
+      border-radius: 0.1rem;
       position: absolute;
-      top: 1rem;
+      top: 1.2rem;
       transition: transform 0.2s ease-in-out;
     }
     &:before {
@@ -43,6 +48,7 @@
       display: none;
     }
     h4 {
+      border-radius: 0.5rem;
       &:before {
         transform: rotate(-45deg);
       }
@@ -66,18 +72,6 @@
   }
   :global(.form-elem__number-input) {
     width: 8rem;
-  }
-  &:global(.highlight) {
-    &:before {
-      display: block;
-      content: '';
-      position: absolute;
-      height: 100%;
-      width: 0.3rem;
-      left: 0;
-      top: 0;
-      background: green;
-    }
   }
 }
 

@@ -1,9 +1,10 @@
+@import './fonts';
 @import './variables';
 
 html {
   font-size: 62.5%;
-  font-family: sans-serif;
-  color: $font-color;
+  font-family: ArchivoNarrow, sans-serif;
+  color: $dark-grey1;
   line-height: 1.4;
 }
 
@@ -42,4 +43,22 @@ body > canvas,
   width: 1px;
   height: 1px;
   z-index: 11000;
+}
+
+.scrollbar {
+  scrollbar-width: 2rem;
+  scrollbar-color: $dark-grey3 $light-grey7;
+  &::-webkit-scrollbar {
+    width: 2rem;
+  }
+  &::-webkit-scrollbar-track {
+    background: $light-grey7;
+    border-radius: 1rem;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: $dark-grey3;
+    border-radius: 1rem;
+    border-left: 0.8rem solid $light-grey7;
+    border-right: 0.8rem solid $light-grey7;
+  }
 }

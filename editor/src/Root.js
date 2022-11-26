@@ -4,6 +4,7 @@ import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { OutlinePass } from 'three/addons/postprocessing/OutlinePass.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { FXAAShader } from 'three/addons/shaders/FXAAShader.js';
+import { SMAAPass } from 'three/addons/postprocessing/SMAAPass.js';
 import * as Stats from 'stats.js';
 
 import { Component } from '../LIGHTER';
@@ -81,11 +82,15 @@ class Root {
     const scene = new SceneLoader(sceneParams, isEditor);
 
     if (isEditor) {
-      // Editor post processing (outline and FXAA)
-      this.editorComposer = new EffectComposer(renderer);
+      // Editor post processing (outline and SMAA/FXAA)
+      const reso = getScreenResolution();
+      const size = renderer.getDrawingBufferSize(new THREE.Vector2());
+      const renderTarget = new THREE.WebGLRenderTarget(size.width, size.height, {
+        samples: 4,
+      });
+      this.editorComposer = new EffectComposer(renderer, renderTarget);
       this.renderPass = new RenderPass(scene, this.sceneItems.curCamera);
       this.editorComposer.addPass(this.renderPass);
-      const reso = getScreenResolution();
       const editorOutlinePass = new OutlinePass(
         new THREE.Vector2(reso.x * pixelRatio, reso.y * pixelRatio),
         scene,
@@ -101,13 +106,15 @@ class Root {
       editorOutlinePass.overlayMaterial.blending = THREE.NormalBlending;
       setSceneItem('editorOutlinePass', editorOutlinePass);
       this.editorOutlinePass = editorOutlinePass;
-      const effectFXAA = new ShaderPass(FXAAShader);
-      effectFXAA.uniforms['resolution'].value.set(
-        1 / (reso.x * pixelRatio),
-        1 / (reso.y * pixelRatio)
-      );
       this.editorComposer.addPass(editorOutlinePass);
-      this.editorComposer.addPass(effectFXAA);
+      // const effectFXAA = new ShaderPass(FXAAShader);
+      // effectFXAA.uniforms['resolution'].value.set(
+      //   1 / (reso.x * pixelRatio),
+      //   1 / (reso.y * pixelRatio)
+      // );
+      // this.editorComposer.addPass(effectFXAA);
+      const SMAA = new SMAAPass(reso.x * pixelRatio, reso.y * pixelRatio);
+      this.editorComposer.addPass(SMAA);
       setSceneItem('editorComposer', this.editorComposer);
 
       // Stats

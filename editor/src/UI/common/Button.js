@@ -21,7 +21,13 @@ class Button extends Component {
       data.class = 'button';
     }
     this.onClick = data.onClick;
+
+    if (data.icon) this.icon = data.icon;
   }
+
+  paint = () => {
+    if (this.icon) this.addChildDraw(this.icon);
+  };
 
   addListeners = () => {
     this.addListener({

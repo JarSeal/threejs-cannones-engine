@@ -1,12 +1,12 @@
 import * as THREE from 'three';
 
-import { getSceneItem, setSceneItem } from '../../sceneData/sceneItems';
+import { getSceneItem, setSceneItem } from '../../../sceneData/sceneItems';
 
 class CameraMeshIcon {
   constructor(camera, cameraParams) {
     const scene = getSceneItem('scene');
     const cameraIcon = new THREE.Group();
-    // TODO: import a good camera icon
+    // TODO: create (in Blender) and import a proper camera icon
     const cameraIconGeo = new THREE.BoxGeometry(0.2, 0.2, 0.28);
     const cameraIconMat = new THREE.MeshBasicMaterial({ color: 0xff0000 });
     const cameraIconMesh = new THREE.Mesh(cameraIconGeo, cameraIconMat);

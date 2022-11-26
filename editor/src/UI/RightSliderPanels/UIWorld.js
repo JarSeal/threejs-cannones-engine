@@ -8,6 +8,7 @@ import { saveSceneState } from '../../sceneData/saveSession';
 import SettingsPanel from '../common/SettingsPanel';
 import NumberInput from '../common/form/NumberInput';
 import TextInput from '../common/form/TextInput';
+import SvgIcon from '../icons/svg-icon';
 
 class UIWorld extends Component {
   constructor(data) {
@@ -17,10 +18,18 @@ class UIWorld extends Component {
   paint = () => {
     this.addChildDraw({
       id: 'panel-title-' + this.id,
-      text: 'World settings',
+      text: 'World',
       tag: 'h3',
       class: 'panelTitle',
     });
+    this.addChildDraw(
+      new SvgIcon({
+        id: this.id + '-main-icon',
+        icon: 'globe',
+        width: 22,
+        class: 'mainTabIcon',
+      })
+    );
     this._basicHelpers();
   };
 

@@ -15,6 +15,9 @@ import ConfirmationDialog from '../dialogs/Confirmation';
 import TextInput from '../common/form/TextInput';
 import SimpleIDInput from '../common/form/SimpleIDInput';
 import { getScreenResolution } from '../../utils/utils';
+import SvgIcon from '../icons/svg-icon';
+import Button from '../common/Button';
+import NewCamera from '../dialogs/NewCamera';
 
 class UICamera extends Component {
   constructor(data) {
@@ -25,10 +28,33 @@ class UICamera extends Component {
   paint = () => {
     this.addChildDraw({
       id: 'panel-title-' + this.id,
-      text: 'Camera settings',
+      text: 'Cameras',
       tag: 'h3',
       class: 'panelTitle',
     });
+    this.addChildDraw(
+      new SvgIcon({
+        id: this.id + '-main-icon',
+        icon: 'camera',
+        width: 22,
+        class: 'mainTabIcon',
+      })
+    );
+    const actionButtonsWrapperId = this.id + '-actions-wrapper';
+    this.addChildDraw(new Component({ id: actionButtonsWrapperId, class: 'panelActionButtons' }));
+    this.addChildDraw(
+      new Button({
+        id: this.id + '-add-new-camera-action',
+        onClick: () =>
+          getSceneItem('dialog').appear({
+            component: NewCamera,
+            title: 'Add new camera',
+          }),
+        class: 'panelActionButton',
+        attach: actionButtonsWrapperId,
+        icon: new SvgIcon({ id: this.id + '-plus-icon', icon: 'plus', width: 16 }),
+      })
+    );
     this._cameras();
   };
 

@@ -13,7 +13,7 @@ import SimpleIDInput from '../common/form/SimpleIDInput';
 import TextInput from '../common/form/TextInput';
 import VectorInput from '../common/form/VectorInput';
 import SettingsPanel from '../common/SettingsPanel';
-import CameraMeshIcon from '../icons/CameraMeshIcon';
+import CameraMeshIcon from '../icons/meshes/CameraMeshIcon';
 
 class NewCamera extends Component {
   constructor() {

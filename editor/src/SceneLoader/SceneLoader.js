@@ -5,7 +5,7 @@ import { setSceneItem } from '../sceneData/sceneItems';
 import { getScreenResolution } from '../utils/utils';
 import ElementLoader from './ElementLoader';
 import { createOrbitControls } from '../controls/orbitControls';
-import CameraMeshIcon from '../UI/icons/CameraMeshIcon';
+import CameraMeshIcon from '../UI/icons/meshes/CameraMeshIcon';
 import { saveStateByKey } from '../sceneData/saveSession';
 
 class SceneLoader {
