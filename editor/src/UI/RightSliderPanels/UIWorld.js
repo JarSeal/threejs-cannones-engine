@@ -51,6 +51,7 @@ class UIWorld extends Component {
       new Checkbox({
         id: showGridHelperId,
         attach: helpersContentId,
+        class: 'panelCheckBox',
         label: 'Show grid',
         name: 'showGrid',
         hideMsg: true,
