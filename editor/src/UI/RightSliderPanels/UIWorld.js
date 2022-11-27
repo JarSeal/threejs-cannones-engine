@@ -46,6 +46,24 @@ class UIWorld extends Component {
       })
     );
 
+    const showAxesHelperId = 'axes-helper-' + this.id;
+    this.addChildDraw(
+      new Checkbox({
+        id: showAxesHelperId,
+        attach: helpersContentId,
+        class: 'panelCheckBox',
+        label: 'Show axes',
+        name: 'showAxes',
+        hideMsg: true,
+        changeFn: () => {
+          axesHelper.visible = !axesHelper.visible;
+          setSceneParam('axesHelper', axesHelper.visible);
+          saveSceneState();
+        },
+        value: axesHelper.visible,
+      })
+    );
+
     const showGridHelperId = 'grid-helper-' + this.id;
     this.addChildDraw(
       new Checkbox({
@@ -88,23 +106,6 @@ class UIWorld extends Component {
           if (!getSceneParam('grid')) gridHelper.visible = false;
           scene.add(gridHelper);
         },
-      })
-    );
-
-    const showAxesHelperId = 'axes-helper-' + this.id;
-    this.addChildDraw(
-      new Checkbox({
-        id: showAxesHelperId,
-        attach: helpersContentId,
-        label: 'Show axes',
-        name: 'showAxes',
-        hideMsg: true,
-        changeFn: () => {
-          axesHelper.visible = !axesHelper.visible;
-          setSceneParam('axesHelper', axesHelper.visible);
-          saveSceneState();
-        },
-        value: axesHelper.visible,
       })
     );
 

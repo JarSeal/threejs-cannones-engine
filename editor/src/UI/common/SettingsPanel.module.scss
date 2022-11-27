@@ -57,19 +57,6 @@
       }
     }
   }
-  :global(.form-elem) {
-    padding: 0.3rem 0;
-    + :global(.form-elem) {
-      margin-top: 0.3rem;
-      border-top: 0.1rem solid lighten($colorPanelBack, 5%);
-    }
-  }
-  :global(.form-elem__label) {
-    vertical-align: top;
-    display: inline-block;
-    font-size: 1.1rem;
-    margin-top: 0.6rem;
-  }
   :global(.form-elem__number-input) {
     width: 8rem;
   }
