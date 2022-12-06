@@ -3,6 +3,8 @@ import { Component } from '../../../LIGHTER';
 import globeIcon from './svg/globe.svg?raw';
 import cameraIcon from './svg/video.svg?raw';
 import plusIcon from './svg/plus.svg?raw';
+import caretUpIcon from './svg/caret-up.svg?raw';
+import caretDownIcon from './svg/caret-down.svg?raw';
 import triangleExclamation from './svg/triangle-exclamation.svg?raw';
 
 class SvgIcon extends Component {
@@ -31,6 +33,10 @@ class SvgIcon extends Component {
         return cameraIcon;
       case 'plus':
         return plusIcon;
+      case 'caretUp':
+        return caretUpIcon;
+      case 'caretDown':
+        return caretDownIcon;
       default:
         this.noIconFound = true;
         return triangleExclamation;

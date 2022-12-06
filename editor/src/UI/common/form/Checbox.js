@@ -50,9 +50,10 @@ class Checkbox extends Component {
   }
 
   addListeners(data) {
+    const inputElem = document.getElementById(this.inputId);
     this.addListener({
       id: this.inputId + '-click',
-      target: document.getElementById(this.inputId),
+      target: inputElem,
       type: 'click',
       fn: (e) => {
         this.value = e.target.checked;
@@ -64,6 +65,26 @@ class Checkbox extends Component {
         }
         if (data.changeFn) data.changeFn(e);
       },
+    });
+    this.addListener({
+      id: this.inputId + '-keyup',
+      target: inputElem,
+      type: 'keyup',
+      fn: (e) => {
+        if (e.code === 'Escape') inputElem.blur();
+      },
+    });
+    this.addListener({
+      id: this.inputId + '-focus',
+      target: inputElem,
+      type: 'focus',
+      fn: () => this.elem.classList.add('focused'),
+    });
+    this.addListener({
+      id: this.inputId + '-blur',
+      target: inputElem,
+      type: 'blur',
+      fn: () => this.elem.classList.remove('focused'),
     });
   }
 

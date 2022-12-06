@@ -90,10 +90,11 @@ class UIWorld extends Component {
         label: 'Grid size',
         step: 2,
         min: 2,
+        max: 200000,
         value: getSceneParam('gridSize'),
         disabled: !gridHelper.visible,
-        changeFn: (e, setValue) => {
-          let value = parseInt(e.target.value);
+        changeFn: (value, setValue) => {
+          value = parseInt(value);
           if (value % 2 !== 0) {
             value += 1;
             setValue(value, true);

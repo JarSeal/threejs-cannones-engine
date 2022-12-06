@@ -144,20 +144,22 @@ class Root {
       // Set selection(s)
       const selectionIds = sceneParams.selection;
       const selection = [];
-      selectionIds.forEach((id) => {
-        const editorIcons = this.sceneItems.editorIcons;
-        for (let i = 0; i < editorIcons.length; i++) {
-          if (editorIcons[i]?.iconMesh?.userData.id === id) {
-            selection.push(editorIcons[i].iconMesh);
+      if (selectionIds && selectionIds.length) {
+        selectionIds.forEach((id) => {
+          const editorIcons = this.sceneItems.editorIcons;
+          for (let i = 0; i < editorIcons.length; i++) {
+            if (editorIcons[i]?.iconMesh?.userData.id === id) {
+              selection.push(editorIcons[i].iconMesh);
+            }
           }
-        }
-        const elements = this.sceneItems.elements;
-        for (let i = 0; i < elements.length; i++) {
-          if (elements[i].userData.id === id) {
-            selection.push(elements[i]);
+          const elements = this.sceneItems.elements;
+          for (let i = 0; i < elements.length; i++) {
+            if (elements[i].userData.id === id) {
+              selection.push(elements[i]);
+            }
           }
-        }
-      });
+        });
+      }
       this.editorOutlinePass.selectedObjects = selection;
     }
 

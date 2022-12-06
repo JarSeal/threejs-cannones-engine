@@ -1,19 +1,18 @@
 @import '../variables.scss';
 
 .panelCheckBox {
-  width: 10.2rem;
-  height: 3.6rem;
   background-color: $light-grey6;
-  border-radius: 0.4rem;
   overflow: hidden;
   padding: 0 !important;
-  text-align: left;
-  transition: background-color 0.15s ease-in-out;
+  border: 0.1rem solid transparent;
+  position: relative;
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
   input {
-    visibility: hidden;
+    opacity: 0;
   }
   label {
     position: relative;
+    z-index: 10;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -94,5 +93,8 @@
         left: 0.9rem;
       }
     }
+  }
+  &.focused {
+    border-color: $mid-grey1;
   }
 }

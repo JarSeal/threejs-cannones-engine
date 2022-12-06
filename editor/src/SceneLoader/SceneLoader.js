@@ -21,9 +21,9 @@ class SceneLoader {
     setSceneItem('scene', this.scene);
     this._createCameras(sceneParams.cameras, sceneParams);
     this._createLights(sceneParams.lights);
+    this._createObjects(sceneParams.elements);
     this._createGrid(sceneParams);
     this._createAxesHelper(sceneParams);
-    this._createObjects(sceneParams.elements);
   };
 
   _createCameras = (camerasA, sceneParams) => {
@@ -185,7 +185,11 @@ class SceneLoader {
 
   _createGrid = (sceneParams) => {
     if (!this.isEditor) return;
-    const size = sceneParams.gridSize || 100;
+    let size = sceneParams.gridSize || 100;
+    if (size > 200000) {
+      size = 200000;
+      sceneParams.gridSize = size;
+    }
     const grid = new THREE.GridHelper(size, size);
     if (!sceneParams.grid) grid.visible = false;
     this.scene.add(grid);

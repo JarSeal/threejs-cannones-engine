@@ -1,6 +1,8 @@
 @import './fonts';
 @import './variables';
+@import './form/base';
 @import './form/panelCheckBox';
+@import './form/inputNumber';
 
 html {
   font-size: 62.5%;
