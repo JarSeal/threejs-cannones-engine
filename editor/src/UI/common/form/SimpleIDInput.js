@@ -4,6 +4,7 @@ import { getSceneItem } from '../../../sceneData/sceneItems';
 import { getSceneParam, setSceneParam } from '../../../sceneData/sceneParams';
 import Button from '../Button';
 import TextInput from './TextInput';
+import SvgIcon from '../../icons/svg-icon';
 import './SimpleIDInput.scss';
 
 // Attributes:
@@ -19,7 +20,7 @@ class SimpleIDInput extends Component {
   constructor(data) {
     super(data);
     this.inputId = this.id + '-text-input';
-    data.class = ['form-elem', 'form-elem--simple-id'];
+    data.class = ['form-elem', 'form-elem--simple-id', 'simpleIdInput'];
     this.curId = data.curId;
     this.undoValue = this.curId;
     this.newId = data.newId;
@@ -60,8 +61,12 @@ class SimpleIDInput extends Component {
     if (!this.newId) {
       this.returnOriginalValueButton = this.addChild(
         new Button({
-          id: this.id + '-return-original-val',
-          text: 'Undo',
+          id: this.id + '-undo',
+          icon: new SvgIcon({
+            id: this.id + '-undo-icon',
+            icon: 'undo',
+            width: 17,
+          }),
           onClick: this._undoClick,
         })
       );

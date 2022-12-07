@@ -17,6 +17,7 @@
   "dependencies": {
     "@babel/plugin-transform-runtime": "^7.18.10",
     "@babel/preset-env": "^7.18.2",
+    "alwan": "^1.0.5",
     "caniuse-lite": "^1.0.30001344",
     "cross-env": "^7.0.3",
     "postcss-loader": "^6.2.0",

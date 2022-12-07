@@ -22,7 +22,7 @@ class TextInput extends Component {
     if (!data.label && data.label !== '') data.label = data.id;
     this.inputId = this.id + '-input';
     this.template = `
-            <div class="form-elem form-elem--text-input">
+            <div class="form-elem form-elem--text-input inputText">
                 <label for="${this.inputId}">
                     <span class="form-elem__label">${data.label}</span>
                     <input

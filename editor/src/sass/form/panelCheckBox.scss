@@ -36,14 +36,13 @@
       position: absolute;
       z-index: 20;
       border-radius: 0.2rem;
+      top: 1.8rem;
     }
     &:before {
-      top: 1.9rem;
       left: 0.9rem;
       transform: rotate(45deg);
     }
     &:after {
-      top: 1.9rem;
       left: 0.9rem;
       transition-delay: 0.05s;
       transform: rotate(-45deg);
@@ -67,7 +66,7 @@
       background-color: $white;
       box-shadow: 0 0 0.4rem 0.1rem rgba($black, 0.26) inset;
       position: absolute;
-      top: 0.9rem;
+      top: 0.8rem;
       left: 0.4rem;
       transition: border-color 0.15s ease-in-out;
     }
@@ -84,12 +83,12 @@
     label {
       &:before {
         width: 0.6rem;
-        top: 1.8rem;
+        top: 1.7rem;
         left: 0.7rem;
       }
       &:after {
         width: 1.1rem;
-        top: 1.7rem;
+        top: 1.6rem;
         left: 0.9rem;
       }
     }

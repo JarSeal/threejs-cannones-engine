@@ -9,6 +9,7 @@ import SettingsPanel from '../common/SettingsPanel';
 import NumberInput from '../common/form/NumberInput';
 import TextInput from '../common/form/TextInput';
 import SvgIcon from '../icons/svg-icon';
+import ColorPicker from '../common/form/ColorPicker';
 
 class UIWorld extends Component {
   constructor(data) {
@@ -119,17 +120,21 @@ class UIWorld extends Component {
         contentId: envContentId,
       })
     );
+    this.addChildDraw({
+      id: this.id + '-env-title1',
+      attach: envContentId,
+      class: ['panelTitle'],
+      text: 'Scene background and skybox:',
+    });
     this.addChildDraw(
-      new TextInput({
-        id: 'env-clearcolor-' + this.id,
+      new ColorPicker({
+        id: this.id + '-env-back-color',
         attach: envContentId,
-        label: 'Background color:',
-        value: getSceneParam('rendererClearColor'),
-        blurOnEnter: true,
-        onBlur: (e) => {
-          const val = e.target.value;
-          setSceneParam('rendererClearColor', val);
-          getSceneItem('renderer').setClearColor(val);
+        color: getSceneParam('rendererClearColor'),
+        label: 'Background',
+        onChangeColor: (newColor) => {
+          setSceneParam('rendererClearColor', newColor.hex);
+          getSceneItem('renderer').setClearColor(newColor.hex);
           saveSceneState();
         },
       })

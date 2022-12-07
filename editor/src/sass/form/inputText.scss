@@ -1,0 +1,33 @@
+.inputText {
+  width: 100%;
+  overflow: visible;
+  label {
+    width: 100%;
+    height: 100%;
+  }
+  .form-elem__input {
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    padding-top: 1.3rem;
+    padding-left: 0.5rem;
+    border: 0;
+    outline: none;
+    font-family: ArchivoNarrow, sans-serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: $dark-grey2;
+  }
+  .form-elem__error-msg {
+    position: absolute;
+    top: 100%;
+    right: 0.2rem;
+    font-size: 1rem;
+    font-family: ArchivoNarrow, sans-serif;
+    font-weight: 600;
+    font-style: italic;
+  }
+  &.form-elem--error {
+    border-color: $error;
+  }
+}
