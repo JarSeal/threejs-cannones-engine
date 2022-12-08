@@ -47,7 +47,20 @@
   &__indicator {
     z-index: 5;
   }
-  &.focus {
-    border-color: $dark-grey1;
+}
+
+.alwan {
+  padding: 1rem;
+  border-radius: 0.4rem;
+  background: $light-grey8;
+  &__input {
+    border-radius: 0.4rem;
+  }
+  &__container {
+    padding: 1rem 0;
+  }
+  .alwan__preview {
+    overflow: hidden;
+    border-radius: 0.4rem;
   }
 }

@@ -108,7 +108,7 @@ class NumberInput extends Component {
       target: inputElem,
       type: 'focus',
       fn: (e) => {
-        this.elem.classList.add('focused');
+        this.elem.classList.add('focus');
         if (data.doNotSelectOnFocus) return;
         e.target.select();
       },
@@ -117,7 +117,7 @@ class NumberInput extends Component {
       id: this.inputId + '-blur',
       target: inputElem,
       type: 'blur',
-      fn: () => this.elem.classList.remove('focused'),
+      fn: () => this.elem.classList.remove('focus'),
     });
     this.addListener({
       id: this.id + '-buttonUp-listener',

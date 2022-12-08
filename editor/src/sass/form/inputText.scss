@@ -1,6 +1,7 @@
 .inputText {
   width: 100%;
   overflow: visible;
+  transition: border-color 0.2s ease-in-out;
   label {
     width: 100%;
     height: 100%;

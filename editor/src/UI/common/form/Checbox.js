@@ -78,13 +78,13 @@ class Checkbox extends Component {
       id: this.inputId + '-focus',
       target: inputElem,
       type: 'focus',
-      fn: () => this.elem.classList.add('focused'),
+      fn: () => this.elem.classList.add('focus'),
     });
     this.addListener({
       id: this.inputId + '-blur',
       target: inputElem,
       type: 'blur',
-      fn: () => this.elem.classList.remove('focused'),
+      fn: () => this.elem.classList.remove('focus'),
     });
   }
 

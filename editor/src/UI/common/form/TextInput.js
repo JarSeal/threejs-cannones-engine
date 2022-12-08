@@ -73,6 +73,7 @@ class TextInput extends Component {
         target: inputElem,
         type: 'focus',
         fn: (e) => {
+          this.elem.classList.add('focus');
           if (!data.doNotSelectOnFocus) e.target.select();
           if (this.onFocus) this.onFocus(e);
         },
@@ -84,6 +85,7 @@ class TextInput extends Component {
         target: inputElem,
         type: 'blur',
         fn: (e) => {
+          this.elem.classList.remove('focus');
           this.onBlur(e);
         },
       });

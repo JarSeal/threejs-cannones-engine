@@ -8,6 +8,9 @@
   overflow: hidden;
   text-align: left;
   margin-bottom: 0.5rem;
+  &.focus {
+    border-color: $dark-grey1;
+  }
 }
 .inputNumber,
 .inputColor,

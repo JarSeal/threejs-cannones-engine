@@ -81,6 +81,7 @@ class SimpleIDInput extends Component {
       clearTimeout(this.timeout);
       this.timeout = setTimeout(() => {
         // Loop through all ids and change the matching curId to the new one
+        const nextElemId = document.activeElement.id;
         for (let g = 0; g < this.groups.length; g++) {
           const group = this.groups[g];
           const items = getSceneParam(group);
@@ -114,6 +115,7 @@ class SimpleIDInput extends Component {
           currentCameraId
         );
         if (!this.newId) this.returnOriginalValueButton.discard();
+        if (nextElemId) document.getElementById(nextElemId).focus(); // Because the timeout will rerender, the possible active elem needs to be refocused
       }, 400);
     }
   };

@@ -349,6 +349,7 @@ class UICamera extends Component {
         new Checkbox({
           id: 'orbitControls-' + c.id + '-' + this.id,
           attach: contentId,
+          class: 'panelCheckBox',
           label: 'Orbit controls',
           changeFn: (e) => {
             const isTurnedOn = e.target.checked;
@@ -368,6 +369,7 @@ class UICamera extends Component {
         new Checkbox({
           id: 'showHelper-' + c.id + '-' + this.id,
           attach: contentId,
+          class: 'panelCheckBox',
           label: 'Show helper',
           changeFn: (e) => {
             const isTurnedOn = e.target.checked;

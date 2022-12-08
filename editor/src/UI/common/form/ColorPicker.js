@@ -55,7 +55,7 @@ class ColorPicker extends Component {
       color: '#' + this.colorHex,
       default: '#F00',
       opacity: this.useOpacity,
-      theme: 'dark',
+      theme: 'light',
       format: 'hex',
       margin: 1,
     });
