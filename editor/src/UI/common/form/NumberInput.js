@@ -49,6 +49,7 @@ class NumberInput extends Component {
       class: 'form-elem__error-msg',
     });
     if (data.error) data.class = 'form-elem--error';
+    this.disabled = data.disabled;
   }
 
   paint = () => {
@@ -68,6 +69,7 @@ class NumberInput extends Component {
         attach: this.buttonDownId,
       })
     );
+    this.toggleDisabled(this.disabled);
   };
 
   addListeners(data) {
@@ -124,7 +126,7 @@ class NumberInput extends Component {
       target: document.getElementById(this.buttonUpId),
       type: 'click',
       fn: () => {
-        this.setValue(checkMinMaxValue(this.value + (this.step || 1)));
+        this.setValue(checkMinMaxValue(parseFloat(this.value + (this.step || 1))));
         inputElem.focus();
       },
     });
@@ -133,7 +135,7 @@ class NumberInput extends Component {
       target: document.getElementById(this.buttonDownId),
       type: 'click',
       fn: () => {
-        this.setValue(checkMinMaxValue(this.value - (this.step || 1)));
+        this.setValue(checkMinMaxValue(parseFloat(this.value - (this.step || 1))));
         inputElem.focus();
       },
     });
@@ -164,7 +166,19 @@ class NumberInput extends Component {
 
   toggleDisabled = (isDisabled) => {
     const inputElem = document.getElementById(this.inputId);
-    isDisabled ? inputElem.setAttribute('disabled', '') : inputElem.removeAttribute('disabled');
+    const buttonUpElem = document.getElementById(this.buttonUpId);
+    const buttonDownElem = document.getElementById(this.buttonDownId);
+    if (isDisabled) {
+      this.elem.classList.add('disabled');
+      inputElem.setAttribute('disabled', '');
+      buttonUpElem.setAttribute('disabled', '');
+      buttonDownElem.setAttribute('disabled', '');
+    } else {
+      this.elem.classList.remove('disabled');
+      inputElem.removeAttribute('disabled');
+      buttonUpElem.removeAttribute('disabled');
+      buttonDownElem.removeAttribute('disabled');
+    }
   };
 }
 

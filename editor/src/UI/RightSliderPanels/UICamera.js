@@ -61,7 +61,7 @@ class UICamera extends Component {
   _cameras = () => {
     const cams = getSceneParam('cameras');
     const camPanels = [];
-    cams.forEach((c) => {
+    cams.forEach((c, index) => {
       // Camera panel
       const contentId = 'panel-cameras-content-' + c.index + '-' + this.id;
       camPanels.push(
@@ -78,7 +78,7 @@ class UICamera extends Component {
       // ID
       this.addChildDraw(
         new SimpleIDInput({
-          id: 'camId-' + c.id + '-' + this.id,
+          id: 'camId-' + index + '-' + this.id,
           label: 'ID:',
           attach: contentId,
           curId: c.id,
@@ -88,7 +88,7 @@ class UICamera extends Component {
       // Name
       this.addChildDraw(
         new TextInput({
-          id: 'cam-name' + c.id + '-' + this.id,
+          id: 'cam-name-' + index + '-' + this.id,
           label: 'Name:',
           attach: contentId,
           value: c.name,
@@ -103,7 +103,7 @@ class UICamera extends Component {
       // Type
       this.addChildDraw(
         new InfoField({
-          id: 'infoType-' + c.id + '-' + this.id,
+          id: 'infoType-' + index + '-' + this.id,
           label: 'Type',
           content: c.type,
           attach: contentId,
@@ -114,30 +114,28 @@ class UICamera extends Component {
       if (c.type === 'perspective') {
         this.addChildDraw(
           new NumberInput({
-            id: 'fov-' + c.id + '-' + this.id,
+            id: 'fov-' + index + '-' + this.id,
             attach: contentId,
             label: 'Field of view',
             step: 1,
             min: 1,
             value: c.fov,
-            changeFn: (e) => {
-              const value = parseInt(e.target.value);
-              this._updateCameraProperty(value, c.index, 'fov');
+            changeFn: (value) => {
+              this._updateCameraProperty(parseFloat(value), c.index, 'fov');
             },
           })
         );
       } else if (c.type === 'orthographic') {
         this.addChildDraw(
           new NumberInput({
-            id: 'view-size-' + c.id + '-' + this.id,
+            id: 'view-size-' + index + '-' + this.id,
             attach: contentId,
             label: 'View size',
             step: 0.01,
             min: 0.00001,
             value: c.orthoViewSize,
-            changeFn: (e) => {
-              const value = parseInt(e.target.value);
-              this._updateCameraProperty(value, c.index, 'orthoViewSize');
+            changeFn: (value) => {
+              this._updateCameraProperty(parseFloat(value), c.index, 'orthoViewSize');
             },
           })
         );
@@ -146,15 +144,14 @@ class UICamera extends Component {
       // Frustum near plane
       this.addChildDraw(
         new NumberInput({
-          id: 'near-' + c.id + '-' + this.id,
+          id: 'near-' + index + '-' + this.id,
           attach: contentId,
           label: 'Frustum near plane',
           step: 0.001,
           min: 0.001,
           value: c.near,
-          changeFn: (e) => {
-            const value = parseFloat(e.target.value);
-            this._updateCameraProperty(value, c.index, 'near');
+          changeFn: (value) => {
+            this._updateCameraProperty(parseFloat(value), c.index, 'near');
           },
         })
       );
@@ -162,15 +159,14 @@ class UICamera extends Component {
       // Frustum far plane
       this.addChildDraw(
         new NumberInput({
-          id: 'far-' + c.id + '-' + this.id,
+          id: 'far-' + index + '-' + this.id,
           attach: contentId,
           label: 'Frustum far plane',
           step: 0.001,
           min: 0.001,
           value: c.far,
-          changeFn: (e) => {
-            const value = parseFloat(e.target.value);
-            this._updateCameraProperty(value, c.index, 'far');
+          changeFn: (value) => {
+            this._updateCameraProperty(parseFloat(value), c.index, 'far');
           },
         })
       );
@@ -179,7 +175,7 @@ class UICamera extends Component {
       const transformsId = 'panel-cam-transforms-content-' + c.index + '-' + this.id;
       this.addChildDraw(
         new SettingsPanel({
-          id: 'panel-cam-transforms-' + c.id + '-' + this.id,
+          id: 'panel-cam-transforms-' + index + '-' + this.id,
           title: 'Transforms',
           contentId: transformsId,
           attach: contentId,
@@ -190,18 +186,18 @@ class UICamera extends Component {
       // Position
       this.addChildDraw(
         new VectorInput({
-          id: 'cam-pos-' + c.id + '-' + this.id,
+          id: 'cam-pos-' + index + '-' + this.id,
           attach: transformsId,
           label: 'Position',
           step: 0.5,
-          inputLabels: ['x', 'y', 'z'],
+          inputLabels: ['X', 'Y', 'Z'],
           values: c.position,
-          onChange: (e, index) => {
+          onChange: (value, index) => {
             const cam = getSceneItem('allCameras')[c.index];
             const curPos = getSceneParam('cameras')[c.index].position;
             const curTarget = getSceneParam('cameras')[c.index].target;
             const curQuat = cam.quaternion;
-            curPos[index] = parseFloat(e.target.value);
+            curPos[index] = parseFloat(value);
             this._updateCameraProperty(curPos, c.index, 'position');
             this._updateCameraProperty(curTarget, c.index, 'target');
             this._updateCameraProperty(
@@ -219,18 +215,18 @@ class UICamera extends Component {
       // Target
       const targetComponent = this.addChildDraw(
         new VectorInput({
-          id: 'cam-target-' + c.id + '-' + this.id,
+          id: 'cam-target-' + index + '-' + this.id,
           attach: transformsId,
           label: 'Target',
           step: 0.5,
-          inputLabels: ['x', 'y', 'z'],
+          inputLabels: ['X', 'Y', 'Z'],
           values: c.target,
-          onChange: (e, index) => {
+          onChange: (value, index) => {
             const cam = getSceneItem('allCameras')[c.index];
             const curPos = getSceneParam('cameras')[c.index].position;
             const curTarget = getSceneParam('cameras')[c.index].target;
             const curQuat = cam.quaternion;
-            curTarget[index] = parseFloat(e.target.value);
+            curTarget[index] = parseFloat(value);
             this._updateCameraProperty(curPos, c.index, 'position');
             this._updateCameraProperty(curTarget, c.index, 'target');
             this._updateCameraProperty(
@@ -252,16 +248,16 @@ class UICamera extends Component {
       const rot = getSceneItem('allCameras')[c.index].rotation;
       const rotationComponent = this.addChildDraw(
         new VectorInput({
-          id: 'cam-rot-' + c.id + '-' + this.id,
+          id: 'cam-rot-' + index + '-' + this.id,
           attach: transformsId,
           label: 'Rotation (rad)',
-          inputLabels: ['x', 'y', 'z'],
+          inputLabels: ['X', 'Y', 'Z'],
           step: Math.PI / 16,
           values: [rot.x, rot.y, rot.z],
-          onChange: (e, index) => {
+          onChange: (value, index) => {
             const cam = getSceneItem('allCameras')[c.index];
             const rotationA = [cam.rotation.x, cam.rotation.y, cam.rotation.z];
-            rotationA[index] = parseFloat(e.target.value);
+            rotationA[index] = parseFloat(value);
 
             // 1. Get the length from camera position to target position
             const targetDistance = cam.position.distanceTo(new THREE.Vector3(...c.target));
@@ -296,7 +292,7 @@ class UICamera extends Component {
       const defaultTransformsId = 'panel-cam-default-transforms-content-' + c.index + '-' + this.id;
       this.addChildDraw(
         new SettingsPanel({
-          id: 'panel-cam-default-transforms-' + c.id + '-' + this.id,
+          id: 'panel-cam-default-transforms-' + index + '-' + this.id,
           title: 'Default transforms',
           contentId: defaultTransformsId,
           attach: contentId,
@@ -307,17 +303,17 @@ class UICamera extends Component {
       // Default Position
       this.addChildDraw(
         new VectorInput({
-          id: 'cam-default-pos-' + c.id + '-' + this.id,
+          id: 'cam-default-pos-' + index + '-' + this.id,
           attach: defaultTransformsId,
           label: 'Position',
           step: 0.5,
-          inputLabels: ['x', 'y', 'z'],
+          inputLabels: ['X', 'Y', 'Z'],
           values: c.defaultPosition || c.position || [5, 5, 5],
-          onChange: (e, index) => {
+          onChange: (value, index) => {
             const cameraParams = getSceneParam('cameras');
             if (!cameraParams[c.index].defaultPosition)
               cameraParams[c.index].defaultPosition = [5, 5, 5];
-            cameraParams[c.index].defaultPosition[index] = parseFloat(e.target.value);
+            cameraParams[c.index].defaultPosition[index] = parseFloat(value);
             setSceneParam('cameras', cameraParams);
             saveAllCamerasState(cameraParams);
           },
@@ -327,17 +323,17 @@ class UICamera extends Component {
       // Default Target
       this.addChildDraw(
         new VectorInput({
-          id: 'cam-default-target-' + c.id + '-' + this.id,
+          id: 'cam-default-target-' + index + '-' + this.id,
           attach: defaultTransformsId,
           label: 'Target',
           step: 0.5,
-          inputLabels: ['x', 'y', 'z'],
+          inputLabels: ['X', 'Y', 'X'],
           values: c.defaultTarget || c.target || [0, 0, 0],
-          onChange: (e, index) => {
+          onChange: (value, index) => {
             const cameraParams = getSceneParam('cameras');
             if (!cameraParams[c.index].defaultTarget)
               cameraParams[c.index].defaultTarget = [0, 0, 0];
-            cameraParams[c.index].defaultTarget[index] = parseFloat(e.target.value);
+            cameraParams[c.index].defaultTarget[index] = parseFloat(value);
             setSceneParam('cameras', cameraParams);
             saveAllCamerasState(cameraParams);
           },
@@ -347,7 +343,7 @@ class UICamera extends Component {
       // Orbit controls
       this.addChildDraw(
         new Checkbox({
-          id: 'orbitControls-' + c.id + '-' + this.id,
+          id: 'orbitControls-' + index + '-' + this.id,
           attach: contentId,
           class: 'panelCheckBox',
           label: 'Orbit controls',
@@ -367,7 +363,7 @@ class UICamera extends Component {
       // Show helper
       this.addChildDraw(
         new Checkbox({
-          id: 'showHelper-' + c.id + '-' + this.id,
+          id: 'showHelper-' + index + '-' + this.id,
           attach: contentId,
           class: 'panelCheckBox',
           label: 'Show helper',
@@ -391,7 +387,7 @@ class UICamera extends Component {
       // Action buttons
       const buttons = [
         {
-          id: 'reset-cam-' + c.id + '-' + this.id,
+          id: 'reset-cam-' + index + '-' + this.id,
           text: 'Reset position',
           onClick: () => {
             if (c.index === getSceneParam('curCameraIndex')) {
@@ -413,7 +409,7 @@ class UICamera extends Component {
           },
         },
         {
-          id: 'use-this-cam-' + c.id + '-' + this.id,
+          id: 'use-this-cam-' + index + '-' + this.id,
           text: 'Use this camera',
           onClick: () => {
             if (c.index === getSceneParam('curCameraIndex')) return;
@@ -422,7 +418,7 @@ class UICamera extends Component {
           },
         },
         {
-          id: 'delete-cam-' + c.id + '-' + this.id,
+          id: 'delete-cam-' + index + '-' + this.id,
           text: 'Destroy!',
           class: 'delete-button',
           onClick: () => {
@@ -493,7 +489,7 @@ class UICamera extends Component {
         },
       ];
       this.addChildDraw(
-        new ActionButtons({ id: 'actions-' + c.id + '-' + this.id, attach: contentId, buttons })
+        new ActionButtons({ id: 'actions-' + index + '-' + this.id, attach: contentId, buttons })
       );
     });
     setSceneItem('cameraPanels', camPanels);

@@ -291,7 +291,7 @@ class NewCamera extends Component {
             cameraParams.map((c) => ({ value: c.id, label: c.name || c.id })),
             allCameras[getSceneParam('curCameraIndex')].id
           );
-          getSceneItem('rightSidePanel').updatePanel('UICamera');
+          getSceneItem('rightSidePanel').updatePanel();
 
           getSceneItem('dialog').disappear();
         },

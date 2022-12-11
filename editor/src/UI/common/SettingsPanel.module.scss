@@ -5,6 +5,7 @@
   position: relative;
   background-color: $light-grey3;
   border-radius: 0.5rem;
+  width: 100%;
   h4 {
     font-size: 1.4rem;
     color: $light-grey8;
@@ -41,6 +42,39 @@
     &:after {
       transform: rotate(-45deg);
       right: 1.3rem;
+    }
+  }
+  :global(.collapsable-panel) {
+    margin-bottom: 0;
+    h4 {
+      width: 100%;
+      height: 1.8rem;
+      background-color: $light-grey7;
+      color: $mid-grey1;
+      font-size: 1.3rem;
+      font-weight: 400;
+      padding-top: 0.1rem;
+      &:before,
+      &:after {
+        background-color: $mid-grey1;
+        top: 0.8rem;
+      }
+      &:before {
+        right: 0.9rem;
+      }
+      &:after {
+        right: 0.5rem;
+      }
+    }
+    :global(.collapsable-panel__content) {
+      background-color: $light-grey6;
+      border-radius: 0 0 0.5rem 0.5rem;
+    }
+    &:global(.closed) {
+      h4 {
+        border-bottom: 0.6rem solid $light-grey6;
+        height: 2.4rem;
+      }
     }
   }
   &:global(.closed) {

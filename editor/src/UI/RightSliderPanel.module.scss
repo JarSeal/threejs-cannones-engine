@@ -39,87 +39,49 @@
       fill: $mid-grey1;
     }
   }
-  :global(.form-elem--vector-input) {
-    position: relative;
-    > :global(.form-elem__label) {
-      position: absolute;
-      left: 0;
-      top: -0.2rem;
-      color: darken(#fff, 50%);
-      font-size: 0.8rem;
-      font-weight: 700;
-    }
-    :global(.form-elem__fields) {
-      margin-top: 0.7rem;
-      :global(.form-elem__label) {
-        position: relative;
-        width: 2.1rem;
-        &:before {
-          display: block;
-          content: '•';
-          font-size: 2rem;
-          line-height: 1rem;
-          position: absolute;
-          left: 0;
-          top: 0.3rem;
-        }
-      }
-      :global(.form-elem:nth-child(1) .form-elem__label:before) {
-        color: red;
-      }
-      :global(.form-elem:nth-child(2) .form-elem__label:before) {
-        color: green;
-      }
-      :global(.form-elem:nth-child(3) .form-elem__label:before) {
-        color: blue;
-      }
-      :global(.form-elem:nth-child(4) .form-elem__label:before) {
-        color: #fff;
-      }
-      :global(.form-elem + .form-elem) {
-        border-top: none;
-        margin-top: 0;
-      }
-    }
-    input {
-      width: 18rem;
-    }
-  }
-  :global(.collapsable-panel) {
-    h4 {
-      // border-top: 0.5rem dashed lighten($colorPanelBack, 30%);
-      width: 100%;
-      height: 2.6rem;
-    }
-  }
-  :global(.collapsable-panel .collapsable-panel) {
-    border-bottom: 0.1rem solid lighten($colorPanelBack, 5%);
-    border-top: 0.1rem solid lighten($colorPanelBack, 5%);
-    margin-top: 0.2rem;
-    padding-top: 0.4rem;
-    h4 {
-      background: #555;
-      border-top: none;
-      border-radius: 0.5rem 0.5rem 0 0;
-      &:hover {
-        background: darken(#555, 5%);
-      }
-    }
-    &:global(.closed h4) {
-      border-radius: 0.5rem;
-      margin-bottom: 0.4rem;
-    }
-    :global(.collapsable-panel__content) {
-      padding-left: 1rem;
-      padding-right: 1rem;
-      background: lighten($colorPanelBack, 2%);
-      border-radius: 0 0 0.5rem 0.5rem;
-      margin-bottom: 0.4rem;
-    }
-    :global(.form-elem__fields input) {
-      width: 16.8rem;
-    }
-  }
+  // :global(.form-elem--vector-input) {
+  //   position: relative;
+  //   > :global(.form-elem__label) {
+  //     position: absolute;
+  //     left: 0;
+  //     top: -0.2rem;
+  //     color: darken(#fff, 50%);
+  //     font-size: 0.8rem;
+  //     font-weight: 700;
+  //   }
+  //   :global(.form-elem__fields) {
+  //     margin-top: 0.7rem;
+  //     :global(.form-elem__label) {
+  //       position: relative;
+  //       width: 2.1rem;
+  //       &:before {
+  //         display: block;
+  //         content: '•';
+  //         font-size: 2rem;
+  //         line-height: 1rem;
+  //         position: absolute;
+  //         left: 0;
+  //         top: 0.3rem;
+  //       }
+  //     }
+  //     :global(.form-elem:nth-child(1) .form-elem__label:before) {
+  //       color: red;
+  //     }
+  //     :global(.form-elem:nth-child(2) .form-elem__label:before) {
+  //       color: green;
+  //     }
+  //     :global(.form-elem:nth-child(3) .form-elem__label:before) {
+  //       color: blue;
+  //     }
+  //     :global(.form-elem:nth-child(4) .form-elem__label:before) {
+  //       color: #fff;
+  //     }
+  //     :global(.form-elem + .form-elem) {
+  //       border-top: none;
+  //       margin-top: 0;
+  //     }
+  //   }
+  // }
   :global(.form-elem--action-buttons button) {
     border: none;
     padding: 0.4rem 0.5rem;

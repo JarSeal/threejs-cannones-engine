@@ -59,12 +59,28 @@
     color: $dark-grey2;
     font-family: ArchivoNarrow, sans-serif;
     font-size: 1.3rem;
-    padding: 1rem 0 0 0.5rem;
+    padding: 1rem 2rem 0 0.5rem;
     outline: none;
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      margin: 0;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    &[type='number'] {
+      appearance: none;
+      -moz-appearance: textfield;
+    }
   }
   &.smallFont {
     input {
       font-size: 1rem;
+    }
+  }
+  &.disabled {
+    button {
+      pointer-events: none;
+      cursor: auto;
     }
   }
 }

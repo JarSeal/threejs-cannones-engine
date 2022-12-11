@@ -9,6 +9,7 @@
   transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
   input {
     opacity: 0;
+    cursor: pointer;
   }
   label {
     position: relative;

@@ -7,7 +7,6 @@ import { getSceneItem, removeMeshFromScene } from '../../sceneData/sceneItems';
 import { saveSceneState } from '../../sceneData/saveSession';
 import SettingsPanel from '../common/SettingsPanel';
 import NumberInput from '../common/form/NumberInput';
-import TextInput from '../common/form/TextInput';
 import SvgIcon from '../icons/svg-icon';
 import ColorPicker from '../common/form/ColorPicker';
 
@@ -65,6 +64,7 @@ class UIWorld extends Component {
       })
     );
 
+    let gridSize;
     const showGridHelperId = 'grid-helper-' + this.id;
     this.addChildDraw(
       new Checkbox({
@@ -84,7 +84,7 @@ class UIWorld extends Component {
       })
     );
 
-    const gridSize = this.addChildDraw(
+    gridSize = this.addChildDraw(
       new NumberInput({
         id: 'grid-size-' + this.id,
         attach: helpersContentId,

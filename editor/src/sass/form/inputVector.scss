@@ -1,0 +1,79 @@
+.inputVector {
+  width: 100%;
+  position: relative;
+  text-align: left;
+  color: $mid-grey3;
+  font-size: 1rem;
+  font-weight: 600;
+  font-style: italic;
+  + .inputVector {
+    margin-top: -1rem;
+  }
+  &:before {
+    display: block;
+    content: '';
+    width: 100%;
+    height: 0.1rem;
+    position: absolute;
+    top: 0.9rem;
+    left: 0;
+    background-color: $light-grey4;
+  }
+  > .form-elem__label {
+    display: inline-block;
+    padding: 0.2rem 0.4rem 0.1rem;
+    background-color: $light-grey6;
+    margin-left: 0.5rem;
+    position: relative;
+    z-index: 5;
+    // position: relative;
+    // z-index: 20;
+    // &:before {
+    //   display: block;
+    //   content: '';
+    //   width: 100%;
+    //   height: 0.1rem;
+    //   position: absolute;
+    //   top: 50%;
+    //   left: 0;
+    //   background-color: $mid-grey3;
+    // }
+  }
+  .form-elem__fields {
+    width: 100%;
+    display: flex;
+    align-content: space-around;
+    gap: 1rem;
+    flex-wrap: wrap;
+    .form-elem__label {
+      &:after {
+        font-family: sans-serif;
+        display: inline-block;
+        content: '•';
+        font-size: 1.7rem;
+        line-height: 1rem;
+        vertical-align: middle;
+        padding: 0 0 0 0.3rem;
+      }
+    }
+    .form-elem:nth-child(1) .form-elem__label:after {
+      color: red;
+    }
+    .form-elem:nth-child(2) .form-elem__label:after {
+      color: green;
+    }
+    .form-elem:nth-child(3) .form-elem__label:after {
+      color: blue;
+    }
+    .form-elem:nth-child(4) .form-elem__label:after {
+      color: #fff;
+    }
+  }
+  .inputNumber {
+    width: 9.63rem;
+    input {
+      font-size: 1rem;
+      padding-top: 1.3rem;
+    }
+  }
+}

@@ -79,12 +79,9 @@ class RightSidePanel extends Component {
     });
   };
 
-  updatePanel = (tabId) => {
-    if (!tabId) {
-      this.rePaint();
-      return;
-    }
-    if (this.tabId === tabId) this.rePaint();
+  updatePanel = (callback) => {
+    this.rePaint();
+    if (callback) callback();
   };
 
   _tabs = [

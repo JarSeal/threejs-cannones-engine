@@ -67,6 +67,7 @@ class SimpleIDInput extends Component {
             icon: 'undo',
             width: 17,
           }),
+          attributes: { tabindex: '-1' },
           onClick: this._undoClick,
         })
       );
@@ -76,12 +77,11 @@ class SimpleIDInput extends Component {
   _saveValue = (value) => {
     this.undoValue = this.curId;
     const error = this._validate(value);
-    if (!error.hasError) {
+    if (!error.hasError && value !== this.curId) {
       // Wait for a possible undo click because this fn is fired before the possible click can happen
       clearTimeout(this.timeout);
       this.timeout = setTimeout(() => {
         // Loop through all ids and change the matching curId to the new one
-        const nextElemId = document.activeElement.id;
         for (let g = 0; g < this.groups.length; g++) {
           const group = this.groups[g];
           const items = getSceneParam(group);
@@ -105,8 +105,6 @@ class SimpleIDInput extends Component {
           saveStateByKey(group, items);
         }
         this.curId = value;
-        const rightSidePanel = getSceneItem('rightSidePanel');
-        rightSidePanel.updatePanel();
         const cameraParams = getSceneParam('cameras');
         const currentCameraId = cameraParams[getSceneParam('curCameraIndex')]?.id;
         const cameraSelector = getSceneItem('cameraSelectorTool');
@@ -115,7 +113,14 @@ class SimpleIDInput extends Component {
           currentCameraId
         );
         if (!this.newId) this.returnOriginalValueButton.discard();
-        if (nextElemId) document.getElementById(nextElemId).focus(); // Because the timeout will rerender, the possible active elem needs to be refocused
+        const nextElemId = document.activeElement.id;
+        const rightSidePanel = getSceneItem('rightSidePanel');
+        rightSidePanel.updatePanel();
+        if (nextElemId) {
+          // Because the timeout will rerender, the possible active elem needs to be refocused
+          const nextElem = document.getElementById(nextElemId);
+          if (nextElem) nextElem.focus();
+        }
       }, 400);
     }
   };

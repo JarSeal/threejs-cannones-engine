@@ -1,7 +1,8 @@
 .panelCheckBox,
 .inputNumber,
 .inputColor,
-.inputText {
+.inputText,
+.infoField {
   width: 10.2rem;
   height: 3.6rem;
   border-radius: 0.4rem;
@@ -14,7 +15,8 @@
 }
 .inputNumber,
 .inputColor,
-.inputText {
+.inputText,
+.infoField {
   background-color: $white;
   border: 0.1rem solid $mid-grey3;
   position: relative;
@@ -31,5 +33,8 @@
     z-index: 20;
     user-select: none;
     pointer-events: none;
+  }
+  &.disabled {
+    opacity: 0.5;
   }
 }

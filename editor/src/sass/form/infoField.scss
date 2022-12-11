@@ -1,0 +1,18 @@
+.infoField {
+  width: 100%;
+  text-align: left;
+  border-color: transparent;
+  background-color: transparent;
+  margin-top: -1rem;
+  margin-bottom: -0.6rem;
+  .form-elem__label {
+    color: $mid-grey1;
+  }
+  .content {
+    display: inline-block;
+    width: 100%;
+    font-size: 1.3rem;
+    padding: 1.5rem 0.5rem 0.2rem;
+    color: $dark-grey2;
+  }
+}

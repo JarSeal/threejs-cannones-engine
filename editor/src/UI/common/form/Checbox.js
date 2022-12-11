@@ -15,7 +15,7 @@ class Checkbox extends Component {
     if (!data.label) data.label = data.id;
     this.inputId = this.id + '-input';
     this.template = `
-            <div class="form-elem form-elem--checkbox">
+            <div class="form-elem form-elem--checkbox${data.disabled ? ' disabled' : ''}">
                 <label for="${this.inputId}">
                     <span class="form-elem__label">${data.label}</span>
                     <input
