@@ -41,7 +41,9 @@ class UICamera extends Component {
       })
     );
     const actionButtonsWrapperId = this.id + '-actions-wrapper';
-    this.addChildDraw(new Component({ id: actionButtonsWrapperId, class: 'panelActionButtons' }));
+    this.addChildDraw(
+      new Component({ id: actionButtonsWrapperId, class: 'panelTopActionButtons' })
+    );
     this.addChildDraw(
       new Button({
         id: this.id + '-add-new-camera-action',
@@ -387,40 +389,74 @@ class UICamera extends Component {
       // Action buttons
       const buttons = [
         {
-          id: 'reset-cam-' + index + '-' + this.id,
-          text: 'Reset position',
-          onClick: () => {
-            if (c.index === getSceneParam('curCameraIndex')) {
-              removeOrbitControls();
-              createOrbitControls();
-            }
-            const pos = c.defaultPosition || [5, 5, 5];
-            this._updateCameraProperty(pos, c.index, 'position');
-            const target = c.defaultTarget || [0, 0, 0];
-            this._updateCameraProperty(target, c.index, 'target');
-            this._updateCameraProperty(target, c.index, 'target'); // Needs to be called twice in order to make the cam helper place correctly as well
-            if (c.index === getSceneParam('curCameraIndex')) {
-              const controls = getSceneItem('orbitControls');
-              if (controls) controls.target = new THREE.Vector3(...target);
-            }
-            this.rePaint();
-            const editorIcons = getSceneItem('editorIcons');
-            editorIcons[c.index].update(getSceneItem('allCameras')[c.index]);
-          },
-        },
-        {
           id: 'use-this-cam-' + index + '-' + this.id,
-          text: 'Use this camera',
+          icon: new SvgIcon({
+            id: this.id + '-use-cam-icon-' + index,
+            icon: 'camera',
+            width: 16,
+          }),
+          disabled: c.index === getSceneParam('curCameraIndex'),
+          class: 'panelActionButton',
           onClick: () => {
             if (c.index === getSceneParam('curCameraIndex')) return;
             const cameraSelector = getSceneItem('cameraSelectorTool');
             cameraSelector.setValue(c.id);
+            this.updatePanel();
+            document
+              .getElementById('use-this-cam-' + index + '-' + this.id)
+              .nextElementSibling.focus();
+          },
+        },
+        {
+          id: 'reset-cam-' + index + '-' + this.id,
+          icon: new SvgIcon({
+            id: this.id + '-set-to-default-transforms-' + index,
+            icon: 'undo',
+            width: 14,
+          }),
+          class: 'panelActionButton',
+          onClick: () => {
+            const resetTransforms = () => {
+              if (c.index === getSceneParam('curCameraIndex')) {
+                removeOrbitControls();
+                createOrbitControls();
+              }
+              const pos = c.defaultPosition || [5, 5, 5];
+              this._updateCameraProperty(pos, c.index, 'position');
+              const target = c.defaultTarget || [0, 0, 0];
+              this._updateCameraProperty(target, c.index, 'target');
+              this._updateCameraProperty(target, c.index, 'target'); // Needs to be called twice (@TODO: look into this) in order to make the cam helper place correctly as well
+              if (c.index === getSceneParam('curCameraIndex')) {
+                const controls = getSceneItem('orbitControls');
+                if (controls) controls.target = new THREE.Vector3(...target);
+              }
+              this.rePaint();
+              const editorIcons = getSceneItem('editorIcons');
+              editorIcons[c.index].update(getSceneItem('allCameras')[c.index]);
+              document.getElementById('reset-cam-' + index + '-' + this.id).focus();
+            };
+            getSceneItem('dialog').appear({
+              component: ConfirmationDialog,
+              componentData: {
+                id: 'reset-cam-conf-dialog-' + c.id + '-' + this.id,
+                message: 'Are you sure you want to reset to default transforms?',
+                confirmButtonFn: () => {
+                  resetTransforms();
+                  getSceneItem('dialog').disappear();
+                },
+              },
+              title: 'Are you sure?',
+            });
           },
         },
         {
           id: 'delete-cam-' + index + '-' + this.id,
-          text: 'Destroy!',
-          class: 'delete-button',
+          icon: new SvgIcon({
+            id: this.id + '-destroy-cam-' + index,
+            icon: 'trash',
+            width: 12,
+          }),
+          class: ['panelActionButton', 'delete-button'],
           onClick: () => {
             const destoryCamera = () => {
               const cameraItems = getSceneItem('allCameras');
@@ -472,12 +508,15 @@ class UICamera extends Component {
               editorIcons[c.index].remove(c.index);
               this.updatePanel();
             };
-            const cameraTextToDestroy = c.name ? `${c.name} (${c.id})` : c.id;
+            const cameraTextToDestroy = c.name ? `${c.name} (id: ${c.id})` : c.id;
             getSceneItem('dialog').appear({
               component: ConfirmationDialog,
               componentData: {
                 id: 'delete-cam-conf-dialog-' + c.id + '-' + this.id,
-                message: 'Are you sure you want remove this camera: ' + cameraTextToDestroy + '?',
+                message:
+                  'Are you sure you want to destroy this camera completely: ' +
+                  cameraTextToDestroy +
+                  '?',
                 confirmButtonFn: () => {
                   destoryCamera();
                   getSceneItem('dialog').disappear();

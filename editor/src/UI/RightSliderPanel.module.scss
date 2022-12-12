@@ -39,70 +39,6 @@
       fill: $mid-grey1;
     }
   }
-  // :global(.form-elem--vector-input) {
-  //   position: relative;
-  //   > :global(.form-elem__label) {
-  //     position: absolute;
-  //     left: 0;
-  //     top: -0.2rem;
-  //     color: darken(#fff, 50%);
-  //     font-size: 0.8rem;
-  //     font-weight: 700;
-  //   }
-  //   :global(.form-elem__fields) {
-  //     margin-top: 0.7rem;
-  //     :global(.form-elem__label) {
-  //       position: relative;
-  //       width: 2.1rem;
-  //       &:before {
-  //         display: block;
-  //         content: '•';
-  //         font-size: 2rem;
-  //         line-height: 1rem;
-  //         position: absolute;
-  //         left: 0;
-  //         top: 0.3rem;
-  //       }
-  //     }
-  //     :global(.form-elem:nth-child(1) .form-elem__label:before) {
-  //       color: red;
-  //     }
-  //     :global(.form-elem:nth-child(2) .form-elem__label:before) {
-  //       color: green;
-  //     }
-  //     :global(.form-elem:nth-child(3) .form-elem__label:before) {
-  //       color: blue;
-  //     }
-  //     :global(.form-elem:nth-child(4) .form-elem__label:before) {
-  //       color: #fff;
-  //     }
-  //     :global(.form-elem + .form-elem) {
-  //       border-top: none;
-  //       margin-top: 0;
-  //     }
-  //   }
-  // }
-  :global(.form-elem--action-buttons button) {
-    border: none;
-    padding: 0.4rem 0.5rem;
-    border-radius: 0.3rem;
-    background: #eaeaea;
-    cursor: pointer;
-    transition: background 0.2s ease-in-out;
-    + :global(button) {
-      margin-left: 0.3rem;
-    }
-    &:hover {
-      background: darken(#eaeaea, 20%);
-    }
-    &:global(.delete-button) {
-      background: rgb(112, 27, 27);
-      color: #ccc;
-      &:hover {
-        background: darken(rgb(112, 27, 27), 5%);
-      }
-    }
-  }
 }
 
 .uiPanelRightInner {
@@ -160,36 +96,10 @@
   }
 }
 
-:global(.panelActionButtons) {
-  position: absolute;
-  top: 5rem;
-  left: 0;
-  width: 100%;
-  z-index: 30;
-  padding: 0 2rem;
-}
-:global(.panelActionButton) {
-  width: 3.6rem;
-  height: 3.6rem;
-  background-color: $mid-grey1;
-  border: none;
-  padding-top: 0.4rem;
-  border-radius: 0.4rem;
-  box-shadow: 0 -0.4rem 0.4rem 0 rgba(0, 0, 0, 0.25) inset;
-  cursor: pointer;
-  transition: background-color 0.1s ease-in-out;
-  &:hover {
-    background-color: $dark-grey3;
-  }
-  path {
-    fill: $white;
-  }
-}
-
 :global(.collapsable-panel__content) {
   display: flex;
-  align-content: space-around;
-  gap: 1.1rem;
+  align-content: space-between;
+  gap: 1rem;
   flex-wrap: wrap;
 }
 

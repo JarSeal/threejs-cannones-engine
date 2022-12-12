@@ -9,7 +9,9 @@ class Button extends Component {
       console.error('Button must have a onClick declared.', this.id);
     }
     if (!data.template) {
-      this.template = '<button type="button"></button>';
+      this.template = `<button type="button"${
+        this.data.disabled ? ' disabled="true"' : ''
+      }></button>`;
     } else {
       this.template = data.template;
     }
@@ -20,9 +22,14 @@ class Button extends Component {
     } else {
       data.class = 'button';
     }
+    if (data.disabled)
+      typeof data.class === 'string'
+        ? (data.class = [data.class, 'disabled'])
+        : data.class.push('disabled');
     this.onClick = data.onClick;
 
     if (data.icon) this.icon = data.icon;
+    this.disabled = data.disabled;
   }
 
   paint = () => {

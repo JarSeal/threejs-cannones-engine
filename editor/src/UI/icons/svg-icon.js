@@ -5,6 +5,7 @@ import caretUpIcon from './svg/caret-up.svg?raw';
 import caretDownIcon from './svg/caret-down.svg?raw';
 import globeIcon from './svg/globe.svg?raw';
 import plusIcon from './svg/plus.svg?raw';
+import trashIcon from './svg/trash.svg?raw';
 import undoIcon from './svg/rotate-left.svg?raw';
 import redoIcon from './svg/rotate-right.svg?raw';
 import triangleExclamation from './svg/triangle-exclamation.svg?raw';
@@ -39,6 +40,8 @@ class SvgIcon extends Component {
         return globeIcon;
       case 'plus':
         return plusIcon;
+      case 'trash':
+        return trashIcon;
       case 'undo':
         return undoIcon;
       case 'redo':
