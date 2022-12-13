@@ -5,7 +5,6 @@ import { OutlinePass } from 'three/addons/postprocessing/OutlinePass.js';
 // import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 // import { FXAAShader } from 'three/addons/shaders/FXAAShader.js';
 import { SMAAPass } from 'three/addons/postprocessing/SMAAPass.js';
-import * as Stats from 'stats.js';
 
 import { Component } from '../LIGHTER';
 import {
@@ -24,6 +23,8 @@ import { getSceneStates, saveSceneId } from './sceneData/saveSession';
 import TopTools from './UI/TopTools';
 import Dialog from './UI/Dialog';
 import { registerStageClick } from './controls/stageClick';
+import SmallStats from './UI/stats/SmallStats';
+import styleVariables from './sass/variables.scss?raw';
 
 class Root {
   constructor() {
@@ -118,11 +119,35 @@ class Root {
       setSceneItem('editorComposer', this.editorComposer);
 
       // Stats
-      const renderStats = new Stats();
-      renderStats.domElement.id = 'running-stats-render';
-      renderStats.domElement.style.top = 'auto';
-      renderStats.domElement.style.bottom = 0;
-      document.getElementById('root').appendChild(renderStats.dom);
+      const smallStatsColors = {
+        FPS: { fg: null, bg: null },
+        MS: { fg: null, bg: null },
+        MB: { fg: null, bg: null },
+      };
+      const styleVars = styleVariables.split('\n');
+      for (let i = 0; i < styleVars.length; i++) {
+        if (styleVars[i].includes('$smallStats-fg')) {
+          const value = styleVars[i].split(' ')[1].replace(';\r', '');
+          smallStatsColors.FPS.fg = value;
+          smallStatsColors.MS.fg = value;
+          smallStatsColors.MB.fg = value;
+        }
+        if (styleVars[i].includes('$smallStats-bg')) {
+          const value = styleVars[i].split(' ')[1].replace(';\r', '');
+          smallStatsColors.FPS.bg = value;
+          smallStatsColors.MS.bg = value;
+          smallStatsColors.MB.bg = value;
+          break;
+        }
+      }
+      const smallStatsContainer = document.createElement('div');
+      smallStatsContainer.id = 'smallStats-container';
+      const renderStats = new SmallStats(smallStatsColors);
+      renderStats.domElement.id = 'smallStats';
+      // renderStats.domElement.style.top = 'auto';
+      // renderStats.domElement.style.bottom = 0;
+      smallStatsContainer.appendChild(renderStats.domElement);
+      document.getElementById('root').appendChild(smallStatsContainer);
       registerStageClick();
       setSceneItem('runningRenderStats', renderStats);
 

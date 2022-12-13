@@ -68,6 +68,9 @@ class TopTools extends Component {
           setSceneItem('cameraHelpers', helpers);
           newCamera.updateProjectionMatrix();
           if (newCameraHasOrbitControls) createOrbitControls();
+
+          const rightPanel = getSceneItem('rightSidePanel');
+          if (rightPanel.tabId === 'UICamera') rightPanel.updatePanel();
         },
       })
     );

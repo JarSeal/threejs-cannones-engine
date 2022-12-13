@@ -1,0 +1,21 @@
+#smallStats-container {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 8.4rem;
+  height: 5.1rem;
+  background-color: $smallStats-bg;
+  border-radius: 0 0.6rem 0 0;
+  border-top: 0.1rem solid $mid-grey5;
+  border-right: 0.1rem solid $mid-grey5;
+  &:after {
+    display: block;
+    content: '';
+    width: 7.4rem;
+    height: 3rem;
+    background-color: $black;
+    position: absolute;
+    left: 0.4rem;
+    bottom: 0.3rem;
+  }
+}

@@ -1,6 +1,6 @@
 @import './fonts';
 @import './variables';
-@import 'alwan/dist/css/alwan.min.css';
+
 @import './form/base';
 @import './form/panelCheckBox';
 @import './form/inputNumber';
@@ -9,6 +9,9 @@
 @import './form/inputText';
 @import './form/infoField';
 @import './form/actionButtons';
+
+@import 'alwan/dist/css/alwan.min.css';
+@import './editorTools/smallStats';
 
 html {
   font-size: 62.5%;
