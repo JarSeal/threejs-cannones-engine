@@ -24,13 +24,7 @@
       }
     }
   }
-  .form-elem--error {
-    input {
-      border-color: red !important;
-      outline-color: red !important;
-    }
-  }
   .form-elem__error-msg {
-    color: rgb(221, 96, 96);
+    color: $error;
   }
 }

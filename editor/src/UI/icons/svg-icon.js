@@ -8,6 +8,7 @@ import plusIcon from './svg/plus.svg?raw';
 import trashIcon from './svg/trash.svg?raw';
 import undoIcon from './svg/rotate-left.svg?raw';
 import redoIcon from './svg/rotate-right.svg?raw';
+import xMarkIcon from './svg/xmark.svg?raw';
 import triangleExclamation from './svg/triangle-exclamation.svg?raw';
 
 class SvgIcon extends Component {
@@ -46,6 +47,8 @@ class SvgIcon extends Component {
         return undoIcon;
       case 'redo':
         return redoIcon;
+      case 'xMark':
+        return xMarkIcon;
       default:
         this.noIconFound = true;
         return triangleExclamation;

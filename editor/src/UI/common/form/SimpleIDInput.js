@@ -16,6 +16,7 @@ import './SimpleIDInput.scss';
 // - disabled = whether the field is disabled or not [Boolean]
 // - doNotSelectOnFocus = boolean whether to select all content or not [Boolean]
 // - doNotBlurOnEnter = boolean whether to blur from the input field when Enter key is pressed [Boolean]
+// - newId = boolean whether the undo button is shown on mistakes, default is false/undefined [Boolean]
 class SimpleIDInput extends Component {
   constructor(data) {
     super(data);

@@ -63,4 +63,14 @@
     overflow: hidden;
     border-radius: 0.4rem;
   }
+  .lw-label {
+    input {
+      font-family: ArchivoNarrow, sans-serif;
+      font-weight: 400;
+    }
+    span {
+      font-family: ArchivoNarrow, sans-serif;
+      font-weight: 600;
+    }
+  }
 }

@@ -21,13 +21,14 @@ $sidePadding: 4rem;
     top: 50%;
     margin-top: -5rem;
     transform: translate3d(-50%, -50%, 0);
-    background-color: #cbcbcb;
+    background-color: $light-grey7;
     opacity: 0;
     transition-property: opacity, margin-top;
     transition-timing-function: ease-in-out;
-    color: #333;
+    color: $mid-grey1;
     padding: 2rem 0 0;
     box-shadow: 0 0.2rem 2rem rgba(0, 0, 0, 0.8);
+    border-radius: 0.5rem;
     a,
     :global(.link) {
       color: $font-color-dialog;
@@ -40,16 +41,12 @@ $sidePadding: 4rem;
 
   .innerScroller {
     width: 100%;
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow-y: scroll;
     transform: translateY(-0.2rem);
   }
 
   .innerBox {
     padding: $sidePadding;
-    :global(.form-divider) {
-      background-color: #999;
-    }
     :global(.confirmButtonDelete) {
       background-color: $dialog-button-alert-bolor;
       color: #fff;
@@ -92,21 +89,45 @@ $sidePadding: 4rem;
     top: 0;
     z-index: 10;
     padding: 2rem ($sidePadding + 2rem) 2rem $sidePadding;
+    font-family: FredokaOne, sans-serif;
+    font-weight: 400;
+    font-size: 2.4rem;
+    color: $mid-grey1;
   }
 
   .closeButton {
     width: 4rem;
     height: 4rem;
     border: none;
-    background-color: rgba(0, 0, 0, 0.3);
-    transition: background-color 0.2s ease-in-out;
+    background-color: $light-grey4;
+    transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
     cursor: pointer;
     position: absolute;
     top: 0;
     right: 0;
     z-index: 20;
+    padding: 0.5rem 0 0 0.2rem;
+    border-radius: 0 0.5rem;
+    box-shadow: inset 4px -4px 10px rgba(0, 0, 0, 0.15);
     &:hover {
-      background-color: rgba(0, 0, 0, 0.2);
+      background-color: $mid-grey3;
+      box-shadow: inset 4px -4px 10px rgba(0, 0, 0, 0.35);
+      path {
+        fill: $light-grey7;
+      }
+    }
+    path {
+      fill: $mid-grey1;
+      transition: fill 0.2s ease-in-out;
+    }
+    span {
+      pointer-events: none;
+    }
+    &:active {
+      box-shadow: inset 4px -4px 10px rgba(0, 0, 0, 0.5);
+      span {
+        transform: translateY(0.2rem);
+      }
     }
   }
 
