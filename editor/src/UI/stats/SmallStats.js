@@ -82,10 +82,10 @@ class SmallStats {
 }
 
 class Panel {
-  constructor(name, fg, bg) {
+  constructor(name, fg, bg, config) {
     this.min = Infinity;
     this.max = 0;
-    const PR = Math.round(window.devicePixelRatio || 1);
+    const PR = Math.round(config?.devicePixelRatio || window.devicePixelRatio || 1);
     this.PR = PR;
     this.name = name;
     this.fg = fg;
@@ -125,6 +125,12 @@ class Panel {
     context.fillStyle = bg;
     context.globalAlpha = 0.9;
     context.fillRect(conf.GRAPH_X, conf.GRAPH_Y, conf.GRAPH_WIDTH, conf.GRAPH_HEIGHT);
+
+    // Reset the min and max after one minute
+    setInterval(() => {
+      this.min = Infinity;
+      this.max = 0;
+    }, 60000);
   }
 
   update = (value, maxValue) => {

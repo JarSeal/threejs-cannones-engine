@@ -31,12 +31,8 @@ $error: #a64444;
 $smallStats-fg: #545454;
 $smallStats-bg: #b5b5b5;
 
-// OLD COLORS
-// Colors:
-$font-color: #ccc;
-$font-color-dialog: #333;
-$colorPanelBack: #252525;
-$dialog-button-alert-bolor: rgb(92, 25, 25);
+// Elevated button (Action buttons, Dialog buttons, etc.)
+$elevated-shadow: 0 -0.4rem 0.4rem 0 rgba(0, 0, 0, 0.25) inset;
 
 // Sizes:
 $rightPanelWidth: 39rem;
@@ -44,3 +40,17 @@ $rightPanelButtonWrapperWidth: 3.8rem;
 $rightPanelButtonWidth: 3.4rem;
 $rightPanelButtonHeight: 3.8rem;
 $rightPanelButtonGap: 0.2rem;
+
+// Mixins:
+@mixin heading-font {
+  font-family: FredokaOne, sans-serif;
+  font-weight: 400;
+}
+@mixin basetext-font {
+  font-family: ArchivoNarrow, sans-serif;
+  font-weight: 400;
+}
+@mixin basetext-font-bold {
+  font-family: ArchivoNarrow, sans-serif;
+  font-weight: 600;
+}

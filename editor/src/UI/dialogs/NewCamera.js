@@ -17,7 +17,7 @@ import CameraMeshIcon from '../icons/meshes/CameraMeshIcon';
 
 class NewCamera extends Component {
   constructor() {
-    super({ id: 'new-camera-dialog' });
+    super({ id: 'new-camera-dialog', class: 'dialog-form' });
     this.formHasErrors = false;
     // Defalt values
     this.newCameraParams = {
@@ -43,6 +43,7 @@ class NewCamera extends Component {
         label: 'ID',
         curId: this.newCameraParams.id,
         newId: true,
+        focus: true,
         onValidationErrors: () => (this.formHasErrors = true),
         onValidationSuccess: () => (this.formHasErrors = false),
       })
@@ -153,7 +154,7 @@ class NewCamera extends Component {
         attach: transformsId,
         label: 'Position',
         step: 0.5,
-        inputLabels: ['x', 'y', 'z'],
+        inputLabels: ['X', 'Y', 'Z'],
         values: this.newCameraParams.position,
         onChange: (e, index) => {
           this.newCameraParams.position[index] = parseFloat(e.target.value);
@@ -168,7 +169,7 @@ class NewCamera extends Component {
         attach: transformsId,
         label: 'Target',
         step: 0.5,
-        inputLabels: ['x', 'y', 'z'],
+        inputLabels: ['X', 'Y', 'Z'],
         values: this.newCameraParams.target,
         onChange: (e, index) => {
           this.newCameraParams.target[index] = parseFloat(e.target.value);

@@ -37,7 +37,7 @@ class ColorPicker extends Component {
         this.useOpacity ? ' inputColor--opacity' : ''
       }">
         <div id="${this.colorPickerId}"></div>
-        <label class="form-elem__label">${data.label || 'Color'}:</label>
+        <label class="form-elem__label">${data.label || 'Color'}</label>
         <span class="inputColor__value" id="${this.colorHexTextId}">#${this.colorHex}</span>
         <div class="inputColor__indicatorBackground"></div>
         <div id="${this.colorIndicatorId}" class="inputColor__indicator"></div>

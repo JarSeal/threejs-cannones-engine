@@ -14,10 +14,9 @@
   padding: 9.7rem 0 0 2rem;
   :global(h3.panelTitle) {
     width: 100%;
-    font-family: FredokaOne, sans-serif;
+    @include heading-font;
     text-align: center;
     font-size: 2rem;
-    font-weight: 400;
     display: inline-block;
     width: 100%;
     padding: 1.3rem 6rem 0.4rem;

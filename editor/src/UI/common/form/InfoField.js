@@ -5,7 +5,7 @@ class InfoField extends Component {
     super(data);
     this.template = `
     <div class="form-elem form-elem--infoField infoField">
-      <span class="form-elem__label">${data.label}:</span>
+      <span class="form-elem__label">${data.label}</span>
       <span class="content">${data.content}</span>
     </div>
     `;

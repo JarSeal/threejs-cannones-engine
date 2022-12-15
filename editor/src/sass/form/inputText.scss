@@ -2,7 +2,6 @@
   width: 100%;
   max-width: 33.3rem;
   overflow: visible;
-  transition: border-color 0.2s ease-in-out;
   label {
     width: 100%;
     height: 100%;
@@ -15,9 +14,8 @@
     padding-left: 0.5rem;
     border: 0;
     outline: none;
-    font-family: ArchivoNarrow, sans-serif;
+    @include basetext-font-bold;
     font-size: 1.3rem;
-    font-weight: 600;
     color: $dark-grey2;
   }
   .form-elem__error-msg {
@@ -25,8 +23,7 @@
     top: 100%;
     right: 0.2rem;
     font-size: 1rem;
-    font-family: ArchivoNarrow, sans-serif;
-    font-weight: 600;
+    @include basetext-font-bold;
     font-style: italic;
   }
   &.form-elem--error {

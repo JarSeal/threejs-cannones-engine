@@ -17,6 +17,7 @@ import './SimpleIDInput.scss';
 // - doNotSelectOnFocus = boolean whether to select all content or not [Boolean]
 // - doNotBlurOnEnter = boolean whether to blur from the input field when Enter key is pressed [Boolean]
 // - newId = boolean whether the undo button is shown on mistakes, default is false/undefined [Boolean]
+// - focus = boolean whether the input should have focus after initiation or not [Boolean]
 class SimpleIDInput extends Component {
   constructor(data) {
     super(data);
@@ -31,6 +32,7 @@ class SimpleIDInput extends Component {
     this.timeout = null;
     this.groups = ['lights', 'cameras', 'scenes', 'elements'];
     this.regex = new RegExp('^[a-zA-Z0-9-_]+$');
+    this.focus = data.focus;
   }
 
   paint = () => {
@@ -39,6 +41,7 @@ class SimpleIDInput extends Component {
         id: this.inputId,
         label: this.data.label,
         value: this.curId,
+        focus: this.focus,
         changeFn: (e) => {
           const value = e.target.value;
           const error = this._validate(value);

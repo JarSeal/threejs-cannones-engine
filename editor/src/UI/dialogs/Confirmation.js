@@ -6,6 +6,7 @@ import Button from '../common/Button';
 // - message: String
 // - confirmButtonText: String
 // - confirmButtonFn: Function
+// - confirmButtonClasses: Array[String]
 // - cancelButtonText: String
 // - cancelButtonFn: Function
 // - noCancelButton: Boolean (hide cancel button)
@@ -37,24 +38,27 @@ class ConfirmationDialog extends Component {
         })
       ).draw();
     }
-    this.addChild(
-      new Button({
-        id: this.id + '-confirm-button',
-        attach: buttonDivId,
-        text: this.data.confirmButtonText || 'Confirm',
-        class: ['saveButton'],
-        onClick: () => {
-          if (this.Dialog.isLocked) return;
-          if (this.data.confirmButtonFn) {
-            if (this.data.confirmSpinner) this.spinner.showSpinner(true);
-            this.data.confirmButtonFn();
-          } else {
-            this.Dialog.disappear();
-          }
-        },
-      })
-    ).draw();
+    let classes = ['saveButton'];
+    if (Array.isArray(this.data.confirmButtonClasses))
+      classes = [...classes, ...this.data.confirmButtonClasses];
+    const confirmButton = new Button({
+      id: this.id + '-confirm-button',
+      attach: buttonDivId,
+      text: this.data.confirmButtonText || 'Confirm',
+      class: classes,
+      onClick: () => {
+        if (this.Dialog.isLocked) return;
+        if (this.data.confirmButtonFn) {
+          if (this.data.confirmSpinner) this.spinner.showSpinner(true);
+          this.data.confirmButtonFn();
+        } else {
+          this.Dialog.disappear();
+        }
+      },
+    });
+    this.addChildDraw(confirmButton);
     if (this.data.confirmSpinner) this.spinner.draw();
+    confirmButton.elem.focus();
   };
 }
 

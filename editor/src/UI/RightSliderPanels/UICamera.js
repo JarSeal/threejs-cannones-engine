@@ -81,7 +81,7 @@ class UICamera extends Component {
       this.addChildDraw(
         new SimpleIDInput({
           id: 'camId-' + index + '-' + this.id,
-          label: 'ID:',
+          label: 'ID',
           attach: contentId,
           curId: c.id,
         })
@@ -91,7 +91,7 @@ class UICamera extends Component {
       this.addChildDraw(
         new TextInput({
           id: 'cam-name-' + index + '-' + this.id,
-          label: 'Name:',
+          label: 'Name',
           attach: contentId,
           value: c.name,
           onBlur: (e) => {
@@ -513,6 +513,8 @@ class UICamera extends Component {
               component: ConfirmationDialog,
               componentData: {
                 id: 'delete-cam-conf-dialog-' + c.id + '-' + this.id,
+                confirmButtonClasses: ['confirmButtonDelete'],
+                confirmButtonText: 'Destroy!',
                 message:
                   'Are you sure you want to destroy this camera completely: ' +
                   cameraTextToDestroy +

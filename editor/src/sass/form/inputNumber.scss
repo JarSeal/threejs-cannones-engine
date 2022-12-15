@@ -57,7 +57,7 @@
     height: 100%;
     border: 0;
     color: $dark-grey2;
-    font-family: ArchivoNarrow, sans-serif;
+    @include basetext-font;
     font-size: 1.3rem;
     padding: 1rem 2rem 0 0.5rem;
     outline: none;

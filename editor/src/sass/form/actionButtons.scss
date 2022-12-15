@@ -16,7 +16,7 @@
   border: 0.1rem solid transparent;
   padding-top: 0.4rem;
   border-radius: 0.4rem;
-  box-shadow: 0 -0.4rem 0.4rem 0 rgba(0, 0, 0, 0.25) inset;
+  box-shadow: $elevated-shadow;
   cursor: pointer;
   transition: background-color 0.1s ease-in-out;
   &:hover {
@@ -32,7 +32,6 @@
     }
     &:active {
       background-color: $error;
-      box-shadow: none;
     }
   }
   &:focus {
@@ -42,6 +41,10 @@
   &:active {
     background-color: $mid-grey1;
     box-shadow: none;
+    border-color: transparent;
+    span {
+      transform: translateY(0.2rem);
+    }
   }
   &.disabled {
     background-color: $mid-grey4;

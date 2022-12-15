@@ -1,12 +1,12 @@
 @import '../variables.scss';
 
-.panelCheckBox {
+.checkbox {
   background-color: $light-grey6;
   overflow: hidden;
   padding: 0 !important;
   border: 0.1rem solid transparent;
   position: relative;
-  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+  transition: background-color 0.15s ease-in-out;
   input {
     opacity: 0;
     cursor: pointer;
@@ -91,6 +91,23 @@
         width: 1.1rem;
         top: 1.6rem;
         left: 0.9rem;
+      }
+    }
+  }
+  .dialog & {
+    background-color: $light-grey4;
+    .form-elem__label {
+      color: $dark-grey2;
+      &:before {
+        border-color: $light-grey1;
+      }
+    }
+    &:hover {
+      background-color: $light-grey2;
+      .form-elem__label {
+        &:before {
+          border-color: $mid-grey2;
+        }
       }
     }
   }

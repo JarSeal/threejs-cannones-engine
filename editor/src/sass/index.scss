@@ -2,11 +2,12 @@
 @import './variables';
 
 @import './form/base';
-@import './form/panelCheckBox';
+@import './form/checkbox';
 @import './form/inputNumber';
 @import './form/inputVector';
 @import './form/inputColor';
 @import './form/inputText';
+@import './form/dropdown';
 @import './form/infoField';
 @import './form/actionButtons';
 
@@ -15,7 +16,7 @@
 
 html {
   font-size: 62.5%;
-  font-family: ArchivoNarrow, sans-serif;
+  @include basetext-font;
   color: $dark-grey1;
   line-height: 1.4;
 }
@@ -40,6 +41,17 @@ body > canvas,
   width: 100% !important;
   height: 100% !important;
   display: block !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+a,
+button {
+  font-weight: 400;
 }
 
 *,

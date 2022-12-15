@@ -5,9 +5,8 @@
   outline: none;
   position: relative;
   transition: border-color 0.15 ease-in-out;
-  font-family: ArchivoNarrow, sans-serif;
+  @include basetext-font-bold;
   color: $dark-grey2;
-  font-weight: 600;
   cursor: pointer;
   user-select: none;
   .lw-ref {
@@ -30,7 +29,7 @@
   &__indicator,
   &__indicatorBackground {
     border: 0.1rem solid $light-grey3;
-    border-radius: 0.2rem;
+    border-radius: 0.4rem;
     width: 2.4rem;
     height: 2.4rem;
     position: absolute;
@@ -65,12 +64,10 @@
   }
   .lw-label {
     input {
-      font-family: ArchivoNarrow, sans-serif;
-      font-weight: 400;
+      @include basetext-font;
     }
     span {
-      font-family: ArchivoNarrow, sans-serif;
-      font-weight: 600;
+      @include basetext-font-bold;
     }
   }
 }
