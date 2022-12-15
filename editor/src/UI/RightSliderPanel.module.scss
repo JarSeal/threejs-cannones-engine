@@ -38,6 +38,22 @@
       fill: $mid-grey1;
     }
   }
+  :global(.floatingUIButtons) {
+    position: absolute;
+    top: 50%;
+    right: 100%;
+    transform: translateY(-50%);
+    height: auto;
+    border-radius: 0.4rem 0 0 0.4rem;
+    :global(.button) {
+      &:first-child {
+        border-radius: 0.4rem 0 0 0 !important;
+      }
+      &:last-child {
+        border-radius: 0 0 0 0.4rem !important;
+      }
+    }
+  }
 }
 
 .uiPanelRightInner {
@@ -49,51 +65,51 @@
   transform: translate3d(0, 0, 0);
 }
 
-.tabButtonWrapper {
-  width: $rightPanelButtonWrapperWidth;
-  position: absolute;
-  top: 50%;
-  right: 100%;
-  transform: translateY(-50%);
-  padding: 0.1rem;
-  border-radius: 0.4rem 0 0 0.4rem;
-  background-color: $light-grey4;
-  border: 0.1rem solid $mid-grey5;
-  :global(.panelTogglerButton) {
-    background-color: $light-grey4;
-    transition: background-color 0.1s ease-in-out;
-    width: $rightPanelButtonWidth;
-    height: $rightPanelButtonHeight;
-    border: none;
-    outline: none;
-    position: relative;
-    cursor: pointer;
-    color: $mid-grey1;
-    border-top: 0.1rem solid $light-grey6;
-    border-bottom: 0.1rem solid $mid-grey4;
-    padding-top: 0.4rem;
-    &:hover {
-      background-color: $light-grey1;
-    }
-    &:global(.current) {
-      border-bottom: 0.1rem solid $light-grey6;
-      border-top: 0.1rem solid $mid-grey4;
-      background-color: $mid-grey5;
-    }
-    &:first-child {
-      border-radius: 0.4rem 0 0 0;
-      border-top-color: transparent;
-    }
-    &:last-child {
-      border-radius: 0 0 0 0.4rem;
-      padding-top: 0.4rem;
-      border-bottom-color: transparent;
-    }
-    svg path {
-      fill: $mid-grey1;
-    }
-  }
-}
+// .tabButtonWrapper {
+//   width: $rightPanelButtonWrapperWidth;
+//   position: absolute;
+//   top: 50%;
+//   right: 100%;
+//   transform: translateY(-50%);
+//   padding: 0.1rem;
+//   border-radius: 0.4rem 0 0 0.4rem;
+//   background-color: $light-grey4;
+//   border: 0.1rem solid $mid-grey5;
+//   :global(.panelTogglerButton) {
+//     background-color: $light-grey4;
+//     transition: background-color 0.1s ease-in-out;
+//     width: $rightPanelButtonWidth;
+//     height: $rightPanelButtonHeight;
+//     border: none;
+//     outline: none;
+//     position: relative;
+//     cursor: pointer;
+//     color: $mid-grey1;
+//     border-top: 0.1rem solid $light-grey6;
+//     border-bottom: 0.1rem solid $mid-grey4;
+//     padding-top: 0.4rem;
+//     &:hover {
+//       background-color: $light-grey1;
+//     }
+//     &:global(.current) {
+//       border-bottom: 0.1rem solid $light-grey6;
+//       border-top: 0.1rem solid $mid-grey4;
+//       background-color: $mid-grey5;
+//     }
+//     &:first-child {
+//       border-radius: 0.4rem 0 0 0;
+//       border-top-color: transparent;
+//     }
+//     &:last-child {
+//       border-radius: 0 0 0 0.4rem;
+//       padding-top: 0.4rem;
+//       border-bottom-color: transparent;
+//     }
+//     svg path {
+//       fill: $mid-grey1;
+//     }
+//   }
+// }
 
 :global(.collapsable-panel__content) {
   display: flex;

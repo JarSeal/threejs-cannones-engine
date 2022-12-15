@@ -20,7 +20,7 @@ class Button extends Component {
     } else if (data.class) {
       data.class = [data.class, 'button'];
     } else {
-      data.class = 'button';
+      data.class = ['button'];
     }
     if (data.disabled)
       typeof data.class === 'string'

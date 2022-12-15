@@ -19,7 +19,7 @@ class RightSidePanel extends Component {
     this.tabButtonWrapperId = this.id + '-tab-btn-wrapper';
     this.tabButtonWrapper = this.addChild({
       id: this.tabButtonWrapperId,
-      class: styles.tabButtonWrapper,
+      class: ['floatingUIButtons', 'vertical'],
     });
     this.tabId = getSceneParamR('editor.show.rightPanelTab', '');
     if (this.tabId.length) {
@@ -28,8 +28,8 @@ class RightSidePanel extends Component {
   }
 
   paint = () => {
-    this.innerContent.draw();
     this.tabButtonWrapper.draw();
+    this.innerContent.draw();
     this.innerContent.addListener({
       id: this.id + '-panel-scroll-listener',
       type: 'scroll',
@@ -44,10 +44,12 @@ class RightSidePanel extends Component {
     });
     for (let i = 0; i < this._tabs.length; i++) {
       const tab = this._tabs[i];
-      tab.btn.draw({ attach: this.tabButtonWrapperId });
+      tab.btn.draw({
+        attach: this.tabButtonWrapperId,
+        class: tab.id === this.tabId ? [...tab.btn.data.class, 'current'] : tab.btn.data.class,
+      });
       if (tab.id === this.tabId) {
         tab.content.draw({ attach: this.innerContentId });
-        tab.btn.elem.classList.add('current');
       }
     }
     this.innerContent.elem.scrollTop = getSceneParamR(
@@ -92,7 +94,6 @@ class RightSidePanel extends Component {
         new Button({
           id: 'btn-UICamera' + this.id,
           onClick: () => this.togglePanel('UICamera'),
-          class: ['panelTogglerButton', 'UICamera'],
           icon: new SvgIcon({ id: this.id + '-world-icon', icon: 'camera', width: 22 }),
         })
       ),
@@ -107,8 +108,7 @@ class RightSidePanel extends Component {
         new Button({
           id: 'btn-UIWorld' + this.id,
           onClick: () => this.togglePanel('UIWorld'),
-          class: ['panelTogglerButton', 'UIWorld'],
-          icon: new SvgIcon({ id: this.id + '-world-icon', icon: 'globe', size: 22 }),
+          icon: new SvgIcon({ id: this.id + '-world-icon', icon: 'globe', width: 22 }),
         })
       ),
       content: this.addChild(new UIWorld({ id: 'ui-tab-world-' + this.id })),

@@ -50,7 +50,8 @@ $sidePadding: 4rem;
     :global(p:first-child) {
       margin-top: 0;
     }
-    :global(.button) {
+    :global(.cancelButton),
+    :global(.saveButton) {
       border-radius: 0.4rem;
       padding: 0 1.5rem 0.2rem;
       min-width: 10.8rem;
@@ -197,7 +198,7 @@ $formElemGap: 1rem;
       width: calc(1 / 6 * 100% - ($formElemGap + 0.7rem));
     }
     :global(.collapsable-panel) {
-      > h4 {
+      > :global(.button) {
         background-color: $light-grey4;
         color: $mid-grey1;
         font-weight: 600;
@@ -205,9 +206,13 @@ $formElemGap: 1rem;
         &:after {
           background-color: $mid-grey1;
         }
+        &:hover {
+          background-color: $light-grey2;
+        }
       }
     }
   }
+
   $collapsableContentBackground: $mid-grey3;
   :global(.collapsable-panel__content) {
     background-color: $collapsableContentBackground;
@@ -243,200 +248,3 @@ $formElemGap: 1rem;
     margin-top: 3.2rem;
   }
 }
-
-// Form elems
-// :global(.dialog) {
-//   :global(.buttons) {
-//     display: flex;
-//     align-items: flex-start;
-//     justify-content: space-between;
-//     margin-top: 3.2rem;
-//   }
-//   :global(.form-elem) {
-//     display: flex;
-//     justify-content: flex-end;
-//     justify-self: center;
-//     margin-bottom: 2rem;
-//     :global(.form-elem) {
-//       margin-bottom: 0;
-//     }
-//   }
-//   label {
-//     display: flex;
-//     width: auto;
-//     justify-content: flex-end;
-//     align-items: flex-start;
-//     gap: 1rem;
-//     &:hover {
-//       input,
-//       select {
-//         border-color: #fff;
-//       }
-//     }
-//   }
-//   :global(.form-elem__label) {
-//     display: flex;
-//     text-align: right;
-//     justify-content: flex-end;
-//     width: auto;
-//     margin-top: 0.7rem;
-//   }
-//   input,
-//   select {
-//     display: flex;
-//     transition: border-color 0.1s ease-in-out;
-//   }
-//   :global(.form-elem--text-input) input,
-//   :global(.form-elem--number-input) input,
-//   :global(.form-elem--dropdown) select {
-//     padding: 0.8rem 0.6rem;
-//     border: 0.2rem solid rgba(0, 0, 0, 0.3);
-//     border-radius: 0.5rem;
-//     box-shadow: 0 0.1rem 0.8rem rgba(0, 0, 0, 0.28) inset;
-//     width: 32rem;
-//   }
-//   :global(.form-elem--text-input) {
-//     position: relative;
-//     :global(.form-elem__error-msg) {
-//       position: absolute;
-//       bottom: -1.6rem;
-//       right: 0;
-//       font-size: 1.2rem;
-//     }
-//   }
-//   :global(.collapsable-panel) {
-//     margin-bottom: 2rem;
-//     background: transparent;
-//     h4 {
-//       background: darken(#cbcbcb, 20%);
-//       border-bottom-color: darken(#cbcbcb, 30%);
-//       border-radius: 0.5rem 0.5rem 0 0;
-//       padding-top: 0.7rem;
-//       padding-bottom: 0.6rem;
-//       font-size: 1.6rem;
-//       font-weight: 400;
-//       color: #fff;
-//       &:before,
-//       &:after {
-//         top: 1.8rem;
-//       }
-//       &:hover {
-//         background: darken(#cbcbcb, 30%);
-//       }
-//     }
-//     &:global(.closed h4) {
-//       border-radius: 0.5rem;
-//     }
-//     :global(.collapsable-panel__content) {
-//       background: darken(#cbcbcb, 10%);
-//       border-radius: 0 0 0.5rem 0.5rem;
-//     }
-//     :global(.form-elem--vector-input) {
-//       position: relative;
-//       margin-bottom: 0.1rem;
-//       > :global(.form-elem__label) {
-//         display: block;
-//         position: absolute;
-//         left: 0;
-//         top: 0;
-//         font-size: 1.4rem;
-//       }
-//       :global(.form-elem--number-input) {
-//         :global(.form-elem__label) {
-//           font-size: 1.6rem;
-//           margin-top: 0.7rem;
-//         }
-//         input {
-//           border-color: rgba(0, 0, 0, 0.4);
-//         }
-//       }
-//       :global(.form-elem) {
-//         margin-bottom: 0;
-//         + :global(.form-elem) {
-//           margin-bottom: 0;
-//           margin-top: 1rem;
-//           border-top: none;
-//         }
-//       }
-//       + :global(.form-elem--vector-input) {
-//         border-top: 0.1rem solid darken(#cbcbcb, 20%);
-//       }
-//       label:hover {
-//         input {
-//           border-color: #fff;
-//         }
-//       }
-//     }
-//   }
-
-//   :global(.form-elem--checkbox) {
-//     label {
-//       position: relative;
-//       cursor: pointer;
-//       &:hover {
-//         :global(.form-elem__label) {
-//           &:before {
-//             border-color: #fff;
-//           }
-//         }
-//       }
-//       &:before,
-//       &:after {
-//         display: block;
-//         content: '';
-//         width: 0;
-//         height: 0.5rem;
-//         background: #444;
-//         transition: width 0.1s ease-in-out, top 0.1s ease-in-out, right 0.1s ease-in-out;
-//         position: absolute;
-//         z-index: 20;
-//         border-radius: 0.2rem;
-//       }
-//       &:before {
-//         top: 1.1rem;
-//         right: 1rem;
-//         transform: rotate(45deg);
-//       }
-//       &:after {
-//         top: 1.2rem;
-//         right: 1.2rem;
-//         transform: rotate(-45deg);
-//       }
-//     }
-//     :global(.form-elem__label) {
-//       margin-top: 0.2rem;
-//       user-select: none;
-//       &:before {
-//         display: block;
-//         content: '';
-//         width: 2.6rem;
-//         height: 2.6rem;
-//         border: 0.2rem solid rgba(0, 0, 0, 0.3);
-//         border-radius: 0.5rem;
-//         box-shadow: 0 0.1rem 0.8rem rgba(0, 0, 0, 0.28) inset;
-//         background: #fff;
-//         position: absolute;
-//         top: 0;
-//         right: 0;
-//       }
-//     }
-//     &:global(.form-elem--checked) {
-//       label {
-//         &:before,
-//         &:after {
-//           width: 2rem;
-//         }
-//         &:before {
-//           width: 1rem;
-//           top: 1.2rem;
-//           right: 1.2rem;
-//         }
-//         &:after {
-//           width: 1.6rem;
-//           top: 1rem;
-//           right: 0.2rem;
-//         }
-//       }
-//     }
-//   }
-// }

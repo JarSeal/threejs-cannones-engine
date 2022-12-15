@@ -6,10 +6,13 @@
   background-color: $light-grey3;
   border-radius: 0.5rem;
   width: 100%;
-  h4 {
+  > :global(.button) {
     font-size: 1.4rem;
     font-weight: 600;
     color: $light-grey8;
+    @include basetext-font-bold;
+    border: none;
+    outline: none;
     width: 100%;
     height: 2.6rem;
     margin: 0;
@@ -44,10 +47,13 @@
       transform: rotate(-45deg);
       right: 1.3rem;
     }
+    &:focus {
+      text-decoration: underline;
+    }
   }
   :global(.collapsable-panel) {
     margin-bottom: 0;
-    h4 {
+    > :global(.button) {
       width: 100%;
       height: 1.8rem;
       background-color: $light-grey7;
@@ -72,7 +78,7 @@
       border-radius: 0 0 0.5rem 0.5rem;
     }
     &:global(.closed) {
-      h4 {
+      > :global(.button) {
         border-bottom: 0.6rem solid $light-grey6;
         height: 2.4rem;
       }
@@ -82,7 +88,7 @@
     .settingsPanelContent {
       display: none;
     }
-    h4 {
+    > :global(.button) {
       border-radius: 0.5rem;
       &:before {
         transform: rotate(-45deg);

@@ -144,21 +144,19 @@ class Root {
       smallStatsContainer.id = 'smallStats-container';
       const renderStats = new SmallStats(smallStatsColors);
       renderStats.domElement.id = 'smallStats';
-      // renderStats.domElement.style.top = 'auto';
-      // renderStats.domElement.style.bottom = 0;
       smallStatsContainer.appendChild(renderStats.domElement);
       document.getElementById('root').appendChild(smallStatsContainer);
       registerStageClick();
       setSceneItem('runningRenderStats', renderStats);
 
       // Init UI
-      const rightSidePanel = new RightSidePanel({ id: 'right-side-panel', parentId: 'root' });
-      rightSidePanel.draw();
-      setSceneItem('rightSidePanel', rightSidePanel);
-
       const topTools = new TopTools({ id: 'top-tools', parentId: 'root' });
       topTools.draw();
       setSceneItem('topTools', topTools);
+
+      const rightSidePanel = new RightSidePanel({ id: 'right-side-panel', parentId: 'root' });
+      rightSidePanel.draw();
+      setSceneItem('rightSidePanel', rightSidePanel);
 
       new Component({ id: 'overlays', parentId: 'root' }).draw();
       const dialog = new Dialog({ id: 'dialog', parentId: 'overlays' });

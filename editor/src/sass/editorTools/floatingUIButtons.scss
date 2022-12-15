@@ -1,0 +1,73 @@
+$wrapperWidth: 3.8rem;
+$wrapperHeight: 3.8rem;
+$buttonWidth: 3.8rem;
+$buttonHeight: 3.4rem;
+
+.floatingUIButtons {
+  height: $wrapperHeight;
+  padding: 0.1rem;
+  border-radius: 0.4rem;
+  background-color: $light-grey4;
+  border: 0.1rem solid $mid-grey5;
+  > .button {
+    background-color: $light-grey4;
+    transition: background-color 0.1s ease-in-out;
+    width: $buttonWidth;
+    height: $buttonHeight;
+    outline: none;
+    border: none;
+    position: relative;
+    cursor: pointer;
+    color: $mid-grey1;
+    border-top: 0.1rem solid $light-grey6;
+    border-bottom: 0.1rem solid $mid-grey4;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .ui-icon {
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+    }
+    &:hover {
+      background-color: $light-grey1;
+    }
+    &.current {
+      border-bottom: 0.1rem solid $light-grey6;
+      border-top: 0.1rem solid $mid-grey4;
+      background-color: $mid-grey5 !important;
+    }
+    &:first-child {
+      border-radius: 0.4rem 0 0 0.4rem;
+      border-top-color: transparent;
+    }
+    &:last-child {
+      border-radius: 0 0.4rem 0.4rem 0;
+      border-bottom-color: transparent;
+    }
+    svg path {
+      fill: $mid-grey1;
+    }
+    &:focus {
+      svg path {
+        fill: $dark-grey3;
+      }
+    }
+  }
+  &.vertical {
+    width: $buttonWidth;
+    > .button {
+      height: $buttonWidth;
+      width: $buttonHeight;
+      &:first-child {
+        border-radius: 0.4rem 0.4rem 0 0;
+        border-top-color: transparent;
+      }
+      &:last-child {
+        border-radius: 0 0 0.4rem 0.4rem;
+        border-bottom-color: transparent;
+      }
+    }
+  }
+}
