@@ -54,6 +54,12 @@ $buttonHeight: 3.4rem;
         fill: $dark-grey3;
       }
     }
+    &:hover,
+    &:focus {
+      .menuWrapper {
+        display: block;
+      }
+    }
   }
   &.vertical {
     width: $buttonWidth;
@@ -68,6 +74,16 @@ $buttonHeight: 3.4rem;
         border-radius: 0 0 0.4rem 0.4rem;
         border-bottom-color: transparent;
       }
+    }
+  }
+  .menuWrapper {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 50;
+    button {
+      cursor: pointer;
     }
   }
 }

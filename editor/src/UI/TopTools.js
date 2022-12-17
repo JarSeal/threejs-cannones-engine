@@ -5,8 +5,10 @@ import { createOrbitControls, removeOrbitControls } from '../controls/orbitContr
 import { saveSceneState } from '../sceneData/saveSession';
 import { getSceneItem, setSceneItem } from '../sceneData/sceneItems';
 import { getSceneParam, setSceneParam } from '../sceneData/sceneParams';
+import Button from './common/Button';
 import Dropdown from './common/form/Dropdown';
 import NewCamera from './dialogs/NewCamera';
+import SvgIcon from './icons/svg-icon';
 import styles from './TopTools.module.scss';
 
 class TopTools extends Component {
@@ -16,8 +18,8 @@ class TopTools extends Component {
   }
 
   paint = () => {
-    this._addDropDown();
-    this._cameraSelector();
+    this._mainButtons();
+    // this._cameraSelector();
   };
 
   _cameraSelector = () => {
@@ -77,23 +79,69 @@ class TopTools extends Component {
     setSceneItem('cameraSelectorTool', cameraSelector);
   };
 
-  _addDropDown = () => {
-    this.addChildDraw(
-      new Dropdown({
-        id: 'add-to-scene',
-        label: '',
-        value: 'add',
+  _mainButtons = () => {
+    const buttonWrapperId = this.id + '-main-buttons-wrapper';
+    const buttons = [
+      {
+        icon: 'camera',
+        type: 'menu',
+        btn: this.addChild(
+          new Button({
+            id: this.id + '-btn-add-menu',
+            class: ['menuButton'],
+            onClick: () => console.log('CLICK ADD'),
+            icon: new SvgIcon({ id: this.id + '-add-icon', icon: 'plus', width: 18 }),
+          })
+        ),
         options: [
-          { value: 'add', label: '[Add]' },
-          { value: 'camera', label: 'Camera' },
+          {
+            icon: new SvgIcon({ id: this.id + '-add-camera-icon', icon: 'camera', width: 18 }),
+            text: 'Add Camera',
+            onClick: () => this._newCameraDialog(),
+          },
+          {
+            icon: new SvgIcon({ id: this.id + '-add-camera-icon', icon: 'camera', width: 18 }),
+            text: 'Add Something else',
+            onClick: () => console.log('Add sumelse click'),
+          },
         ],
-        changeFn: (e, self) => {
-          self.setValue('add', true);
-          e.target.blur();
-          this._newCameraDialog();
-        },
-      })
-    );
+      },
+    ];
+    this.addChildDraw({
+      id: buttonWrapperId,
+      class: ['floatingUIButtons', 'mainButtons'],
+    });
+    for (let i = 0; i < buttons.length; i++) {
+      const button = buttons[i];
+      if (button.type === 'menu') {
+        button.btn.draw({ attach: buttonWrapperId });
+        const buttonMenu = button.btn.addChildDraw({
+          id: button.btn.data.id + '-menu-wrapper',
+          class: ['menuWrapper'],
+        });
+        for (let j = 0; j < button.options.length; j++) {
+          buttonMenu.addChildDraw(
+            new Button({ ...button.options[j], id: button.id + '-option-' + j })
+          );
+        }
+      }
+    }
+    // this.addChildDraw(
+    //   new Dropdown({
+    //     id: 'add-to-scene',
+    //     label: '',
+    //     value: 'add',
+    //     options: [
+    //       { value: 'add', label: '[Add]' },
+    //       { value: 'camera', label: 'Camera' },
+    //     ],
+    //     changeFn: (e, self) => {
+    //       self.setValue('add', true);
+    //       e.target.blur();
+    //       this._newCameraDialog();
+    //     },
+    //   })
+    // );
   };
 
   _newCameraDialog = () => {

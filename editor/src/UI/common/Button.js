@@ -5,9 +5,7 @@ import Component from '../../../LIGHTER/Component';
 class Button extends Component {
   constructor(data) {
     super(data);
-    if (!data.onClick) {
-      console.error('Button must have a onClick declared.', this.id);
-    }
+
     if (!data.template) {
       this.template = `<button type="button"${
         this.data.disabled ? ' disabled="true"' : ''
@@ -33,15 +31,19 @@ class Button extends Component {
   }
 
   paint = () => {
-    if (this.icon) this.addChildDraw(this.icon);
+    if (this.icon) {
+      this.addChildDraw(this.icon);
+    }
   };
 
   addListeners = () => {
-    this.addListener({
-      id: this.id + '-listener',
-      type: 'click',
-      fn: this.onClick,
-    });
+    if (this.onClick) {
+      this.addListener({
+        id: this.id + '-listener',
+        type: 'click',
+        fn: this.onClick,
+      });
+    }
   };
 }
 
