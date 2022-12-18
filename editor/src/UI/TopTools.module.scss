@@ -17,4 +17,20 @@
     color: #000;
     text-shadow: 0.1rem 0.1rem 0 #fff;
   }
+  :global(button.camSelector) {
+    width: 14rem;
+    :global(.curCamName) {
+      display: block;
+      width: 100%;
+      padding-left: 3.4rem;
+      @include heading-font;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    :global(.ui-icon) {
+      position: absolute;
+      left: 1rem;
+    }
+  }
 }

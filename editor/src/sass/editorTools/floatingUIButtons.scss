@@ -4,14 +4,16 @@ $buttonWidth: 3.8rem;
 $buttonHeight: 3.4rem;
 
 .floatingUIButtons {
+  display: flex;
+  flex-direction: row;
   height: $wrapperHeight;
   padding: 0.1rem;
   border-radius: 0.4rem;
   background-color: $light-grey4;
   border: 0.1rem solid $mid-grey5;
   > .button {
+    position: relative;
     background-color: $light-grey4;
-    transition: background-color 0.1s ease-in-out;
     width: $buttonWidth;
     height: $buttonHeight;
     outline: none;
@@ -19,8 +21,8 @@ $buttonHeight: 3.4rem;
     position: relative;
     cursor: pointer;
     color: $mid-grey1;
-    border-top: 0.1rem solid $light-grey6;
-    border-bottom: 0.1rem solid $mid-grey4;
+    border-left: 0.1rem solid $light-grey6;
+    border-right: 0.1rem solid $mid-grey4;
     padding: 0;
     display: flex;
     align-items: center;
@@ -34,30 +36,52 @@ $buttonHeight: 3.4rem;
       background-color: $light-grey1;
     }
     &.current {
-      border-bottom: 0.1rem solid $light-grey6;
-      border-top: 0.1rem solid $mid-grey4;
+      border-left: 0.1rem solid $mid-grey4;
+      border-right: 0.1rem solid $light-grey6;
       background-color: $mid-grey5 !important;
     }
     &:first-child {
       border-radius: 0.4rem 0 0 0.4rem;
-      border-top-color: transparent;
+      border-left-color: transparent;
     }
     &:last-child {
       border-radius: 0 0.4rem 0.4rem 0;
-      border-bottom-color: transparent;
+      border-right-color: transparent;
     }
     svg path {
       fill: $mid-grey1;
     }
     &:focus {
-      svg path {
-        fill: $dark-grey3;
+      > .ui-icon {
+        path {
+          fill: $dark-grey3;
+        }
       }
     }
-    &:hover,
-    &:focus {
+    &:focus,
+    &:focus-within {
       .menuWrapper {
         display: block;
+      }
+    }
+    &.menuButton {
+      &:before,
+      &:after {
+        display: block;
+        content: '';
+        background-color: $mid-grey4;
+        border-radius: 0.2rem;
+        position: absolute;
+        right: 0.2rem;
+        bottom: 0.1rem;
+      }
+      &:before {
+        width: 0.6rem;
+        height: 0.2rem;
+      }
+      &:after {
+        width: 0.2rem;
+        height: 0.6rem;
       }
     }
   }
@@ -66,6 +90,15 @@ $buttonHeight: 3.4rem;
     > .button {
       height: $buttonWidth;
       width: $buttonHeight;
+      border-left: none;
+      border-right: none;
+      border-top: 0.1rem solid $light-grey6;
+      border-bottom: 0.1rem solid $mid-grey4;
+      &.current {
+        border-top: 0.1rem solid $mid-grey4;
+        border-bottom: 0.1rem solid $light-grey6;
+        background-color: $mid-grey5 !important;
+      }
       &:first-child {
         border-radius: 0.4rem 0.4rem 0 0;
         border-top-color: transparent;
@@ -80,10 +113,79 @@ $buttonHeight: 3.4rem;
     display: none;
     position: absolute;
     top: 100%;
-    left: 0;
+    left: -0.1rem;
     z-index: 50;
+    min-width: 20rem;
+    background-color: $mid-grey1;
+    border-radius: 0 0.6rem 0.6rem 0.6rem;
+    border: 0.1rem solid $mid-grey5;
+    padding: 0.1rem 0;
     button {
+      width: 100%;
       cursor: pointer;
+      background-color: transparent;
+      border: none;
+      outline: none;
+      position: relative;
+      padding: 0.7rem 0.4rem 0.7rem 1.2rem;
+      text-align: left;
+      @include heading-font;
+      font-size: 1.2rem;
+      color: $light-grey8;
+      letter-spacing: 0.03rem;
+      &.hasIcon {
+        padding-left: 3.8rem;
+      }
+      &:before,
+      &:after {
+        display: block;
+        content: '';
+        width: calc(100% - 0.8rem);
+        height: 0.1rem;
+        position: absolute;
+        left: 0.4rem;
+      }
+      &:before {
+        top: 0;
+        background-color: $mid-grey3;
+      }
+      &:first-child {
+        &:before {
+          background-color: transparent;
+        }
+      }
+      &:last-child {
+        &:after {
+          background-color: transparent;
+        }
+      }
+      &:after {
+        bottom: 0;
+        background-color: $dark-grey3;
+      }
+      .ui-icon {
+        position: absolute;
+        left: 0.4rem;
+        top: 0.7rem;
+        width: 3.4rem !important;
+        display: flex;
+        justify-content: center;
+        svg {
+          width: 1.6rem;
+        }
+      }
+      path {
+        fill: $light-grey4;
+      }
+      &:focus,
+      &:hover,
+      &.current {
+        color: $white;
+        background-color: $mid-grey2;
+        path {
+          fill: $white;
+        }
+      }
     }
   }
 }

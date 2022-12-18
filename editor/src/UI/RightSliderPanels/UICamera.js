@@ -14,7 +14,7 @@ import VectorInput from '../common/form/VectorInput';
 import ConfirmationDialog from '../dialogs/Confirmation';
 import TextInput from '../common/form/TextInput';
 import SimpleIDInput from '../common/form/SimpleIDInput';
-import { getScreenResolution } from '../../utils/utils';
+import { getScreenResolution, printName } from '../../utils/utils';
 import SvgIcon from '../icons/svg-icon';
 import Button from '../common/Button';
 import NewCamera from '../dialogs/NewCamera';
@@ -70,7 +70,7 @@ class UICamera extends Component {
         this.addChildDraw(
           new SettingsPanel({
             id: 'panel-cameras-' + c.id + '-' + this.id,
-            title: c.name || c.id,
+            title: printName(c),
             contentId: contentId,
             class: getSceneParam('curCameraIndex') === c.index ? 'highlight' : null,
           })

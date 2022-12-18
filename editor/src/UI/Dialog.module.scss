@@ -199,21 +199,18 @@ $formElemGap: 1rem;
     }
     :global(.collapsable-panel) {
       > :global(.button) {
-        background-color: $light-grey4;
-        color: $mid-grey1;
+        background-color: $mid-grey3;
+        color: $light-grey8;
         font-weight: 600;
         &:before,
         &:after {
-          background-color: $mid-grey1;
-        }
-        &:hover {
-          background-color: $light-grey2;
+          background-color: $light-grey8;
         }
       }
     }
   }
 
-  $collapsableContentBackground: $mid-grey3;
+  $collapsableContentBackground: $light-grey4;
   :global(.collapsable-panel__content) {
     background-color: $collapsableContentBackground;
     border-radius: 0 0 0.5rem 0.5rem;

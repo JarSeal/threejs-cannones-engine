@@ -87,8 +87,8 @@ class NewCamera extends Component {
           step: 1,
           min: 1,
           value: this.newCameraParams.fov,
-          changeFn: (e) => {
-            this.newCameraParams.fov = parseInt(e.target.value);
+          changeFn: (value) => {
+            this.newCameraParams.fov = parseInt(value);
           },
         })
       );
@@ -101,8 +101,8 @@ class NewCamera extends Component {
           step: 0.01,
           min: 0.00001,
           value: this.newCameraParams.orthoViewSize,
-          changeFn: (e) => {
-            this.newCameraParams.orthoViewSize = parseFloat(e.target.value);
+          changeFn: (value) => {
+            this.newCameraParams.orthoViewSize = parseFloat(value);
           },
         })
       );
@@ -116,8 +116,8 @@ class NewCamera extends Component {
         step: 0.001,
         min: 0.001,
         value: this.newCameraParams.near,
-        changeFn: (e) => {
-          this.newCameraParams.near = parseFloat(e.target.value);
+        changeFn: (value) => {
+          this.newCameraParams.near = parseFloat(value);
         },
       })
     );
@@ -130,8 +130,8 @@ class NewCamera extends Component {
         step: 0.001,
         min: 0.001,
         value: this.newCameraParams.far,
-        changeFn: (e) => {
-          this.newCameraParams.far = parseFloat(e.target.value);
+        changeFn: (value) => {
+          this.newCameraParams.far = parseFloat(value);
         },
       })
     );
@@ -156,8 +156,8 @@ class NewCamera extends Component {
         step: 0.5,
         inputLabels: ['X', 'Y', 'Z'],
         values: this.newCameraParams.position,
-        onChange: (e, index) => {
-          this.newCameraParams.position[index] = parseFloat(e.target.value);
+        onChange: (value, index) => {
+          this.newCameraParams.position[index] = parseFloat(value);
         },
       })
     );
@@ -171,8 +171,8 @@ class NewCamera extends Component {
         step: 0.5,
         inputLabels: ['X', 'Y', 'Z'],
         values: this.newCameraParams.target,
-        onChange: (e, index) => {
-          this.newCameraParams.target[index] = parseFloat(e.target.value);
+        onChange: (value, index) => {
+          this.newCameraParams.target[index] = parseFloat(value);
         },
       })
     );

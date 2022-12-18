@@ -25,6 +25,7 @@ export const createOrbitControls = () => {
     controls.target = new THREE.Vector3(...curCamera.target);
   }
   controls.addEventListener('start', () => {
+    document.activeElement.blur(); // In case there are drop down menus open (with focus), this will close them.
     rootElem.style.transitionDelay = '0.5s';
     rootElem.style.opacity = 0.5;
     const editorIcons = getSceneItem('editorIcons');
@@ -41,7 +42,7 @@ export const createOrbitControls = () => {
     const target = controls.target;
     const saveState = { index: sceneParams.curCameraIndex, position, target };
     if (quaternion) saveState.quaternion = quaternion;
-    // TODO: Make the zoom handling update the view size in stead (keep the zoom always 1 when scrolling the wheel)
+    // TODO: Make the zoom handling update the view size instead (keep the zoom always 1 when scrolling the wheel)
     // if (curCamera && curCamera.type === 'orthographic') {
     //   console.log('CUR CAM', curCameraItem);
     //   saveState.orthoViewSize = curCameraItem.top + curCameraItem.bottom;
