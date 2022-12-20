@@ -25,6 +25,7 @@ import Dialog from './UI/Dialog';
 import { registerStageClick } from './controls/stageClick';
 import SmallStats from './UI/stats/SmallStats';
 import styleVariables from './sass/variables.scss?raw';
+import LeftTools from './UI/LeftTools';
 
 class Root {
   constructor() {
@@ -149,21 +150,6 @@ class Root {
       registerStageClick();
       setSceneItem('runningRenderStats', renderStats);
 
-      // Init UI
-      const topTools = new TopTools({ id: 'top-tools', parentId: 'root' });
-      topTools.draw();
-      setSceneItem('topTools', topTools);
-
-      const rightSidePanel = new RightSidePanel({ id: 'right-side-panel', parentId: 'root' });
-      rightSidePanel.draw();
-      setSceneItem('rightSidePanel', rightSidePanel);
-
-      new Component({ id: 'overlays', parentId: 'root' }).draw();
-      const dialog = new Dialog({ id: 'dialog', parentId: 'overlays' });
-      dialog.draw();
-      dialog.disappear();
-      setSceneItem('dialog', dialog);
-
       // Set selection(s)
       const selectionIds = sceneParams.selection;
       const selection = [];
@@ -182,8 +168,31 @@ class Root {
             }
           }
         });
+        setSceneItem('selection', selection);
+      } else {
+        setSceneParam('selection', []);
+        setSceneItem('selection', []);
       }
       this.editorOutlinePass.selectedObjects = selection;
+
+      // Init UI
+      const topTools = new TopTools({ id: 'top-tools', parentId: 'root' });
+      topTools.draw();
+      setSceneItem('topTools', topTools);
+
+      const leftTools = new LeftTools({ id: 'left-tools', parentId: 'root' });
+      leftTools.draw();
+      setSceneItem('leftTools', leftTools);
+
+      const rightSidePanel = new RightSidePanel({ id: 'right-side-panel', parentId: 'root' });
+      rightSidePanel.draw();
+      setSceneItem('rightSidePanel', rightSidePanel);
+
+      new Component({ id: 'overlays', parentId: 'root' }).draw();
+      const dialog = new Dialog({ id: 'dialog', parentId: 'overlays' });
+      dialog.draw();
+      dialog.disappear();
+      setSceneItem('dialog', dialog);
     }
 
     this._resize();

@@ -14,21 +14,21 @@ export const scene1 = {
     {
       id: 'ambient',
       type: 'ambient',
-      color: 0xffffff,
+      color: '#ffffff',
       intensity: 0.2,
     },
     {
       id: 'hemi',
       type: 'hemisphere',
-      colorTop: 0xffffbb,
-      colorBottom: 0x080820,
+      colorTop: '#ffffbb',
+      colorBottom: '#080820',
       intensity: 0.25,
       position: [0, 0, 0],
     },
     {
       type: 'point',
       position: [0, 5, 0],
-      color: 0xffffff,
+      color: '#ffffff',
       intensity: 10,
       distance: 200,
       decay: 150,
@@ -73,7 +73,7 @@ export const scene1 = {
       receiveShadow: true,
       material: {
         type: 'lambert',
-        color: 0x00ffff,
+        color: '#00ffff',
       },
     },
     {
@@ -85,7 +85,7 @@ export const scene1 = {
       receiveShadow: true,
       material: {
         type: 'lambert',
-        color: 0xcccccc,
+        color: '#cccccc',
       },
     },
   ],

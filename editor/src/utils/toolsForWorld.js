@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { saveAllLightsState, saveSceneState } from '../sceneData/saveSession';
 import { getSceneItem, removeMeshFromScene } from '../sceneData/sceneItems';
 import { getSceneParam, setSceneParam } from '../sceneData/sceneParams';
-import { AMBIENT_LIGHT } from './defaultSceneValues';
+import { AMBIENT_LIGHT, HEMI_LIGHT } from './defaultSceneValues';
 
 export const toggleWorldAxesHelper = () => {
   const scene = getSceneItem('scene');
@@ -97,6 +97,72 @@ export const changeWorldAmbientIntensity = (newIntensity) => {
   if (ambientLight) ambientLight.intensity = newIntensity;
   const lightParams = getSceneParam('lights').map((l) => {
     if (l.type === 'ambient') return { ...l, intensity: newIntensity };
+    return l;
+  });
+  setSceneParam('lights', lightParams);
+  saveAllLightsState();
+};
+
+export const toggleWorldHemiLight = () => {
+  const scene = getSceneItem('scene');
+  const hemiParams = getSceneParam('lights').find((l) => l.type === 'hemisphere');
+  let lightParams = {};
+  const useAmbientLight = hemiParams.disabled === undefined ? false : hemiParams.disabled;
+  if (useAmbientLight) {
+    const colorTop = hemiParams.colorTop || HEMI_LIGHT.colorTop;
+    const colorBottom = hemiParams.colorBottom || HEMI_LIGHT.colorBottom;
+    const intensity = hemiParams.intensity || HEMI_LIGHT.intensity;
+    const light = new THREE.HemisphereLight(colorTop, colorBottom, intensity);
+    const params = {
+      id: THREE.MathUtils.generateUUID(),
+      type: 'hemisphere',
+      colorTop,
+      colorBottom,
+      intensity,
+      disabled: false,
+    };
+    light.userData = params;
+    light.userData.id = params.id;
+    scene.add(light);
+    lightParams = getSceneParam('lights').map((l) => {
+      if (l.type === 'hemisphere') return params;
+      return l;
+    });
+  } else {
+    const light = scene.children.find((item) => item.type === 'HemisphereLight');
+    light.removeFromParent();
+    lightParams = getSceneParam('lights').map((l) => {
+      if (l.type === 'hemisphere') return { ...hemiParams, disabled: true };
+      return l;
+    });
+  }
+  setSceneParam('lights', lightParams);
+  saveAllLightsState();
+};
+
+export const changeWorldHemiColors = (newColorHex, topOrBottom) => {
+  const scene = getSceneItem('scene');
+  const hemiLight = scene.children.find((item) => item.type === 'HemisphereLight');
+  if (hemiLight)
+    topOrBottom === 'bottom'
+      ? hemiLight.groundColor.set(newColorHex)
+      : hemiLight.color.set(newColorHex);
+  const lightParams = getSceneParam('lights').map((l) => {
+    const changedColor =
+      topOrBottom === 'bottom' ? { colorBottom: newColorHex } : { colorTop: newColorHex };
+    if (l.type === 'hemisphere') return { ...l, ...changedColor };
+    return l;
+  });
+  setSceneParam('lights', lightParams);
+  saveAllLightsState();
+};
+
+export const changeWorldHemiIntensity = (newIntensity) => {
+  const scene = getSceneItem('scene');
+  const hemiLight = scene.children.find((item) => item.type === 'HemisphereLight');
+  if (hemiLight) hemiLight.intensity = newIntensity;
+  const lightParams = getSceneParam('lights').map((l) => {
+    if (l.type === 'hemisphere') return { ...l, intensity: newIntensity };
     return l;
   });
   setSceneParam('lights', lightParams);

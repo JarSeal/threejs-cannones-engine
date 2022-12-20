@@ -10,10 +10,13 @@ import {
   changeWorldAmbientColor,
   changeWorldAmbientIntensity,
   changeWorldBackgroundColor,
+  changeWorldHemiColors,
+  changeWorldHemiIntensity,
   setWorldGridHelperSize,
   toggleWorldAmbientLight,
   toggleWorldAxesHelper,
   toggleWorldGridHelper,
+  toggleWorldHemiLight,
 } from '../../utils/toolsForWorld';
 
 class UIWorld extends Component {
@@ -131,10 +134,8 @@ class UIWorld extends Component {
       new Checkbox({
         id: this.id + '-use-ambient-light',
         attach: envContentId,
-        class: 'panelCheckBox',
         label: 'Ambient light',
         name: 'showAmbient',
-        hideMsg: true,
         changeFn: toggleWorldAmbientLight,
         value:
           getSceneParam('lights').find((l) => l.type === 'ambient').disabled === undefined
@@ -162,6 +163,51 @@ class UIWorld extends Component {
         precision: 3,
         value: getSceneParam('lights').find((l) => l.type === 'ambient').intensity,
         changeFn: changeWorldAmbientIntensity,
+      })
+    );
+    this.addChildDraw(
+      new Checkbox({
+        id: this.id + '-use-hemi-light',
+        attach: envContentId,
+        label: 'Hemisphere light',
+        name: 'showHemisphere',
+        changeFn: toggleWorldHemiLight,
+        value:
+          getSceneParam('lights').find((l) => l.type === 'hemisphere').disabled === undefined
+            ? true
+            : !getSceneParam('lights').find((l) => l.type === 'hemisphere').disabled,
+      })
+    );
+    this.addChildDraw(
+      new ColorPicker({
+        id: this.id + '-env-hemi-top-color',
+        attach: envContentId,
+        color: getSceneParam('lights').find((l) => l.type === 'hemisphere').colorTop,
+        label: 'Hemi top',
+        onChangeColor: (newColor) => changeWorldHemiColors(newColor.hex, 'top'),
+      })
+    );
+    this.addChildDraw(
+      new ColorPicker({
+        id: this.id + '-env-hemi-bottom-color',
+        attach: envContentId,
+        color: getSceneParam('lights').find((l) => l.type === 'hemisphere').colorBottom,
+        label: 'Hemi bottom',
+        onChangeColor: (newColor) => changeWorldHemiColors(newColor.hex, 'bottom'),
+      })
+    );
+    this.addChildDraw(
+      new NumberInput({
+        id: this.id + '-env-hemi-intensity',
+        class: ['alignAloneRight'],
+        attach: envContentId,
+        label: 'Hemi intensity',
+        step: 0.1,
+        min: 0,
+        max: 1,
+        precision: 3,
+        value: getSceneParam('lights').find((l) => l.type === 'hemisphere').intensity,
+        changeFn: changeWorldHemiIntensity,
       })
     );
   };

@@ -41,11 +41,13 @@ $buttonHeight: 3.4rem;
       background-color: $mid-grey5 !important;
     }
     &:first-child {
-      border-radius: 0.4rem 0 0 0.4rem;
+      border-top-left-radius: 0.4rem;
+      border-bottom-left-radius: 0.4rem;
       border-left-color: transparent;
     }
     &:last-child {
-      border-radius: 0 0.4rem 0.4rem 0;
+      border-top-right-radius: 0.4rem;
+      border-bottom-right-radius: 0.4rem;
       border-right-color: transparent;
     }
     svg path {
@@ -87,9 +89,10 @@ $buttonHeight: 3.4rem;
   }
   &.vertical {
     width: $buttonWidth;
+    height: auto;
     > .button {
-      height: $buttonWidth;
-      width: $buttonHeight;
+      width: $buttonWidth;
+      height: $buttonHeight;
       border-left: none;
       border-right: none;
       border-top: 0.1rem solid $light-grey6;
@@ -100,11 +103,13 @@ $buttonHeight: 3.4rem;
         background-color: $mid-grey5 !important;
       }
       &:first-child {
-        border-radius: 0.4rem 0.4rem 0 0;
+        border-top-left-radius: 0.4rem;
+        border-top-right-radius: 0.4rem;
         border-top-color: transparent;
       }
       &:last-child {
-        border-radius: 0 0 0.4rem 0.4rem;
+        border-bottom-left-radius: 0.4rem;
+        border-bottom-right-radius: 0.4rem;
         border-bottom-color: transparent;
       }
     }
@@ -181,12 +186,20 @@ $buttonHeight: 3.4rem;
         pointer-events: none;
       }
       &:focus,
-      &:hover,
-      &.current {
+      &:hover {
         color: $white;
         background-color: $mid-grey2;
         path {
           fill: $white;
+        }
+      }
+      &.current {
+        background-color: $dark-grey3;
+        &:hover {
+          color: $white;
+          path {
+            fill: $white;
+          }
         }
       }
     }

@@ -49,7 +49,7 @@ export const createOrbitControls = () => {
     // }
     saveCameraState(saveState);
     const rightSidePanel = getSceneItem('rightSidePanel');
-    rightSidePanel.updatePanel();
+    if (rightSidePanel.tabId === 'UICamera') rightSidePanel.updatePanel();
     rootElem.style.transitionDelay = '0s';
     rootElem.style.opacity = 1;
     const editorIcons = getSceneItem('editorIcons');

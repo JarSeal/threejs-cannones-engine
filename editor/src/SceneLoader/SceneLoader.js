@@ -7,7 +7,7 @@ import ElementLoader from './ElementLoader';
 import { createOrbitControls } from '../controls/orbitControls';
 import CameraMeshIcon from '../UI/icons/meshes/CameraMeshIcon';
 import { saveStateByKey } from '../sceneData/saveSession';
-import { AMBIENT_LIGHT } from '../utils/defaultSceneValues';
+import { AMBIENT_LIGHT, HEMI_LIGHT, POINT_LIGHT } from '../utils/defaultSceneValues';
 
 class SceneLoader {
   constructor(scene, isEditor) {
@@ -130,32 +130,32 @@ class SceneLoader {
         const intensity = l.intensity || AMBIENT_LIGHT.intensity;
         const light = new THREE.AmbientLight(color, intensity);
         light.userData = l;
-        light.userData.id = l.id || 'light' + i;
+        light.userData.id = l.id || 'light-' + i;
         this.scene.add(light);
         continue;
       }
       if (l.type === 'hemisphere') {
-        const colorTop = l.colorTop || 0xffffbb;
-        const colorBottom = l.colorBottom || 0x080820;
-        const intensity = l.intensity || 0.78;
+        const colorTop = l.colorTop || HEMI_LIGHT.colorTop;
+        const colorBottom = l.colorBottom || HEMI_LIGHT.colorBottom;
+        const intensity = l.intensity || HEMI_LIGHT.intensity;
         const pos = l.position ? l.position : [0, 0, 0];
         const light = new THREE.HemisphereLight(colorTop, colorBottom, intensity);
         light.position.set(pos[0], pos[1], pos[2]);
         light.userData = l;
-        light.userData.id = l.id || 'light' + i;
+        light.userData.id = l.id || 'light-' + i;
         this.scene.add(light);
         continue;
       }
       if (l.type === 'point') {
-        const color = l.color || 0xffffff;
-        const intensity = l.intensity || 1;
-        const distance = l.distance || 10;
-        const decay = l.decay || 5;
+        const color = l.color || POINT_LIGHT.color;
+        const intensity = l.intensity || POINT_LIGHT.intensity;
+        const distance = l.distance || POINT_LIGHT.distance;
+        const decay = l.decay || POINT_LIGHT.decay;
         const light = new THREE.PointLight(color, intensity, distance, decay);
         const pos = l.position ? l.position : [0, 0, 0];
         light.position.set(pos[0], pos[1], pos[2]);
         light.userData = l;
-        light.userData.id = l.id || 'light' + i;
+        light.userData.id = l.id || 'light-' + i;
         if (l.castShadow) light.castShadow = true;
         this.scene.add(light);
         if (this.isEditor && l.showHelper) {

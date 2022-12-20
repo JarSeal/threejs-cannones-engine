@@ -298,13 +298,15 @@ export const destroyCamera = (cameraIndex) => {
         return c;
       });
     setSceneParam('cameras', cameraParams);
-    const selection = getSceneParam('selection');
+    const selection = getSceneItem('selection');
     for (let i = 0; i < selection.length; i++) {
       if (selection[i].userData?.id === cameraItems[index].userData.id) {
         const filteredSelection = selection.filter(
           (sel) => sel.userData.id !== cameraItems[index].userData.id
         );
-        setSceneParam('selection', filteredSelection);
+        setSceneItem('selection', filteredSelection);
+        const selectionIds = filteredSelection.map((sel) => sel.userData.id);
+        setSceneParam('selection', selectionIds);
         saveSceneState({ selection: filteredSelection.map((sel) => sel.userData.id) });
         break;
       }
@@ -328,6 +330,7 @@ export const destroyCamera = (cameraIndex) => {
       changeCurCamera(0);
     }
     getSceneItem('topTools').updateTools();
+    getSceneItem('leftTools').updateTools();
     const editorIcons = getSceneItem('editorIcons');
     editorIcons[index].remove(index);
     const rightPanel = getSceneItem('rightSidePanel');

@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { saveSceneState } from '../sceneData/saveSession';
 
-import { getSceneItem } from '../sceneData/sceneItems';
+import { getSceneItem, setSceneItem } from '../sceneData/sceneItems';
 import { getSceneParam, setSceneParam } from '../sceneData/sceneParams';
 
 let rayClicker;
@@ -62,13 +62,16 @@ const _mouseUpOnStage = (e) => {
     // TODO: Add shift key addition to add multiple object and create a temp group for them
     const selection = [selectedObject];
     const selectionIds = selection.map((sel) => sel.userData.id);
-    setSceneParam('selection', selection);
     outlinePass.selectedObjects = selection;
+    setSceneItem('selection', selection);
+    setSceneParam('selection', selectionIds);
     saveSceneState({ selection: selectionIds });
   } else {
+    setSceneItem('selection', []);
     setSceneParam('selection', []);
     saveSceneState({ selection: [] });
   }
+  getSceneItem('leftTools').updateTools();
 
-  console.log('selection', getSceneParam('selection'));
+  console.log('selection', getSceneParam('selection'), getSceneItem('selection'));
 };

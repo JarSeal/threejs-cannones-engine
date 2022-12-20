@@ -6,17 +6,6 @@
   left: 2rem;
   background: transparent;
   user-select: none;
-  :global(.form-elem) {
-    display: inline-block;
-    + :global(.form-elem) {
-      margin-left: 2rem;
-    }
-  }
-  :global(.form-elem__label) {
-    font-size: 1.1rem;
-    color: #000;
-    text-shadow: 0.1rem 0.1rem 0 #fff;
-  }
   :global(button.camSelector) {
     width: 14rem;
     :global(.curCamName) {
