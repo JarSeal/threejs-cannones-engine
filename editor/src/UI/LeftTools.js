@@ -1,7 +1,7 @@
 import { Component } from '../../LIGHTER';
+import { saveEditorState } from '../sceneData/saveSession';
 import { getSceneItem } from '../sceneData/sceneItems';
-import { getSceneParam, getSceneParamR } from '../sceneData/sceneParams';
-import { getElemParamsById } from '../utils/utils';
+import { getSceneParamR, setSceneParamR } from '../sceneData/sceneParams';
 import Button from './common/Button';
 import SvgIcon from './icons/svg-icon';
 import styles from './LeftTools.module.scss';
@@ -65,7 +65,16 @@ class LeftTools extends Component {
             }),
             class: ['selectedElemToolToggle'],
             onClick: () => {
-              console.log('Toggle selected elem tool window');
+              const newValue = !getSceneParamR('editor.show.elemTool');
+              setSceneParamR('editor.show.elemTool', newValue);
+              saveEditorState({ show: { elemTool: newValue } });
+              const elemTool = getSceneItem('elemTool');
+              elemTool.updateTool();
+              const buttonPosAndSize = buttons[0].btn.elem.getBoundingClientRect();
+              elemTool.setPosition(
+                buttonPosAndSize.left + buttonPosAndSize.width + 2,
+                buttonPosAndSize.top - 1
+              );
             },
           })
         ),
@@ -108,7 +117,7 @@ class LeftTools extends Component {
     if (selections.length > 1) return { icon: 'cubes', width: 26 };
     const sel = selections[0].userData;
     if (sel?.paramType === 'element') return { icon: 'cube', width: 22 };
-    if (sel?.paramType === 'camera') return { icon: 'camera', width: 22 };
+    if (sel?.paramType === 'camera') return { icon: 'camera', width: 18 };
     return { icon: '', width: 22 };
   };
 }

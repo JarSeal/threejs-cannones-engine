@@ -43,7 +43,7 @@ class Component {
     //     parentId (optional, string, used when addChild from with the parent method is not possible)
     //     replace (optional, boolean, default=false, whether the Component should replace the parent's innerHTML or not)
     //     class (optional, string/array, element classe(s))
-    //     style (optional, flat object, element inline style(s))
+    //     style (optional, flat object, element inline style(s) as CSS object)
     //     attributes (optional, flat object, element attributes as key and value as value)
     //     appendHtml (optional, string, element's appended innerHTML text/html)
     //     prepend (optional, boolean, use prepend instead append)

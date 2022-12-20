@@ -4,6 +4,7 @@
   position: fixed;
   top: 2rem;
   left: 2rem;
+  z-index: 500;
   background: transparent;
   user-select: none;
   :global(button.camSelector) {

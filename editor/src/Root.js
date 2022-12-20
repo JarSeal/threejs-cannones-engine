@@ -26,6 +26,7 @@ import { registerStageClick } from './controls/stageClick';
 import SmallStats from './UI/stats/SmallStats';
 import styleVariables from './sass/variables.scss?raw';
 import LeftTools from './UI/LeftTools';
+import ElemTool from './UI/ElemTool';
 
 class Root {
   constructor() {
@@ -183,6 +184,10 @@ class Root {
       const leftTools = new LeftTools({ id: 'left-tools', parentId: 'root' });
       leftTools.draw();
       setSceneItem('leftTools', leftTools);
+
+      const elemTool = new ElemTool({ id: 'elem-tool', parentId: 'root' });
+      elemTool.draw();
+      setSceneItem('elemTool', elemTool);
 
       const rightSidePanel = new RightSidePanel({ id: 'right-side-panel', parentId: 'root' });
       rightSidePanel.draw();

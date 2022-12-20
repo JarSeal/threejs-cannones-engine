@@ -72,6 +72,7 @@ const _mouseUpOnStage = (e) => {
     saveSceneState({ selection: [] });
   }
   getSceneItem('leftTools').updateTools();
+  getSceneItem('elemTool').updateTool();
 
   console.log('selection', getSceneParam('selection'), getSceneItem('selection'));
 };
