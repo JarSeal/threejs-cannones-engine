@@ -8,6 +8,7 @@ import SvgIcon from '../../icons/svg-icon';
 // - changeFn = function that is ran after each change [Function]
 // - value = input value [Number]
 // - max = maximum value
+// - min = minimum value
 // - disabled = whether the field is disabled or not [Boolean]
 // - error = an error boolean or object to tell if the field has errors {hasError:Boolean, errorMsg:String} [Boolean/Object]
 // - doNotSelectOnFocus = boolean whether to select all content or not [Boolean]
@@ -44,6 +45,7 @@ class NumberInput extends Component {
         `;
     this.value = data.value;
     this.step = data.step;
+    this.precision = data.precision;
     this.errorComp = this.addChild({
       id: this.id + '-error-msg',
       class: 'form-elem__error-msg',
@@ -88,7 +90,7 @@ class NumberInput extends Component {
       target: inputElem,
       type: 'change',
       fn: (e) => {
-        const value = checkMinMaxValue(e.target.value);
+        const value = checkMinMaxValue(this._parsePrecision(e.target.value));
         this.setValue(value);
         if (data.changeFn) data.changeFn(value, this.setValue);
       },
@@ -126,7 +128,7 @@ class NumberInput extends Component {
       target: document.getElementById(this.buttonUpId),
       type: 'click',
       fn: () => {
-        this.setValue(checkMinMaxValue(parseFloat(this.value + (this.step || 1))));
+        this.setValue(checkMinMaxValue(this._parsePrecision(this.value + (this.step || 1))));
         inputElem.focus();
       },
     });
@@ -135,7 +137,7 @@ class NumberInput extends Component {
       target: document.getElementById(this.buttonDownId),
       type: 'click',
       fn: () => {
-        this.setValue(checkMinMaxValue(parseFloat(this.value - (this.step || 1))));
+        this.setValue(checkMinMaxValue(this._parsePrecision(this.value - (this.step || 1))));
         inputElem.focus();
       },
     });
@@ -179,6 +181,13 @@ class NumberInput extends Component {
       buttonUpElem.removeAttribute('disabled');
       buttonDownElem.removeAttribute('disabled');
     }
+  };
+
+  _parsePrecision = (value) => {
+    if (!value) value = 0;
+    if (this.precision === 0) return parseInt(value);
+    if (!this.precision) return parseFloat(value);
+    return parseFloat(parseFloat(value).toFixed(this.precision));
   };
 }
 

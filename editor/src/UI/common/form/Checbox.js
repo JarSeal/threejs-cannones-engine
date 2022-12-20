@@ -63,7 +63,7 @@ class Checkbox extends Component {
         } else {
           this.elem.classList.add('form-elem--checked');
         }
-        if (data.changeFn) data.changeFn(e);
+        if (data.changeFn) data.changeFn(e, this);
       },
     });
     this.addListener({

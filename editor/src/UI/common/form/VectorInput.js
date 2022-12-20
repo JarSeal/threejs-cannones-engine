@@ -35,6 +35,7 @@ class VectorInput extends Component {
             label: this.labels[i],
             step: this.step || 0.1,
             value: this.values[i].toFixed(12),
+            precision: 16,
             changeFn: (value) => {
               this.data.onChange(value, i);
             },

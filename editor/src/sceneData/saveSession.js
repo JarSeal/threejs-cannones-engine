@@ -3,7 +3,7 @@ import { getSceneParam, getSceneParams } from './sceneParams';
 
 const LS = new LocalStorage('ft_');
 
-const LSKeysJson = ['cameras', 'editor', 'sceneState', 'elements'];
+const LSKeysJson = ['cameras', 'editor', 'sceneState', 'elements', 'lights'];
 const LSKeysStrings = ['sceneId'];
 
 // Get all scene state values
@@ -81,6 +81,11 @@ export const saveCameraState = (values) => {
 
 export const saveAllCamerasState = (cameras) => {
   if (cameras?.length) LS.setItem('cameras', JSON.stringify(cameras));
+};
+
+export const saveAllLightsState = () => {
+  const lights = getSceneParam('lights');
+  if (lights?.length) LS.setItem('lights', JSON.stringify(lights));
 };
 
 export const saveEditorState = (values) => {

@@ -7,6 +7,7 @@ import ElementLoader from './ElementLoader';
 import { createOrbitControls } from '../controls/orbitControls';
 import CameraMeshIcon from '../UI/icons/meshes/CameraMeshIcon';
 import { saveStateByKey } from '../sceneData/saveSession';
+import { AMBIENT_LIGHT } from '../utils/defaultSceneValues';
 
 class SceneLoader {
   constructor(scene, isEditor) {
@@ -124,9 +125,9 @@ class SceneLoader {
       const l = lightsA[i];
       l.paramType = 'light';
       l.index = i;
-      if (l.type === 'ambient') {
-        const color = l.color || 0xffffff;
-        const intensity = l.intensity || 1;
+      if (l.type === 'ambient' && !l.disabled) {
+        const color = l.color || AMBIENT_LIGHT.color;
+        const intensity = l.intensity || AMBIENT_LIGHT.intensity;
         const light = new THREE.AmbientLight(color, intensity);
         light.userData = l;
         light.userData.id = l.id || 'light' + i;

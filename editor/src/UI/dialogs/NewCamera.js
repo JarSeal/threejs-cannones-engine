@@ -1,10 +1,8 @@
 import * as THREE from 'three';
 
 import { Component } from '../../../LIGHTER';
-import { saveAllCamerasState } from '../../sceneData/saveSession';
-import { getSceneItem, setSceneItem } from '../../sceneData/sceneItems';
-import { getSceneParam } from '../../sceneData/sceneParams';
-import { getScreenResolution } from '../../utils/utils';
+import { getSceneItem } from '../../sceneData/sceneItems';
+import { addCamera } from '../../utils/toolsForCamera';
 import Button from '../common/Button';
 import Checkbox from '../common/form/Checbox';
 import Dropdown from '../common/form/Dropdown';
@@ -13,7 +11,6 @@ import SimpleIDInput from '../common/form/SimpleIDInput';
 import TextInput from '../common/form/TextInput';
 import VectorInput from '../common/form/VectorInput';
 import SettingsPanel from '../common/SettingsPanel';
-import CameraMeshIcon from '../icons/meshes/CameraMeshIcon';
 
 class NewCamera extends Component {
   constructor() {
@@ -85,7 +82,8 @@ class NewCamera extends Component {
           id: 'new-cam-fov-' + this.id,
           label: 'Field of view',
           step: 1,
-          min: 1,
+          min: 0.1,
+          precision: 3,
           value: this.newCameraParams.fov,
           changeFn: (value) => {
             this.newCameraParams.fov = parseInt(value);
@@ -98,8 +96,9 @@ class NewCamera extends Component {
         new NumberInput({
           id: 'new-cam-view-size-' + this.id,
           label: 'View size',
-          step: 0.01,
-          min: 0.00001,
+          step: 1,
+          min: 0.1,
+          precision: 3,
           value: this.newCameraParams.orthoViewSize,
           changeFn: (value) => {
             this.newCameraParams.orthoViewSize = parseFloat(value);
@@ -113,8 +112,9 @@ class NewCamera extends Component {
       new NumberInput({
         id: 'new-cam-near-' + this.id,
         label: 'Frustum near plane',
-        step: 0.001,
-        min: 0.001,
+        step: 1,
+        min: 0.1,
+        precision: 3,
         value: this.newCameraParams.near,
         changeFn: (value) => {
           this.newCameraParams.near = parseFloat(value);
@@ -127,8 +127,9 @@ class NewCamera extends Component {
       new NumberInput({
         id: 'new-cam-far-' + this.id,
         label: 'Frustum far plane',
-        step: 0.001,
-        min: 0.001,
+        step: 1,
+        min: 0.2,
+        precision: 3,
         value: this.newCameraParams.far,
         changeFn: (value) => {
           this.newCameraParams.far = parseFloat(value);
@@ -226,75 +227,7 @@ class NewCamera extends Component {
         text: 'Create',
         onClick: () => {
           if (this.formHasErrors) return;
-          const scene = getSceneItem('scene');
-          // Create three.js camera and helper
-          const reso = getScreenResolution();
-          const aspectRatio = reso.x / reso.y;
-          this.newCameraParams.paramType = 'camera';
-          let camera;
-          if (this.newCameraParams.type === 'perspective') {
-            camera = new THREE.PerspectiveCamera(
-              this.newCameraParams.fov,
-              aspectRatio,
-              this.newCameraParams.near,
-              this.newCameraParams.far
-            );
-          } else if (this.newCameraParams.type === 'orthographic') {
-            const viewSize = this.newCameraParams.orthoViewSize;
-            camera = new THREE.OrthographicCamera(
-              -viewSize * aspectRatio,
-              viewSize * aspectRatio,
-              viewSize,
-              -viewSize,
-              this.newCameraParams.near,
-              this.newCameraParams.far
-            );
-          }
-          if (!camera) {
-            console.error('Camera type invalid');
-            return;
-          }
-
-          camera.position.set(...this.newCameraParams.position);
-          camera.lookAt(new THREE.Vector3(...this.newCameraParams.target));
-          const helpers = getSceneItem('cameraHelpers');
-          const helper = new THREE.CameraHelper(camera);
-          if (!this.newCameraParams.showHelper) helper.visible = false;
-          helpers.push(helper);
-          helper.update();
-          scene.add(helper);
-          camera.updateWorldMatrix();
-          camera.userData = this.newCameraParams;
-
-          new CameraMeshIcon(camera, this.newCameraParams);
-
-          let allCameras = getSceneItem('allCameras');
-          if (allCameras && Array.isArray(allCameras)) {
-            allCameras.push(camera);
-          } else {
-            allCameras = [camera];
-          }
-          setSceneItem('allCameras', allCameras);
-          const cameraParams = getSceneParam('cameras');
-          const nextIndex = cameraParams.length;
-          this.newCameraParams.index = nextIndex;
-          this.newCameraParams.defaultPosition = [...this.newCameraParams.position];
-          this.newCameraParams.defaultTarget = [...this.newCameraParams.target];
-          if (cameraParams && Array.isArray(cameraParams)) {
-            cameraParams.push(this.newCameraParams);
-          } else {
-            allCameras = [this.newCameraParams];
-          }
-          saveAllCamerasState(cameraParams);
-
-          const cameraSelector = getSceneItem('cameraSelectorTool');
-          cameraSelector.setOptions(
-            cameraParams.map((c) => ({ value: c.id, label: c.name || c.id })),
-            allCameras[getSceneParam('curCameraIndex')].id
-          );
-          getSceneItem('rightSidePanel').updatePanel();
-
-          getSceneItem('dialog').disappear();
+          addCamera(this.newCameraParams);
         },
       })
     );

@@ -1,23 +1,28 @@
-import * as THREE from 'three';
-
 import { Component } from '../../../LIGHTER';
-import { getSceneParam, setSceneParam } from '../../sceneData/sceneParams';
+import { getSceneParam } from '../../sceneData/sceneParams';
 import SettingsPanel from '../common/SettingsPanel';
 import NumberInput from '../common/form/NumberInput';
-import { saveAllCamerasState, saveCameraState, saveSceneState } from '../../sceneData/saveSession';
 import { getSceneItem, setSceneItem } from '../../sceneData/sceneItems';
 import InfoField from '../common/form/InfoField';
 import Checkbox from '../common/form/Checbox';
-import { createOrbitControls, removeOrbitControls } from '../../controls/orbitControls';
 import ActionButtons from '../common/form/ActionButtons';
 import VectorInput from '../common/form/VectorInput';
-import ConfirmationDialog from '../dialogs/Confirmation';
 import TextInput from '../common/form/TextInput';
 import SimpleIDInput from '../common/form/SimpleIDInput';
-import { getScreenResolution, printName } from '../../utils/utils';
+import { printName } from '../../utils/utils';
 import SvgIcon from '../icons/svg-icon';
 import Button from '../common/Button';
-import NewCamera from '../dialogs/NewCamera';
+import {
+  changeCurCamera,
+  destroyCamera,
+  newCameraDialog,
+  resetCameraTransforms,
+  toggleOrbitControls,
+  toggleShowCameraHelper,
+  updateCameraDefaultTransforms,
+  updateCameraProperty,
+  updateCameraTransforms,
+} from '../../utils/toolsForCamera';
 
 class UICamera extends Component {
   constructor(data) {
@@ -47,11 +52,7 @@ class UICamera extends Component {
     this.addChildDraw(
       new Button({
         id: this.id + '-add-new-camera-action',
-        onClick: () =>
-          getSceneItem('dialog').appear({
-            component: NewCamera,
-            title: 'Add new camera',
-          }),
+        onClick: () => newCameraDialog(),
         class: 'panelActionButton',
         attach: actionButtonsWrapperId,
         icon: new SvgIcon({ id: this.id + '-plus-icon', icon: 'plus', width: 16 }),
@@ -96,8 +97,8 @@ class UICamera extends Component {
           value: c.name,
           onBlur: (e) => {
             const value = e.target.value;
-            this._updateCameraProperty(value, c.index, 'name');
-            camPanels[c.index].updateTitle(value || c.id);
+            updateCameraProperty(value, c.index, 'name');
+            camPanels[c.index].updateTitle(printName({ name: value, id: c.id }));
           },
         })
       );
@@ -121,9 +122,10 @@ class UICamera extends Component {
             label: 'Field of view',
             step: 1,
             min: 1,
+            precision: 2,
             value: c.fov,
             changeFn: (value) => {
-              this._updateCameraProperty(parseFloat(value), c.index, 'fov');
+              updateCameraProperty(parseFloat(value), c.index, 'fov');
             },
           })
         );
@@ -133,11 +135,12 @@ class UICamera extends Component {
             id: 'view-size-' + index + '-' + this.id,
             attach: contentId,
             label: 'View size',
-            step: 0.01,
-            min: 0.00001,
+            step: 1,
+            min: 0.1,
+            precision: 3,
             value: c.orthoViewSize,
             changeFn: (value) => {
-              this._updateCameraProperty(parseFloat(value), c.index, 'orthoViewSize');
+              updateCameraProperty(parseFloat(value), c.index, 'orthoViewSize');
             },
           })
         );
@@ -149,11 +152,12 @@ class UICamera extends Component {
           id: 'near-' + index + '-' + this.id,
           attach: contentId,
           label: 'Frustum near plane',
-          step: 0.001,
-          min: 0.001,
+          step: 1,
+          min: 0.1,
+          precision: 3,
           value: c.near,
           changeFn: (value) => {
-            this._updateCameraProperty(parseFloat(value), c.index, 'near');
+            updateCameraProperty(parseFloat(value), c.index, 'near');
           },
         })
       );
@@ -164,11 +168,12 @@ class UICamera extends Component {
           id: 'far-' + index + '-' + this.id,
           attach: contentId,
           label: 'Frustum far plane',
-          step: 0.001,
-          min: 0.001,
+          step: 1,
+          min: 0.2,
+          precision: 3,
           value: c.far,
           changeFn: (value) => {
-            this._updateCameraProperty(parseFloat(value), c.index, 'far');
+            updateCameraProperty(parseFloat(value), c.index, 'far');
           },
         })
       );
@@ -195,21 +200,9 @@ class UICamera extends Component {
           inputLabels: ['X', 'Y', 'Z'],
           values: c.position,
           onChange: (value, index) => {
+            updateCameraTransforms('position', value, index, c.index);
             const cam = getSceneItem('allCameras')[c.index];
-            const curPos = getSceneParam('cameras')[c.index].position;
-            const curTarget = getSceneParam('cameras')[c.index].target;
-            const curQuat = cam.quaternion;
-            curPos[index] = parseFloat(value);
-            this._updateCameraProperty(curPos, c.index, 'position');
-            this._updateCameraProperty(curTarget, c.index, 'target');
-            this._updateCameraProperty(
-              [curQuat.x, curQuat.y, curQuat.z, curQuat.w],
-              c.index,
-              'quaternion'
-            );
             rotationComponent.setValues([cam.rotation.x, cam.rotation.y, cam.rotation.z], true);
-            const editorIcons = getSceneItem('editorIcons');
-            editorIcons[c.index].update(cam);
           },
         })
       );
@@ -224,24 +217,9 @@ class UICamera extends Component {
           inputLabels: ['X', 'Y', 'Z'],
           values: c.target,
           onChange: (value, index) => {
+            updateCameraTransforms('target', value, index, c.index);
             const cam = getSceneItem('allCameras')[c.index];
-            const curPos = getSceneParam('cameras')[c.index].position;
-            const curTarget = getSceneParam('cameras')[c.index].target;
-            const curQuat = cam.quaternion;
-            curTarget[index] = parseFloat(value);
-            this._updateCameraProperty(curPos, c.index, 'position');
-            this._updateCameraProperty(curTarget, c.index, 'target');
-            this._updateCameraProperty(
-              [curQuat.x, curQuat.y, curQuat.z, curQuat.w],
-              c.index,
-              'quaternion'
-            );
-            if (c.index === getSceneParam('curCameraIndex')) {
-              getSceneItem('orbitControls').target = new THREE.Vector3(...curTarget);
-            }
             rotationComponent.setValues([cam.rotation.x, cam.rotation.y, cam.rotation.z], true);
-            const editorIcons = getSceneItem('editorIcons');
-            editorIcons[c.index].update(cam);
           },
         })
       );
@@ -257,35 +235,9 @@ class UICamera extends Component {
           step: Math.PI / 16,
           values: [rot.x, rot.y, rot.z],
           onChange: (value, index) => {
-            const cam = getSceneItem('allCameras')[c.index];
-            const rotationA = [cam.rotation.x, cam.rotation.y, cam.rotation.z];
-            rotationA[index] = parseFloat(value);
-
-            // 1. Get the length from camera position to target position
-            const targetDistance = cam.position.distanceTo(new THREE.Vector3(...c.target));
-
-            cam.rotation.set(...rotationA);
-            cam.updateProjectionMatrix();
-            const curQuats = [
-              cam.quaternion.x,
-              cam.quaternion.y,
-              cam.quaternion.z,
-              cam.quaternion.w,
-            ];
-            this._updateCameraProperty(curQuats, c.index, 'quaternion');
-
-            // 2. Find the position at the end of this distance
-            const newTarget = new THREE.Vector3();
-            const camDirection = cam.getWorldDirection(new THREE.Vector3());
-            newTarget.addVectors(cam.position, camDirection.multiplyScalar(targetDistance));
-            const newTargetA = [newTarget.x, newTarget.y, newTarget.z];
-            targetComponent.setValues(newTargetA, true);
-            this._updateCameraProperty(newTargetA, c.index, 'target');
-            if (c.index === getSceneParam('curCameraIndex')) {
-              getSceneItem('orbitControls').target = newTarget;
-            }
-            const editorIcons = getSceneItem('editorIcons');
-            editorIcons[c.index].update(cam);
+            updateCameraTransforms('rotation', value, index, c.index);
+            const curTarget = getSceneParam('cameras')[c.index].target;
+            targetComponent.setValues(curTarget, true);
           },
         })
       );
@@ -311,14 +263,8 @@ class UICamera extends Component {
           step: 0.5,
           inputLabels: ['X', 'Y', 'Z'],
           values: c.defaultPosition || c.position || [5, 5, 5],
-          onChange: (value, index) => {
-            const cameraParams = getSceneParam('cameras');
-            if (!cameraParams[c.index].defaultPosition)
-              cameraParams[c.index].defaultPosition = [5, 5, 5];
-            cameraParams[c.index].defaultPosition[index] = parseFloat(value);
-            setSceneParam('cameras', cameraParams);
-            saveAllCamerasState(cameraParams);
-          },
+          onChange: (value, index) =>
+            updateCameraDefaultTransforms('position', value, index, c.index),
         })
       );
 
@@ -331,14 +277,8 @@ class UICamera extends Component {
           step: 0.5,
           inputLabels: ['X', 'Y', 'X'],
           values: c.defaultTarget || c.target || [0, 0, 0],
-          onChange: (value, index) => {
-            const cameraParams = getSceneParam('cameras');
-            if (!cameraParams[c.index].defaultTarget)
-              cameraParams[c.index].defaultTarget = [0, 0, 0];
-            cameraParams[c.index].defaultTarget[index] = parseFloat(value);
-            setSceneParam('cameras', cameraParams);
-            saveAllCamerasState(cameraParams);
-          },
+          onChange: (value, index) =>
+            updateCameraDefaultTransforms('target', value, index, c.index),
         })
       );
 
@@ -349,15 +289,7 @@ class UICamera extends Component {
           attach: contentId,
           class: 'panelCheckBox',
           label: 'Orbit controls',
-          changeFn: (e) => {
-            const isTurnedOn = e.target.checked;
-            this._updateCameraProperty(isTurnedOn, c.index, 'orbitControls');
-            if (isTurnedOn) {
-              if (c.index === getSceneParam('curCameraIndex')) createOrbitControls();
-            } else {
-              if (c.index === getSceneParam('curCameraIndex')) removeOrbitControls();
-            }
-          },
+          changeFn: (e) => toggleOrbitControls(e.target.checked, c.index),
           value: c.orbitControls,
         })
       );
@@ -369,19 +301,7 @@ class UICamera extends Component {
           attach: contentId,
           class: 'panelCheckBox',
           label: 'Show helper',
-          changeFn: (e) => {
-            const isTurnedOn = e.target.checked;
-            if (c.index !== getSceneParam('curCameraIndex')) {
-              const helpers = getSceneItem('cameraHelpers');
-              if (helpers && helpers.length && helpers[c.index]) {
-                helpers[c.index].visible = isTurnedOn;
-              }
-            }
-            const cameraParams = getSceneParam('cameras');
-            cameraParams[c.index].showHelper = isTurnedOn;
-            setSceneParam('cameras', cameraParams);
-            saveCameraState({ index: c.index, showHelper: isTurnedOn });
-          },
+          changeFn: (e) => toggleShowCameraHelper(e.target.checked, c.index),
           value: c.showHelper || false,
         })
       );
@@ -399,9 +319,7 @@ class UICamera extends Component {
           class: 'panelActionButton',
           onClick: () => {
             if (c.index === getSceneParam('curCameraIndex')) return;
-            const cameraSelector = getSceneItem('cameraSelectorTool');
-            cameraSelector.setValue(c.id);
-            this.updatePanel();
+            changeCurCamera(c.index);
             document
               .getElementById('use-this-cam-' + index + '-' + this.id)
               .nextElementSibling.focus();
@@ -416,37 +334,11 @@ class UICamera extends Component {
           }),
           class: 'panelActionButton',
           onClick: () => {
-            const resetTransforms = () => {
-              if (c.index === getSceneParam('curCameraIndex')) {
-                removeOrbitControls();
-                createOrbitControls();
-              }
-              const pos = c.defaultPosition || [5, 5, 5];
-              this._updateCameraProperty(pos, c.index, 'position');
-              const target = c.defaultTarget || [0, 0, 0];
-              this._updateCameraProperty(target, c.index, 'target');
-              this._updateCameraProperty(target, c.index, 'target'); // Needs to be called twice (@TODO: look into this) in order to make the cam helper place correctly as well
-              if (c.index === getSceneParam('curCameraIndex')) {
-                const controls = getSceneItem('orbitControls');
-                if (controls) controls.target = new THREE.Vector3(...target);
-              }
+            const afterConfirmation = () => {
               this.rePaint();
-              const editorIcons = getSceneItem('editorIcons');
-              editorIcons[c.index].update(getSceneItem('allCameras')[c.index]);
               document.getElementById('reset-cam-' + index + '-' + this.id).focus();
             };
-            getSceneItem('dialog').appear({
-              component: ConfirmationDialog,
-              componentData: {
-                id: 'reset-cam-conf-dialog-' + c.id + '-' + this.id,
-                message: 'Are you sure you want to reset to default transforms?',
-                confirmButtonFn: () => {
-                  resetTransforms();
-                  getSceneItem('dialog').disappear();
-                },
-              },
-              title: 'Are you sure?',
-            });
+            resetCameraTransforms(c.index, afterConfirmation);
           },
         },
         {
@@ -458,74 +350,75 @@ class UICamera extends Component {
           }),
           class: ['panelActionButton', 'delete-button'],
           onClick: () => {
-            const destoryCamera = () => {
-              const cameraItems = getSceneItem('allCameras');
-              if (cameraItems.length <= 1) return;
-              const index = c.index;
-              const cameraParams = getSceneParam('cameras')
-                .filter((cam) => cam.id !== c.id)
-                .map((c, i) => {
-                  c.index = i;
-                  return c;
-                });
-              setSceneParam('cameras', cameraParams);
-              const selection = getSceneParam('selection');
-              for (let i = 0; i < selection.length; i++) {
-                if (selection[i].userData.id === cameraItems[index].userData.id) {
-                  const filteredSelection = selection.filter(
-                    (sel) => sel.userData.id !== cameraItems[index].userData.id
-                  );
-                  setSceneParam('selection', filteredSelection);
-                  saveSceneState({ selection: filteredSelection.map((sel) => sel.userData.id) });
-                  break;
-                }
-              }
-              cameraItems[index].clear();
-              cameraItems[index].removeFromParent();
-              setSceneItem(
-                'allCameras',
-                cameraItems.filter((c, i) => i !== index)
-              );
-              const helpers = getSceneItem('cameraHelpers');
-              if (helpers[c.index]) {
-                getSceneItem('scene').remove(helpers[c.index]);
-                setSceneItem(
-                  'cameraHelpers',
-                  helpers.filter((c, i) => i !== index)
-                );
-              }
-              saveCameraState({ removeIndex: index });
-              const cameraSelector = getSceneItem('cameraSelectorTool');
-              if (c.index === getSceneParam('curCameraIndex')) {
-                cameraSelector.setValue(cameraParams[0].id);
-                setSceneParam('curCameraIndex', 0);
-              }
-              cameraSelector.setOptions(
-                cameraParams.map((c) => ({ value: c.id, label: c.name || c.id })),
-                c.id
-              );
-              const editorIcons = getSceneItem('editorIcons');
-              editorIcons[c.index].remove(c.index);
-              this.updatePanel();
-            };
-            const cameraTextToDestroy = c.name ? `${c.name} (id: ${c.id})` : c.id;
-            getSceneItem('dialog').appear({
-              component: ConfirmationDialog,
-              componentData: {
-                id: 'delete-cam-conf-dialog-' + c.id + '-' + this.id,
-                confirmButtonClasses: ['confirmButtonDelete'],
-                confirmButtonText: 'Destroy!',
-                message:
-                  'Are you sure you want to destroy this camera completely: ' +
-                  cameraTextToDestroy +
-                  '?',
-                confirmButtonFn: () => {
-                  destoryCamera();
-                  getSceneItem('dialog').disappear();
-                },
-              },
-              title: 'Are you sure?',
-            });
+            destroyCamera(c.index);
+            // const destoryCamera = () => {
+            //   const cameraItems = getSceneItem('allCameras');
+            //   if (cameraItems.length <= 1) return;
+            //   const index = c.index;
+            //   const cameraParams = getSceneParam('cameras')
+            //     .filter((cam) => cam.id !== c.id)
+            //     .map((c, i) => {
+            //       c.index = i;
+            //       return c;
+            //     });
+            //   setSceneParam('cameras', cameraParams);
+            //   const selection = getSceneParam('selection');
+            //   for (let i = 0; i < selection.length; i++) {
+            //     if (selection[i].userData.id === cameraItems[index].userData.id) {
+            //       const filteredSelection = selection.filter(
+            //         (sel) => sel.userData.id !== cameraItems[index].userData.id
+            //       );
+            //       setSceneParam('selection', filteredSelection);
+            //       saveSceneState({ selection: filteredSelection.map((sel) => sel.userData.id) });
+            //       break;
+            //     }
+            //   }
+            //   cameraItems[index].clear();
+            //   cameraItems[index].removeFromParent();
+            //   setSceneItem(
+            //     'allCameras',
+            //     cameraItems.filter((c, i) => i !== index)
+            //   );
+            //   const helpers = getSceneItem('cameraHelpers');
+            //   if (helpers[c.index]) {
+            //     getSceneItem('scene').remove(helpers[c.index]);
+            //     setSceneItem(
+            //       'cameraHelpers',
+            //       helpers.filter((c, i) => i !== index)
+            //     );
+            //   }
+            //   saveCameraState({ removeIndex: index });
+            //   const cameraSelector = getSceneItem('cameraSelectorTool');
+            //   if (c.index === getSceneParam('curCameraIndex')) {
+            //     cameraSelector.setValue(cameraParams[0].id);
+            //     setSceneParam('curCameraIndex', 0);
+            //   }
+            //   cameraSelector.setOptions(
+            //     cameraParams.map((c) => ({ value: c.id, label: c.name || c.id })),
+            //     c.id
+            //   );
+            //   const editorIcons = getSceneItem('editorIcons');
+            //   editorIcons[c.index].remove(c.index);
+            //   this.updatePanel();
+            // };
+            // const cameraTextToDestroy = c.name ? `${c.name} (id: ${c.id})` : c.id;
+            // getSceneItem('dialog').appear({
+            //   component: ConfirmationDialog,
+            //   componentData: {
+            //     id: 'delete-cam-conf-dialog-' + c.id + '-' + this.id,
+            //     confirmButtonClasses: ['confirmButtonDelete'],
+            //     confirmButtonText: 'Destroy!',
+            //     message:
+            //       'Are you sure you want to destroy this camera completely: ' +
+            //       cameraTextToDestroy +
+            //       '?',
+            //     confirmButtonFn: () => {
+            //       destoryCamera();
+            //       getSceneItem('dialog').disappear();
+            //     },
+            //   },
+            //   title: 'Are you sure?',
+            // });
           },
         },
       ];
@@ -534,45 +427,6 @@ class UICamera extends Component {
       );
     });
     setSceneItem('cameraPanels', camPanels);
-  };
-
-  _updateCameraProperty = (value, i, key) => {
-    const newCamParams = getSceneParam('cameras').map((cam, index) => {
-      if (index === i) return { ...cam, [key]: value };
-      return cam;
-    });
-    const cam = getSceneItem('allCameras')[i];
-    if (key === 'position' || key === 'quaternion') {
-      cam[key].set(...value);
-    } else if (key === 'target') {
-      cam.lookAt(...value);
-    } else if (key === 'orthoViewSize') {
-      const reso = getScreenResolution();
-      const aspectRatio = reso.x / reso.y;
-      cam.left = -value * aspectRatio;
-      cam.right = value * aspectRatio;
-      cam.top = value;
-      cam.bottom = -value;
-    } else {
-      cam[key] = value;
-    }
-    cam.updateMatrixWorld();
-    cam.updateProjectionMatrix();
-    setSceneParam('cameras', newCamParams);
-    saveCameraState({ index: i, [key]: value });
-    const helpers = getSceneItem('cameraHelpers');
-    if (helpers && helpers.length && helpers[i]) {
-      helpers[i].update();
-    }
-    if (key === 'name') {
-      const camerasParams = getSceneParam('cameras');
-      const currentCameraId = camerasParams[getSceneParam('curCameraIndex')]?.id;
-      const cameraSelector = getSceneItem('cameraSelectorTool');
-      cameraSelector.setOptions(
-        camerasParams.map((c) => ({ value: c.id, label: c.name || c.id })),
-        currentCameraId
-      );
-    }
   };
 }
 

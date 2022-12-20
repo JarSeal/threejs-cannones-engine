@@ -170,12 +170,15 @@ $buttonHeight: 3.4rem;
         width: 3.4rem !important;
         display: flex;
         justify-content: center;
+        pointer-events: none;
         svg {
           width: 1.6rem;
+          pointer-events: none;
         }
       }
       path {
         fill: $light-grey4;
+        pointer-events: none;
       }
       &:focus,
       &:hover,

@@ -9,13 +9,7 @@ import './SimpleIDInput.scss';
 
 // Attributes:
 // - label = field label [String]
-// - changeFn = function that is ran after each change [Function]
-// - onBlur = function that happens when the input loses focus [Function]
-// - onFocus = function that happens when the input gets focus [Function]
 // - curId = current ID's value [Number]
-// - disabled = whether the field is disabled or not [Boolean]
-// - doNotSelectOnFocus = boolean whether to select all content or not [Boolean]
-// - doNotBlurOnEnter = boolean whether to blur from the input field when Enter key is pressed [Boolean]
 // - newId = boolean whether the undo button is shown on mistakes, default is false/undefined [Boolean]
 // - focus = boolean whether the input should have focus after initiation or not [Boolean]
 class SimpleIDInput extends Component {
@@ -109,13 +103,9 @@ class SimpleIDInput extends Component {
           saveStateByKey(group, items);
         }
         this.curId = value;
-        const cameraParams = getSceneParam('cameras');
-        const currentCameraId = cameraParams[getSceneParam('curCameraIndex')]?.id;
-        const cameraSelector = getSceneItem('cameraSelectorTool');
-        cameraSelector.setOptions(
-          cameraParams.map((c) => ({ value: c.id, label: c.name || c.id })),
-          currentCameraId
-        );
+
+        getSceneItem('topTools')?.updateTools();
+
         if (!this.newId) this.returnOriginalValueButton.discard();
         const nextElemId = document.activeElement.id;
         const rightSidePanel = getSceneItem('rightSidePanel');

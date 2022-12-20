@@ -1,14 +1,8 @@
-import * as THREE from 'three';
-
 import { Component } from '../../LIGHTER';
-import { createOrbitControls, removeOrbitControls } from '../controls/orbitControls';
-import { saveSceneState } from '../sceneData/saveSession';
-import { getSceneItem, setSceneItem } from '../sceneData/sceneItems';
-import { getSceneParam, setSceneParam } from '../sceneData/sceneParams';
+import { getSceneParam } from '../sceneData/sceneParams';
+import { changeCurCamera, newCameraDialog } from '../utils/toolsForCamera';
 import { printName } from '../utils/utils';
 import Button from './common/Button';
-import Dropdown from './common/form/Dropdown';
-import NewCamera from './dialogs/NewCamera';
 import SvgIcon from './icons/svg-icon';
 import styles from './TopTools.module.scss';
 
@@ -16,68 +10,11 @@ class TopTools extends Component {
   constructor(data) {
     super(data);
     data.class = [styles.topTools];
+    this.mainButtonsWrapper = null;
   }
 
   paint = () => {
-    this._mainButtons();
-    // this._cameraSelector();
-  };
-
-  _cameraSelector = () => {
-    const cameraParams = getSceneParam('cameras');
-    const curIndex = getSceneParam('curCameraIndex');
-    const cameraSelector = this.addChildDraw(
-      new Dropdown({
-        id: 'camera-selector',
-        label: 'cam:',
-        value: cameraParams[curIndex].id,
-        options: cameraParams.map((c) => ({ value: c.id, label: c.name || c.id })),
-        changeFn: (e) => {
-          const camItems = getSceneItem('allCameras');
-          const camHelpers = getSceneItem('cameraHelpers');
-          const camParams = getSceneParam('cameras');
-          const camPanels = getSceneItem('cameraPanels');
-          let newCamera = null,
-            newCameraIndex = 0,
-            newCameraHasOrbitControls = false,
-            helpers = [];
-          const scene = getSceneItem('scene');
-          for (let i = 0; i < camItems.length; i++) {
-            if (camHelpers && camHelpers.length && camHelpers[i]) {
-              camHelpers[i].dispose();
-              scene.remove(camHelpers[i]);
-            }
-            if (camPanels && camPanels[i] && camPanels[i].elem)
-              camPanels[i].elem.classList.remove('highlight');
-            if (camParams[i].id === e.target.value) {
-              newCamera = camItems[i];
-              newCameraIndex = i;
-              newCameraHasOrbitControls = camParams[i].orbitControls;
-              helpers.push(null);
-              if (camPanels && camPanels[i] && camPanels[i].elem)
-                camPanels[i].elem.classList.add('highlight');
-            } else {
-              const helper = new THREE.CameraHelper(camItems[i]);
-              helpers.push(helper);
-              helper.update();
-              helper.visible = camParams[i].showHelper;
-              scene.add(helper);
-            }
-          }
-          removeOrbitControls();
-          setSceneParam('curCameraIndex', newCameraIndex);
-          saveSceneState();
-          setSceneItem('curCamera', newCamera);
-          setSceneItem('cameraHelpers', helpers);
-          newCamera.updateProjectionMatrix();
-          if (newCameraHasOrbitControls) createOrbitControls();
-
-          const rightPanel = getSceneItem('rightSidePanel');
-          if (rightPanel.tabId === 'UICamera') rightPanel.updatePanel();
-        },
-      })
-    );
-    setSceneItem('cameraSelectorTool', cameraSelector);
+    this.updateTools();
   };
 
   _mainButtons = () => {
@@ -87,22 +24,17 @@ class TopTools extends Component {
         type: 'menu',
         btn: this.addChild(
           new Button({
-            id: this.id + '-btn-add-menu',
+            id: this.id + '-btn-add-menu-button',
             class: ['menuButton'],
-            onClick: () => console.log('CLICK ADD'),
             icon: new SvgIcon({ id: this.id + '-add-icon', icon: 'plus', width: 18 }),
+            ...this._menuButtonListeners,
           })
         ),
         options: [
           {
             icon: new SvgIcon({ id: this.id + '-add-camera-icon', icon: 'camera', width: 18 }),
             text: 'Add Camera',
-            onClick: () => this._newCameraDialog(),
-          },
-          {
-            icon: new SvgIcon({ id: this.id + '-add-camera-icon', icon: 'camera', width: 18 }),
-            text: 'Add Something else',
-            onClick: () => console.log('Add sumelse click'),
+            onClick: () => newCameraDialog(),
           },
         ],
       },
@@ -110,14 +42,16 @@ class TopTools extends Component {
         type: 'cameraSelector',
         btn: this.addChild(
           new Button({
-            id: this.id + '-btn-change-cam-menu',
+            id: this.id + '-btn-change-cam-menu-button',
             class: ['menuButton', 'camSelector'],
             icon: new SvgIcon({ id: this.id + '-change-cam-icon', icon: 'camera', width: 18 }),
+            ...this._menuButtonListeners,
           })
         ),
       },
     ];
-    this.addChildDraw({
+    if (this.mainButtonsWrapper) this.mainButtonsWrapper.discard(true);
+    this.mainButtonsWrapper = this.addChildDraw({
       id: buttonWrapperId,
       class: ['floatingUIButtons', 'mainButtons'],
     });
@@ -159,8 +93,7 @@ class TopTools extends Component {
               class: getSceneParam('curCameraIndex') === j ? 'current' : [],
               text: printName(cams[j]),
               onClick: () => {
-                this.changeCurCamera(j);
-                this.reDrawSelf();
+                changeCurCamera(j);
               },
             })
           );
@@ -169,56 +102,19 @@ class TopTools extends Component {
     }
   };
 
-  _newCameraDialog = () => {
-    getSceneItem('dialog').appear({
-      component: NewCamera,
-      title: 'Add new camera',
-    });
+  updateTools = () => {
+    this._mainButtons();
   };
 
-  changeCurCamera = (newCamIndex) => {
-    // Move changing camera logic here and use it in the UICamera rightSidePanel
-    const camItems = getSceneItem('allCameras');
-    const camHelpers = getSceneItem('cameraHelpers');
-    const camParams = getSceneParam('cameras');
-    const camPanels = getSceneItem('cameraPanels');
-    let newCamera = null,
-      newCameraIndex = 0,
-      newCameraHasOrbitControls = false,
-      helpers = [];
-    const scene = getSceneItem('scene');
-    for (let i = 0; i < camItems.length; i++) {
-      if (camHelpers && camHelpers.length && camHelpers[i]) {
-        camHelpers[i].dispose();
-        scene.remove(camHelpers[i]);
-      }
-      if (camPanels && camPanels[i] && camPanels[i].elem)
-        camPanels[i].elem.classList.remove('highlight');
-      if (camParams[i].id === camParams[newCamIndex].id) {
-        newCamera = camItems[i];
-        newCameraIndex = i;
-        newCameraHasOrbitControls = camParams[i].orbitControls;
-        helpers.push(null);
-        if (camPanels && camPanels[i] && camPanels[i].elem)
-          camPanels[i].elem.classList.add('highlight');
-      } else {
-        const helper = new THREE.CameraHelper(camItems[i]);
-        helpers.push(helper);
-        helper.update();
-        helper.visible = camParams[i].showHelper;
-        scene.add(helper);
-      }
-    }
-    removeOrbitControls();
-    setSceneParam('curCameraIndex', newCameraIndex);
-    saveSceneState();
-    setSceneItem('curCamera', newCamera);
-    setSceneItem('cameraHelpers', helpers);
-    newCamera.updateProjectionMatrix();
-    if (newCameraHasOrbitControls) createOrbitControls();
-
-    const rightPanel = getSceneItem('rightSidePanel');
-    if (rightPanel.tabId === 'UICamera') rightPanel.updatePanel();
+  _menuButtonListeners = {
+    onFocus: (_, comp) => {
+      comp.hasFocus = true;
+      comp.focusStart = performance.now();
+    },
+    onBlur: (_, comp) => (comp.hasFocus = false),
+    onClick: (_, comp) => {
+      if (performance.now() > comp.focusStart + 200) comp.elem.blur();
+    },
   };
 }
 
