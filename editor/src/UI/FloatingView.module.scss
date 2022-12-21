@@ -1,0 +1,145 @@
+@import '../sass/variables';
+
+.floatingView {
+  width: 20rem;
+  height: 20rem;
+  background-color: $light-grey7;
+  position: fixed;
+  z-index: 400;
+  border-radius: 0.4rem;
+  border: 0.1rem solid $mid-grey5;
+  width: 37rem;
+  height: 36.8rem;
+  &:global(.dragging) {
+    cursor: grabbing;
+  }
+  &:global(.minified) {
+    height: 3.5rem;
+    overflow: hidden;
+  }
+}
+.floatingViewHeader {
+  width: 100%;
+  height: 3.5rem;
+  border-radius: 0.4rem 0.4rem 0 0;
+  border-bottom: 0.1rem solid $mid-grey5;
+  background-color: $mid-grey1;
+  text-align: center;
+  @include heading-font;
+  font-size: 1.4rem;
+  color: $light-grey4;
+  padding-top: 0.7rem;
+  user-select: none;
+  cursor: grab;
+  :global(.dragging) & {
+    cursor: grabbing;
+  }
+}
+.floatingViewHeaderIcon {
+  position: absolute;
+  top: 0;
+  left: 1.4rem;
+  height: 3.4rem !important;
+  display: flex !important;
+  align-items: center;
+  pointer-events: none;
+  path {
+    fill: $light-grey4;
+  }
+}
+.floatingHeaderBtn {
+  position: absolute;
+  top: 0;
+  border: none;
+  border-left: 0.1rem solid $dark-grey3;
+  outline: none;
+  width: 3.6rem;
+  height: 3.4rem;
+  overflow: hidden;
+  background-color: $mid-grey1;
+  cursor: pointer;
+  transition: background-color 0.05s ease-in-out;
+  &:before {
+    display: block;
+    content: '';
+    width: 0.1rem;
+    height: 100%;
+    background-color: $mid-grey2;
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+  :global(.ui-icon) {
+    margin-top: 0.2rem;
+    margin-left: 0.1rem;
+  }
+  path {
+    fill: $light-grey4;
+  }
+  &:hover {
+    background-color: $dark-grey3;
+  }
+  &:active {
+    background-color: $dark-grey2;
+    :global(.ui-icon) {
+      margin-top: 0.4rem;
+    }
+  }
+  &:focus {
+    path {
+      fill: $light-grey2;
+    }
+  }
+}
+.floatingHeaderMinifyBtn {
+  right: 3.6rem;
+  &:before,
+  &:after {
+    display: block;
+    content: '';
+    background-color: $light-grey4;
+    width: 1.2rem;
+    height: 0.5rem;
+    border-radius: 0.2rem;
+    position: absolute;
+    top: 1.5rem;
+    transition: transform 0.2s ease-in-out;
+  }
+  &:before {
+    left: 0.9rem;
+    transform: rotate(45deg);
+  }
+  &:after {
+    left: 1.5rem;
+    transform: rotate(-45deg);
+  }
+  &:active {
+    &:before,
+    &:after {
+      top: 1.7rem;
+    }
+  }
+  &:focus {
+    &:before,
+    &:after {
+      background-color: $light-grey2;
+    }
+  }
+  :global(.minified) & {
+    &:before {
+      transform: rotate(-45deg);
+    }
+    &:after {
+      transform: rotate(45deg);
+    }
+  }
+}
+.floatingHeaderCloseBtn {
+  right: 0;
+  border-radius: 0 0.4rem 0 0;
+}
+.floatingContentWrapper {
+  :global(.minified) & {
+    display: none;
+  }
+}

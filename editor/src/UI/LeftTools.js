@@ -2,6 +2,7 @@ import { Component } from '../../LIGHTER';
 import { saveEditorState } from '../sceneData/saveSession';
 import { getSceneItem } from '../sceneData/sceneItems';
 import { getSceneParamR, setSceneParamR } from '../sceneData/sceneParams';
+import { getSelectedElemIcon } from '../utils/utils';
 import Button from './common/Button';
 import SvgIcon from './icons/svg-icon';
 import styles from './LeftTools.module.scss';
@@ -61,13 +62,14 @@ class LeftTools extends Component {
             id: this.id + '-btn-toggle-selected-elem-tool-button',
             icon: new SvgIcon({
               id: this.id + '-selected-elem-icon',
-              ...this._selectedElemIcon(selections),
+              ...getSelectedElemIcon(selections),
             }),
             class: ['selectedElemToolToggle'],
             onClick: () => {
               const newValue = !getSceneParamR('editor.show.elemTool');
               setSceneParamR('editor.show.elemTool', newValue);
-              saveEditorState({ show: { elemTool: newValue } });
+              setSceneParamR('editor.show.elemToolContent', true);
+              saveEditorState({ show: { elemTool: newValue, elemToolContent: true } });
               const elemTool = getSceneItem('elemTool');
               elemTool.updateTool();
               const buttonPosAndSize = buttons[0].btn.elem.getBoundingClientRect();
@@ -111,14 +113,6 @@ class LeftTools extends Component {
   updateTools = () => {
     this._selectedElemButtons();
     this._selectAndTransformButtons();
-  };
-
-  _selectedElemIcon = (selections) => {
-    if (selections.length > 1) return { icon: 'cubes', width: 26 };
-    const sel = selections[0].userData;
-    if (sel?.paramType === 'element') return { icon: 'cube', width: 22 };
-    if (sel?.paramType === 'camera') return { icon: 'camera', width: 18 };
-    return { icon: '', width: 22 };
   };
 }
 

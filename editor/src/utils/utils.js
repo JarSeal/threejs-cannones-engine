@@ -12,12 +12,19 @@ export const printName = (obj) => {
   return '';
 };
 
+export const getSelectedElemIcon = (selections) => {
+  if (selections.length > 1) return { icon: 'cubes', width: 26 };
+  const sel = selections[0].userData;
+  if (sel?.paramType === 'element') return { icon: 'cube', width: 22 };
+  if (sel?.paramType === 'camera') return { icon: 'camera', width: 18 };
+  return { icon: '', width: 22 };
+};
+
 export const getElemParamsById = (id) => {
   const groups = ['lights', 'cameras', 'scenes', 'elements'];
   let foundParams = null;
   for (let i = 0; i < groups.length; i++) {
     const params = getSceneParam(groups[i]);
-    console.log('PARAMS', params);
     if (!params) continue;
     for (let j = 0; j < params.length; j++) {
       if (params[j].id === id) {
