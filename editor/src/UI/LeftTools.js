@@ -69,7 +69,13 @@ class LeftTools extends Component {
               const newValue = !getSceneParamR('editor.show.elemTool');
               setSceneParamR('editor.show.elemTool', newValue);
               setSceneParamR('editor.show.elemToolContent', true);
-              saveEditorState({ show: { elemTool: newValue, elemToolContent: true } });
+              setSceneParamR('editor.heights.elemTool', null);
+              setSceneParamR('editor.scrollPositions.elemTool', 0);
+              saveEditorState({
+                show: { elemTool: newValue, elemToolContent: true },
+                heights: { elemTool: null },
+                scrollPositions: { elemTool: 0 },
+              });
               const elemTool = getSceneItem('elemTool');
               elemTool.updateTool();
               const buttonPosAndSize = buttons[0].btn.elem.getBoundingClientRect();

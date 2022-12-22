@@ -4,5 +4,54 @@
   text-align: center;
   color: $mid-grey1;
   font-size: 1rem;
-  margin-top: 0.4rem;
+  padding-top: 0.4rem;
+}
+
+.tabsWrapper {
+  padding: 0 1rem;
+  margin: 0.5rem 1rem;
+  position: relative;
+  border-bottom: 0.1rem solid $mid-grey5;
+  line-height: 0;
+  button {
+    background-color: $light-grey6;
+    border-radius: 0.4rem 0.4rem 0 0;
+    border: 0.1rem solid $mid-grey5;
+    outline: none;
+    cursor: pointer;
+    width: 2.6rem;
+    height: 2.3rem;
+    margin: 0;
+    padding: 0;
+    display: inline-block;
+    text-align: center;
+    transform: translateY(0.1rem);
+    transition: background-color 0.15s ease-in-out;
+    vertical-align: bottom;
+    + button {
+      margin-left: 0.2rem;
+    }
+    &:hover {
+      background-color: $light-grey4;
+    }
+    &:global(.current) {
+      border-bottom-color: $light-grey7;
+      background-color: $light-grey7;
+    }
+    &:focus {
+      border-top-color: $mid-grey1;
+      border-left-color: $mid-grey1;
+      border-right-color: $mid-grey1;
+    }
+    :global(.ui-icon) {
+      transform: translateY(0.1rem);
+    }
+    path {
+      fill: $mid-grey1;
+    }
+  }
+}
+
+.tabsContent {
+  padding: 0 0 2rem 2rem;
 }

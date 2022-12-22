@@ -6,6 +6,8 @@ import caretDownIcon from './svg/caret-down.svg?raw';
 import cubeIcon from './svg/cube.svg?raw';
 import cubesIcon from './svg/cubes.svg?raw';
 import globeIcon from './svg/globe.svg?raw';
+import infoIcon from './svg/info.svg?raw';
+import moveArrowsIcon from './svg/arrows-up-down-left-right.svg?raw';
 import plusIcon from './svg/plus.svg?raw';
 import pointerIcon from './svg/arrow-pointer.svg?raw';
 import trashIcon from './svg/trash.svg?raw';
@@ -46,6 +48,10 @@ class SvgIcon extends Component {
         return cubesIcon;
       case 'globe':
         return globeIcon;
+      case 'info':
+        return infoIcon;
+      case 'moveArrows':
+        return moveArrowsIcon;
       case 'plus':
         return plusIcon;
       case 'pointer':

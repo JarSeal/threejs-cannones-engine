@@ -1,21 +1,25 @@
 @import '../sass/variables';
 
 .floatingView {
-  width: 20rem;
-  height: 20rem;
   background-color: $light-grey7;
   position: fixed;
   z-index: 400;
   border-radius: 0.4rem;
   border: 0.1rem solid $mid-grey5;
   width: 37rem;
-  height: 36.8rem;
   &:global(.dragging) {
-    cursor: grabbing;
+    cursor: grabbing !important;
   }
   &:global(.minified) {
-    height: 3.5rem;
+    height: 3.5rem !important;
+    min-height: 3.5rem !important;
     overflow: hidden;
+  }
+  &:global(.resizingHeight),
+  &:global(.dragging) {
+    * {
+      user-select: none;
+    }
   }
 }
 .floatingViewHeader {
@@ -87,7 +91,7 @@
   }
   &:focus {
     path {
-      fill: $light-grey2;
+      fill: $light-grey7;
     }
   }
 }
@@ -122,7 +126,7 @@
   &:focus {
     &:before,
     &:after {
-      background-color: $light-grey2;
+      background-color: $light-grey7;
     }
   }
   :global(.minified) & {
@@ -139,6 +143,45 @@
   border-radius: 0 0.4rem 0 0;
 }
 .floatingContentWrapper {
+  overflow: auto;
+  :global(.minified) & {
+    display: none;
+  }
+  > *:last-child {
+    overflow: auto;
+    overflow-y: scroll;
+    :global(.resizingHeight) & {
+      overflow: hidden;
+    }
+  }
+}
+.floatingHeightSizer {
+  width: 4.2rem;
+  height: 0.6rem;
+  border: none;
+  outline: none;
+  background: transparent;
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  cursor: n-resize;
+  &:before {
+    display: block;
+    content: '';
+    background-color: $mid-grey3;
+    width: 3.2rem;
+    height: 0.2rem;
+    position: absolute;
+    left: 50%;
+    bottom: 0.2rem;
+    transform: translateX(-50%);
+  }
+  &:hover {
+    &:before {
+      background-color: $mid-grey1;
+    }
+  }
   :global(.minified) & {
     display: none;
   }

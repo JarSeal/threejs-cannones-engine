@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { saveSceneState } from '../sceneData/saveSession';
 
 import { getSceneItem, setSceneItem } from '../sceneData/sceneItems';
-import { getSceneParam, setSceneParam } from '../sceneData/sceneParams';
+import { getSceneParam, setSceneParam, setSceneParamR } from '../sceneData/sceneParams';
 
 let rayClicker;
 const mouseClickStart = { x: 0, y: 0 };
@@ -72,6 +72,7 @@ const _mouseUpOnStage = (e) => {
     saveSceneState({ selection: [] });
   }
   getSceneItem('leftTools').updateTools();
+  setSceneParamR('editor.scrollPositions.elemTool', 0);
   getSceneItem('elemTool').updateTool();
 
   console.log('selection', getSceneParam('selection'), getSceneItem('selection'));
