@@ -33,6 +33,7 @@ export const toggleWorldGridHelper = (gridSizeComponent) => {
 };
 
 export const setWorldGridHelperSize = (value, prevValue, setValue) => {
+  if (value === prevValue) return;
   value = parseInt(value);
   if (setValue && value % 2 !== 0) {
     value += 1;
@@ -98,11 +99,17 @@ export const toggleWorldAmbientLight = () => {
   }
   setSceneParam('lights', lightParams);
   saveAllLightsState();
+  getSceneItem('undoRedo').addAction({
+    type: 'toggleWorldAmbientLight',
+    prevVal: !useAmbientLight,
+    newVal: useAmbientLight,
+  });
 };
 
 export const changeWorldAmbientColor = (newColorHex) => {
   const scene = getSceneItem('scene');
   const ambientLight = scene.children.find((item) => item.type === 'AmbientLight');
+  const prevColorHex = '#' + ambientLight.color.getHexString();
   if (ambientLight) ambientLight.color.set(newColorHex);
   const lightParams = getSceneParam('lights').map((l) => {
     if (l.type === 'ambient') return { ...l, color: newColorHex };
@@ -110,9 +117,15 @@ export const changeWorldAmbientColor = (newColorHex) => {
   });
   setSceneParam('lights', lightParams);
   saveAllLightsState();
+  getSceneItem('undoRedo').addAction({
+    type: 'changeWorldAmbientColor',
+    prevVal: prevColorHex,
+    newVal: newColorHex,
+  });
 };
 
-export const changeWorldAmbientIntensity = (newIntensity) => {
+export const changeWorldAmbientIntensity = (newIntensity, prevVal) => {
+  if (newIntensity === prevVal) return;
   const scene = getSceneItem('scene');
   const ambientLight = scene.children.find((item) => item.type === 'AmbientLight');
   if (ambientLight) ambientLight.intensity = newIntensity;
@@ -122,14 +135,19 @@ export const changeWorldAmbientIntensity = (newIntensity) => {
   });
   setSceneParam('lights', lightParams);
   saveAllLightsState();
+  getSceneItem('undoRedo').addAction({
+    type: 'changeWorldAmbientIntensity',
+    prevVal: prevVal,
+    newVal: newIntensity,
+  });
 };
 
 export const toggleWorldHemiLight = () => {
   const scene = getSceneItem('scene');
   const hemiParams = getSceneParam('lights').find((l) => l.type === 'hemisphere');
   let lightParams = {};
-  const useAmbientLight = hemiParams.disabled === undefined ? false : hemiParams.disabled;
-  if (useAmbientLight) {
+  const useHemiLight = hemiParams.disabled === undefined ? false : hemiParams.disabled;
+  if (useHemiLight) {
     const colorTop = hemiParams.colorTop || HEMI_LIGHT.colorTop;
     const colorBottom = hemiParams.colorBottom || HEMI_LIGHT.colorBottom;
     const intensity = hemiParams.intensity || HEMI_LIGHT.intensity;
@@ -159,26 +177,43 @@ export const toggleWorldHemiLight = () => {
   }
   setSceneParam('lights', lightParams);
   saveAllLightsState();
+  getSceneItem('undoRedo').addAction({
+    type: 'toggleWorldHemiLight',
+    prevVal: !useHemiLight,
+    newVal: useHemiLight,
+  });
 };
 
 export const changeWorldHemiColors = (newColorHex, topOrBottom) => {
   const scene = getSceneItem('scene');
   const hemiLight = scene.children.find((item) => item.type === 'HemisphereLight');
-  if (hemiLight)
+  if (hemiLight) {
     topOrBottom === 'bottom'
       ? hemiLight.groundColor.set(newColorHex)
       : hemiLight.color.set(newColorHex);
+  }
+  const changedColor =
+    topOrBottom === 'bottom' ? { colorBottom: newColorHex } : { colorTop: newColorHex };
+  let prevColorHex = '#ffffff';
   const lightParams = getSceneParam('lights').map((l) => {
-    const changedColor =
-      topOrBottom === 'bottom' ? { colorBottom: newColorHex } : { colorTop: newColorHex };
-    if (l.type === 'hemisphere') return { ...l, ...changedColor };
+    if (l.type === 'hemisphere') {
+      prevColorHex = topOrBottom === 'bottom' ? l.colorBottom : l.colorTop;
+      return { ...l, ...changedColor };
+    }
     return l;
   });
   setSceneParam('lights', lightParams);
   saveAllLightsState();
+  getSceneItem('undoRedo').addAction({
+    type: 'changeWorldHemiColors',
+    prevVal: prevColorHex,
+    newVal: newColorHex,
+    topOrBottom,
+  });
 };
 
-export const changeWorldHemiIntensity = (newIntensity) => {
+export const changeWorldHemiIntensity = (newIntensity, prevVal) => {
+  if (newIntensity === prevVal) return;
   const scene = getSceneItem('scene');
   const hemiLight = scene.children.find((item) => item.type === 'HemisphereLight');
   if (hemiLight) hemiLight.intensity = newIntensity;
@@ -188,4 +223,22 @@ export const changeWorldHemiIntensity = (newIntensity) => {
   });
   setSceneParam('lights', lightParams);
   saveAllLightsState();
+  getSceneItem('undoRedo').addAction({
+    type: 'changeWorldHemiIntensity',
+    prevVal: prevVal,
+    newVal: newIntensity,
+  });
+};
+
+export default {
+  toggleWorldAxesHelper,
+  toggleWorldGridHelper,
+  setWorldGridHelperSize,
+  changeWorldBackgroundColor,
+  toggleWorldAmbientLight,
+  changeWorldAmbientColor,
+  changeWorldAmbientIntensity,
+  toggleWorldHemiLight,
+  changeWorldHemiColors,
+  changeWorldHemiIntensity,
 };

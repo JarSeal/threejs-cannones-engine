@@ -1,12 +1,7 @@
 import { saveEditorState } from '../../sceneData/saveSession';
 import { getSceneItem } from '../../sceneData/sceneItems';
 import { getSceneParamR } from '../../sceneData/sceneParams';
-import {
-  changeWorldBackgroundColor,
-  setWorldGridHelperSize,
-  toggleWorldAxesHelper,
-  toggleWorldGridHelper,
-} from '../../utils/toolsForWorld';
+import undoRedoOperations from './undoRedoOperations';
 
 class UndoRedo {
   constructor() {
@@ -39,7 +34,7 @@ class UndoRedo {
 
   undo = () => {
     this.applyingUndoOrRedo = true;
-    this._doOperation(this.stack[this.stackPointer], 'undo');
+    this._doOperation(this.stack[this.stackPointer], true);
     this.stackPointer++;
     if (this.stackPointer > this.STACK_MAX_SIZE - 1) this.stackPointer = this.STACK_MAX_SIZE - 1;
     getSceneItem('topTools').updateTools();
@@ -51,7 +46,7 @@ class UndoRedo {
     this.applyingUndoOrRedo = true;
     this.stackPointer--;
     if (this.stackPointer < 0) this.stackPointer = 0;
-    this._doOperation(this.stack[this.stackPointer], 'redo');
+    this._doOperation(this.stack[this.stackPointer], false);
     getSceneItem('topTools').updateTools();
     saveEditorState({ undoredo: { stack: this.stack, pointer: this.stackPointer } });
     this.applyingUndoOrRedo = false;
@@ -60,29 +55,8 @@ class UndoRedo {
   isLastUndo = () => this.stackPointer === this.stack.length - 1;
   isFirstUndo = () => this.stackPointer === 0;
 
-  _doOperation = (action, undoOrRedo) => {
-    this._undoOperations[action.type]
-      ? this._undoOperations[action.type](action, undoOrRedo)
-      : null;
-  };
-
-  _undoOperations = {
-    toggleWorldAxesHelper: () => {
-      toggleWorldAxesHelper();
-      getSceneItem('rightSidePanel').updatePanel();
-    },
-    toggleWorldGridHelper: () => {
-      toggleWorldGridHelper();
-      getSceneItem('rightSidePanel').updatePanel();
-    },
-    setWorldGridHelperSize: (action, undoOrRedo) => {
-      setWorldGridHelperSize(undoOrRedo === 'undo' ? action.prevVal : action.newVal);
-      getSceneItem('rightSidePanel').updatePanel();
-    },
-    changeWorldBackgroundColor: (action, undoOrRedo) => {
-      changeWorldBackgroundColor(undoOrRedo === 'undo' ? action.prevVal : action.newVal);
-      getSceneItem('rightSidePanel').updatePanel();
-    },
+  _doOperation = (action, isUndo) => {
+    undoRedoOperations[action.type] ? undoRedoOperations[action.type](action, isUndo) : null;
   };
 }
 
