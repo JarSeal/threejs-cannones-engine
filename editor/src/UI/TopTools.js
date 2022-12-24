@@ -1,4 +1,5 @@
 import { Component } from '../../LIGHTER';
+import { getSceneItem } from '../sceneData/sceneItems';
 import { getSceneParam } from '../sceneData/sceneParams';
 import { changeCurCamera, newCameraDialog } from '../utils/toolsForCamera';
 import { printName } from '../utils/utils';
@@ -11,6 +12,7 @@ class TopTools extends Component {
     super(data);
     data.class = [styles.topTools];
     this.mainButtonsWrapper = null;
+    this.undoRedoButtonsWrapper = null;
   }
 
   paint = () => {
@@ -102,8 +104,34 @@ class TopTools extends Component {
     }
   };
 
+  _undoRedoButtons = () => {
+    const buttonWrapperId = this.id + '-undoredo-buttons-wrapper';
+    if (this.undoRedoButtonsWrapper) this.undoRedoButtonsWrapper.discard(true);
+    this.undoRedoButtonsWrapper = this.addChildDraw({
+      id: buttonWrapperId,
+      class: ['floatingUIButtons', 'undoRedoButtons'],
+    });
+    this.undoRedoButtonsWrapper.addChildDraw(
+      new Button({
+        id: this.id + '-btn-undo-button',
+        disabled: getSceneItem('undoRedo').isLastUndo(),
+        icon: new SvgIcon({ id: this.id + '-undo-icon', icon: 'undo', width: 18 }),
+        onClick: () => getSceneItem('undoRedo').undo(),
+      })
+    );
+    this.undoRedoButtonsWrapper.addChildDraw(
+      new Button({
+        id: this.id + '-btn-redo-button',
+        disabled: getSceneItem('undoRedo').isFirstUndo(),
+        icon: new SvgIcon({ id: this.id + '-redo-icon', icon: 'redo', width: 18 }),
+        onClick: () => getSceneItem('undoRedo').redo(),
+      })
+    );
+  };
+
   updateTools = () => {
     this._mainButtons();
+    this._undoRedoButtons();
   };
 
   _menuButtonListeners = {

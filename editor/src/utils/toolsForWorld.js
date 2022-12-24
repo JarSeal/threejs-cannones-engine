@@ -11,6 +11,11 @@ export const toggleWorldAxesHelper = () => {
   axesHelper.visible = !axesHelper.visible;
   setSceneParam('axesHelper', axesHelper.visible);
   saveSceneState();
+  getSceneItem('undoRedo').addAction({
+    type: 'toggleWorldAxesHelper',
+    prevVal: axesHelper.visible,
+    newVal: !axesHelper.visible,
+  });
 };
 
 export const toggleWorldGridHelper = (gridSizeComponent) => {
@@ -19,12 +24,17 @@ export const toggleWorldGridHelper = (gridSizeComponent) => {
   gridHelper.visible = !gridHelper.visible;
   setSceneParam('grid', gridHelper.visible);
   saveSceneState();
+  getSceneItem('undoRedo').addAction({
+    type: 'toggleWorldGridHelper',
+    prevVal: gridHelper.visible,
+    newVal: !gridHelper.visible,
+  });
   if (gridSizeComponent) gridSizeComponent.toggleDisabled(!gridHelper.visible);
 };
 
-export const setWorldGridHelperSize = (value, setValue) => {
+export const setWorldGridHelperSize = (value, prevValue, setValue) => {
   value = parseInt(value);
-  if (value % 2 !== 0) {
+  if (setValue && value % 2 !== 0) {
     value += 1;
     setValue(value, true);
   }
@@ -36,12 +46,23 @@ export const setWorldGridHelperSize = (value, setValue) => {
   gridHelper = new THREE.GridHelper(value, value);
   if (!getSceneParam('grid')) gridHelper.visible = false;
   scene.add(gridHelper);
+  getSceneItem('undoRedo').addAction({
+    type: 'setWorldGridHelperSize',
+    prevVal: prevValue,
+    newVal: value,
+  });
 };
 
 export const changeWorldBackgroundColor = (newColorHex) => {
+  const prevHexColor = getSceneParam('rendererClearColor');
   setSceneParam('rendererClearColor', newColorHex);
   getSceneItem('renderer').setClearColor(newColorHex);
   saveSceneState();
+  getSceneItem('undoRedo').addAction({
+    type: 'changeWorldBackgroundColor',
+    prevVal: prevHexColor,
+    newVal: newColorHex,
+  });
 };
 
 export const toggleWorldAmbientLight = () => {

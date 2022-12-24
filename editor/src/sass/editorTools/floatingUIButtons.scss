@@ -66,6 +66,11 @@ $buttonHeight: 3.4rem;
         display: block;
       }
     }
+    &:active {
+      > .ui-icon {
+        transform: translateY(0.2rem);
+      }
+    }
     &.menuButton {
       &:before,
       &:after {
@@ -84,6 +89,25 @@ $buttonHeight: 3.4rem;
       &:after {
         width: 0.2rem;
         height: 0.6rem;
+      }
+      &:active {
+        > .ui-icon {
+          transform: translateY(0);
+        }
+      }
+    }
+    &:disabled,
+    &.disabled {
+      path {
+        fill: $mid-grey4;
+      }
+      &:hover {
+        background-color: $light-grey4;
+      }
+      &:active {
+        > .ui-icon {
+          transform: translateY(0);
+        }
       }
     }
   }

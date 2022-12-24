@@ -27,6 +27,7 @@ import SmallStats from './UI/stats/SmallStats';
 import styleVariables from './sass/variables.scss?raw';
 import LeftTools from './UI/LeftTools';
 import ElemTool from './UI/ElemTool';
+import UndoRedo from './UI/UndoRedo/UndoRedo';
 
 class Root {
   constructor() {
@@ -175,6 +176,10 @@ class Root {
         setSceneItem('selection', []);
       }
       this.editorOutlinePass.selectedObjects = selection;
+
+      // Undo / Redo
+      const undoRedo = new UndoRedo();
+      setSceneItem('undoRedo', undoRedo);
 
       // Init UI
       const topTools = new TopTools({ id: 'top-tools', parentId: 'root' });

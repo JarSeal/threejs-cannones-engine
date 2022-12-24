@@ -91,8 +91,9 @@ class NumberInput extends Component {
       type: 'change',
       fn: (e) => {
         const value = checkMinMaxValue(this._parsePrecision(e.target.value));
+        const prevValue = this.value;
         this.setValue(value);
-        if (data.changeFn) data.changeFn(value, this.setValue);
+        if (data.changeFn) data.changeFn(value, prevValue, this.setValue);
       },
     });
     if (!data.doNotBlurOnEnter) {
@@ -160,10 +161,11 @@ class NumberInput extends Component {
 
   setValue = (newValue, noChangeFn) => {
     const inputElem = document.getElementById(this.inputId);
+    const prevValue = this.value;
     this.data.value = this.value = newValue;
     inputElem.value = newValue;
     if (noChangeFn) return;
-    if (this.data.changeFn) this.data.changeFn(newValue, this.setValue);
+    if (this.data.changeFn) this.data.changeFn(newValue, prevValue, this.setValue);
   };
 
   toggleDisabled = (isDisabled) => {
