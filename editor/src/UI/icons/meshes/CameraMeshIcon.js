@@ -13,6 +13,7 @@ class CameraMeshIcon {
     cameraIconMesh.position.set(0, 0, 0.14);
     cameraIcon.add(cameraIconMesh);
 
+    cameraIcon.userData = cameraParams;
     cameraIconMesh.userData = cameraParams;
 
     const newPos = [camera.position.x, camera.position.y, camera.position.z];

@@ -23,7 +23,6 @@ export const scene1 = {
       colorTop: '#ffffbb',
       colorBottom: '#080820',
       intensity: 0.25,
-      position: [0, 0, 0],
     },
     {
       type: 'point',

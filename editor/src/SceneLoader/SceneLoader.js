@@ -134,11 +134,11 @@ class SceneLoader {
         this.scene.add(light);
         continue;
       }
-      if (l.type === 'hemisphere') {
+      if (l.type === 'hemisphere' && !l.disabled) {
         const colorTop = l.colorTop || HEMI_LIGHT.colorTop;
         const colorBottom = l.colorBottom || HEMI_LIGHT.colorBottom;
         const intensity = l.intensity || HEMI_LIGHT.intensity;
-        const pos = l.position ? l.position : [0, 0, 0];
+        const pos = l.position ? l.position : [0, 1, 0];
         const light = new THREE.HemisphereLight(colorTop, colorBottom, intensity);
         light.position.set(pos[0], pos[1], pos[2]);
         light.userData = l;

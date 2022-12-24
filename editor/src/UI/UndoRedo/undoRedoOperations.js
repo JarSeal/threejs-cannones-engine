@@ -1,7 +1,11 @@
+import { selectObjects } from '../../controls/stageClick';
 import { getSceneItem } from '../../sceneData/sceneItems';
 import worldTools from '../../utils/toolsForWorld';
 
 const undoRedoOperations = {
+  selection: (action, isUndo) => {
+    selectObjects(isUndo ? action.prevVal : action.newVal);
+  },
   toggleWorldAxesHelper: () => {
     worldTools.toggleWorldAxesHelper();
     getSceneItem('rightSidePanel').updatePanel();
