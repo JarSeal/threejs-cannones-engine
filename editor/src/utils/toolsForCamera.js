@@ -9,7 +9,8 @@ import NewCamera from '../UI/dialogs/NewCamera';
 import CameraMeshIcon from '../UI/icons/meshes/CameraMeshIcon';
 import { getScreenResolution } from './utils';
 
-export const updateCameraProperty = (value, i, key) => {
+export const updateCameraProperty = (value, i, key, args) => {
+  const prevVal = args.prevVal ? args.prevVal : [...getSceneParam('cameras')[i][key]];
   const newCamParams = getSceneParam('cameras').map((cam, index) => {
     if (index === i) return { ...cam, [key]: value };
     return cam;
@@ -29,6 +30,7 @@ export const updateCameraProperty = (value, i, key) => {
   } else {
     cam[key] = value;
   }
+  cam.userData = newCamParams;
   cam.updateMatrixWorld();
   cam.updateProjectionMatrix();
   setSceneParam('cameras', newCamParams);
@@ -38,6 +40,18 @@ export const updateCameraProperty = (value, i, key) => {
     helpers[i].update();
   }
   getSceneItem('topTools')?.updateTools();
+  if (!args.doNotUpdateUndo) {
+    const isTransform = key === 'position' || key === 'target' || key === 'quaternion';
+    const additionalParams = isTransform ? { valueIndex: args.valueIndex } : {};
+    getSceneItem('undoRedo').addAction({
+      type: isTransform ? 'updateCameraTransforms' : 'updateCameraProperty',
+      prevVal: prevVal,
+      newVal: [...value],
+      key,
+      index: i,
+      ...additionalParams,
+    });
+  }
 };
 
 export const newCameraDialog = () =>
@@ -168,11 +182,26 @@ export const updateCameraTransforms = (
     const curPos = getSceneParam('cameras')[cameraIndex].position;
     const curTarget = getSceneParam('cameras')[cameraIndex].target;
     const curQuat = cam.quaternion;
-    if (posTarOrRot === 'position') curPos[valueIndex] = parseFloat(value);
-    if (posTarOrRot === 'target') curTarget[valueIndex] = parseFloat(value);
-    updateCameraProperty(curPos, cameraIndex, 'position');
-    updateCameraProperty(curTarget, cameraIndex, 'target');
-    updateCameraProperty([curQuat.x, curQuat.y, curQuat.z, curQuat.w], cameraIndex, 'quaternion');
+    if (posTarOrRot === 'position') {
+      const prevVal = [...curPos];
+      curPos[valueIndex] = parseFloat(value);
+      updateCameraProperty(curPos, cameraIndex, 'position', {
+        valueIndex,
+        prevVal,
+      });
+      updateCameraProperty(curTarget, cameraIndex, 'target', { doNotUpdateUndo: true });
+    } else if (posTarOrRot === 'target') {
+      const prevVal = [...curTarget];
+      curTarget[valueIndex] = parseFloat(value);
+      updateCameraProperty(curPos, cameraIndex, 'position', { doNotUpdateUndo: true });
+      updateCameraProperty(curTarget, cameraIndex, 'target', {
+        valueIndex,
+        prevVal,
+      });
+    }
+    updateCameraProperty([curQuat.x, curQuat.y, curQuat.z, curQuat.w], cameraIndex, 'quaternion', {
+      doNotUpdateUndo: true,
+    });
     if (posTarOrRot === 'target' && cameraIndex === getSceneParam('curCameraIndex')) {
       getSceneItem('orbitControls').target = new THREE.Vector3(...curTarget);
     }
@@ -183,19 +212,23 @@ export const updateCameraTransforms = (
 
     // 1. Get the length from camera position to target position
     const curTarget = getSceneParam('cameras')[cameraIndex].target;
+    const curRotation = getSceneParam('cameras')[cameraIndex].quaternion;
     const targetDistance = cam.position.distanceTo(new THREE.Vector3(...curTarget));
 
     cam.rotation.set(...rotationA);
     cam.updateProjectionMatrix();
     const curQuats = [cam.quaternion.x, cam.quaternion.y, cam.quaternion.z, cam.quaternion.w];
-    updateCameraProperty(curQuats, cameraIndex, 'quaternion');
+    updateCameraProperty(curQuats, cameraIndex, 'quaternion', {
+      valueIndex,
+      prevVal: [...curRotation],
+    });
 
     // 2. Find the position at the end of this distance
     const newTarget = new THREE.Vector3();
     const camDirection = cam.getWorldDirection(new THREE.Vector3());
     newTarget.addVectors(cam.position, camDirection.multiplyScalar(targetDistance));
     const newTargetA = [newTarget.x, newTarget.y, newTarget.z];
-    updateCameraProperty(newTargetA, cameraIndex, 'target');
+    updateCameraProperty(newTargetA, cameraIndex, 'target', { doNotUpdateUndo: true });
     if (cameraIndex === getSceneParam('curCameraIndex')) {
       getSceneItem('orbitControls').target = newTarget;
     }
@@ -356,4 +389,17 @@ export const destroyCamera = (cameraIndex) => {
     },
     title: 'Are you sure?',
   });
+};
+
+export default {
+  updateCameraProperty,
+  newCameraDialog,
+  addCamera,
+  changeCurCamera,
+  updateCameraTransforms,
+  updateCameraDefaultTransforms,
+  toggleOrbitControls,
+  toggleShowCameraHelper,
+  resetCameraTransforms,
+  destroyCamera,
 };

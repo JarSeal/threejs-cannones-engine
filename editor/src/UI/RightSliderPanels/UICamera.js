@@ -200,6 +200,7 @@ class UICamera extends Component {
           inputLabels: ['X', 'Y', 'Z'],
           values: c.position,
           onChange: (value, index) => {
+            if (getSceneParam('cameras')[c.index].position[index] === value) return;
             updateCameraTransforms('position', value, index, c.index);
             const cam = getSceneItem('allCameras')[c.index];
             rotationComponent.setValues([cam.rotation.x, cam.rotation.y, cam.rotation.z], true);
@@ -217,6 +218,7 @@ class UICamera extends Component {
           inputLabels: ['X', 'Y', 'Z'],
           values: c.target,
           onChange: (value, index) => {
+            if (getSceneParam('cameras')[c.index].target[index] === value) return;
             updateCameraTransforms('target', value, index, c.index);
             const cam = getSceneItem('allCameras')[c.index];
             rotationComponent.setValues([cam.rotation.x, cam.rotation.y, cam.rotation.z], true);
