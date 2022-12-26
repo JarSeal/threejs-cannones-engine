@@ -10,7 +10,7 @@ import CameraMeshIcon from '../UI/icons/meshes/CameraMeshIcon';
 import { getScreenResolution } from './utils';
 
 export const updateCameraProperty = (value, i, key, args) => {
-  const prevVal = args.prevVal ? args.prevVal : [...getSceneParam('cameras')[i][key]];
+  let prevVal = getSceneParam('cameras')[i][key];
   const newCamParams = getSceneParam('cameras').map((cam, index) => {
     if (index === i) return { ...cam, [key]: value };
     return cam;
@@ -18,8 +18,10 @@ export const updateCameraProperty = (value, i, key, args) => {
   const cam = getSceneItem('allCameras')[i];
   if (key === 'position' || key === 'quaternion') {
     cam[key].set(...value);
+    prevVal = args?.prevVal ? args.prevVal : [...prevVal];
   } else if (key === 'target') {
     cam.lookAt(...value);
+    prevVal = args?.prevVal ? args.prevVal : [...prevVal];
   } else if (key === 'orthoViewSize') {
     const reso = getScreenResolution();
     const aspectRatio = reso.x / reso.y;
@@ -40,13 +42,13 @@ export const updateCameraProperty = (value, i, key, args) => {
     helpers[i].update();
   }
   getSceneItem('topTools')?.updateTools();
-  if (!args.doNotUpdateUndo) {
+  if (args?.doNotUpdateUndo !== true) {
     const isTransform = key === 'position' || key === 'target' || key === 'quaternion';
     const additionalParams = isTransform ? { valueIndex: args.valueIndex } : {};
     getSceneItem('undoRedo').addAction({
       type: isTransform ? 'updateCameraTransforms' : 'updateCameraProperty',
       prevVal: prevVal,
-      newVal: [...value],
+      newVal: value,
       key,
       index: i,
       ...additionalParams,
@@ -247,28 +249,46 @@ export const updateCameraDefaultTransforms = (
   updateRightPanel
 ) => {
   const cameraParams = getSceneParam('cameras');
+  let prevVal;
   if (posOrTar === 'position') {
     if (!cameraParams[cameraIndex].defaultPosition)
       cameraParams[cameraIndex].defaultPosition = [5, 5, 5];
+    prevVal = cameraParams[cameraIndex].defaultPosition[valueIndex];
     cameraParams[cameraIndex].defaultPosition[valueIndex] = parseFloat(value);
   } else if (posOrTar === 'target') {
     if (!cameraParams[cameraIndex].defaultTarget)
       cameraParams[cameraIndex].defaultTarget = [0, 0, 0];
+    prevVal = cameraParams[cameraIndex].defaultTarget[valueIndex];
     cameraParams[cameraIndex].defaultTarget[valueIndex] = parseFloat(value);
   }
+  if (prevVal === value) return;
   setSceneParam('cameras', cameraParams);
   saveAllCamerasState(cameraParams);
   const rightPanel = getSceneItem('rightSidePanel');
   if (updateRightPanel && rightPanel.tabId === 'UICamera') rightPanel.updatePanel();
+  getSceneItem('undoRedo').addAction({
+    type: 'updateCameraDefaultTransforms',
+    prevVal,
+    newVal: value,
+    valueIndex,
+    cameraIndex,
+    posOrTar,
+  });
 };
 
 export const toggleOrbitControls = (isTurnedOn, cameraIndex) => {
-  updateCameraProperty(isTurnedOn, cameraIndex, 'orbitControls');
+  updateCameraProperty(isTurnedOn, cameraIndex, 'orbitControls', { doNotUpdateUndo: true });
   if (isTurnedOn) {
     if (cameraIndex === getSceneParam('curCameraIndex')) createOrbitControls();
   } else {
     if (cameraIndex === getSceneParam('curCameraIndex')) removeOrbitControls();
   }
+  getSceneItem('undoRedo').addAction({
+    type: 'toggleOrbitControls',
+    prevVal: !isTurnedOn,
+    newVal: isTurnedOn,
+    cameraIndex,
+  });
 };
 
 export const toggleShowCameraHelper = (isTurnedOn, cameraIndex) => {
@@ -282,6 +302,12 @@ export const toggleShowCameraHelper = (isTurnedOn, cameraIndex) => {
   cameraParams[cameraIndex].showHelper = isTurnedOn;
   setSceneParam('cameras', cameraParams);
   saveCameraState({ index: cameraIndex, showHelper: isTurnedOn });
+  getSceneItem('undoRedo').addAction({
+    type: 'toggleShowCameraHelper',
+    prevVal: !isTurnedOn,
+    newVal: isTurnedOn,
+    cameraIndex,
+  });
 };
 
 export const resetCameraTransforms = (cameraIndex, afterConfFn) => {
@@ -318,7 +344,7 @@ export const resetCameraTransforms = (cameraIndex, afterConfFn) => {
   });
 };
 
-export const destroyCamera = (cameraIndex) => {
+export const destroyCamera = (cameraIndex, destroyWithoutDialog) => {
   const destoryCamera = () => {
     const cameraItems = getSceneItem('allCameras');
     if (cameraItems.length <= 1) return; // There has to always at least one camera in the scene
@@ -374,21 +400,25 @@ export const destroyCamera = (cameraIndex) => {
   const cameraTextToDestroy = destroyCameraParams.name
     ? `${destroyCameraParams.name} (id: ${destroyCameraParams.id})`
     : destroyCameraParams.id;
-  getSceneItem('dialog').appear({
-    component: ConfirmationDialog,
-    componentData: {
-      id: 'delete-cam-conf-dialog-' + cameraIndex,
-      confirmButtonClasses: ['confirmButtonDelete'],
-      confirmButtonText: 'Destroy!',
-      message:
-        'Are you sure you want to destroy this camera completely: ' + cameraTextToDestroy + '?',
-      confirmButtonFn: () => {
-        destoryCamera();
-        getSceneItem('dialog').disappear();
+  if (!destroyWithoutDialog) {
+    getSceneItem('dialog').appear({
+      component: ConfirmationDialog,
+      componentData: {
+        id: 'delete-cam-conf-dialog-' + cameraIndex,
+        confirmButtonClasses: ['confirmButtonDelete'],
+        confirmButtonText: 'Destroy!',
+        message:
+          'Are you sure you want to destroy this camera completely: ' + cameraTextToDestroy + '?',
+        confirmButtonFn: () => {
+          destoryCamera();
+          getSceneItem('dialog').disappear();
+        },
       },
-    },
-    title: 'Are you sure?',
-  });
+      title: 'Are you sure?',
+    });
+  } else {
+    destoryCamera();
+  }
 };
 
 export default {

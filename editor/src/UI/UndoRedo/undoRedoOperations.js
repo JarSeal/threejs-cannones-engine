@@ -68,6 +68,24 @@ const undoRedoOperations = {
     );
     getSceneItem('rightSidePanel').updatePanel();
   },
+  updateCameraDefaultTransforms: (action, isUndo) => {
+    cameraTools.updateCameraDefaultTransforms(
+      action.posOrTar,
+      isUndo ? action.prevVal : action.newVal,
+      action.valueIndex,
+      action.cameraIndex,
+      false
+    );
+    getSceneItem('rightSidePanel').updatePanel();
+  },
+  toggleOrbitControls: (action, isUndo) => {
+    cameraTools.toggleOrbitControls(isUndo ? action.prevVal : action.newVal, action.cameraIndex);
+    getSceneItem('rightSidePanel').updatePanel();
+  },
+  toggleShowCameraHelper: (action, isUndo) => {
+    cameraTools.toggleShowCameraHelper(isUndo ? action.prevVal : action.newVal, action.cameraIndex);
+    getSceneItem('rightSidePanel').updatePanel();
+  },
 };
 
 export default undoRedoOperations;
