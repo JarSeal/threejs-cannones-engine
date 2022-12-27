@@ -2,7 +2,7 @@ import { Component } from '../../../LIGHTER';
 import { getSceneParam } from '../../sceneData/sceneParams';
 import SettingsPanel from '../common/SettingsPanel';
 import NumberInput from '../common/form/NumberInput';
-import { getSceneItem, setSceneItem } from '../../sceneData/sceneItems';
+import { setSceneItem } from '../../sceneData/sceneItems';
 import InfoField from '../common/form/InfoField';
 import Checkbox from '../common/form/Checbox';
 import ActionButtons from '../common/form/ActionButtons';
@@ -23,6 +23,7 @@ import {
   updateCameraProperty,
   updateCameraTransforms,
 } from '../../utils/toolsForCamera';
+import { CAMERA_TYPES } from '../../utils/defaultSceneValues';
 
 class UICamera extends Component {
   constructor(data) {
@@ -94,7 +95,7 @@ class UICamera extends Component {
           id: 'cam-name-' + index + '-' + this.id,
           label: 'Name',
           attach: contentId,
-          value: c.name,
+          value: c.name || '',
           onBlur: (e) => {
             const value = e.target.value;
             updateCameraProperty(value, c.index, 'name');
@@ -108,7 +109,8 @@ class UICamera extends Component {
         new InfoField({
           id: 'infoType-' + index + '-' + this.id,
           label: 'Type',
-          content: c.type,
+          content: CAMERA_TYPES.find((type) => type.value === c.type).label,
+          // content: c.type,
           attach: contentId,
         })
       );
@@ -202,14 +204,15 @@ class UICamera extends Component {
           onChange: (value, index) => {
             if (getSceneParam('cameras')[c.index].position[index] === value) return;
             updateCameraTransforms('position', value, index, c.index);
-            const cam = getSceneItem('allCameras')[c.index];
-            rotationComponent.setValues([cam.rotation.x, cam.rotation.y, cam.rotation.z], true);
+            // const cam = getSceneItem('allCameras')[c.index];
+            // rotationComponent.setValues([cam.rotation.x, cam.rotation.y, cam.rotation.z], true);
           },
         })
       );
 
       // Target
-      const targetComponent = this.addChildDraw(
+      // const targetComponent = this.addChildDraw(
+      this.addChildDraw(
         new VectorInput({
           id: 'cam-target-' + index + '-' + this.id,
           attach: transformsId,
@@ -220,29 +223,31 @@ class UICamera extends Component {
           onChange: (value, index) => {
             if (getSceneParam('cameras')[c.index].target[index] === value) return;
             updateCameraTransforms('target', value, index, c.index);
-            const cam = getSceneItem('allCameras')[c.index];
-            rotationComponent.setValues([cam.rotation.x, cam.rotation.y, cam.rotation.z], true);
+            // const cam = getSceneItem('allCameras')[c.index];
+            // rotationComponent.setValues([cam.rotation.x, cam.rotation.y, cam.rotation.z], true);
           },
         })
       );
 
+      // TODO: ADD A FREE CAMERA WHERE THE ROTATION CAN BE SET
       // Rotation
-      const rot = getSceneItem('allCameras')[c.index].rotation;
-      const rotationComponent = this.addChildDraw(
-        new VectorInput({
-          id: 'cam-rot-' + index + '-' + this.id,
-          attach: transformsId,
-          label: 'Rotation (rad)',
-          inputLabels: ['X', 'Y', 'Z'],
-          step: Math.PI / 16,
-          values: [rot.x, rot.y, rot.z],
-          onChange: (value, index) => {
-            updateCameraTransforms('rotation', value, index, c.index);
-            const curTarget = getSceneParam('cameras')[c.index].target;
-            targetComponent.setValues(curTarget, true);
-          },
-        })
-      );
+      // const rot = getSceneItem('allCameras')[c.index].rotation;
+      // const rotationComponent = this.addChildDraw(
+      //   new VectorInput({
+      //     id: 'cam-rot-' + index + '-' + this.id,
+      //     attach: transformsId,
+      //     label: 'Rotation (rad)',
+      //     inputLabels: ['X', 'Y', 'Z'],
+      //     step: Math.PI / 16,
+      //     values: [rot.x, rot.y, rot.z],
+      //     onChange: (value, index) => {
+      //       if (getSceneParam('cameras')[c.index].target[index] === value) return;
+      //       updateCameraTransforms('rotation', value, index, c.index);
+      //       const curTarget = getSceneParam('cameras')[c.index].target;
+      //       targetComponent.setValues(curTarget, true);
+      //     },
+      //   })
+      // );
 
       // Transforms (DEFAULTS)
       const defaultTransformsId = 'panel-cam-default-transforms-content-' + c.index + '-' + this.id;
@@ -336,11 +341,7 @@ class UICamera extends Component {
           }),
           class: 'panelActionButton',
           onClick: () => {
-            const afterConfirmation = () => {
-              this.rePaint();
-              document.getElementById('reset-cam-' + index + '-' + this.id).focus();
-            };
-            resetCameraTransforms(c.index, afterConfirmation);
+            resetCameraTransforms(c.index);
           },
         },
         {
@@ -350,6 +351,7 @@ class UICamera extends Component {
             icon: 'trash',
             width: 12,
           }),
+          disabled: getSceneParam('cameras').length === 1,
           class: ['panelActionButton', 'delete-button'],
           onClick: () => {
             destroyCamera(c.index);

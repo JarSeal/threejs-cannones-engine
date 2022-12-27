@@ -28,8 +28,10 @@ export const createOrbitControls = () => {
     document.activeElement.blur(); // In case there are drop down menus open (with focus), this will close them.
     rootElem.style.transitionDelay = '0.5s';
     rootElem.style.opacity = 0.5;
-    const editorIcons = getSceneItem('editorIcons');
-    editorIcons[sceneParams.curCameraIndex].cameraIcon.visible = false;
+    const editorIcon = getSceneItem('editorIcons').find(
+      (icon) => curCamera.id === icon.iconMesh.userData.id
+    );
+    editorIcon.cameraIcon.visible = false;
     // TODO: Make this better by recording the start position of the movement and comparing
     // at the end listener if it has moved enough
     setTimeout(() => {
@@ -52,9 +54,11 @@ export const createOrbitControls = () => {
     if (rightSidePanel.tabId === 'UICamera') rightSidePanel.updatePanel();
     rootElem.style.transitionDelay = '0s';
     rootElem.style.opacity = 1;
-    const editorIcons = getSceneItem('editorIcons');
-    editorIcons[sceneParams.curCameraIndex].cameraIcon.visible = true;
-    editorIcons[sceneParams.curCameraIndex].update(curCameraItem);
+    const editorIcon = getSceneItem('editorIcons').find(
+      (icon) => curCamera.id === icon.iconMesh.userData.id
+    );
+    editorIcon.cameraIcon.visible = true;
+    editorIcon.update(curCameraItem);
     // TODO: Make this better by recording the start position of the movement and comparing
     // at the end listener if it has moved enough
     setTimeout(() => {

@@ -1,6 +1,6 @@
 import { Component } from '../../../../LIGHTER';
 import { saveStateByKey } from '../../../sceneData/saveSession';
-import { getSceneItem } from '../../../sceneData/sceneItems';
+import { getSceneItem, setSceneItem } from '../../../sceneData/sceneItems';
 import { getSceneParam, setSceneParam } from '../../../sceneData/sceneParams';
 import Button from '../Button';
 import TextInput from './TextInput';
@@ -27,6 +27,7 @@ class SimpleIDInput extends Component {
     this.groups = ['lights', 'cameras', 'scenes', 'elements'];
     this.regex = new RegExp('^[a-zA-Z0-9-_]+$');
     this.focus = data.focus;
+    setSceneItem('IDComponents', { ...(getSceneItem('IDComponents') || {}), [this.id]: this });
   }
 
   paint = () => {
@@ -52,7 +53,7 @@ class SimpleIDInput extends Component {
         },
         onBlur: (e) => {
           const value = e.target.value;
-          this._saveValue(value);
+          this.saveValue(value);
         },
       })
     );
@@ -72,7 +73,7 @@ class SimpleIDInput extends Component {
     }
   };
 
-  _saveValue = (value) => {
+  saveValue = (value, isUndo) => {
     this.undoValue = this.curId;
     const error = this._validate(value);
     if (!error.hasError && value !== this.curId) {
@@ -110,6 +111,14 @@ class SimpleIDInput extends Component {
         const nextElemId = document.activeElement.id;
         const rightSidePanel = getSceneItem('rightSidePanel');
         rightSidePanel.updatePanel();
+        if (!this.newId && !isUndo) {
+          getSceneItem('undoRedo').addAction({
+            type: 'updateId',
+            prevVal: this.undoValue,
+            newVal: this.curId,
+            compoId: this.id,
+          });
+        }
         if (nextElemId) {
           // Because the timeout will rerender, the possible active elem needs to be refocused
           const nextElem = document.getElementById(nextElemId);
@@ -124,7 +133,7 @@ class SimpleIDInput extends Component {
     this.inputComponent.setValue(this.curId, true);
     this.inputComponent.error();
     if (!this.newId) this.returnOriginalValueButton.discard();
-    this._saveValue(this.curId);
+    this.saveValue(this.curId, true);
   };
 
   _validate = (value) => {

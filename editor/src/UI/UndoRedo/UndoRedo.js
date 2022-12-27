@@ -21,6 +21,15 @@ class UndoRedo {
       );
       return;
     }
+    // If the type and the newVal are the same as the previous entry, then don't record it
+    if (
+      (action.type === this.stack[this.stackPointer].type &&
+        action.newVal.toString() === this.stack[this.stackPointer].newVal.toString()) || // @CONSIDER: This might need refactoring
+      action.newVal === action.prevVal
+    ) {
+      return;
+    }
+
     this.stack.splice(0, this.stackPointer); // Remove the actions before the stack pointer (does nothing if stackPointer is 0)
     this.stack.unshift(action); // Add the new action to the beginning of the stack
     if (this.stack.length > this.STACK_MAX_SIZE) {

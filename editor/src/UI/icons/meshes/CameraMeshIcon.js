@@ -46,16 +46,13 @@ class CameraMeshIcon {
     this.icon.quaternion.set(...newQuat);
   };
 
-  remove = (index) => {
-    const editorIcons = getSceneItem('editorIcons');
-    if (editorIcons[index]) {
-      editorIcons[index].cameraIcon.traverse((obj) => this.removeMeshFromScene(obj));
-      editorIcons[index].cameraIcon.removeFromParent();
-      setSceneItem(
-        'editorIcons',
-        editorIcons.filter((_, i) => index !== i)
-      );
-    }
+  remove = () => {
+    const newEditorIcons = getSceneItem('editorIcons').filter(
+      (icon) => this.cameraIcon.userData.id !== icon.cameraIcon.userData.id
+    );
+    setSceneItem('editorIcons', newEditorIcons);
+    this.cameraIcon.traverse((obj) => this.removeMeshFromScene(obj));
+    this.cameraIcon.removeFromParent();
   };
 
   removeMeshFromScene = (obj) => {

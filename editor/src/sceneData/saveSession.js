@@ -33,7 +33,7 @@ export const saveSceneId = (id) => LS.setItem('sceneId', id);
 
 export const saveCameraState = (values) => {
   if (values === undefined) return;
-  // For camera the values are: {
+  // For camera the params and values are (object): {
   // - index: number (camera index number)
   // - quaternion: THREE.Vector3
   // - position: THREE.Vector3
@@ -74,8 +74,6 @@ export const saveCameraState = (values) => {
     // Remove a camera
     const cameras = getSceneParam('cameras');
     LS.setItem('cameras', JSON.stringify(cameras && cameras.length ? cameras : []));
-  } else {
-    // TODO: add camera
   }
 };
 

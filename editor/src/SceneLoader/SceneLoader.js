@@ -64,28 +64,16 @@ class SceneLoader {
         );
       }
 
+      if (c.name === undefined) c.name = '';
+
       camera.userData = c;
       camera.userData.id = c.id || 'camera' + i;
       const pos = c.position ? c.position : [5, 5, 5];
       camera.position.set(pos[0], pos[1], pos[2]);
 
-      if (c.quaternion) {
-        camera.quaternion.set(...c.quaternion);
-      }
-      if (c.target) {
-        const target = c.target ? c.target : [0, 0, 0];
-        camera.lookAt(new THREE.Vector3(target[0], target[1], target[2]));
-      } else {
-        console.error('Camera must have a target defined');
-      }
-      if (!c.quaternion) {
-        c.quaternion = [
-          camera.quaternion.x,
-          camera.quaternion.y,
-          camera.quaternion.z,
-          camera.quaternion.w,
-        ];
-      }
+      const target = c.target ? c.target : [0, 0, 0];
+      camera.lookAt(new THREE.Vector3(target[0], target[1], target[2]));
+
       allCameras.push(camera);
       new CameraMeshIcon(camera, c);
       if (
@@ -104,6 +92,7 @@ class SceneLoader {
       } else {
         // Create camera helpers
         const helper = new THREE.CameraHelper(camera);
+        helper.userData = c;
         if (!c.showHelper) helper.visible = false;
         helpers.push(helper);
         helper.update();

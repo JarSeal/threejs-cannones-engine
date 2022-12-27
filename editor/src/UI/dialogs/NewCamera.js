@@ -2,6 +2,7 @@ import * as THREE from 'three';
 
 import { Component } from '../../../LIGHTER';
 import { getSceneItem } from '../../sceneData/sceneItems';
+import { CAMERA_TYPES, NEW_CAMERA_DEFAULT_PARAMS } from '../../utils/defaultSceneValues';
 import { addCamera } from '../../utils/toolsForCamera';
 import Button from '../common/Button';
 import Checkbox from '../common/form/Checbox';
@@ -19,17 +20,7 @@ class NewCamera extends Component {
     // Defalt values
     this.newCameraParams = {
       id: THREE.MathUtils.generateUUID(),
-      name: '',
-      type: 'perspective',
-      orthoViewSize: 1,
-      fov: 45,
-      near: 0.001,
-      far: 256,
-      position: [5, 5, 5],
-      target: [0, 0, 0],
-      rotation: [0, 0, 0],
-      orbitControls: false,
-      showHelper: true,
+      ...NEW_CAMERA_DEFAULT_PARAMS,
     };
   }
 
@@ -64,10 +55,7 @@ class NewCamera extends Component {
         id: this.id + '-type',
         label: 'Type',
         value: this.newCameraParams.type,
-        options: [
-          { value: 'perspective', label: 'Perspective' },
-          { value: 'orthographic', label: 'Orthographic' },
-        ],
+        options: CAMERA_TYPES,
         changeFn: (e) => {
           this.newCameraParams.type = e.target.value;
           this.reDrawSelf();

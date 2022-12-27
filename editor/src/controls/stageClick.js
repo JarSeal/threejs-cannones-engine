@@ -48,6 +48,7 @@ const _mouseUpOnStage = (e) => {
     if (
       hitObject &&
       hitObject.userData?.paramType &&
+      !hitObject.isLine && // CameraHelpers cannot be selected
       selectableObjectTypes.includes(hitObject.userData.paramType)
     ) {
       // TODO: Add shift key addition to add multiple object and create a temp group for them
