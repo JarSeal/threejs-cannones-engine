@@ -1,7 +1,7 @@
-import { Component } from '../../LIGHTER';
-import Button from './common/Button';
+import { Component } from '../../../LIGHTER';
+import Button from '../common/Button';
 import styles from './Dialog.module.scss';
-import SvgIcon from './icons/svg-icon';
+import SvgIcon from '../icons/svg-icon';
 
 // Attributes for data:
 //

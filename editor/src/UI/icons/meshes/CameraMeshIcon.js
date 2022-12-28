@@ -44,6 +44,8 @@ class CameraMeshIcon {
     ];
     this.icon.position.set(...newPos);
     this.icon.quaternion.set(...newQuat);
+    this.cameraIcon.userData = camera.userData;
+    this.iconMesh.userData = camera.userData;
   };
 
   remove = () => {
