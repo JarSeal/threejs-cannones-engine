@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
-import { getSceneParams, setSceneParam } from '../sceneData/sceneParams';
+import { getSceneParam, getSceneParams, setSceneParam } from '../sceneData/sceneParams';
 import { setSceneItem, getSceneItem } from '../sceneData/sceneItems';
 import { saveCameraState } from '../sceneData/saveSession';
 
@@ -24,6 +24,11 @@ export const createOrbitControls = () => {
   if (curCamera.target) {
     controls.target = new THREE.Vector3(...curCamera.target);
   }
+  let undoRedoPrevVal = {
+    position: curCamera.position,
+    quaternion: curCamera.quaternion,
+    target: curCamera.target,
+  };
   controls.addEventListener('start', () => {
     document.activeElement.blur(); // In case there are drop down menus open (with focus), this will close them.
     rootElem.style.transitionDelay = '0.5s';
@@ -32,6 +37,11 @@ export const createOrbitControls = () => {
       (icon) => curCamera.id === icon.iconMesh.userData.id
     );
     editorIcon.cameraIcon.visible = false;
+    const params = getSceneParam('cameras')[getSceneParam('curCameraIndex')];
+    undoRedoPrevVal = {
+      position: params.position,
+      target: params.target,
+    };
     // TODO: Make this better by recording the start position of the movement and comparing
     // at the end listener if it has moved enough
     setTimeout(() => {
@@ -39,9 +49,13 @@ export const createOrbitControls = () => {
     }, 100);
   });
   controls.addEventListener('end', () => {
-    const quaternion = curCameraItem.quaternion;
     const position = curCameraItem.position;
+    const quaternion = curCameraItem.quaternion;
     const target = controls.target;
+    const undoRedoNewVal = {
+      position: [position.x, position.y, position.z],
+      target: [target.x, target.y, target.z],
+    };
     const saveState = { index: sceneParams.curCameraIndex, position, target };
     if (quaternion) saveState.quaternion = quaternion;
     // TODO: Make the zoom handling update the view size instead (keep the zoom always 1 when scrolling the wheel)
@@ -64,6 +78,12 @@ export const createOrbitControls = () => {
     setTimeout(() => {
       setSceneParam('orbiterMoving', false);
     }, 200);
+    getSceneItem('undoRedo').addAction({
+      type: 'setNewCameraTransforms',
+      prevVal: undoRedoPrevVal,
+      newVal: undoRedoNewVal,
+      cameraIndex: getSceneParam('curCameraIndex'),
+    });
   });
   // TODO: remove this when the view size scrolling is enabled
   if (curCamera && curCamera.type === 'orthographic') {

@@ -142,7 +142,10 @@ class ElemTool extends Component {
       });
       if (this._allTabs[currentTabId]) this._allTabs[currentTabId].content(tabsContentWrapper);
       setTimeout(() => {
-        tabsContentWrapper.elem.scrollTop = getSceneParamR('editor.scrollPositions.elemTool') || 0;
+        if (tabsContentWrapper && tabsContentWrapper.elem) {
+          tabsContentWrapper.elem.scrollTop =
+            getSceneParamR('editor.scrollPositions.elemTool') || 0;
+        }
       }, 200);
     }
   };

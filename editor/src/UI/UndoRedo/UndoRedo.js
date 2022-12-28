@@ -22,10 +22,11 @@ class UndoRedo {
       return;
     }
     // If the type and the newVal are the same as the previous entry, then don't record it
+    const newValStringified = JSON.stringify(action.newVal);
     if (
       (action.type === this.stack[this.stackPointer].type &&
-        action.newVal.toString() === this.stack[this.stackPointer].newVal.toString()) || // @CONSIDER: This might need refactoring
-      action.newVal === action.prevVal
+        newValStringified === JSON.stringify(this.stack[this.stackPointer].newVal)) ||
+      newValStringified === JSON.stringify(action.prevVal)
     ) {
       return;
     }

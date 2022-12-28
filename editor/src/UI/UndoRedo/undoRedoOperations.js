@@ -17,6 +17,12 @@ const undoRedoOperations = {
     getSceneItem('topTools').updateTools();
     getSceneItem('elemTool').updateTool();
   },
+  // Orbit controls
+  setNewCameraTransforms: (action, isUndo) => {
+    cameraTools.setNewCameraTransforms(isUndo ? action.prevVal : action.newVal, action.cameraIndex);
+    getSceneItem('rightSidePanel').updatePanel();
+    getSceneItem('elemTool').updateTool();
+  },
   // Selection
   selection: (action, isUndo) => {
     selectObjects(isUndo ? action.prevVal : action.newVal);
