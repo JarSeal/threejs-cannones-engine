@@ -21,7 +21,8 @@ class UndoRedo {
       );
       return;
     }
-    // If the type and the newVal are the same as the previous entry, then don't record it
+    // If the type and the newVal are the same as the previous entry newVal, or, if the newVal is the same as the prevVal,
+    // then don't record the undo/redo
     const newValStringified = JSON.stringify(action.newVal);
     if (
       (action.type === this.stack[this.stackPointer].type &&
@@ -43,6 +44,7 @@ class UndoRedo {
   };
 
   undo = () => {
+    if (this.stackPointer === this.stack.length - 1) return;
     this.applyingUndoOrRedo = true;
     this._doOperation(this.stack[this.stackPointer], true);
     this.stackPointer++;
@@ -53,6 +55,7 @@ class UndoRedo {
   };
 
   redo = () => {
+    if (this.stackPointer === 0) return;
     this.applyingUndoOrRedo = true;
     this.stackPointer--;
     if (this.stackPointer < 0) this.stackPointer = 0;

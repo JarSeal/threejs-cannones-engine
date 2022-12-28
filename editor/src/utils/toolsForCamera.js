@@ -26,15 +26,11 @@ export const updateCameraProperty = (value, i, key, args) => {
   } else {
     cam[key] = value;
   }
-  cam.userData = newCamParams;
   cam.updateMatrixWorld();
   cam.updateProjectionMatrix();
   setSceneParam('cameras', newCamParams);
   saveCameraState({ index: i, [key]: value });
-  const helpers = getSceneItem('cameraHelpers');
-  if (helpers && helpers.length && helpers[i]) {
-    helpers[i].update();
-  }
+  updateCamUserDataHelpersAndIcon(i);
   getSceneItem('topTools')?.updateTools();
   if (args?.doNotUpdateUndo !== true) {
     const isTransform = key === 'position' || key === 'target' || key === 'quaternion';
@@ -151,7 +147,6 @@ export const updateCameraTransforms = (
   });
   cam.position.set(...curPos);
   cam.lookAt(...curTarget);
-  cam.userData = newCamParams;
   cam.updateMatrixWorld();
   cam.updateProjectionMatrix();
   setSceneParam('cameras', newCamParams);
@@ -159,6 +154,9 @@ export const updateCameraTransforms = (
   if (posOrTar === 'target' && cameraIndex === getSceneParam('curCameraIndex')) {
     getSceneItem('orbitControls').target = new THREE.Vector3(...curTarget);
   }
+  const rightPanel = getSceneItem('rightSidePanel');
+  if (updateRightPanel && rightPanel.tabId === 'UICamera') rightPanel.updatePanel();
+  updateCamUserDataHelpersAndIcon(cameraIndex);
   getSceneItem('undoRedo').addAction({
     type: 'updateCameraTransforms',
     prevVal: prevVal,
@@ -167,12 +165,6 @@ export const updateCameraTransforms = (
     cameraIndex,
     valueIndex,
   });
-  const rightPanel = getSceneItem('rightSidePanel');
-  if (updateRightPanel && rightPanel.tabId === 'UICamera') rightPanel.updatePanel();
-  const editorIcon = getSceneItem('editorIcons').find(
-    (icon) => newCamParams[cameraIndex].id === icon.iconMesh.userData.id
-  );
-  if (editorIcon) editorIcon.update(cam);
 
   // // Rotation
   // const rotationA = [cam.rotation.x, cam.rotation.y, cam.rotation.z];
@@ -227,6 +219,7 @@ export const updateCameraDefaultTransforms = (
   saveAllCamerasState(cameraParams);
   const rightPanel = getSceneItem('rightSidePanel');
   if (updateRightPanel && rightPanel.tabId === 'UICamera') rightPanel.updatePanel();
+  updateCamUserDataHelpersAndIcon(cameraIndex);
   getSceneItem('undoRedo').addAction({
     type: 'updateCameraDefaultTransforms',
     prevVal,
@@ -244,6 +237,7 @@ export const toggleOrbitControls = (isTurnedOn, cameraIndex) => {
   } else {
     if (cameraIndex === getSceneParam('curCameraIndex')) removeOrbitControls();
   }
+  updateCamUserDataHelpersAndIcon(cameraIndex);
   getSceneItem('undoRedo').addAction({
     type: 'toggleOrbitControls',
     prevVal: !isTurnedOn,
@@ -263,6 +257,7 @@ export const toggleShowCameraHelper = (isTurnedOn, cameraIndex) => {
   cameraParams[cameraIndex].showHelper = isTurnedOn;
   setSceneParam('cameras', cameraParams);
   saveCameraState({ index: cameraIndex, showHelper: isTurnedOn });
+  updateCamUserDataHelpersAndIcon(cameraIndex);
   getSceneItem('undoRedo').addAction({
     type: 'toggleShowCameraHelper',
     prevVal: !isTurnedOn,
@@ -338,7 +333,6 @@ export const resetCameraTransforms = (cameraIndex) => {
   });
   cam.position.set(...pos);
   cam.lookAt(...target);
-  cam.userData = newCamParams;
   cam.updateMatrixWorld();
   cam.updateProjectionMatrix();
   setSceneParam('cameras', newCamParams);
@@ -347,10 +341,7 @@ export const resetCameraTransforms = (cameraIndex) => {
     const controls = getSceneItem('orbitControls');
     if (controls) controls.target = new THREE.Vector3(...target);
   }
-  const editorIcon = getSceneItem('editorIcons').find(
-    (icon) => newCamParams[cameraIndex].id === icon.iconMesh.userData.id
-  );
-  if (editorIcon) editorIcon.update(getSceneItem('allCameras')[cameraIndex]);
+  updateCamUserDataHelpersAndIcon(cameraIndex);
   getSceneItem('rightSidePanel').updatePanel();
   getSceneItem('undoRedo').addAction({
     type: 'resetCameraTransforms',
@@ -493,7 +484,6 @@ export const setNewCameraTransforms = (transforms, cameraIndex) => {
   });
   cam.position.set(...position);
   cam.lookAt(...target);
-  cam.userData = newCamParams;
   cam.updateMatrixWorld();
   cam.updateProjectionMatrix();
   setSceneParam('cameras', newCamParams);
@@ -502,10 +492,7 @@ export const setNewCameraTransforms = (transforms, cameraIndex) => {
     const controls = getSceneItem('orbitControls');
     if (controls) controls.target = new THREE.Vector3(...target);
   }
-  const editorIcon = getSceneItem('editorIcons').find(
-    (icon) => newCamParams[cameraIndex].id === icon.iconMesh.userData.id
-  );
-  if (editorIcon) editorIcon.update(getSceneItem('allCameras')[cameraIndex]);
+  updateCamUserDataHelpersAndIcon(cameraIndex);
   getSceneItem('rightSidePanel').updatePanel();
   getSceneItem('undoRedo').addAction({
     type: 'setNewCameraTransforms',
@@ -513,6 +500,31 @@ export const setNewCameraTransforms = (transforms, cameraIndex) => {
     newVal: { position, target },
     cameraIndex,
   });
+};
+
+export const updateCamUserDataHelpersAndIcon = (cameraIndex, updateById) => {
+  const allCamParams = getSceneParam('cameras');
+  if (updateById) {
+    for (let i = 0; i < allCamParams.length; i++) {
+      if (allCamParams[i].id === updateById) {
+        cameraIndex = i;
+        break;
+      }
+    }
+  }
+  const params = allCamParams[cameraIndex];
+  const cameraItem = getSceneItem('allCameras')[cameraIndex];
+  const helpers = getSceneItem('cameraHelpers');
+  cameraItem.userData = params;
+  const editorIcon = getSceneItem('editorIcons').find(
+    (icon) => params.id === icon.iconMesh.userData.id
+  );
+  if (editorIcon) editorIcon.update(cameraItem);
+  if (helpers && helpers.length && helpers[cameraIndex]) {
+    helpers[cameraIndex].userData = params[cameraIndex];
+    helpers[cameraIndex].update();
+  }
+  getSceneItem('elemTool').updateTool();
 };
 
 export default {
@@ -527,4 +539,5 @@ export default {
   resetCameraTransforms,
   destroyCamera,
   setNewCameraTransforms,
+  updateCamUserDataHelpersAndIcon,
 };

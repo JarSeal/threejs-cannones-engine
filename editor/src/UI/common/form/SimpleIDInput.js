@@ -6,6 +6,7 @@ import Button from '../Button';
 import TextInput from './TextInput';
 import SvgIcon from '../../icons/svg-icon';
 import './SimpleIDInput.scss';
+import { updateCamUserDataHelpersAndIcon } from '../../../utils/toolsForCamera';
 
 // Attributes:
 // - label = field label [String]
@@ -111,6 +112,7 @@ class SimpleIDInput extends Component {
         const nextElemId = document.activeElement.id;
         const rightSidePanel = getSceneItem('rightSidePanel');
         rightSidePanel.updatePanel();
+        updateCamUserDataHelpersAndIcon(null, this.curId);
         if (!this.newId && !isUndo) {
           getSceneItem('undoRedo').addAction({
             type: 'updateId',

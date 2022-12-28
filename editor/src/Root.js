@@ -21,13 +21,14 @@ import RightSidePanel from './UI/RightSliderPanel';
 import { scenes } from '../../data';
 import { getSceneStates, saveSceneId } from './sceneData/saveSession';
 import TopTools from './UI/TopTools';
-import Dialog from './UI/Dialog';
+import Dialog from './UI/dialogs/Dialog';
 import { registerStageClick } from './controls/stageClick';
 import SmallStats from './UI/stats/SmallStats';
 import styleVariables from './sass/variables.scss?raw';
 import LeftTools from './UI/LeftTools';
 import ElemTool from './UI/ElemTool';
 import UndoRedo from './UI/UndoRedo/UndoRedo';
+import KeyboardShortcuts from './UI/KeyboarShortcuts';
 
 class Root {
   constructor() {
@@ -203,6 +204,9 @@ class Root {
       dialog.draw();
       dialog.disappear();
       setSceneItem('dialog', dialog);
+
+      const keyboard = new KeyboardShortcuts();
+      setSceneItem('keyboard', keyboard);
     }
 
     this._resize();
