@@ -13,7 +13,7 @@ class VectorInput extends Component {
     this.fieldsId = this.id + '-fields';
     this.inputFieldIdPrefix = this.id + '-field-';
     this.template = `
-            <div class="form-elem form-elem--vector-input">
+            <div class="form-elem form-elem--vector-input inputVector">
               <span class="form-elem__label">${data.label}${data.label ? ':' : ''}</span>
               <div class="form-elem__fields" id="${this.fieldsId}"></div>
             </div>
@@ -35,8 +35,9 @@ class VectorInput extends Component {
             label: this.labels[i],
             step: this.step || 0.1,
             value: this.values[i].toFixed(12),
-            changeFn: (e) => {
-              this.data.onChange(e, i);
+            precision: 16,
+            changeFn: (value) => {
+              this.data.onChange(value, i);
             },
           })
         )

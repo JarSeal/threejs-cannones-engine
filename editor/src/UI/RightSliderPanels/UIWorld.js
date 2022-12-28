@@ -1,13 +1,23 @@
-import * as THREE from 'three';
-
 import { Component } from '../../../LIGHTER';
 import Checkbox from '../common/form/Checbox';
-import { getSceneParam, setSceneParam } from '../../sceneData/sceneParams';
-import { getSceneItem, removeMeshFromScene } from '../../sceneData/sceneItems';
-import { saveSceneState } from '../../sceneData/saveSession';
+import { getSceneParam } from '../../sceneData/sceneParams';
+import { getSceneItem } from '../../sceneData/sceneItems';
 import SettingsPanel from '../common/SettingsPanel';
 import NumberInput from '../common/form/NumberInput';
-import TextInput from '../common/form/TextInput';
+import SvgIcon from '../icons/svg-icon';
+import ColorPicker from '../common/form/ColorPicker';
+import {
+  changeWorldAmbientColor,
+  changeWorldAmbientIntensity,
+  changeWorldBackgroundColor,
+  changeWorldHemiColors,
+  changeWorldHemiIntensity,
+  setWorldGridHelperSize,
+  toggleWorldAmbientLight,
+  toggleWorldAxesHelper,
+  toggleWorldGridHelper,
+  toggleWorldHemiLight,
+} from '../../utils/toolsForWorld';
 
 class UIWorld extends Component {
   constructor(data) {
@@ -17,10 +27,18 @@ class UIWorld extends Component {
   paint = () => {
     this.addChildDraw({
       id: 'panel-title-' + this.id,
-      text: 'World settings',
+      text: 'World',
       tag: 'h3',
       class: 'panelTitle',
     });
+    this.addChildDraw(
+      new SvgIcon({
+        id: this.id + '-main-icon',
+        icon: 'globe',
+        width: 22,
+        class: 'mainTabIcon',
+      })
+    );
     this._basicHelpers();
   };
 
@@ -37,64 +55,47 @@ class UIWorld extends Component {
       })
     );
 
+    const showAxesHelperId = 'axes-helper-' + this.id;
+    this.addChildDraw(
+      new Checkbox({
+        id: showAxesHelperId,
+        attach: helpersContentId,
+        class: 'panelCheckBox',
+        label: 'Show axes',
+        name: 'showAxes',
+        hideMsg: true,
+        changeFn: toggleWorldAxesHelper,
+        value: axesHelper.visible,
+      })
+    );
+
+    let gridSize;
     const showGridHelperId = 'grid-helper-' + this.id;
     this.addChildDraw(
       new Checkbox({
         id: showGridHelperId,
         attach: helpersContentId,
+        class: 'panelCheckBox',
         label: 'Show grid',
         name: 'showGrid',
         hideMsg: true,
-        changeFn: () => {
-          gridHelper.visible = !gridHelper.visible;
-          setSceneParam('grid', gridHelper.visible);
-          saveSceneState();
-          if (gridSize) gridSize.toggleDisabled(!gridHelper.visible);
-        },
+        changeFn: () => toggleWorldGridHelper(gridSize),
         value: gridHelper.visible,
       })
     );
 
-    const gridSize = this.addChildDraw(
+    gridSize = this.addChildDraw(
       new NumberInput({
         id: 'grid-size-' + this.id,
         attach: helpersContentId,
         label: 'Grid size',
         step: 2,
         min: 2,
+        max: 200000,
+        precision: 0,
         value: getSceneParam('gridSize'),
         disabled: !gridHelper.visible,
-        changeFn: (e, setValue) => {
-          let value = parseInt(e.target.value);
-          if (value % 2 !== 0) {
-            value += 1;
-            setValue(value, true);
-          }
-          setSceneParam('gridSize', value);
-          saveSceneState({ gridSize: value });
-          gridHelper = scene.children.find((item) => item.type === 'GridHelper');
-          removeMeshFromScene(gridHelper, scene);
-          gridHelper = new THREE.GridHelper(value, value);
-          if (!getSceneParam('grid')) gridHelper.visible = false;
-          scene.add(gridHelper);
-        },
-      })
-    );
-
-    const showAxesHelperId = 'axes-helper-' + this.id;
-    this.addChildDraw(
-      new Checkbox({
-        id: showAxesHelperId,
-        attach: helpersContentId,
-        label: 'Show axes',
-        name: 'showAxes',
-        hideMsg: true,
-        changeFn: () => {
-          axesHelper.visible = !axesHelper.visible;
-          setSceneParam('axesHelper', axesHelper.visible);
-          saveSceneState();
-        },
-        value: axesHelper.visible,
+        changeFn: setWorldGridHelperSize,
       })
     );
 
@@ -107,19 +108,106 @@ class UIWorld extends Component {
         contentId: envContentId,
       })
     );
+    this.addChildDraw({
+      id: this.id + '-env-title-back-and-skybox',
+      attach: envContentId,
+      class: ['panelTitle'],
+      text: 'Scene background and skybox:',
+    });
     this.addChildDraw(
-      new TextInput({
-        id: 'env-clearcolor-' + this.id,
+      new ColorPicker({
+        id: this.id + '-env-back-color',
         attach: envContentId,
-        label: 'Background color:',
-        value: getSceneParam('rendererClearColor'),
-        blurOnEnter: true,
-        onBlur: (e) => {
-          const val = e.target.value;
-          setSceneParam('rendererClearColor', val);
-          getSceneItem('renderer').setClearColor(val);
-          saveSceneState();
-        },
+        color: getSceneParam('rendererClearColor'),
+        label: 'Background',
+        onChangeColor: (newColor) => changeWorldBackgroundColor(newColor.hex),
+      })
+    );
+
+    this.addChildDraw({
+      id: this.id + '-env-title-lighting',
+      attach: envContentId,
+      class: ['panelTitle', 'overline'],
+      text: 'Environment lighting:',
+    });
+    this.addChildDraw(
+      new Checkbox({
+        id: this.id + '-use-ambient-light',
+        attach: envContentId,
+        label: 'Ambient light',
+        name: 'showAmbient',
+        changeFn: toggleWorldAmbientLight,
+        value:
+          getSceneParam('lights').find((l) => l.type === 'ambient').disabled === undefined
+            ? true
+            : !getSceneParam('lights').find((l) => l.type === 'ambient').disabled,
+      })
+    );
+    this.addChildDraw(
+      new ColorPicker({
+        id: this.id + '-env-ambient-color',
+        attach: envContentId,
+        color: getSceneParam('lights').find((l) => l.type === 'ambient').color,
+        label: 'Ambient color',
+        onChangeColor: (newColor) => changeWorldAmbientColor(newColor.hex),
+      })
+    );
+    this.addChildDraw(
+      new NumberInput({
+        id: this.id + '-env-ambient-intensity',
+        attach: envContentId,
+        label: 'Ambient intensity',
+        step: 0.1,
+        min: 0,
+        max: 1,
+        precision: 3,
+        value: getSceneParam('lights').find((l) => l.type === 'ambient').intensity,
+        changeFn: changeWorldAmbientIntensity,
+      })
+    );
+    this.addChildDraw(
+      new Checkbox({
+        id: this.id + '-use-hemi-light',
+        attach: envContentId,
+        label: 'Hemisphere light',
+        name: 'showHemisphere',
+        changeFn: toggleWorldHemiLight,
+        value:
+          getSceneParam('lights').find((l) => l.type === 'hemisphere').disabled === undefined
+            ? true
+            : !getSceneParam('lights').find((l) => l.type === 'hemisphere').disabled,
+      })
+    );
+    this.addChildDraw(
+      new ColorPicker({
+        id: this.id + '-env-hemi-top-color',
+        attach: envContentId,
+        color: getSceneParam('lights').find((l) => l.type === 'hemisphere').colorTop,
+        label: 'Hemi top',
+        onChangeColor: (newColor) => changeWorldHemiColors(newColor.hex, 'top'),
+      })
+    );
+    this.addChildDraw(
+      new ColorPicker({
+        id: this.id + '-env-hemi-bottom-color',
+        attach: envContentId,
+        color: getSceneParam('lights').find((l) => l.type === 'hemisphere').colorBottom,
+        label: 'Hemi bottom',
+        onChangeColor: (newColor) => changeWorldHemiColors(newColor.hex, 'bottom'),
+      })
+    );
+    this.addChildDraw(
+      new NumberInput({
+        id: this.id + '-env-hemi-intensity',
+        class: ['alignAloneRight'],
+        attach: envContentId,
+        label: 'Hemi intensity',
+        step: 0.1,
+        min: 0,
+        max: 1,
+        precision: 3,
+        value: getSceneParam('lights').find((l) => l.type === 'hemisphere').intensity,
+        changeFn: changeWorldHemiIntensity,
       })
     );
   };

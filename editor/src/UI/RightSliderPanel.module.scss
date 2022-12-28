@@ -1,281 +1,95 @@
 @import '../sass/variables';
 
-@function buttonPlacement($orderNr) {
-  @return ($orderNr - 1) * ($rightPanelButtonGap + $rightPanelButtonHeight) + $rightPanelButtonGap;
-}
-
 .uiPanelRight {
   position: fixed;
   top: 0;
   right: 0;
+  z-index: 500;
   width: $rightPanelWidth;
   height: 100vh;
-  background: $colorPanelBack;
+  background-color: $light-grey7;
+  border-left: 0.1rem solid $mid-grey5;
   transition: transform 0.2s ease-in-out;
   transform: translate3d(100%, 0, 0);
   font-size: 1.1rem;
-  :global(.panelTogglerButton) {
-    width: $rightPanelButtonWidth;
-    height: $rightPanelButtonHeight;
-    position: absolute;
-    right: 100%;
-    border-radius: 0.4rem 0 0 0.4rem;
-    border: none;
-    background: rgba($colorPanelBack, 0.8);
-    user-select: none;
-    cursor: pointer;
-    color: $font-color;
-    text-shadow: 0 0 1rem $colorPanelBack;
-    outline: none;
-    font-size: 1.4rem;
-    font-weight: 700;
-    transition: background 0.2s ease-in-out;
-    &:global(.current),
-    &:hover {
-      background: $colorPanelBack;
-    }
-    &:global(.current) {
-      &:before {
-        display: block;
-        content: '';
-        width: 0.8rem;
-        height: 0.8rem;
-        border-radius: 50%;
-        background: #fff;
-        position: absolute;
-        left: 0;
-        top: 50%;
-        transform: translate3d(-50%, -50%, 0);
-      }
-    }
-  }
+  padding: 9.7rem 0 0 2rem;
   :global(h3.panelTitle) {
     width: 100%;
+    @include heading-font;
     text-align: center;
-    font-size: 1.1rem;
+    font-size: 2rem;
     display: inline-block;
     width: 100%;
-    padding: 0.6rem 1rem 0.4rem;
-    background: lighten($colorPanelBack, 10%);
+    padding: 1.3rem 6rem 0.4rem;
     margin: 0 0 0.4rem 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 20;
+    height: 9.7rem;
+    background-color: $light-grey7;
+    color: $mid-grey1;
   }
-  :global(.form-elem--infoField) {
-    font-size: 1.2rem;
-  }
-  :global(.form-elem--infoField .label),
-  :global(.form-elem--text-input .form-elem__label) {
-    display: block;
-    width: 100%;
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: darken(#fff, 50%);
-    margin-top: -0.2rem;
-    margin-bottom: -0.3rem;
-    text-align: left;
-  }
-  :global(.form-elem--vector-input) {
-    position: relative;
-    > :global(.form-elem__label) {
-      position: absolute;
-      left: 0;
-      top: -0.2rem;
-      color: darken(#fff, 50%);
-      font-size: 0.8rem;
-      font-weight: 700;
+  :global(.mainTabIcon) {
+    position: absolute;
+    top: 1.7rem;
+    left: 2.7rem;
+    z-index: 25;
+    path {
+      fill: $mid-grey1;
     }
-    :global(.form-elem__fields) {
-      margin-top: 0.7rem;
-      :global(.form-elem__label) {
-        position: relative;
-        width: 2.1rem;
-        &:before {
-          display: block;
-          content: '•';
-          font-size: 2rem;
-          line-height: 1rem;
-          position: absolute;
-          left: 0;
-          top: 0.3rem;
-        }
+  }
+  :global(.floatingUIButtons) {
+    flex-direction: column;
+    position: absolute;
+    top: 50%;
+    right: 100%;
+    transform: translateY(-50%);
+    height: auto;
+    border-radius: 0.4rem 0 0 0.4rem;
+    :global(.button) {
+      width: 3.4rem !important;
+      height: 3.6rem !important;
+      &:first-child {
+        border-radius: 0.4rem 0 0 0 !important;
       }
-      :global(.form-elem:nth-child(1) .form-elem__label:before) {
-        color: red;
-      }
-      :global(.form-elem:nth-child(2) .form-elem__label:before) {
-        color: green;
-      }
-      :global(.form-elem:nth-child(3) .form-elem__label:before) {
-        color: blue;
-      }
-      :global(.form-elem:nth-child(4) .form-elem__label:before) {
-        color: #fff;
-      }
-      :global(.form-elem + .form-elem) {
-        border-top: none;
-        margin-top: 0;
-      }
-    }
-    input {
-      width: 18rem;
-    }
-  }
-  :global(.form-elem--text-input .form-elem__input) {
-    width: 100%;
-    margin-top: 0.5rem;
-    text-align: right;
-    padding-right: 0.8rem;
-  }
-  :global(.form-elem--text-input input),
-  :global(.form-elem__number-input) {
-    border-radius: 0.4rem;
-    padding: 0.5rem 0.5rem 0.3rem 0.6rem;
-    background: #666;
-    color: #fff;
-    box-shadow: 0 0.1rem 0.5rem rgba(0, 0, 0, 0.8) inset;
-    border: 0.1rem solid rgba(0, 0, 0, 0.3);
-    transition: border-color 0.05s ease-in-out;
-    &:hover {
-      border-color: #fff;
-    }
-  }
-  :global(.collapsable-panel) {
-    h4 {
-      border-top: 0.5rem dashed lighten($colorPanelBack, 30%);
-    }
-  }
-  :global(.collapsable-panel .collapsable-panel) {
-    border-bottom: 0.1rem solid lighten($colorPanelBack, 5%);
-    border-top: 0.1rem solid lighten($colorPanelBack, 5%);
-    margin-top: 0.2rem;
-    padding-top: 0.4rem;
-    h4 {
-      background: #555;
-      border-top: none;
-      border-radius: 0.5rem 0.5rem 0 0;
-      &:hover {
-        background: darken(#555, 5%);
-      }
-    }
-    &:global(.closed h4) {
-      border-radius: 0.5rem;
-      margin-bottom: 0.4rem;
-    }
-    :global(.collapsable-panel__content) {
-      padding-left: 1rem;
-      padding-right: 1rem;
-      background: lighten($colorPanelBack, 2%);
-      border-radius: 0 0 0.5rem 0.5rem;
-      margin-bottom: 0.4rem;
-    }
-    :global(.form-elem__fields input) {
-      width: 16.8rem;
-    }
-  }
-  :global(.form-elem--action-buttons button) {
-    border: none;
-    padding: 0.4rem 0.5rem;
-    border-radius: 0.3rem;
-    background: #eaeaea;
-    cursor: pointer;
-    transition: background 0.2s ease-in-out;
-    + :global(button) {
-      margin-left: 0.3rem;
-    }
-    &:hover {
-      background: darken(#eaeaea, 20%);
-    }
-    &:global(.delete-button) {
-      background: rgb(112, 27, 27);
-      color: #ccc;
-      &:hover {
-        background: darken(rgb(112, 27, 27), 5%);
+      &:last-child {
+        border-radius: 0 0 0 0.4rem !important;
       }
     }
   }
-  :global(.form-elem--checkbox) {
-    overflow: hidden;
-    input {
-      visibility: hidden;
-    }
-    label {
-      position: relative;
-      cursor: pointer;
-      &:hover {
-        :global(.form-elem__label) {
-          &:before {
-            border-color: #fff;
-          }
-        }
-      }
-      &:before,
-      &:after {
-        display: block;
-        content: '';
-        width: 0;
-        height: 0.3rem;
-        background: #fff;
-        transition: width 0.1s ease-in-out, top 0.1s ease-in-out, right 0.1s ease-in-out;
-        position: absolute;
-        z-index: 20;
-        border-radius: 0.2rem;
-      }
-      &:before {
-        top: 0.4rem;
-        right: 0.8rem;
-        transform: rotate(45deg);
-      }
-      &:after {
-        top: 0.4rem;
-        right: 0.7rem;
-        transform: rotate(-45deg);
-      }
-    }
-    :global(.form-elem__label) {
-      user-select: none;
-      &:before {
-        display: block;
-        content: '';
-        width: 1.6rem;
-        height: 1.6rem;
-        border: 0.1rem solid rgba(0, 0, 0, 0.3);
-        border-radius: 0.5rem;
-        box-shadow: 0 0.1rem 0.8rem rgba(0, 0, 0, 0.28) inset;
-        background: #666;
-        box-shadow: 0 0.1rem 0.5rem rgba(0, 0, 0, 0.8) inset;
-        position: absolute;
-        top: -0.4rem;
-        right: 0;
-      }
-    }
-    &:global(.form-elem--checked) {
-      label {
-        &:before {
-          width: 0.6rem;
-          top: 0.4rem;
-          right: 0.8rem;
-        }
-        &:after {
-          width: 1rem;
-          top: 0.3rem;
-          right: 0.2rem;
-        }
-      }
-    }
+  :global(.alignAloneRight) {
+    margin-left: auto;
+    margin-right: 0.2rem;
   }
 }
 
 .uiPanelRightInner {
-  height: 100vh;
-  overflow-y: auto;
+  height: 100%;
+  overflow-y: scroll;
 }
 
 .showPanel {
   transform: translate3d(0, 0, 0);
 }
 
-:global(.UIWorld.panelTogglerButton) {
-  top: buttonPlacement(1);
+:global(.collapsable-panel__content) {
+  display: flex;
+  align-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
-:global(.UICamera.panelTogglerButton) {
-  top: buttonPlacement(2);
+
+:global(.panelTitle) {
+  width: 100%;
+  text-align: left;
+  margin-bottom: -0.7rem;
+  padding-left: 0.2rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: $mid-grey1;
+  &:global(.overline) {
+    border-top: 0.1rem solid $mid-grey4;
+    padding-top: 0.5rem;
+  }
 }

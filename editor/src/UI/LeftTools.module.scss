@@ -1,0 +1,31 @@
+@import '../sass/variables';
+
+.leftTools {
+  position: fixed;
+  top: 50%;
+  left: 2rem;
+  z-index: 500;
+  transform: translateY(-50%);
+  background: transparent;
+  user-select: none;
+  :global(.selectedElemButtons) {
+    position: absolute;
+    top: -25vh;
+    left: 0;
+    transform: translateY(50%);
+  }
+  :global(.button.selectedElemToolToggle) {
+    background-color: $mid-grey1;
+    path {
+      fill: $light-grey4;
+    }
+    &:hover {
+      background-color: $dark-grey3;
+    }
+    &:focus {
+      svg path {
+        fill: $light-grey7;
+      }
+    }
+  }
+}

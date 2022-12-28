@@ -1,11 +1,55 @@
-// Colors:
-$font-color: #ccc;
-$font-color-dialog: #333;
-$colorPanelBack: #252525;
-$dialog-button-alert-bolor: rgb(92, 25, 25);
+// New Design colors
+$dark-grey1: #202020;
+$dark-grey2: #494949;
+$dark-grey3: #545454;
+
+$mid-grey1: #686868;
+$mid-grey2: #818181;
+$mid-grey3: #848484;
+$mid-grey4: #929292;
+$mid-grey5: #9f9f9f;
+
+$light-grey1: #acacac;
+$light-grey2: #adadad;
+$light-grey3: #b1b1b1;
+$light-grey4: #b5b5b5;
+$light-grey5: #c3c3c3;
+$light-grey6: #cacaca;
+$light-grey7: #d9d9d9;
+$light-grey8: #eaeaea;
+
+$white: #ffffff;
+$black: #000000;
+
+$axis-x: #ea2323;
+$axis-y: #27ea23;
+$axis-z: #2337ea;
+
+$error: #a64444;
+
+// Small Stats colors (the actual color values are parsed from this file)
+$smallStats-fg: #545454;
+$smallStats-bg: #b5b5b5;
+
+// Elevated button (Action buttons, Dialog buttons, etc.)
+$elevated-shadow: 0 -0.4rem 0.4rem 0 rgba(0, 0, 0, 0.25) inset;
 
 // Sizes:
-$rightPanelWidth: 30rem;
-$rightPanelButtonWidth: 5rem;
-$rightPanelButtonHeight: 5rem;
-$rightPanelButtonGap: 0.2rem;
+$rightPanelWidth: 39rem;
+$rightPanelButtonWrapperWidth: 3.8rem;
+$rightPanelButtonWidth: 3.4rem;
+$rightPanelButtonHeight: 3.8rem;
+
+// Mixins:
+@mixin heading-font {
+  font-family: FredokaOne, sans-serif;
+  font-weight: 400;
+}
+@mixin basetext-font {
+  font-family: ArchivoNarrow, sans-serif;
+  font-weight: 400;
+}
+@mixin basetext-font-bold {
+  font-family: ArchivoNarrow, sans-serif;
+  font-weight: 600;
+}

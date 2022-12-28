@@ -1,6 +1,7 @@
 import { Component } from '../../LIGHTER';
 import Button from './common/Button';
 import styles from './Dialog.module.scss';
+import SvgIcon from './icons/svg-icon';
 
 // Attributes for data:
 //
@@ -35,6 +36,7 @@ class Dialog extends Component {
           class: styles.closeButton,
           attach: this.id + '-box-wrapper',
           attributes: { title: 'Close' },
+          icon: new SvgIcon({ id: this.id + '-close-icon', icon: 'xMark', width: 16 }),
           onClick: this._closeDialogClick,
         })
       )
@@ -42,7 +44,7 @@ class Dialog extends Component {
     this.dialogCompos.push(
       this.addChild({
         id: this.id + '-inner-scroller',
-        class: styles.innerScroller,
+        class: [styles.innerScroller, 'scrollbar'],
         attach: this.id + '-box-wrapper',
       })
     );

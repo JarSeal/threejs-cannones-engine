@@ -1,0 +1,114 @@
+@import '../variables.scss';
+
+.checkbox {
+  background-color: $light-grey6;
+  overflow: hidden;
+  padding: 0 !important;
+  border: 0.1rem solid transparent;
+  position: relative;
+  transition: background-color 0.15s ease-in-out;
+  input {
+    opacity: 0;
+    cursor: pointer;
+  }
+  label {
+    position: relative;
+    z-index: 10;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    &:hover {
+      :global(.form-elem__label) {
+        &:before {
+          border-color: #fff;
+        }
+      }
+    }
+    &:before,
+    &:after {
+      display: block;
+      content: '';
+      width: 0;
+      height: 0.3rem;
+      background-color: $dark-grey2;
+      transition: width 0.1s ease-in-out, top 0.1s ease-in-out, right 0.1s ease-in-out;
+      position: absolute;
+      z-index: 20;
+      border-radius: 0.2rem;
+      top: 1.8rem;
+    }
+    &:before {
+      left: 0.9rem;
+      transform: rotate(45deg);
+    }
+    &:after {
+      left: 0.9rem;
+      transition-delay: 0.05s;
+      transform: rotate(-45deg);
+    }
+  }
+  .form-elem__label {
+    user-select: none;
+    width: 100%;
+    margin-top: 0 !important;
+    padding-left: 2.6rem;
+    font-size: 1.2rem;
+    line-height: 1.2rem;
+    &:before {
+      display: block;
+      content: '';
+      width: 1.8rem;
+      height: 1.8rem;
+      border: 0.1rem solid $light-grey4;
+      border-radius: 0.5rem;
+      box-shadow: 0 0.1rem 0.8rem rgba(0, 0, 0, 0.28) inset;
+      background-color: $white;
+      box-shadow: 0 0 0.4rem 0.1rem rgba($black, 0.26) inset;
+      position: absolute;
+      top: 0.8rem;
+      left: 0.4rem;
+      transition: border-color 0.15s ease-in-out;
+    }
+  }
+  &:hover {
+    background-color: $light-grey5;
+    .form-elem__label {
+      &:before {
+        border-color: $mid-grey3;
+      }
+    }
+  }
+  &.form-elem--checked {
+    label {
+      &:before {
+        width: 0.6rem;
+        top: 1.7rem;
+        left: 0.7rem;
+      }
+      &:after {
+        width: 1.1rem;
+        top: 1.6rem;
+        left: 0.9rem;
+      }
+    }
+  }
+  .dialog & {
+    background-color: $light-grey4;
+    .form-elem__label {
+      color: $dark-grey2;
+      &:before {
+        border-color: $light-grey1;
+      }
+    }
+    &:hover {
+      background-color: $light-grey2;
+      .form-elem__label {
+        &:before {
+          border-color: $mid-grey2;
+        }
+      }
+    }
+  }
+}

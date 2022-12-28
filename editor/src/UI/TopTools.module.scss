@@ -1,20 +1,28 @@
 @import '../sass/variables';
 
 .topTools {
+  display: flex;
+  gap: 2rem;
   position: fixed;
-  top: 1rem;
-  left: 1rem;
+  top: 2rem;
+  left: 2rem;
+  z-index: 500;
   background: transparent;
   user-select: none;
-  :global(.form-elem) {
-    display: inline-block;
-    + :global(.form-elem) {
-      margin-left: 2rem;
+  :global(button.camSelector) {
+    width: 14rem;
+    :global(.curCamName) {
+      display: block;
+      width: 100%;
+      padding-left: 3.4rem;
+      @include heading-font;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
-  }
-  :global(.form-elem__label) {
-    font-size: 1.1rem;
-    color: #000;
-    text-shadow: 0.1rem 0.1rem 0 #fff;
+    :global(.ui-icon) {
+      position: absolute;
+      left: 1rem;
+    }
   }
 }

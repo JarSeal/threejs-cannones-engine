@@ -1,0 +1,49 @@
+.checkbox,
+.inputNumber,
+.inputColor,
+.inputText,
+.dropdown,
+.infoField {
+  width: 10.2rem;
+  height: 3.6rem;
+  border-radius: 0.4rem;
+  overflow: hidden;
+  text-align: left;
+  margin-bottom: 0.5rem;
+  &.focus {
+    border-color: $dark-grey1;
+  }
+}
+.inputNumber,
+.inputColor,
+.inputText,
+.dropdown,
+.infoField {
+  background-color: $white;
+  border: 0.1rem solid $mid-grey3;
+  position: relative;
+  transition: border-color 0.15 ease-in-out;
+  .form-elem__label {
+    font-size: 1rem;
+    line-height: 1rem;
+    font-weight: 600;
+    font-style: italic;
+    color: $mid-grey3;
+    position: absolute;
+    top: 0.4rem;
+    left: 0.5rem;
+    z-index: 20;
+    user-select: none;
+    pointer-events: none;
+  }
+  &.disabled {
+    opacity: 0.5;
+  }
+}
+
+.form-layout {
+  display: flex;
+  align-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}

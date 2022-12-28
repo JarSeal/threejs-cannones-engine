@@ -15,7 +15,7 @@ class Checkbox extends Component {
     if (!data.label) data.label = data.id;
     this.inputId = this.id + '-input';
     this.template = `
-            <div class="form-elem form-elem--checkbox">
+            <div class="form-elem form-elem--checkbox checkbox${data.disabled ? ' disabled' : ''}">
                 <label for="${this.inputId}">
                     <span class="form-elem__label">${data.label}</span>
                     <input
@@ -50,9 +50,10 @@ class Checkbox extends Component {
   }
 
   addListeners(data) {
+    const inputElem = document.getElementById(this.inputId);
     this.addListener({
       id: this.inputId + '-click',
-      target: document.getElementById(this.inputId),
+      target: inputElem,
       type: 'click',
       fn: (e) => {
         this.value = e.target.checked;
@@ -62,8 +63,28 @@ class Checkbox extends Component {
         } else {
           this.elem.classList.add('form-elem--checked');
         }
-        if (data.changeFn) data.changeFn(e);
+        if (data.changeFn) data.changeFn(e, this);
       },
+    });
+    this.addListener({
+      id: this.inputId + '-keyup',
+      target: inputElem,
+      type: 'keyup',
+      fn: (e) => {
+        if (e.code === 'Escape') inputElem.blur();
+      },
+    });
+    this.addListener({
+      id: this.inputId + '-focus',
+      target: inputElem,
+      type: 'focus',
+      fn: () => this.elem.classList.add('focus'),
+    });
+    this.addListener({
+      id: this.inputId + '-blur',
+      target: inputElem,
+      type: 'blur',
+      fn: () => this.elem.classList.remove('focus'),
     });
   }
 

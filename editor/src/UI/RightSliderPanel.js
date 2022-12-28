@@ -5,13 +5,22 @@ import { getSceneParamR, setSceneParamR } from '../sceneData/sceneParams';
 import { saveEditorState } from '../sceneData/saveSession';
 import UIWorld from './RightSliderPanels/UIWorld';
 import UICamera from './RightSliderPanels/UICamera';
+import SvgIcon from './icons/svg-icon';
 
 class RightSidePanel extends Component {
   constructor(data) {
     super(data);
     data.class = [styles.uiPanelRight];
     this.innerContentId = this.id + '-inner-content';
-    this.innerContent = this.addChild({ id: this.innerContentId, class: styles.uiPanelRightInner });
+    this.innerContent = this.addChild({
+      id: this.innerContentId,
+      class: [styles.uiPanelRightInner, 'scrollbar'],
+    });
+    this.tabButtonWrapperId = this.id + '-tab-btn-wrapper';
+    this.tabButtonWrapper = this.addChild({
+      id: this.tabButtonWrapperId,
+      class: ['floatingUIButtons', 'vertical'],
+    });
     this.tabId = getSceneParamR('editor.show.rightPanelTab', '');
     if (this.tabId.length) {
       data.class.push(styles.showPanel);
@@ -19,6 +28,7 @@ class RightSidePanel extends Component {
   }
 
   paint = () => {
+    this.tabButtonWrapper.draw();
     this.innerContent.draw();
     this.innerContent.addListener({
       id: this.id + '-panel-scroll-listener',
@@ -34,10 +44,12 @@ class RightSidePanel extends Component {
     });
     for (let i = 0; i < this._tabs.length; i++) {
       const tab = this._tabs[i];
-      tab.btn.draw();
+      tab.btn.draw({
+        attach: this.tabButtonWrapperId,
+        class: tab.id === this.tabId ? [...tab.btn.data.class, 'current'] : tab.btn.data.class,
+      });
       if (tab.id === this.tabId) {
         tab.content.draw({ attach: this.innerContentId });
-        tab.btn.elem.classList.add('current');
       }
     }
     this.innerContent.elem.scrollTop = getSceneParamR(
@@ -69,40 +81,37 @@ class RightSidePanel extends Component {
     });
   };
 
-  updatePanel = (tabId) => {
-    if (!tabId) {
-      this.rePaint();
-      return;
-    }
-    if (this.tabId === tabId) this.rePaint();
+  updatePanel = (callback) => {
+    this.rePaint();
+    if (callback) callback();
   };
 
   _tabs = [
     {
-      id: 'UIWorld',
-      btn: this.addChild(
-        new Button({
-          id: 'btn-UIWorld' + this.id,
-          onClick: () => this.togglePanel('UIWorld'),
-          class: ['panelTogglerButton', 'UIWorld'],
-          text: 'W',
-        })
-      ),
-      content: this.addChild(new UIWorld({ id: 'ui-tab-world-' + this.id })),
-    },
-    {
       id: 'UICamera',
+      icon: 'camera',
       btn: this.addChild(
         new Button({
           id: 'btn-UICamera' + this.id,
           onClick: () => this.togglePanel('UICamera'),
-          class: ['panelTogglerButton', 'UICamera'],
-          text: 'C',
+          icon: new SvgIcon({ id: this.id + '-world-icon', icon: 'camera', width: 22 }),
         })
       ),
       content: this.addChild(
         new UICamera({ id: 'ui-tab-camera-' + this.id, updatePanel: this.updatePanel })
       ),
+    },
+    {
+      id: 'UIWorld',
+      icon: 'globe',
+      btn: this.addChild(
+        new Button({
+          id: 'btn-UIWorld' + this.id,
+          onClick: () => this.togglePanel('UIWorld'),
+          icon: new SvgIcon({ id: this.id + '-world-icon', icon: 'globe', width: 22 }),
+        })
+      ),
+      content: this.addChild(new UIWorld({ id: 'ui-tab-world-' + this.id })),
     },
   ];
 }

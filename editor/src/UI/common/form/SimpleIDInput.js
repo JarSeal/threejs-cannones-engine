@@ -1,25 +1,22 @@
 import { Component } from '../../../../LIGHTER';
 import { saveStateByKey } from '../../../sceneData/saveSession';
-import { getSceneItem } from '../../../sceneData/sceneItems';
+import { getSceneItem, setSceneItem } from '../../../sceneData/sceneItems';
 import { getSceneParam, setSceneParam } from '../../../sceneData/sceneParams';
 import Button from '../Button';
 import TextInput from './TextInput';
+import SvgIcon from '../../icons/svg-icon';
 import './SimpleIDInput.scss';
 
 // Attributes:
 // - label = field label [String]
-// - changeFn = function that is ran after each change [Function]
-// - onBlur = function that happens when the input loses focus [Function]
-// - onFocus = function that happens when the input gets focus [Function]
 // - curId = current ID's value [Number]
-// - disabled = whether the field is disabled or not [Boolean]
-// - doNotSelectOnFocus = boolean whether to select all content or not [Boolean]
-// - doNotBlurOnEnter = boolean whether to blur from the input field when Enter key is pressed [Boolean]
+// - newId = boolean whether the undo button is shown on mistakes, default is false/undefined [Boolean]
+// - focus = boolean whether the input should have focus after initiation or not [Boolean]
 class SimpleIDInput extends Component {
   constructor(data) {
     super(data);
     this.inputId = this.id + '-text-input';
-    data.class = ['form-elem', 'form-elem--simple-id'];
+    data.class = ['form-elem', 'form-elem--simple-id', 'simpleIdInput'];
     this.curId = data.curId;
     this.undoValue = this.curId;
     this.newId = data.newId;
@@ -29,6 +26,8 @@ class SimpleIDInput extends Component {
     this.timeout = null;
     this.groups = ['lights', 'cameras', 'scenes', 'elements'];
     this.regex = new RegExp('^[a-zA-Z0-9-_]+$');
+    this.focus = data.focus;
+    setSceneItem('IDComponents', { ...(getSceneItem('IDComponents') || {}), [this.id]: this });
   }
 
   paint = () => {
@@ -37,6 +36,7 @@ class SimpleIDInput extends Component {
         id: this.inputId,
         label: this.data.label,
         value: this.curId,
+        focus: this.focus,
         changeFn: (e) => {
           const value = e.target.value;
           const error = this._validate(value);
@@ -53,25 +53,30 @@ class SimpleIDInput extends Component {
         },
         onBlur: (e) => {
           const value = e.target.value;
-          this._saveValue(value);
+          this.saveValue(value);
         },
       })
     );
     if (!this.newId) {
       this.returnOriginalValueButton = this.addChild(
         new Button({
-          id: this.id + '-return-original-val',
-          text: 'Undo',
+          id: this.id + '-undo',
+          icon: new SvgIcon({
+            id: this.id + '-undo-icon',
+            icon: 'undo',
+            width: 17,
+          }),
+          attributes: { tabindex: '-1' },
           onClick: this._undoClick,
         })
       );
     }
   };
 
-  _saveValue = (value) => {
+  saveValue = (value, isUndo) => {
     this.undoValue = this.curId;
     const error = this._validate(value);
-    if (!error.hasError) {
+    if (!error.hasError && value !== this.curId) {
       // Wait for a possible undo click because this fn is fired before the possible click can happen
       clearTimeout(this.timeout);
       this.timeout = setTimeout(() => {
@@ -99,16 +104,26 @@ class SimpleIDInput extends Component {
           saveStateByKey(group, items);
         }
         this.curId = value;
+
+        getSceneItem('topTools')?.updateTools();
+
+        if (!this.newId) this.returnOriginalValueButton.discard();
+        const nextElemId = document.activeElement.id;
         const rightSidePanel = getSceneItem('rightSidePanel');
         rightSidePanel.updatePanel();
-        const cameraParams = getSceneParam('cameras');
-        const currentCameraId = cameraParams[getSceneParam('curCameraIndex')]?.id;
-        const cameraSelector = getSceneItem('cameraSelectorTool');
-        cameraSelector.setOptions(
-          cameraParams.map((c) => ({ value: c.id, label: c.name || c.id })),
-          currentCameraId
-        );
-        if (!this.newId) this.returnOriginalValueButton.discard();
+        if (!this.newId && !isUndo) {
+          getSceneItem('undoRedo').addAction({
+            type: 'updateId',
+            prevVal: this.undoValue,
+            newVal: this.curId,
+            compoId: this.id,
+          });
+        }
+        if (nextElemId) {
+          // Because the timeout will rerender, the possible active elem needs to be refocused
+          const nextElem = document.getElementById(nextElemId);
+          if (nextElem) nextElem.focus();
+        }
       }, 400);
     }
   };
@@ -118,7 +133,7 @@ class SimpleIDInput extends Component {
     this.inputComponent.setValue(this.curId, true);
     this.inputComponent.error();
     if (!this.newId) this.returnOriginalValueButton.discard();
-    this._saveValue(this.curId);
+    this.saveValue(this.curId, true);
   };
 
   _validate = (value) => {

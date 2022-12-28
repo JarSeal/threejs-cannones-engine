@@ -1,0 +1,73 @@
+.inputColor {
+  background-color: $white;
+  border: 0.1rem solid $mid-grey3;
+  padding: 0;
+  outline: none;
+  position: relative;
+  transition: border-color 0.15 ease-in-out;
+  @include basetext-font-bold;
+  color: $dark-grey2;
+  cursor: pointer;
+  user-select: none;
+  .lw-ref {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    z-index: 20;
+  }
+  &__value {
+    font-size: 1.4rem;
+    text-transform: uppercase;
+    position: absolute;
+    left: 0.5rem;
+    bottom: 0.2rem;
+    pointer-events: none;
+  }
+  &__indicator,
+  &__indicatorBackground {
+    border: 0.1rem solid $light-grey3;
+    border-radius: 0.4rem;
+    width: 2.4rem;
+    height: 2.4rem;
+    position: absolute;
+    top: 0.5rem;
+    right: 0.6rem;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  &__indicatorBackground {
+    background: center center
+      url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 20 20"><path fill="%23d1d3d4" d="M0 0h10v10H0Z"/><path fill="%23fff" d="M0 10h10v10H0Z"/><path fill="%23d1d3d4" d="M10 10h10v10H10Z"/><path fill="%23fff" d="M10 0h10v10H10Z"/></svg>');
+    z-index: 3;
+  }
+  &__indicator {
+    z-index: 5;
+  }
+}
+
+.alwan {
+  padding: 1rem;
+  border-radius: 0.4rem;
+  background: $light-grey8;
+  &__input {
+    border-radius: 0.4rem;
+  }
+  &__container {
+    padding: 1rem 0;
+  }
+  .alwan__preview {
+    overflow: hidden;
+    border-radius: 0.4rem;
+  }
+  .lw-label {
+    input {
+      @include basetext-font;
+    }
+    span {
+      @include basetext-font-bold;
+    }
+  }
+}

@@ -3,6 +3,7 @@ import styles from './SettingsPanel.module.scss';
 import { saveEditorState } from '../../sceneData/saveSession';
 import { getSceneParamR, setSceneParamR } from '../../sceneData/sceneParams';
 import { getSceneItem } from '../../sceneData/sceneItems';
+import Button from './Button';
 
 class SettingsPanel extends Component {
   constructor(data) {
@@ -22,26 +23,19 @@ class SettingsPanel extends Component {
     this.panelTitleId = 'settings-panel-title-' + this.id;
   }
 
-  addListeners = () => {
-    this.addListener({
-      id: 'panel-toggle-listener-' + this.id,
-      target: document.getElementById('settings-panel-title-' + this.id),
-      type: 'click',
-      fn: () => {
-        this.showPanel = !this.showPanel;
-        this._setPanelClass();
-        setSceneParamR(`editor.show.${this.id}`, this.showPanel);
-        saveEditorState({ show: { [this.id]: this.showPanel } });
-      },
-    });
-  };
-
   paint() {
-    this.addChildDraw({
-      id: this.panelTitleId,
-      tag: 'h4',
-      text: this.title,
-    });
+    this.addChildDraw(
+      new Button({
+        id: this.panelTitleId,
+        text: this.title,
+        onClick: () => {
+          this.showPanel = !this.showPanel;
+          this._setPanelClass();
+          setSceneParamR(`editor.show.${this.id}`, this.showPanel);
+          saveEditorState({ show: { [this.id]: this.showPanel } });
+        },
+      })
+    );
     this.addChildDraw({
       id: this.contentId,
       class: [styles.settingsPanelContent, 'collapsable-panel__content'],

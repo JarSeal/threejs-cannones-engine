@@ -15,6 +15,7 @@ import { Component } from '../../../../LIGHTER';
 // - maxlength = html max length attribute value for input elem [Number/String]
 // - doNotSelectOnFocus = boolean whether to select all content or not [Boolean]
 // - doNotBlurOnEnter = boolean whether to blur from the input field when Enter key is pressed [Boolean]
+// - focus = boolean whether the input should have focus after initiation or not [Boolean]
 class TextInput extends Component {
   constructor(data) {
     super(data);
@@ -22,7 +23,7 @@ class TextInput extends Component {
     if (!data.label && data.label !== '') data.label = data.id;
     this.inputId = this.id + '-input';
     this.template = `
-            <div class="form-elem form-elem--text-input">
+            <div class="form-elem form-elem--text-input inputText">
                 <label for="${this.inputId}">
                     <span class="form-elem__label">${data.label}</span>
                     <input
@@ -44,6 +45,7 @@ class TextInput extends Component {
       class: 'form-elem__error-msg',
     });
     if (data.error) data.class = 'form-elem--error';
+    this.focus = data.focus;
     this.onFocus = data.onFocus ? data.onFocus : null;
     this.onBlur = data.onBlur ? data.onBlur : null;
   }
@@ -67,27 +69,25 @@ class TextInput extends Component {
         },
       });
     }
-    if (this.onFocus || !data.doNotSelectOnFocus) {
-      this.addListener({
-        id: this.inputId + '-focus',
-        target: inputElem,
-        type: 'focus',
-        fn: (e) => {
-          if (!data.doNotSelectOnFocus) e.target.select();
-          if (this.onFocus) this.onFocus(e);
-        },
-      });
-    }
-    if (this.onBlur) {
-      this.addListener({
-        id: this.inputId + '-blur',
-        target: inputElem,
-        type: 'blur',
-        fn: (e) => {
-          this.onBlur(e);
-        },
-      });
-    }
+    this.addListener({
+      id: this.inputId + '-focus',
+      target: inputElem,
+      type: 'focus',
+      fn: (e) => {
+        this.elem.classList.add('focus');
+        if (!data.doNotSelectOnFocus) e.target.select();
+        if (this.onFocus) this.onFocus(e);
+      },
+    });
+    this.addListener({
+      id: this.inputId + '-blur',
+      target: inputElem,
+      type: 'blur',
+      fn: (e) => {
+        this.elem.classList.remove('focus');
+        if (this.onBlur) this.onBlur(e);
+      },
+    });
   };
 
   paint(data) {
@@ -105,6 +105,7 @@ class TextInput extends Component {
       }
     }
     if (data.disabled) inputElem.setAttribute('disabled', '');
+    if (this.focus) inputElem.select();
   }
 
   error(err) {

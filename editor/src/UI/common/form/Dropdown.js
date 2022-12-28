@@ -1,4 +1,5 @@
 import { Component } from '../../../../LIGHTER';
+import SvgIcon from '../../icons/svg-icon';
 
 // Attributes:
 // - options = array of objects with value, label, disabled [Array[Object]] [required]
@@ -29,7 +30,7 @@ class Dropdown extends Component {
       this.value = data.value;
     }
     this.template = `
-            <div class="form-elem form-elem--dropdown">
+            <div class="form-elem form-elem--dropdown dropdown">
                 <label for="${this.selectId}">
                     <span class="form-elem__label">${data.label}</span>
                     <select
@@ -54,9 +55,10 @@ class Dropdown extends Component {
   }
 
   addListeners(data) {
+    const selectElem = document.getElementById(this.selectId);
     this.addListener({
       id: this.selectId + '-click',
-      target: document.getElementById(this.selectId),
+      target: selectElem,
       type: 'click',
       fn: (e) => {
         const newVal = e.target.value;
@@ -65,6 +67,18 @@ class Dropdown extends Component {
         this.data.value = this.data.selected = this.value;
         if (data.changeFn) data.changeFn(e, this);
       },
+    });
+    this.addListener({
+      id: this.selectId + '-focus',
+      target: selectElem,
+      type: 'focus',
+      fn: () => this.elem.classList.add('focus'),
+    });
+    this.addListener({
+      id: this.selectId + '-blur',
+      target: selectElem,
+      type: 'blur',
+      fn: () => this.elem.classList.remove('focus'),
     });
   }
 
@@ -83,6 +97,13 @@ class Dropdown extends Component {
       }
     }
     if (data.disabled) selectElem.setAttribute('disabled', '');
+    this.addChildDraw(
+      new SvgIcon({
+        id: this.id + '-dropdown-icon',
+        icon: 'caretDown',
+        width: 12,
+      })
+    );
   }
 
   error(err) {

@@ -1,9 +1,24 @@
+@import './fonts';
 @import './variables';
+
+@import './form/base';
+@import './form/checkbox';
+@import './form/inputNumber';
+@import './form/inputVector';
+@import './form/inputColor';
+@import './form/inputText';
+@import './form/dropdown';
+@import './form/infoField';
+@import './form/actionButtons';
+
+@import 'alwan/dist/css/alwan.min.css';
+@import './editorTools/smallStats';
+@import './editorTools/floatingUIButtons';
 
 html {
   font-size: 62.5%;
-  font-family: sans-serif;
-  color: $font-color;
+  @include basetext-font;
+  color: $dark-grey1;
   line-height: 1.4;
 }
 
@@ -29,6 +44,17 @@ body > canvas,
   display: block !important;
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+a,
+button {
+  font-weight: 400;
+}
+
 *,
 *:before,
 *:after {
@@ -42,4 +68,22 @@ body > canvas,
   width: 1px;
   height: 1px;
   z-index: 11000;
+}
+
+.scrollbar {
+  scrollbar-width: 2rem;
+  scrollbar-color: $dark-grey3 $light-grey7;
+  &::-webkit-scrollbar {
+    width: 2rem;
+  }
+  &::-webkit-scrollbar-track {
+    background: $light-grey7;
+    border-radius: 1rem;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: $mid-grey1;
+    border-radius: 1rem;
+    border-left: 0.8rem solid $light-grey7;
+    border-right: 0.8rem solid $light-grey7;
+  }
 }

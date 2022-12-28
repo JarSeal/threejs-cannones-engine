@@ -1,0 +1,32 @@
+.inputText {
+  width: 100%;
+  max-width: 33.3rem;
+  overflow: visible;
+  label {
+    width: 100%;
+    height: 100%;
+  }
+  .form-elem__input {
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    padding-top: 1.3rem;
+    padding-left: 0.5rem;
+    border: 0;
+    outline: none;
+    @include basetext-font-bold;
+    font-size: 1.3rem;
+    color: $dark-grey2;
+  }
+  .form-elem__error-msg {
+    position: absolute;
+    top: 100%;
+    right: 0.2rem;
+    font-size: 1rem;
+    @include basetext-font-bold;
+    font-style: italic;
+  }
+  &.form-elem--error {
+    border-color: $error;
+  }
+}

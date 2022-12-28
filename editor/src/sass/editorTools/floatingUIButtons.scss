@@ -1,0 +1,231 @@
+$wrapperWidth: 3.8rem;
+$wrapperHeight: 3.8rem;
+$buttonWidth: 3.8rem;
+$buttonHeight: 3.4rem;
+
+.floatingUIButtons {
+  display: flex;
+  flex-direction: row;
+  height: $wrapperHeight;
+  padding: 0.1rem;
+  border-radius: 0.4rem;
+  background-color: $light-grey4;
+  border: 0.1rem solid $mid-grey5;
+  > .button {
+    position: relative;
+    background-color: $light-grey4;
+    width: $buttonWidth;
+    height: $buttonHeight;
+    outline: none;
+    border: none;
+    position: relative;
+    cursor: pointer;
+    color: $mid-grey1;
+    border-left: 0.1rem solid $light-grey6;
+    border-right: 0.1rem solid $mid-grey4;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .ui-icon {
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+    }
+    &:hover {
+      background-color: $light-grey1;
+    }
+    &.current {
+      border-left: 0.1rem solid $mid-grey4;
+      border-right: 0.1rem solid $light-grey6;
+      background-color: $mid-grey5 !important;
+    }
+    &:first-child {
+      border-top-left-radius: 0.4rem;
+      border-bottom-left-radius: 0.4rem;
+      border-left-color: transparent;
+    }
+    &:last-child {
+      border-top-right-radius: 0.4rem;
+      border-bottom-right-radius: 0.4rem;
+      border-right-color: transparent;
+    }
+    svg path {
+      fill: $mid-grey1;
+    }
+    &:focus {
+      > .ui-icon {
+        path {
+          fill: $dark-grey3;
+        }
+      }
+    }
+    &:focus,
+    &:focus-within {
+      .menuWrapper {
+        display: block;
+      }
+    }
+    &:active {
+      > .ui-icon {
+        transform: translateY(0.2rem);
+      }
+    }
+    &.menuButton {
+      &:before,
+      &:after {
+        display: block;
+        content: '';
+        background-color: $mid-grey4;
+        border-radius: 0.2rem;
+        position: absolute;
+        right: 0.2rem;
+        bottom: 0.1rem;
+      }
+      &:before {
+        width: 0.6rem;
+        height: 0.2rem;
+      }
+      &:after {
+        width: 0.2rem;
+        height: 0.6rem;
+      }
+      &:active {
+        > .ui-icon {
+          transform: translateY(0);
+        }
+      }
+    }
+    &:disabled,
+    &.disabled {
+      path {
+        fill: $mid-grey4;
+      }
+      &:hover {
+        background-color: $light-grey4;
+      }
+      &:active {
+        > .ui-icon {
+          transform: translateY(0);
+        }
+      }
+    }
+  }
+  &.vertical {
+    width: $buttonWidth;
+    height: auto;
+    > .button {
+      width: $buttonWidth;
+      height: $buttonHeight;
+      border-left: none;
+      border-right: none;
+      border-top: 0.1rem solid $light-grey6;
+      border-bottom: 0.1rem solid $mid-grey4;
+      &.current {
+        border-top: 0.1rem solid $mid-grey4;
+        border-bottom: 0.1rem solid $light-grey6;
+        background-color: $mid-grey5 !important;
+      }
+      &:first-child {
+        border-top-left-radius: 0.4rem;
+        border-top-right-radius: 0.4rem;
+        border-top-color: transparent;
+      }
+      &:last-child {
+        border-bottom-left-radius: 0.4rem;
+        border-bottom-right-radius: 0.4rem;
+        border-bottom-color: transparent;
+      }
+    }
+  }
+  .menuWrapper {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: -0.1rem;
+    z-index: 50;
+    min-width: 20rem;
+    background-color: $mid-grey1;
+    border-radius: 0 0.6rem 0.6rem 0.6rem;
+    border: 0.1rem solid $mid-grey5;
+    padding: 0.1rem 0;
+    button {
+      width: 100%;
+      cursor: pointer;
+      background-color: transparent;
+      border: none;
+      outline: none;
+      position: relative;
+      padding: 0.7rem 0.4rem 0.7rem 1.2rem;
+      text-align: left;
+      @include heading-font;
+      font-size: 1.2rem;
+      color: $light-grey8;
+      letter-spacing: 0.03rem;
+      &.hasIcon {
+        padding-left: 3.8rem;
+      }
+      &:before,
+      &:after {
+        display: block;
+        content: '';
+        width: calc(100% - 0.8rem);
+        height: 0.1rem;
+        position: absolute;
+        left: 0.4rem;
+      }
+      &:before {
+        top: 0;
+        background-color: $mid-grey3;
+      }
+      &:first-child {
+        &:before {
+          background-color: transparent;
+        }
+      }
+      &:last-child {
+        &:after {
+          background-color: transparent;
+        }
+      }
+      &:after {
+        bottom: 0;
+        background-color: $dark-grey3;
+      }
+      .ui-icon {
+        position: absolute;
+        left: 0.4rem;
+        top: 0.7rem;
+        width: 3.4rem !important;
+        display: flex;
+        justify-content: center;
+        pointer-events: none;
+        svg {
+          width: 1.6rem;
+          pointer-events: none;
+        }
+      }
+      path {
+        fill: $light-grey4;
+        pointer-events: none;
+      }
+      &:focus,
+      &:hover {
+        color: $white;
+        background-color: $mid-grey2;
+        path {
+          fill: $white;
+        }
+      }
+      &.current {
+        background-color: $dark-grey3;
+        &:hover {
+          color: $white;
+          path {
+            fill: $white;
+          }
+        }
+      }
+    }
+  }
+}

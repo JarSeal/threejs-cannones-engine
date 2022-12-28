@@ -1482,6 +1482,11 @@ ajv@^8.0.1:
     require-from-string "^2.0.2"
     uri-js "^4.2.2"
 
+alwan@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/alwan/-/alwan-1.0.5.tgz#6dcde3f8179cae8a81b3ec683fc1d7deeeb78752"
+  integrity sha512-0AH/NKL3grWDf+oeX+D1sVFIlR4j+tHnklzbz7moBjPLXafncJDU+WeWo4v1HbizCRsuFDY8tQjab1lzuF67Pg==
+
 ansi-colors@^4.1.1:
   version "4.1.3"
   resolved "https://registry.yarnpkg.com/ansi-colors/-/ansi-colors-4.1.3.tgz#37611340eb2243e70cc604cad35d63270d48781b"

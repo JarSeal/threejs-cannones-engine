@@ -2,9 +2,9 @@ import * as THREE from 'three';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { OutlinePass } from 'three/addons/postprocessing/OutlinePass.js';
-import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
-import { FXAAShader } from 'three/addons/shaders/FXAAShader.js';
-import * as Stats from 'stats.js';
+// import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+// import { FXAAShader } from 'three/addons/shaders/FXAAShader.js';
+import { SMAAPass } from 'three/addons/postprocessing/SMAAPass.js';
 
 import { Component } from '../LIGHTER';
 import {
@@ -23,6 +23,11 @@ import { getSceneStates, saveSceneId } from './sceneData/saveSession';
 import TopTools from './UI/TopTools';
 import Dialog from './UI/Dialog';
 import { registerStageClick } from './controls/stageClick';
+import SmallStats from './UI/stats/SmallStats';
+import styleVariables from './sass/variables.scss?raw';
+import LeftTools from './UI/LeftTools';
+import ElemTool from './UI/ElemTool';
+import UndoRedo from './UI/UndoRedo/UndoRedo';
 
 class Root {
   constructor() {
@@ -81,11 +86,15 @@ class Root {
     const scene = new SceneLoader(sceneParams, isEditor);
 
     if (isEditor) {
-      // Editor post processing (outline and FXAA)
-      this.editorComposer = new EffectComposer(renderer);
+      // Editor post processing (outline and SMAA/FXAA)
+      const reso = getScreenResolution();
+      const size = renderer.getDrawingBufferSize(new THREE.Vector2());
+      const renderTarget = new THREE.WebGLRenderTarget(size.width, size.height, {
+        samples: 4,
+      });
+      this.editorComposer = new EffectComposer(renderer, renderTarget);
       this.renderPass = new RenderPass(scene, this.sceneItems.curCamera);
       this.editorComposer.addPass(this.renderPass);
-      const reso = getScreenResolution();
       const editorOutlinePass = new OutlinePass(
         new THREE.Vector2(reso.x * pixelRatio, reso.y * pixelRatio),
         scene,
@@ -101,57 +110,99 @@ class Root {
       editorOutlinePass.overlayMaterial.blending = THREE.NormalBlending;
       setSceneItem('editorOutlinePass', editorOutlinePass);
       this.editorOutlinePass = editorOutlinePass;
-      const effectFXAA = new ShaderPass(FXAAShader);
-      effectFXAA.uniforms['resolution'].value.set(
-        1 / (reso.x * pixelRatio),
-        1 / (reso.y * pixelRatio)
-      );
       this.editorComposer.addPass(editorOutlinePass);
-      this.editorComposer.addPass(effectFXAA);
+      // const effectFXAA = new ShaderPass(FXAAShader);
+      // effectFXAA.uniforms['resolution'].value.set(
+      //   1 / (reso.x * pixelRatio),
+      //   1 / (reso.y * pixelRatio)
+      // );
+      // this.editorComposer.addPass(effectFXAA);
+      const SMAA = new SMAAPass(reso.x * pixelRatio, reso.y * pixelRatio);
+      this.editorComposer.addPass(SMAA);
       setSceneItem('editorComposer', this.editorComposer);
 
       // Stats
-      const renderStats = new Stats();
-      renderStats.domElement.id = 'running-stats-render';
-      renderStats.domElement.style.top = 'auto';
-      renderStats.domElement.style.bottom = 0;
-      document.getElementById('root').appendChild(renderStats.dom);
+      const smallStatsColors = {
+        FPS: { fg: null, bg: null },
+        MS: { fg: null, bg: null },
+        MB: { fg: null, bg: null },
+      };
+      const styleVars = styleVariables.split('\n');
+      for (let i = 0; i < styleVars.length; i++) {
+        if (styleVars[i].includes('$smallStats-fg')) {
+          const value = styleVars[i].split(' ')[1].replace(';\r', '');
+          smallStatsColors.FPS.fg = value;
+          smallStatsColors.MS.fg = value;
+          smallStatsColors.MB.fg = value;
+        }
+        if (styleVars[i].includes('$smallStats-bg')) {
+          const value = styleVars[i].split(' ')[1].replace(';\r', '');
+          smallStatsColors.FPS.bg = value;
+          smallStatsColors.MS.bg = value;
+          smallStatsColors.MB.bg = value;
+          break;
+        }
+      }
+      const smallStatsContainer = document.createElement('div');
+      smallStatsContainer.id = 'smallStats-container';
+      const renderStats = new SmallStats(smallStatsColors);
+      renderStats.domElement.id = 'smallStats';
+      smallStatsContainer.appendChild(renderStats.domElement);
+      document.getElementById('root').appendChild(smallStatsContainer);
       registerStageClick();
       setSceneItem('runningRenderStats', renderStats);
 
-      // Init UI
-      const rightSidePanel = new RightSidePanel({ id: 'right-side-panel', parentId: 'root' });
-      rightSidePanel.draw();
-      setSceneItem('rightSidePanel', rightSidePanel);
+      // Set selection(s)
+      const selectionIds = sceneParams.selection;
+      const selection = [];
+      if (selectionIds && selectionIds.length) {
+        selectionIds.forEach((id) => {
+          const editorIcons = this.sceneItems.editorIcons;
+          for (let i = 0; i < editorIcons.length; i++) {
+            if (editorIcons[i]?.iconMesh?.userData.id === id) {
+              selection.push(editorIcons[i].iconMesh);
+            }
+          }
+          const elements = this.sceneItems.elements;
+          for (let i = 0; i < elements.length; i++) {
+            if (elements[i].userData.id === id) {
+              selection.push(elements[i]);
+            }
+          }
+        });
+        setSceneItem('selection', selection);
+      } else {
+        setSceneParam('selection', []);
+        setSceneItem('selection', []);
+      }
+      this.editorOutlinePass.selectedObjects = selection;
 
+      // Undo / Redo
+      const undoRedo = new UndoRedo();
+      setSceneItem('undoRedo', undoRedo);
+
+      // Init UI
       const topTools = new TopTools({ id: 'top-tools', parentId: 'root' });
       topTools.draw();
       setSceneItem('topTools', topTools);
+
+      const leftTools = new LeftTools({ id: 'left-tools', parentId: 'root' });
+      leftTools.draw();
+      setSceneItem('leftTools', leftTools);
+
+      const elemTool = new ElemTool({ id: 'elem-tool', parentId: 'root' });
+      elemTool.draw();
+      setSceneItem('elemTool', elemTool);
+
+      const rightSidePanel = new RightSidePanel({ id: 'right-side-panel', parentId: 'root' });
+      rightSidePanel.draw();
+      setSceneItem('rightSidePanel', rightSidePanel);
 
       new Component({ id: 'overlays', parentId: 'root' }).draw();
       const dialog = new Dialog({ id: 'dialog', parentId: 'overlays' });
       dialog.draw();
       dialog.disappear();
       setSceneItem('dialog', dialog);
-
-      // Set selection(s)
-      const selectionIds = sceneParams.selection;
-      const selection = [];
-      selectionIds.forEach((id) => {
-        const editorIcons = this.sceneItems.editorIcons;
-        for (let i = 0; i < editorIcons.length; i++) {
-          if (editorIcons[i]?.iconMesh?.userData.id === id) {
-            selection.push(editorIcons[i].iconMesh);
-          }
-        }
-        const elements = this.sceneItems.elements;
-        for (let i = 0; i < elements.length; i++) {
-          if (elements[i].userData.id === id) {
-            selection.push(elements[i]);
-          }
-        }
-      });
-      this.editorOutlinePass.selectedObjects = selection;
     }
 
     this._resize();

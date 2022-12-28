@@ -1,0 +1,56 @@
+.panelTopActionButtons {
+  position: absolute;
+  top: 5rem;
+  left: 0;
+  width: 100%;
+  z-index: 30;
+  padding: 0 2rem;
+}
+.panelActionButtons {
+  margin-top: -0.7rem;
+}
+.panelActionButton {
+  width: 3.6rem;
+  height: 3.6rem;
+  background-color: $mid-grey1;
+  border: 0.1rem solid transparent;
+  padding-top: 0.4rem;
+  border-radius: 0.4rem;
+  box-shadow: $elevated-shadow;
+  cursor: pointer;
+  transition: background-color 0.1s ease-in-out;
+  &:hover {
+    background-color: $dark-grey3;
+  }
+  path {
+    fill: $white;
+  }
+  &.delete-button {
+    background-color: $error;
+    &:hover {
+      background-color: darken($error, 10%);
+    }
+    &:active {
+      background-color: $error;
+    }
+  }
+  &:focus {
+    border-color: $dark-grey1;
+    outline: none;
+  }
+  &:active {
+    background-color: $mid-grey1;
+    box-shadow: none;
+    border-color: transparent;
+    span {
+      transform: translateY(0.2rem);
+    }
+  }
+  &.disabled {
+    background-color: $mid-grey4;
+    box-shadow: none;
+    &:hover {
+      background-color: $mid-grey4;
+    }
+  }
+}

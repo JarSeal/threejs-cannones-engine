@@ -1,103 +1,148 @@
-import * as THREE from 'three';
-
 import { Component } from '../../LIGHTER';
-import { createOrbitControls, removeOrbitControls } from '../controls/orbitControls';
-import { saveSceneState } from '../sceneData/saveSession';
-import { getSceneItem, setSceneItem } from '../sceneData/sceneItems';
-import { getSceneParam, setSceneParam } from '../sceneData/sceneParams';
-import Dropdown from './common/form/Dropdown';
-import NewCamera from './dialogs/NewCamera';
+import { getSceneItem } from '../sceneData/sceneItems';
+import { getSceneParam } from '../sceneData/sceneParams';
+import { changeCurCamera, newCameraDialog } from '../utils/toolsForCamera';
+import { printName } from '../utils/utils';
+import Button from './common/Button';
+import SvgIcon from './icons/svg-icon';
 import styles from './TopTools.module.scss';
 
 class TopTools extends Component {
   constructor(data) {
     super(data);
     data.class = [styles.topTools];
+    this.mainButtonsWrapper = null;
+    this.undoRedoButtonsWrapper = null;
   }
 
   paint = () => {
-    this._addDropDown();
-    this._cameraSelector();
+    this.updateTools();
   };
 
-  _cameraSelector = () => {
-    const cameraParams = getSceneParam('cameras');
-    const curIndex = getSceneParam('curCameraIndex');
-    const cameraSelector = this.addChildDraw(
-      new Dropdown({
-        id: 'camera-selector',
-        label: 'cam:',
-        value: cameraParams[curIndex].id,
-        options: cameraParams.map((c) => ({ value: c.id, label: c.name || c.id })),
-        changeFn: (e) => {
-          const camItems = getSceneItem('allCameras');
-          const camHelpers = getSceneItem('cameraHelpers');
-          const camParams = getSceneParam('cameras');
-          const camPanels = getSceneItem('cameraPanels');
-          let newCamera = null,
-            newCameraIndex = 0,
-            newCameraHasOrbitControls = false,
-            helpers = [];
-          const scene = getSceneItem('scene');
-          for (let i = 0; i < camItems.length; i++) {
-            if (camHelpers && camHelpers.length && camHelpers[i]) {
-              camHelpers[i].dispose();
-              scene.remove(camHelpers[i]);
-            }
-            if (camPanels && camPanels[i] && camPanels[i].elem)
-              camPanels[i].elem.classList.remove('highlight');
-            if (camParams[i].id === e.target.value) {
-              newCamera = camItems[i];
-              newCameraIndex = i;
-              newCameraHasOrbitControls = camParams[i].orbitControls;
-              helpers.push(null);
-              if (camPanels && camPanels[i] && camPanels[i].elem)
-                camPanels[i].elem.classList.add('highlight');
-            } else {
-              const helper = new THREE.CameraHelper(camItems[i]);
-              helpers.push(helper);
-              helper.update();
-              helper.visible = camParams[i].showHelper;
-              scene.add(helper);
-            }
-          }
-          removeOrbitControls();
-          setSceneParam('curCameraIndex', newCameraIndex);
-          saveSceneState();
-          setSceneItem('curCamera', newCamera);
-          setSceneItem('cameraHelpers', helpers);
-          newCamera.updateProjectionMatrix();
-          if (newCameraHasOrbitControls) createOrbitControls();
-        },
-      })
-    );
-    setSceneItem('cameraSelectorTool', cameraSelector);
-  };
-
-  _addDropDown = () => {
-    this.addChildDraw(
-      new Dropdown({
-        id: 'add-to-scene',
-        label: '',
-        value: 'add',
+  _mainButtons = () => {
+    const buttonWrapperId = this.id + '-main-buttons-wrapper';
+    const buttons = [
+      {
+        type: 'menu',
+        btn: this.addChild(
+          new Button({
+            id: this.id + '-btn-add-menu-button',
+            class: ['menuButton'],
+            icon: new SvgIcon({ id: this.id + '-add-icon', icon: 'plus', width: 18 }),
+            ...this._menuButtonListeners,
+          })
+        ),
         options: [
-          { value: 'add', label: '[Add]' },
-          { value: 'camera', label: 'Camera' },
+          {
+            icon: new SvgIcon({ id: this.id + '-add-camera-icon', icon: 'camera', width: 18 }),
+            text: 'Add Camera',
+            onClick: () => newCameraDialog(),
+          },
         ],
-        changeFn: (e, self) => {
-          self.setValue('add', true);
-          e.target.blur();
-          this._newCameraDialog();
-        },
+      },
+      {
+        type: 'cameraSelector',
+        btn: this.addChild(
+          new Button({
+            id: this.id + '-btn-change-cam-menu-button',
+            class: ['menuButton', 'camSelector'],
+            icon: new SvgIcon({ id: this.id + '-change-cam-icon', icon: 'camera', width: 18 }),
+            ...this._menuButtonListeners,
+          })
+        ),
+      },
+    ];
+    if (this.mainButtonsWrapper) this.mainButtonsWrapper.discard(true);
+    this.mainButtonsWrapper = this.addChildDraw({
+      id: buttonWrapperId,
+      class: ['floatingUIButtons', 'mainButtons'],
+    });
+    for (let i = 0; i < buttons.length; i++) {
+      const button = buttons[i];
+      if (button.type === 'menu') {
+        button.btn.draw({ attach: buttonWrapperId });
+        if (button.options && Array.isArray(button.options)) {
+          const buttonMenu = button.btn.addChildDraw({
+            id: button.btn.data.id + '-menu-wrapper',
+            class: ['menuWrapper'],
+          });
+          for (let j = 0; j < button.options.length; j++) {
+            buttonMenu.addChildDraw(
+              new Button({
+                ...button.options[j],
+                id: button.btn.data.id + '-option-' + j,
+                class: button.options[j].icon ? ['hasIcon'] : [],
+              })
+            );
+          }
+        }
+      } else if (button.type === 'cameraSelector') {
+        const cams = getSceneParam('cameras');
+        button.btn.draw({
+          attach: buttonWrapperId,
+          appendHtml: `<span class="curCamName">
+            ${printName(cams[getSceneParam('curCameraIndex')])}
+          </span>`,
+        });
+        const buttonMenu = button.btn.addChildDraw({
+          id: button.btn.data.id + '-menu-wrapper',
+          class: ['menuWrapper'],
+        });
+        for (let j = 0; j < cams.length; j++) {
+          buttonMenu.addChildDraw(
+            new Button({
+              id: button.btn.data.id + '-cameras-' + j,
+              class: getSceneParam('curCameraIndex') === j ? 'current' : [],
+              text: printName(cams[j]),
+              onClick: () => {
+                changeCurCamera(j);
+              },
+            })
+          );
+        }
+      }
+    }
+  };
+
+  _undoRedoButtons = () => {
+    const buttonWrapperId = this.id + '-undoredo-buttons-wrapper';
+    if (this.undoRedoButtonsWrapper) this.undoRedoButtonsWrapper.discard(true);
+    this.undoRedoButtonsWrapper = this.addChildDraw({
+      id: buttonWrapperId,
+      class: ['floatingUIButtons', 'undoRedoButtons'],
+    });
+    this.undoRedoButtonsWrapper.addChildDraw(
+      new Button({
+        id: this.id + '-btn-undo-button',
+        disabled: getSceneItem('undoRedo').isLastUndo(),
+        icon: new SvgIcon({ id: this.id + '-undo-icon', icon: 'undo', width: 18 }),
+        onClick: () => getSceneItem('undoRedo').undo(),
+      })
+    );
+    this.undoRedoButtonsWrapper.addChildDraw(
+      new Button({
+        id: this.id + '-btn-redo-button',
+        disabled: getSceneItem('undoRedo').isFirstUndo(),
+        icon: new SvgIcon({ id: this.id + '-redo-icon', icon: 'redo', width: 18 }),
+        onClick: () => getSceneItem('undoRedo').redo(),
       })
     );
   };
 
-  _newCameraDialog = () => {
-    getSceneItem('dialog').appear({
-      component: NewCamera,
-      title: 'Add new camera',
-    });
+  updateTools = () => {
+    this._mainButtons();
+    this._undoRedoButtons();
+  };
+
+  _menuButtonListeners = {
+    onFocus: (_, comp) => {
+      comp.hasFocus = true;
+      comp.focusStart = performance.now();
+    },
+    onBlur: (_, comp) => (comp.hasFocus = false),
+    onClick: (_, comp) => {
+      if (performance.now() > comp.focusStart + 200) comp.elem.blur();
+    },
   };
 }
 
