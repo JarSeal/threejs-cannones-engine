@@ -114,8 +114,9 @@ $buttonHeight: 3.4rem;
   &.vertical {
     width: $buttonWidth;
     height: auto;
+    flex-direction: column;
     > .button {
-      width: $buttonWidth;
+      width: $buttonWidth - 0.4rem;
       height: $buttonHeight;
       border-left: none;
       border-right: none;
@@ -127,11 +128,15 @@ $buttonHeight: 3.4rem;
         background-color: $mid-grey5 !important;
       }
       &:first-child {
-        border-top-left-radius: 0.4rem;
-        border-top-right-radius: 0.4rem;
+        border-top-left-radius: 0.4rem !important;
+        border-top-right-radius: 0.4rem !important;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
         border-top-color: transparent;
       }
       &:last-child {
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
         border-bottom-left-radius: 0.4rem;
         border-bottom-right-radius: 0.4rem;
         border-bottom-color: transparent;

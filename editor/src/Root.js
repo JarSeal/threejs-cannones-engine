@@ -1,12 +1,12 @@
 import * as THREE from 'three';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-import { OutlinePass } from 'three/addons/postprocessing/OutlinePass.js';
 // import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 // import { FXAAShader } from 'three/addons/shaders/FXAAShader.js';
 import { SMAAPass } from 'three/addons/postprocessing/SMAAPass.js';
 
 import { Component } from '../LIGHTER';
+import { OutlinePass } from './postFX/OutlinePass/OutlinePass.js';
 import {
   getSceneParams,
   setSceneParam,
@@ -29,6 +29,7 @@ import LeftTools from './UI/LeftTools';
 import ElemTool from './UI/ElemTool';
 import UndoRedo from './UI/UndoRedo/UndoRedo';
 import KeyboardShortcuts from './UI/KeyboarShortcuts';
+import { createTransformControls } from './controls/transformControls';
 
 class Root {
   constructor() {
@@ -101,9 +102,9 @@ class Root {
         scene,
         this.sceneItems.curCamera
       );
-      editorOutlinePass.edgeStrength = 3.0;
-      editorOutlinePass.edgeGlow = 0.5;
-      editorOutlinePass.edgeThickness = 0.5;
+      editorOutlinePass.edgeStrength = 10.0;
+      editorOutlinePass.edgeGlow = 0.25;
+      editorOutlinePass.edgeThickness = 2.5;
       editorOutlinePass.pulsePeriod = 2;
       editorOutlinePass.selectedObjects = getSceneParams('selections');
       editorOutlinePass.visibleEdgeColor.set('#f69909');
@@ -207,6 +208,18 @@ class Root {
 
       const keyboard = new KeyboardShortcuts();
       setSceneItem('keyboard', keyboard);
+
+      // Transform controls
+      const transControls = createTransformControls();
+      if (
+        selection.length &&
+        (leftTools.selectAndTransformTool === 'translate' ||
+          leftTools.selectAndTransformTool === 'rotate' ||
+          leftTools.selectAndTransformTool === 'scale')
+      ) {
+        transControls.mode = leftTools.selectAndTransformTool;
+        transControls.attach(selection[0]); // @TODO: add multiselection
+      }
     }
 
     this._resize();

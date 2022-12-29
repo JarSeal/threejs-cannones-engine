@@ -25,6 +25,8 @@ const _mouseDownOnStage = (e) => {
   mouseClickStart.y = e.clientY;
 };
 
+export const getMouseClickStart = () => mouseClickStart;
+
 const _mouseUpOnStage = (e) => {
   e.preventDefault();
 
@@ -80,17 +82,32 @@ export const selectObjects = (selectedObjects) => {
 
   const prevSelection = [...getSceneParam('selection')];
   const outlinePass = getSceneItem('editorOutlinePass');
+  const transControls = getSceneItem('transformControls');
+  const leftTools = getSceneItem('leftTools');
   if (prevSelection && prevSelection.length) outlinePass.selectedObjects = [];
   if (selectedObjects?.length) {
     const selection = selectedObjects;
     selectionIds = selection.map((sel) => sel.userData?.id);
     outlinePass.selectedObjects = selection;
+    if (
+      leftTools.selectAndTransformTool === 'translate' ||
+      leftTools.selectAndTransformTool === 'rotate' ||
+      leftTools.selectAndTransformTool === 'scale'
+    ) {
+      transControls.enabled = true;
+      if (selection[0].userData.paramType === 'camera') {
+        transControls.attach(selection[0].parent); // @TODO: add multiselect
+      } else {
+        transControls.attach(selection[0]); // @TODO: add multiselect
+      }
+    }
     setSceneItem('selection', selection);
     setSceneParam('selection', selectionIds);
     saveSceneState({ selection: selectionIds });
   } else {
     setSceneItem('selection', []);
     setSceneParam('selection', []);
+    transControls.detach();
     saveSceneState({ selection: [] });
   }
   getSceneItem('leftTools').updateTools();

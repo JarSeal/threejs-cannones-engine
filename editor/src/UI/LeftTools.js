@@ -29,11 +29,37 @@ class LeftTools extends Component {
             id: this.id + '-btn-select-button',
             icon: new SvgIcon({ id: this.id + '-add-icon', icon: 'pointer', width: 12 }),
             class: this.selectAndTransformTool === 'select' ? ['current'] : [],
-            onClick: () => {
-              if (this.selectAndTransformTool === 'select') return;
-              this.selectAndTransformTool = 'select';
-              this.updateTools();
-            },
+            onClick: () => this.changeTool('select'),
+          })
+        ),
+      },
+      {
+        btn: this.addChild(
+          new Button({
+            id: this.id + '-btn-translate-button',
+            icon: new SvgIcon({ id: this.id + '-translate-icon', icon: 'moveArrows', width: 18 }),
+            class: this.selectAndTransformTool === 'translate' ? ['current'] : [],
+            onClick: () => this.changeTool('translate'),
+          })
+        ),
+      },
+      {
+        btn: this.addChild(
+          new Button({
+            id: this.id + '-btn-rotate-button',
+            icon: new SvgIcon({ id: this.id + '-rotate-icon', icon: 'rotate', width: 18 }),
+            class: this.selectAndTransformTool === 'rotate' ? ['current'] : [],
+            onClick: () => this.changeTool('rotate'),
+          })
+        ),
+      },
+      {
+        btn: this.addChild(
+          new Button({
+            id: this.id + '-btn-scale-button',
+            icon: new SvgIcon({ id: this.id + '-scale-icon', icon: 'scale', width: 18 }),
+            class: this.selectAndTransformTool === 'scale' ? ['current'] : [],
+            onClick: () => this.changeTool('scale'),
           })
         ),
       },
@@ -119,6 +145,32 @@ class LeftTools extends Component {
   updateTools = () => {
     this._selectedElemButtons();
     this._selectAndTransformButtons();
+  };
+
+  changeTool = (toolId) => {
+    if (
+      this.selectAndTransformTool === toolId ||
+      (toolId !== 'select' && toolId !== 'translate' && toolId !== 'rotate' && toolId !== 'scale')
+    ) {
+      return;
+    }
+    this.selectAndTransformTool = toolId;
+    setSceneParamR('editor.selectAndTransformTool', toolId);
+    saveEditorState({ editor: { selectAndTransformTool: toolId } });
+    const transControls = getSceneItem('transformControls');
+    if (toolId === 'select') {
+      transControls.detach();
+      transControls.enabled = false;
+      this.updateTools();
+      return;
+    }
+    transControls.mode = toolId;
+    const selections = getSceneItem('selection');
+    if (selections.length) {
+      transControls.attach(getSceneItem('selection')[0]); // @TODO: add multiselection
+      transControls.enabled = true;
+    }
+    this.updateTools();
   };
 }
 

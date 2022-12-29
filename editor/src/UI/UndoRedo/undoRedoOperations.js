@@ -6,6 +6,7 @@ import worldTools from '../../utils/toolsForWorld';
 import cameraTools from '../../utils/toolsForCamera';
 import { getSceneParam, setSceneParam } from '../../sceneData/sceneParams';
 import { saveAllCamerasState } from '../../sceneData/saveSession';
+import { updateElemTranslation } from '../../controls/transformControls';
 
 const undoRedoOperations = {
   // ID
@@ -20,6 +21,16 @@ const undoRedoOperations = {
   // Orbit controls
   setNewCameraTransforms: (action, isUndo) => {
     cameraTools.setNewCameraTransforms(isUndo ? action.prevVal : action.newVal, action.cameraIndex);
+    getSceneItem('rightSidePanel').updatePanel();
+    getSceneItem('elemTool').updateTool();
+  },
+  // Transform controls
+  updateElemTranslation: (action, isUndo) => {
+    console.log('HUUT');
+    const position = isUndo ? action.prevVal.position : action.newVal.position;
+    const rotation = isUndo ? action.prevVal.rotation : action.newVal.rotation;
+    const scale = isUndo ? action.prevVal.scale : action.newVal.scale;
+    updateElemTranslation(action.elemId, { position, rotation, scale }, {});
     getSceneItem('rightSidePanel').updatePanel();
     getSceneItem('elemTool').updateTool();
   },

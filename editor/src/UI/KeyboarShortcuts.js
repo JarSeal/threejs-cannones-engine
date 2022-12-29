@@ -60,12 +60,20 @@ class KeyboardShortcuts {
   DEFAULT_SHORTCUTS = [
     { keys: ['Control', 'z'], actionKey: 'undo' },
     { keys: ['Control', 'Shift', 'Z'], actionKey: 'redo' },
+    { keys: ['s'], actionKey: 'changeLeftToolToSelect' },
+    { keys: ['m'], actionKey: 'changeLeftToolToTranslate' },
+    { keys: ['r'], actionKey: 'changeLeftToolToRotate' },
+    { keys: ['x'], actionKey: 'changeLeftToolToScale' },
   ];
 
   // These are all the available shortcut actions for the user to configure in the settings (@TODO)
   ACTION_POOL = {
     undo: () => getSceneItem('undoRedo').undo(),
     redo: () => getSceneItem('undoRedo').redo(),
+    changeLeftToolToSelect: () => getSceneItem('leftTools').changeTool('select'),
+    changeLeftToolToTranslate: () => getSceneItem('leftTools').changeTool('translate'),
+    changeLeftToolToRotate: () => getSceneItem('leftTools').changeTool('rotate'),
+    changeLeftToolToScale: () => getSceneItem('leftTools').changeTool('scale'),
   };
 }
 

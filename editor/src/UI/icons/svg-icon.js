@@ -10,9 +10,11 @@ import infoIcon from './svg/info.svg?raw';
 import moveArrowsIcon from './svg/arrows-up-down-left-right.svg?raw';
 import plusIcon from './svg/plus.svg?raw';
 import pointerIcon from './svg/arrow-pointer.svg?raw';
+import redoIcon from './svg/rotate-right.svg?raw';
+import rotateIcon from './svg/rotate.svg?raw';
+import scaleIcon from './svg/crop-simple.svg?raw';
 import trashIcon from './svg/trash.svg?raw';
 import undoIcon from './svg/rotate-left.svg?raw';
-import redoIcon from './svg/rotate-right.svg?raw';
 import xMarkIcon from './svg/xmark.svg?raw';
 import triangleExclamation from './svg/triangle-exclamation.svg?raw';
 
@@ -56,12 +58,16 @@ class SvgIcon extends Component {
         return plusIcon;
       case 'pointer':
         return pointerIcon;
+      case 'redo':
+        return redoIcon;
+      case 'rotate':
+        return rotateIcon;
+      case 'scale':
+        return scaleIcon;
       case 'trash':
         return trashIcon;
       case 'undo':
         return undoIcon;
-      case 'redo':
-        return redoIcon;
       case 'xMark':
         return xMarkIcon;
       default:
