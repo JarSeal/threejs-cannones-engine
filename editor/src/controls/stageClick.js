@@ -97,6 +97,9 @@ export const selectObjects = (selectedObjects) => {
       transControls.enabled = true;
       if (selection[0].userData.paramType === 'camera') {
         transControls.attach(selection[0].parent); // @TODO: add multiselect
+        if (selection[0].userData.type === 'perspectiveTarget') {
+          console.log('YES IT IS');
+        }
       } else {
         transControls.attach(selection[0]); // @TODO: add multiselect
       }

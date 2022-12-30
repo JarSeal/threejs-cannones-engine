@@ -26,7 +26,6 @@ const undoRedoOperations = {
   },
   // Transform controls
   updateElemTranslation: (action, isUndo) => {
-    console.log('HUUT');
     const position = isUndo ? action.prevVal.position : action.newVal.position;
     const rotation = isUndo ? action.prevVal.rotation : action.newVal.rotation;
     const scale = isUndo ? action.prevVal.scale : action.newVal.scale;

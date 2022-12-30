@@ -18,20 +18,22 @@ export const POINT_LIGHT = {
 
 export const NEW_CAMERA_DEFAULT_PARAMS = {
   name: '',
-  type: 'perspective',
+  type: 'perspectiveTarget',
   orthoViewSize: 1,
   fov: 45,
   near: 0.1,
   far: 256,
   position: [5, 5, 5],
   target: [0, 0, 0],
+  defaultPosition: [5, 5, 5],
   defaultTarget: [0, 0, 0],
   orbitControls: false,
   showHelper: true,
 };
 
 export const CAMERA_TYPES = [
-  { value: 'perspective', label: 'Targeted perspective camera' },
-  { value: 'freeperspective', label: 'Free perspective camera (TODO)', disabled: true },
-  { value: 'orthographic', label: 'Orthographic camera' },
+  { value: 'perspectiveTarget', label: 'Targeted perspective camera' },
+  { value: 'perspectiveFree', label: 'Free perspective camera (TODO)', disabled: true },
+  { value: 'orthographicTarget', label: 'Targeted orthographic camera' },
+  { value: 'orthographicFree', label: 'Free orthographic camera (TODO)', disabled: true },
 ];

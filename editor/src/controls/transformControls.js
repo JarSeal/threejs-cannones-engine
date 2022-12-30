@@ -131,7 +131,6 @@ export const createTransformControls = () => {
 };
 
 export const updateElemTranslation = (id, newVal, prevVal, object) => {
-  console.log('here');
   const newElemParams = getSceneParam('elements').map((elem) => {
     if (elem.id === id)
       return { ...elem, position: newVal.position, rotation: newVal.rotation, scale: newVal.scale };

@@ -259,7 +259,10 @@ class Root {
     for (let i = 0; SI.allCameras.length; i++) {
       const camera = SI.allCameras[i];
       if (!camera) break;
-      if (camParams[i] && camParams[i].type === 'orthographic') {
+      if (
+        camParams[i] &&
+        (camParams[i].type === 'orthographicTarget' || camParams[i].type === 'orthographicFree')
+      ) {
         const viewSize = camParams[i].orthoViewSize;
         camera.left = -viewSize * aspectRatio;
         camera.right = viewSize * aspectRatio;

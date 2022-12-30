@@ -7,6 +7,7 @@ import { getSceneParam, setSceneParam } from '../sceneData/sceneParams';
 import ConfirmationDialog from '../UI/dialogs/Confirmation';
 import NewCamera from '../UI/dialogs/NewCamera';
 import CameraMeshIcon from '../UI/icons/meshes/CameraMeshIcon';
+import { NEW_CAMERA_DEFAULT_PARAMS } from './defaultSceneValues';
 import { getScreenResolution } from './utils';
 
 export const updateCameraProperty = (value, i, key, args) => {
@@ -52,17 +53,35 @@ export const newCameraDialog = () =>
     title: 'Add new camera',
   });
 
-export const addCamera = (params) => {
+export const addCamera = (params, initiatingCameras) => {
   const scene = getSceneItem('scene');
   // Create three.js camera and helper
   const reso = getScreenResolution();
   const aspectRatio = reso.x / reso.y;
   params.paramType = 'camera';
   let camera;
-  if (params.type === 'perspective') {
+  if (!params.id) {
+    console.error('Camera must have an ID and type');
+    return;
+  }
+
+  // Check and set default params if some missing (for all camera types)
+  if (!params.name) params.name = NEW_CAMERA_DEFAULT_PARAMS.name;
+  if (!params.type) params.type = NEW_CAMERA_DEFAULT_PARAMS.type;
+  if (!params.near) params.near = NEW_CAMERA_DEFAULT_PARAMS.near;
+  if (!params.far) params.far = NEW_CAMERA_DEFAULT_PARAMS.far;
+  if (!params.orbitControls === undefined)
+    params.orbitControls = NEW_CAMERA_DEFAULT_PARAMS.orbitControls;
+  if (params.showHelper === undefined) params.showHelper = NEW_CAMERA_DEFAULT_PARAMS.showHelper;
+  if (!params.position) params.position = NEW_CAMERA_DEFAULT_PARAMS.position;
+  if (!params.defaultPosition) params.defaultPosition = NEW_CAMERA_DEFAULT_PARAMS.defaultPosition;
+
+  // @TODO: check also for if the id is unique or not
+  if (params.type === 'perspectiveTarget') {
+    if (!params.fov) params.fov = NEW_CAMERA_DEFAULT_PARAMS.fov;
     camera = new THREE.PerspectiveCamera(params.fov, aspectRatio, params.near, params.far);
-  } else if (params.type === 'orthographic') {
-    const viewSize = params.orthoViewSize;
+  } else if (params.type === 'orthographicTarget') {
+    const viewSize = params.orthoViewSize || NEW_CAMERA_DEFAULT_PARAMS.orthoViewSize;
     camera = new THREE.OrthographicCamera(
       -viewSize * aspectRatio,
       viewSize * aspectRatio,
@@ -77,50 +96,65 @@ export const addCamera = (params) => {
     return;
   }
 
+  let isTargetedCamera = false;
+  if (params.type === 'perspectiveTarget' || params.type === 'orthographicTarget') {
+    isTargetedCamera = true;
+  }
+  params.isTargetedCamera = isTargetedCamera;
+
   camera.position.set(...params.position);
-  camera.lookAt(new THREE.Vector3(...params.target));
-  const helpers = getSceneItem('cameraHelpers');
-  const helper = new THREE.CameraHelper(camera);
-  helper.userData = params;
-  if (!params.showHelper) helper.visible = false;
-  helpers.push(helper);
-  helper.update();
-  scene.add(helper);
-  camera.updateWorldMatrix();
+  if (isTargetedCamera) {
+    if (!params.target) params.target = NEW_CAMERA_DEFAULT_PARAMS.target;
+    if (!params.defaultTarget) params.defaultTarget = NEW_CAMERA_DEFAULT_PARAMS.defaultTarget;
+    camera.lookAt(new THREE.Vector3(...params.target));
+  }
+
   camera.userData = params;
 
   new CameraMeshIcon(camera, params);
 
-  let allCameras = getSceneItem('allCameras');
-  if (allCameras && Array.isArray(allCameras)) {
-    allCameras.push(camera);
-  } else {
-    allCameras = [camera];
-  }
+  let allCameras = getSceneItem('allCameras') || [];
+  const nextIndex = allCameras.length;
+  allCameras.push(camera);
   setSceneItem('allCameras', allCameras);
-  const cameraParams = getSceneParam('cameras');
-  const nextIndex = cameraParams.length;
   params.index = nextIndex;
-  params.defaultPosition = [...params.position];
-  params.defaultTarget = [...params.target];
-  if (cameraParams && Array.isArray(cameraParams)) {
-    cameraParams.push(params);
+
+  const helpers = getSceneItem('cameraHelpers') || [];
+  if (nextIndex !== getSceneParam('curCameraIndex')) {
+    const helper = new THREE.CameraHelper(camera);
+    helper.userData = params;
+    if (!params.showHelper) helper.visible = false;
+    helpers.push(helper);
+    helper.update();
+    scene.add(helper);
+    camera.updateWorldMatrix();
   } else {
-    allCameras = [params];
+    helpers.push(null);
+    setSceneItem('curCamera', camera);
   }
-  saveAllCamerasState(cameraParams);
+  setSceneItem('cameraHelpers', helpers);
 
-  getSceneItem('topTools').updateTools();
-  getSceneItem('rightSidePanel').updatePanel();
+  if (!initiatingCameras) {
+    const cameraParams = getSceneParam('cameras') || [];
+    cameraParams.push(params);
+    setSceneParam('cameras', cameraParams);
+    saveAllCamerasState(cameraParams);
 
-  getSceneItem('dialog').disappear();
+    getSceneItem('topTools')?.updateTools();
+    getSceneItem('rightSidePanel')?.updatePanel();
+    getSceneItem('dialog')?.disappear();
 
-  getSceneItem('undoRedo').addAction({
-    type: 'addCamera',
-    prevVal: null,
-    newVal: cameraParams.length - 1,
-    params,
-  });
+    getSceneItem('undoRedo').addAction({
+      type: 'addCamera',
+      prevVal: null,
+      newVal: cameraParams.length - 1,
+      params,
+    });
+  } else {
+    if (params.orbitControls && getSceneParam('curCameraIndex') === nextIndex) {
+      createOrbitControls();
+    }
+  }
 };
 
 export const updateCameraTransforms = (

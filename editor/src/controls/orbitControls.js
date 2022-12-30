@@ -59,7 +59,7 @@ export const createOrbitControls = () => {
     const saveState = { index: sceneParams.curCameraIndex, position, target };
     if (quaternion) saveState.quaternion = quaternion;
     // TODO: Make the zoom handling update the view size instead (keep the zoom always 1 when scrolling the wheel)
-    // if (curCamera && curCamera.type === 'orthographic') {
+    // if (curCamera && (curCamera.type === 'orthographicTarget' || curCamera.type === 'orthographicFree')) {
     //   console.log('CUR CAM', curCameraItem);
     //   saveState.orthoViewSize = curCameraItem.top + curCameraItem.bottom;
     // }
@@ -86,7 +86,10 @@ export const createOrbitControls = () => {
     });
   });
   // TODO: remove this when the view size scrolling is enabled
-  if (curCamera && curCamera.type === 'orthographic') {
+  if (
+    curCamera &&
+    (curCamera.type === 'orthographicTarget' || curCamera.type === 'orthographicFree')
+  ) {
     controls.enableZoom = false;
   }
   controls.update();

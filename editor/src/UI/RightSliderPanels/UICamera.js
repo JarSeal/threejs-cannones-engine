@@ -117,7 +117,7 @@ class UICamera extends Component {
       );
 
       // Field of view (FOV)
-      if (c.type === 'perspective') {
+      if (c.type === 'perspectiveTarget') {
         this.addChildDraw(
           new NumberInput({
             id: 'fov-' + index + '-' + this.id,
@@ -132,7 +132,7 @@ class UICamera extends Component {
             },
           })
         );
-      } else if (c.type === 'orthographic') {
+      } else if (c.type === 'orthographicTarget') {
         this.addChildDraw(
           new NumberInput({
             id: 'view-size-' + index + '-' + this.id,

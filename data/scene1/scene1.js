@@ -39,7 +39,7 @@ export const scene1 = {
     {
       id: 'editor-main',
       name: 'Editor main camera',
-      type: 'perspective',
+      type: 'perspectiveTarget',
       fov: 45,
       near: 0.1,
       far: 256,
@@ -50,7 +50,7 @@ export const scene1 = {
     },
     {
       id: 'editor-main2',
-      type: 'perspective',
+      type: 'perspectiveTarget',
       fov: 45,
       near: 0.1,
       far: 256,
