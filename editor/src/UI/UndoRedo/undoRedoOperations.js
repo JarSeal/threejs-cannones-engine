@@ -34,9 +34,7 @@ const undoRedoOperations = {
     getSceneItem('elemTool').updateTool();
   },
   // Selection
-  selection: (action, isUndo) => {
-    selectObjects(isUndo ? action.prevVal : action.newVal);
-  },
+  selection: (action, isUndo) => selectObjects(isUndo ? action.prevVal : action.newVal, action),
   // World
   toggleWorldAxesHelper: () => {
     worldTools.toggleWorldAxesHelper();

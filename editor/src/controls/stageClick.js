@@ -2,12 +2,7 @@ import * as THREE from 'three';
 import { saveSceneState } from '../sceneData/saveSession';
 
 import { getSceneItem, setSceneItem } from '../sceneData/sceneItems';
-import {
-  getSceneParam,
-  getSceneParamR,
-  setSceneParam,
-  setSceneParamR,
-} from '../sceneData/sceneParams';
+import { getSceneParam, setSceneParam, setSceneParamR } from '../sceneData/sceneParams';
 import { removeCameraTargetMesh, updateCameraTargetMesh } from '../UI/icons/meshes/CameraMeshIcon';
 import { CAMERA_TARGET_ID } from '../utils/defaultSceneValues';
 
@@ -73,7 +68,7 @@ const _mouseUpOnStage = (e) => {
 };
 
 // The selectedObjects can be an array of object IDs (strings) or array of 3D objects
-export const selectObjects = (selectedObjects) => {
+export const selectObjects = (selectedObjects, args) => {
   const prevSelection = [...getSceneParam('selection')];
   let selectionIds = [];
   if (selectedObjects?.length && !selectedObjects[0].isObject3D) {
@@ -86,8 +81,9 @@ export const selectObjects = (selectedObjects) => {
         selected3DObjects.push(object3D.children[0]);
       } else if (object3D) {
         selected3DObjects.push(object3D);
-      } else if (id === CAMERA_TARGET_ID) {
-        updateCameraTargetMesh(getSceneParamR('editor.cameraTargetParams'));
+      } else if (id === CAMERA_TARGET_ID && args.targetParamId) {
+        const params = getSceneParam('cameras').find((c) => c.id === args.targetParamId);
+        updateCameraTargetMesh(params);
         selected3DObjects.push(getSceneItem('cameraTargetMesh'));
       }
     });
@@ -137,7 +133,16 @@ export const selectObjects = (selectedObjects) => {
     type: 'selection',
     prevVal: prevSelection,
     newVal: selectionIds,
+    targetParamId:
+      selectedObjects.length && selectionIds.includes(CAMERA_TARGET_ID)
+        ? selectedObjects[0].userData.cameraParams.id
+        : null,
   });
 
-  console.log('selection', getSceneParam('selection'), getSceneItem('selection'));
+  console.log(
+    'selection',
+    getSceneParam('selection'),
+    getSceneItem('selection'),
+    selectedObjects[0]?.userData.cameraParams?.id
+  );
 };
