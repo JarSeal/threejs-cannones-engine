@@ -135,7 +135,7 @@ export const addCamera = (params, initiatingCameras) => {
     helpers.push(null);
     setSceneItem('curCamera', camera);
     const targetMesh = getSceneItem('editorTargetMeshes').find(
-      (mesh) => mesh.userData.cameraParams.id === params.id
+      (mesh) => mesh.userData.params.id === params.id
     );
     targetMesh.visible = false;
   }
@@ -296,7 +296,7 @@ export const toggleShowCameraHelper = (isTurnedOn, cameraIndex) => {
     }
     const curId = cameraParams[cameraIndex].id;
     const targetMesh = getSceneItem('editorTargetMeshes').find(
-      (mesh) => mesh.userData.cameraParams.id === curId
+      (mesh) => mesh.userData.params.id === curId
     );
     if (
       targetMesh &&
@@ -340,7 +340,7 @@ export const changeCurCamera = (newCamIndex) => {
       camPanels[i].elem.classList.remove('highlight');
     }
     const targetMesh = getSceneItem('editorTargetMeshes').find(
-      (mesh) => mesh.userData.cameraParams.id === camParams[i].id
+      (mesh) => mesh.userData.params.id === camParams[i].id
     );
     if (camParams[i].id === camParams[newCamIndex].id) {
       newCamera = camItems[i];
@@ -372,7 +372,7 @@ export const changeCurCamera = (newCamIndex) => {
     // Remove the selection, if current camera icon is selected
     selectObjects(getSceneItem('selection').filter((sel) => sel.userData.id !== newCamId));
   }
-  if (newCamId === transformControls.object?.userData.cameraParams?.id) {
+  if (newCamId === transformControls.object?.userData.params?.id) {
     // Remove the selection, if current camera target mesh is selected
     selectObjects(getSceneItem('selection').filter((sel) => sel.userData.id !== CAMERA_TARGET_ID));
   }
@@ -455,10 +455,10 @@ export const destroyCamera = (cameraIndex, destroyWithoutDialogAndUndo) => {
       }
       if (
         selection[i].userData.id === CAMERA_TARGET_ID &&
-        selection[i].userData.cameraParams.id === destroyCameraParams.id
+        selection[i].userData.params.id === destroyCameraParams.id
       ) {
         filteredSelection = selection.filter(
-          (sel) => sel.userData.cameraParams.id !== destroyCameraParams.id
+          (sel) => sel.userData.params.id !== destroyCameraParams.id
         );
       }
       if (filteredSelection) {

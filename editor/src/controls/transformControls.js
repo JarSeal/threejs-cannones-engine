@@ -1,6 +1,6 @@
 import { saveStateByKey } from '../sceneData/saveSession';
 import { setSceneItem, getSceneItem } from '../sceneData/sceneItems';
-import { getSceneParam, setSceneParam, setSceneParamR } from '../sceneData/sceneParams';
+import { getSceneParam, setSceneParam } from '../sceneData/sceneParams';
 import { TransformControls } from './TransformControls/TransformControls.js';
 
 export const createTransformControls = () => {

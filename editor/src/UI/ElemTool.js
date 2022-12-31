@@ -28,7 +28,7 @@ class ElemTool extends Component {
     let headerText = `[ ${selections.length} items ]`;
     if (selections.length === 1) {
       if (selections[0]?.userData.paramType === 'cameraTarget') {
-        headerText = selections[0].userData.cameraParams.name || '';
+        headerText = selections[0].userData.params.name || '';
       } else {
         headerText = selections[0]?.userData.name || '';
       }
@@ -82,7 +82,7 @@ class ElemTool extends Component {
         id: parent.id + '-id-text',
         text:
           selections[0]?.userData.paramType === 'cameraTarget'
-            ? '(camera target for..) ' + selections[0].userData.cameraParams.id
+            ? '(camera target for..) ' + selections[0].userData.params.id
             : selections[0]?.userData.id || '[ ID NOT FOUND ]',
         class: [styles.idText],
       });

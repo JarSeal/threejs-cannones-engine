@@ -53,7 +53,7 @@ class CameraMeshIcon {
     this.cameraIcon.userData = camera.userData;
     this.iconMesh.userData = camera.userData;
     if (this.cameraTargetMesh) {
-      this.cameraTargetMesh.userData.cameraParams = camera.userData;
+      this.cameraTargetMesh.userData.params = camera.userData;
     }
   };
 
@@ -79,8 +79,9 @@ class CameraMeshIcon {
       const cameraTargetMesh = new THREE.Mesh(cameraTargetGeo, cameraTargetMat);
       cameraTargetMesh.position.set(...params.target);
       cameraTargetMesh.isCameraTarget = true;
+      cameraTargetMesh.isTargetObject = true;
       cameraTargetMesh.userData = {
-        cameraParams: params,
+        params,
         paramType: 'cameraTarget',
         id: CAMERA_TARGET_ID + '--' + params.id,
       };

@@ -72,8 +72,10 @@ const _mouseUpOnStage = (e) => {
 export const selectObjects = (selectedObjects) => {
   const prevSelection = [...getSceneParam('selection')];
   let selectionIds = [];
+
   if (selectedObjects?.length && !selectedObjects[0]?.isObject3D) {
     // The selectedObjects are object IDs, we need to get the 3D objects:
+    // For example the undo/redo uses only the IDs (since they need to be saved to the LS)
     selectionIds = [...selectedObjects];
     const selected3DObjects = [];
     selectedObjects.forEach((id) => {
@@ -82,6 +84,9 @@ export const selectObjects = (selectedObjects) => {
         selected3DObjects.push(object3D.children[0]);
       } else if (object3D) {
         selected3DObjects.push(object3D);
+        if (object3D.isTargetObject) {
+          object3D.visible = true;
+        }
       }
     });
     selectedObjects = selected3DObjects;
@@ -96,10 +101,11 @@ export const selectObjects = (selectedObjects) => {
     const selection = selectedObjects;
     selectionIds = selection.map((sel) => sel.userData?.id);
     outlinePass.selectedObjects = selection;
+    const leftToolSelected = leftTools.selectAndTransformTool;
     if (
-      leftTools.selectAndTransformTool === 'translate' ||
-      leftTools.selectAndTransformTool === 'rotate' ||
-      leftTools.selectAndTransformTool === 'scale'
+      leftToolSelected === 'translate' ||
+      leftToolSelected === 'rotate' ||
+      leftToolSelected === 'scale'
     ) {
       transControls.enabled = true;
       if (selection[0].userData.paramType === 'camera') {
@@ -111,7 +117,7 @@ export const selectObjects = (selectedObjects) => {
     if (selection[0].userData.isTargetedObject) {
       const elemId = selection[0].userData.id;
       const targetMesh = getSceneItem('editorTargetMeshes').find(
-        (mesh) => mesh.userData.cameraParams.id === elemId
+        (mesh) => mesh.userData.params.id === elemId
       );
       targetMesh.visible = true;
     }
@@ -124,14 +130,19 @@ export const selectObjects = (selectedObjects) => {
     transControls.detach();
     saveSceneState({ selection: [] });
   }
+
+  // Hide possible target meshes when the selection changes
   for (let i = 0; i < prevSelection.length; i++) {
     const targetMesh = getSceneItem('editorTargetMeshes').find(
       (mesh) =>
-        mesh.userData.cameraParams.id === prevSelection[i] || // This means, that the target camera was selected
-        mesh.userData.id === prevSelection[i] // This means, that the target mesh was selected
+        !selectionIds.includes(mesh.userData.params.id) &&
+        !selectionIds.includes(mesh.userData.id) &&
+        (mesh.userData.params.id === prevSelection[i] || // Targeted item (like camera) was selected
+          mesh.userData.id === prevSelection[i]) // Target mesh was selected
     );
-    if (targetMesh) targetMesh.visible = targetMesh.userData.cameraParams.showHelper;
+    if (targetMesh) targetMesh.visible = targetMesh.userData.params.showHelper;
   }
+
   getSceneItem('leftTools').updateTools();
   setSceneParamR('editor.scrollPositions.elemTool', 0);
   getSceneItem('elemTool').updateTool();
@@ -145,6 +156,6 @@ export const selectObjects = (selectedObjects) => {
     'selection',
     getSceneParam('selection'),
     getSceneItem('selection'),
-    selectedObjects[0]?.userData.cameraParams?.id
+    selectedObjects[0]?.userData.params?.id
   );
 };
