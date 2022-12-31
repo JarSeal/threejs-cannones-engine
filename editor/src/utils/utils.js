@@ -14,7 +14,7 @@ export const printName = (obj) => {
 
 export const getSelectedElemIcon = (selections) => {
   if (selections.length > 1) return { icon: 'cubes', width: 26 };
-  const sel = selections[0].userData;
+  const sel = selections[0]?.userData;
   if (sel?.paramType === 'element') return { icon: 'cube', width: 22 };
   if (sel?.paramType === 'camera') return { icon: 'camera', width: 18 };
   if (sel?.paramType === 'cameraTarget') return { icon: 'camera', width: 18 }; // @TODO: figure out a new icon (maybe the camera with crosshair target or something...)

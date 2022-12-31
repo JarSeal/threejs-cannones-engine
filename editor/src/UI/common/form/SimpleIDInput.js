@@ -155,8 +155,8 @@ class SimpleIDInput extends Component {
         errorMsg: 'Only A-Z (a-z), 0-9, dash, and underscore allowed',
       };
     }
-    if (value === CAMERA_TARGET_ID) {
-      return { hasError: true, errorMsg: 'This is a reserved ID and cannot be used' };
+    if (value.search(CAMERA_TARGET_ID) !== -1) {
+      return { hasError: true, errorMsg: `ID contains a reserved string ("${CAMERA_TARGET_ID}")` };
     }
     for (let g = 0; g < groups.length; g++) {
       const group = groups[g];

@@ -1,11 +1,8 @@
 import * as THREE from 'three';
 
-import { getSceneParam, setSceneParam } from '../sceneData/sceneParams';
-import { getSceneItem, setSceneItem } from '../sceneData/sceneItems';
-import { getScreenResolution } from '../utils/utils';
+import { setSceneParam } from '../sceneData/sceneParams';
+import { setSceneItem } from '../sceneData/sceneItems';
 import ElementLoader from './ElementLoader';
-import { createOrbitControls } from '../controls/orbitControls';
-import CameraMeshIcon from '../UI/icons/meshes/CameraMeshIcon';
 import { saveStateByKey } from '../sceneData/saveSession';
 import { AMBIENT_LIGHT, HEMI_LIGHT, POINT_LIGHT } from '../utils/defaultSceneValues';
 import { addCamera } from '../utils/toolsForCamera';
