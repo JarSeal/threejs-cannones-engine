@@ -91,11 +91,27 @@ export const selectObjects = (selectedObjects) => {
     });
     selectedObjects = selected3DObjects;
   }
+
+  // Check if there are targeted objects or target objects in the selections,
+  // then change and disable left tools accordingly (rotation and scale are disabled)
+  const leftTools = getSceneItem('leftTools');
+  let disabledLeftTools = [];
+  for (let i = 0; i < selectedObjects.length; i++) {
+    if (
+      selectedObjects[i].userData.isTargetedObject ||
+      selectedObjects[i].userData.isTargetObject
+    ) {
+      disabledLeftTools = ['rotate', 'scale'];
+      if (leftTools.selectAndTransformTool !== 'select') leftTools.changeTool('translate');
+      break;
+    }
+  }
+  leftTools.disableTools(disabledLeftTools);
+
   // @TODO: Check if object is part of a group, then select all objects belonging into that group (selecting a group)
 
   const outlinePass = getSceneItem('editorOutlinePass');
   const transControls = getSceneItem('transformControls');
-  const leftTools = getSceneItem('leftTools');
   if (prevSelection && prevSelection.length) outlinePass.selectedObjects = [];
   if (selectedObjects?.length) {
     const selection = selectedObjects;

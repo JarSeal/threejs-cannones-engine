@@ -98,6 +98,8 @@ export const addCamera = (params, initiatingCameras) => {
     isTargetedCamera = true;
     isTargetedObject = true;
   }
+  camera.isTargetedCamera = isTargetedCamera;
+  camera.isTargetedObject = isTargetedObject;
   params.isTargetedCamera = isTargetedCamera;
   params.isTargetedObject = isTargetedObject;
   if (!camera) {

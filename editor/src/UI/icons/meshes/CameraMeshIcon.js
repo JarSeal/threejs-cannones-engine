@@ -84,6 +84,8 @@ class CameraMeshIcon {
         params,
         paramType: 'cameraTarget',
         id: CAMERA_TARGET_ID + '--' + params.id,
+        isCameraTarget: true,
+        isTargetObject: true,
       };
       cameraTargetMesh.visible = params.showHelper;
       this.cameraTargetMesh = cameraTargetMesh;
