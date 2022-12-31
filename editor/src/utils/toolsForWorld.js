@@ -1,9 +1,10 @@
 import * as THREE from 'three';
 
 import { saveAllLightsState, saveSceneState } from '../sceneData/saveSession';
-import { getSceneItem, removeMeshFromScene } from '../sceneData/sceneItems';
+import { getSceneItem } from '../sceneData/sceneItems';
 import { getSceneParam, setSceneParam } from '../sceneData/sceneParams';
 import { AMBIENT_LIGHT, HEMI_LIGHT } from './defaultSceneValues';
+import { removeMeshFromScene } from './utils';
 
 export const toggleWorldAxesHelper = () => {
   const scene = getSceneItem('scene');

@@ -69,7 +69,7 @@ class KeyboardShortcuts {
     { keys: ['h'], actionKey: 'toggleAxes' },
   ];
 
-  // These are all the available shortcut actions for the user to configure in the settings (@TODO)
+  // These are all the available shortcut actions for the user to configure in the settings (@TODO users can reset these)
   ACTION_POOL = {
     undo: () => getSceneItem('undoRedo').undo(),
     redo: () => getSceneItem('undoRedo').redo(),

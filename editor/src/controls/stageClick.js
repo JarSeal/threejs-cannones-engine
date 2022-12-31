@@ -2,7 +2,14 @@ import * as THREE from 'three';
 import { saveSceneState } from '../sceneData/saveSession';
 
 import { getSceneItem, setSceneItem } from '../sceneData/sceneItems';
-import { getSceneParam, setSceneParam, setSceneParamR } from '../sceneData/sceneParams';
+import {
+  getSceneParam,
+  getSceneParamR,
+  setSceneParam,
+  setSceneParamR,
+} from '../sceneData/sceneParams';
+import { removeCameraTargetMesh, updateCameraTargetMesh } from '../UI/icons/meshes/CameraMeshIcon';
+import { CAMERA_TARGET_ID } from '../utils/defaultSceneValues';
 
 let rayClicker;
 const mouseClickStart = { x: 0, y: 0 };
@@ -44,7 +51,7 @@ const _mouseUpOnStage = (e) => {
   rayClicker.setFromCamera(mouse, getSceneItem('curCamera'));
   const intersects = rayClicker.intersectObjects(getSceneItem('scene').children);
   let selectedObjects = [];
-  const selectableObjectTypes = ['camera', 'element', 'light'];
+  const selectableObjectTypes = ['camera', 'cameraTarget', 'element', 'light'];
   for (let i = 0; i < intersects.length; i++) {
     const hitObject = intersects[i].object;
     if (
@@ -67,6 +74,7 @@ const _mouseUpOnStage = (e) => {
 
 // The selectedObjects can be an array of object IDs (strings) or array of 3D objects
 export const selectObjects = (selectedObjects) => {
+  const prevSelection = [...getSceneParam('selection')];
   let selectionIds = [];
   if (selectedObjects?.length && !selectedObjects[0].isObject3D) {
     // The selectedObjects are object IDs, we need to get the 3D objects:
@@ -74,13 +82,19 @@ export const selectObjects = (selectedObjects) => {
     const selected3DObjects = [];
     selectedObjects.forEach((id) => {
       const object3D = getSceneItem('scene').children.find((obj) => obj.userData?.id === id);
-      if (object3D) selected3DObjects.push(object3D);
+      if (object3D?.isGroup && object3D?.userData.paramType === 'camera') {
+        selected3DObjects.push(object3D.children[0]);
+      } else if (object3D) {
+        selected3DObjects.push(object3D);
+      } else if (id === CAMERA_TARGET_ID) {
+        updateCameraTargetMesh(getSceneParamR('editor.cameraTargetParams'));
+        selected3DObjects.push(getSceneItem('cameraTargetMesh'));
+      }
     });
     selectedObjects = selected3DObjects;
   }
-  // TODO: Check if object is part of a group, then select all objects belonging into that group (selecting a group)
+  // @TODO: Check if object is part of a group, then select all objects belonging into that group (selecting a group)
 
-  const prevSelection = [...getSceneParam('selection')];
   const outlinePass = getSceneItem('editorOutlinePass');
   const transControls = getSceneItem('transformControls');
   const leftTools = getSceneItem('leftTools');
@@ -97,17 +111,20 @@ export const selectObjects = (selectedObjects) => {
       transControls.enabled = true;
       if (selection[0].userData.paramType === 'camera') {
         transControls.attach(selection[0].parent); // @TODO: add multiselect
-        if (selection[0].userData.type === 'perspectiveTarget') {
-          console.log('YES IT IS');
-        }
       } else {
         transControls.attach(selection[0]); // @TODO: add multiselect
       }
+    }
+    if (selection[0].userData.isTargetedCamera) {
+      updateCameraTargetMesh(getSceneParam('cameras')[selection[0].userData.index]);
+    } else if (!selection[0].userData.cameraParams?.isTargetedCamera) {
+      removeCameraTargetMesh();
     }
     setSceneItem('selection', selection);
     setSceneParam('selection', selectionIds);
     saveSceneState({ selection: selectionIds });
   } else {
+    removeCameraTargetMesh();
     setSceneItem('selection', []);
     setSceneParam('selection', []);
     transControls.detach();

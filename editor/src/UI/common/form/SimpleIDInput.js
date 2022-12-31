@@ -7,6 +7,7 @@ import TextInput from './TextInput';
 import SvgIcon from '../../icons/svg-icon';
 import './SimpleIDInput.scss';
 import { updateCamUserDataHelpersAndIcon } from '../../../utils/toolsForCamera';
+import { CAMERA_TARGET_ID } from '../../../utils/defaultSceneValues';
 
 // Attributes:
 // - label = field label [String]
@@ -153,6 +154,9 @@ class SimpleIDInput extends Component {
         hasError: true,
         errorMsg: 'Only A-Z (a-z), 0-9, dash, and underscore allowed',
       };
+    }
+    if (value === CAMERA_TARGET_ID) {
+      return { hasError: true, errorMsg: 'This is a reserved ID and cannot be used' };
     }
     for (let g = 0; g < groups.length; g++) {
       const group = groups[g];

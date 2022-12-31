@@ -1,3 +1,5 @@
+export const CAMERA_TARGET_ID = '__camera-target';
+
 export const AMBIENT_LIGHT = {
   color: 0xffffff,
   intensity: 1,

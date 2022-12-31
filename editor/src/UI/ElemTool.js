@@ -27,12 +27,11 @@ class ElemTool extends Component {
 
     let headerText = `[ ${selections.length} items ]`;
     if (selections.length === 1) {
-      headerText =
-        selections[0].userData.name && selections[0].userData.name.length
-          ? selections[0].userData.name
-          : '';
-    } else if (selections.length === 0) {
-      headerText = '';
+      if (selections[0].userData.paramType === 'cameraTarget') {
+        headerText = selections[0].userData.cameraParams.name || '';
+      } else {
+        headerText = selections[0].userData.name || '';
+      }
     }
 
     this.elemToolWrapper = this.addChildDraw(
@@ -81,10 +80,13 @@ class ElemTool extends Component {
     if (selections.length === 1) {
       parent.addChildDraw({
         id: parent.id + '-id-text',
-        text: selections[0].userData.id,
+        text:
+          selections[0].userData.paramType === 'cameraTarget'
+            ? '(camera target for..) ' + selections[0].userData.cameraParams.id
+            : selections[0].userData.id,
         class: [styles.idText],
       });
-      // TODO: Create Tools here
+      // TODO: Create Tools here (buttons for group, copy, etc.)
       this._createElemTabs(parent, selections);
     }
   };

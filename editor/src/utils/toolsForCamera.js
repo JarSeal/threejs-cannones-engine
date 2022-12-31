@@ -1,13 +1,17 @@
 import * as THREE from 'three';
 
 import { createOrbitControls, removeOrbitControls } from '../controls/orbitControls';
+import { selectObjects } from '../controls/stageClick';
 import { saveAllCamerasState, saveCameraState, saveSceneState } from '../sceneData/saveSession';
 import { getSceneItem, setSceneItem } from '../sceneData/sceneItems';
 import { getSceneParam, setSceneParam } from '../sceneData/sceneParams';
 import ConfirmationDialog from '../UI/dialogs/Confirmation';
 import NewCamera from '../UI/dialogs/NewCamera';
-import CameraMeshIcon from '../UI/icons/meshes/CameraMeshIcon';
-import { NEW_CAMERA_DEFAULT_PARAMS } from './defaultSceneValues';
+import CameraMeshIcon, {
+  removeCameraTargetMesh,
+  updateCameraTargetMesh,
+} from '../UI/icons/meshes/CameraMeshIcon';
+import { CAMERA_TARGET_ID, NEW_CAMERA_DEFAULT_PARAMS } from './defaultSceneValues';
 import { getScreenResolution } from './utils';
 
 export const updateCameraProperty = (value, i, key, args) => {
@@ -34,7 +38,7 @@ export const updateCameraProperty = (value, i, key, args) => {
   updateCamUserDataHelpersAndIcon(i);
   getSceneItem('topTools')?.updateTools();
   if (args?.doNotUpdateUndo !== true) {
-    const isTransform = key === 'position' || key === 'target' || key === 'quaternion';
+    const isTransform = key === 'position' || key === 'target' || key === 'rotation';
     const additionalParams = isTransform && args ? { valueIndex: args.valueIndex } : {};
     getSceneItem('undoRedo').addAction({
       type: isTransform ? 'updateCameraTransforms' : 'updateCameraProperty',
@@ -77,9 +81,11 @@ export const addCamera = (params, initiatingCameras) => {
   if (!params.defaultPosition) params.defaultPosition = NEW_CAMERA_DEFAULT_PARAMS.defaultPosition;
 
   // @TODO: check also for if the id is unique or not
+  let isTargetedCamera = false;
   if (params.type === 'perspectiveTarget') {
     if (!params.fov) params.fov = NEW_CAMERA_DEFAULT_PARAMS.fov;
     camera = new THREE.PerspectiveCamera(params.fov, aspectRatio, params.near, params.far);
+    isTargetedCamera = true;
   } else if (params.type === 'orthographicTarget') {
     const viewSize = params.orthoViewSize || NEW_CAMERA_DEFAULT_PARAMS.orthoViewSize;
     camera = new THREE.OrthographicCamera(
@@ -90,17 +96,13 @@ export const addCamera = (params, initiatingCameras) => {
       params.near,
       params.far
     );
+    isTargetedCamera = true;
   }
+  params.isTargetedCamera = isTargetedCamera;
   if (!camera) {
     console.error('Camera type invalid');
     return;
   }
-
-  let isTargetedCamera = false;
-  if (params.type === 'perspectiveTarget' || params.type === 'orthographicTarget') {
-    isTargetedCamera = true;
-  }
-  params.isTargetedCamera = isTargetedCamera;
 
   camera.position.set(...params.position);
   if (isTargetedCamera) {
@@ -301,6 +303,7 @@ export const toggleShowCameraHelper = (isTurnedOn, cameraIndex) => {
 };
 
 export const changeCurCamera = (newCamIndex) => {
+  const prevVal = getSceneParam('curCameraIndex');
   const camItems = getSceneItem('allCameras');
   const camHelpers = getSceneItem('cameraHelpers');
   const camParams = getSceneParam('cameras');
@@ -334,6 +337,17 @@ export const changeCurCamera = (newCamIndex) => {
       scene.add(helper);
     }
   }
+
+  const transformControls = getSceneItem('transformControls');
+  const newCamId = camParams[newCamIndex].id;
+  if (newCamId === transformControls.object?.userData.id) {
+    // Remove the selection, if current camera icon is selected
+    selectObjects(getSceneItem('selection').filter((sel) => sel.userData.id !== newCamId));
+  }
+  if (newCamId === transformControls.object?.userData.cameraParams?.id) {
+    // Remove the selection, if current camera target mesh is selected
+    selectObjects(getSceneItem('selection').filter((sel) => sel.userData.id !== CAMERA_TARGET_ID));
+  }
   removeOrbitControls();
   setSceneParam('curCameraIndex', newCameraIndex);
   saveSceneState();
@@ -346,6 +360,11 @@ export const changeCurCamera = (newCamIndex) => {
   if (rightPanel.tabId === 'UICamera') rightPanel.updatePanel();
 
   getSceneItem('topTools')?.updateTools();
+  getSceneItem('undoRedo').addAction({
+    type: 'changeCurCamera',
+    prevVal,
+    newVal: newCamIndex,
+  });
 };
 
 export const resetCameraTransforms = (cameraIndex) => {
@@ -400,10 +419,21 @@ export const destroyCamera = (cameraIndex, destroyWithoutDialogAndUndo) => {
     setSceneParam('cameras', cameraParams);
     const selection = getSceneItem('selection');
     for (let i = 0; i < selection.length; i++) {
+      let filteredSelection;
       if (selection[i].userData?.id === cameraItems[index].userData.id) {
-        const filteredSelection = selection.filter(
+        filteredSelection = selection.filter(
           (sel) => sel.userData.id !== cameraItems[index].userData.id
         );
+      }
+      if (
+        selection[i].userData.id === CAMERA_TARGET_ID &&
+        selection[i].userData.cameraParams.id === destroyCameraParams.id
+      ) {
+        filteredSelection = selection.filter(
+          (sel) => sel.userData.cameraParams.id !== destroyCameraParams.id
+        );
+      }
+      if (filteredSelection) {
         setSceneItem('selection', filteredSelection);
         const selectionIds = filteredSelection.map((sel) => sel.userData.id);
         setSceneParam('selection', selectionIds);
@@ -455,6 +485,16 @@ export const destroyCamera = (cameraIndex, destroyWithoutDialogAndUndo) => {
       }
     });
 
+    // Remove possible camera target
+    const cameraTargetMesh = getSceneItem('cameraTargetMesh');
+    if (
+      destroyCameraParams.isTargetedCamera && // @Consider: Not sure if this is needed
+      cameraTargetMesh &&
+      destroyCameraParams.id === cameraTargetMesh.userData.cameraParams.id
+    ) {
+      removeCameraTargetMesh();
+    }
+
     saveCameraState({ removeIndex: index });
     if (index === getSceneParam('curCameraIndex')) {
       changeCurCamera(0);
@@ -463,6 +503,7 @@ export const destroyCamera = (cameraIndex, destroyWithoutDialogAndUndo) => {
     }
     getSceneItem('topTools').updateTools();
     getSceneItem('leftTools').updateTools();
+    getSceneItem('elemTool').updateTool();
     const rightPanel = getSceneItem('rightSidePanel');
     if (rightPanel.tabId === 'UICamera') rightPanel.updatePanel();
 
@@ -557,6 +598,14 @@ export const updateCamUserDataHelpersAndIcon = (cameraIndex, updateById) => {
   if (helpers && helpers.length && helpers[cameraIndex]) {
     helpers[cameraIndex].userData = params[cameraIndex];
     helpers[cameraIndex].update();
+  }
+  const cameraTargetMesh = getSceneItem('cameraTargetMesh');
+  if (
+    cameraTargetMesh &&
+    cameraTargetMesh.userData.cameraParams.id === params.id &&
+    params.isTargetedCamera
+  ) {
+    updateCameraTargetMesh(params);
   }
   getSceneItem('elemTool').updateTool();
 };

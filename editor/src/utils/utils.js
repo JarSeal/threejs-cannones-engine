@@ -17,6 +17,7 @@ export const getSelectedElemIcon = (selections) => {
   const sel = selections[0].userData;
   if (sel?.paramType === 'element') return { icon: 'cube', width: 22 };
   if (sel?.paramType === 'camera') return { icon: 'camera', width: 18 };
+  if (sel?.paramType === 'cameraTarget') return { icon: 'camera', width: 18 }; // @TODO: figure out a new icon (maybe the camera with crosshair target or something...)
   return { icon: '', width: 22 };
 };
 
@@ -38,4 +39,17 @@ export const getElemParamsById = (id) => {
     console.warn(`Could not find element params with ID "${id}" from groups ${groups.join(', ')}.`);
   }
   return foundParams;
+};
+
+export const removeMeshFromScene = (obj) => {
+  if (!obj) return;
+  if (obj.geometry) obj.geometry.dispose();
+  if (obj.material) {
+    if (Array.isArray(obj.material)) {
+      obj.material.forEach((mat) => mat.dispose());
+    } else {
+      obj.material.dispose();
+    }
+  }
+  obj.removeFromParent();
 };

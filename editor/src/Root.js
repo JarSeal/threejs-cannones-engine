@@ -13,6 +13,7 @@ import {
   resetSceneParams,
   setSceneParams,
   getSceneParam,
+  getSceneParamR,
 } from './sceneData/sceneParams';
 import { getSceneItem, getSceneItems, setSceneItem, resetSceneItems } from './sceneData/sceneItems';
 import { getScreenResolution } from './utils/utils';
@@ -22,7 +23,7 @@ import { scenes } from '../../data';
 import { getSceneStates, saveSceneId } from './sceneData/saveSession';
 import TopTools from './UI/TopTools';
 import Dialog from './UI/dialogs/Dialog';
-import { registerStageClick } from './controls/stageClick';
+import { registerStageClick, selectObjects } from './controls/stageClick';
 import SmallStats from './UI/stats/SmallStats';
 import styleVariables from './sass/variables.scss?raw';
 import LeftTools from './UI/LeftTools';
@@ -30,6 +31,8 @@ import ElemTool from './UI/ElemTool';
 import UndoRedo from './UI/UndoRedo/UndoRedo';
 import KeyboardShortcuts from './UI/KeyboarShortcuts';
 import { createTransformControls } from './controls/transformControls';
+import { CAMERA_TARGET_ID } from './utils/defaultSceneValues';
+import { updateCameraTargetMesh } from './UI/icons/meshes/CameraMeshIcon';
 
 class Root {
   constructor() {
@@ -106,7 +109,6 @@ class Root {
       editorOutlinePass.edgeGlow = 0.25;
       editorOutlinePass.edgeThickness = 2.5;
       editorOutlinePass.pulsePeriod = 2;
-      editorOutlinePass.selectedObjects = getSceneParams('selections');
       editorOutlinePass.visibleEdgeColor.set('#f69909');
       editorOutlinePass.hiddenEdgeColor.set('#ff4500');
       editorOutlinePass.overlayMaterial.blending = THREE.NormalBlending;
@@ -171,13 +173,16 @@ class Root {
               selection.push(elements[i]);
             }
           }
+          if (id === CAMERA_TARGET_ID) {
+            updateCameraTargetMesh(getSceneParamR('editor.cameraTargetParams'));
+            selection.push(getSceneItem('cameraTargetMesh'));
+          }
         });
         setSceneItem('selection', selection);
       } else {
         setSceneParam('selection', []);
         setSceneItem('selection', []);
       }
-      this.editorOutlinePass.selectedObjects = selection;
 
       // Undo / Redo
       const undoRedo = new UndoRedo();
@@ -220,6 +225,9 @@ class Root {
         transControls.mode = leftTools.selectAndTransformTool;
         transControls.attach(selection[0]); // @TODO: add multiselection
       }
+
+      // Select possible selected object(s)
+      selectObjects(selection);
     }
 
     this._resize();
