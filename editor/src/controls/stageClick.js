@@ -132,10 +132,10 @@ export const selectObjects = (selectedObjects) => {
     }
     if (selection[0].userData.isTargetingObject) {
       const elemId = selection[0].userData.id;
-      const targetMesh = getSceneItem('editorTargetMeshes').find(
+      const targetMesh = getSceneItem('editorTargetMeshes')?.find(
         (mesh) => mesh.userData.params.id === elemId
       );
-      targetMesh.visible = true;
+      if (targetMesh) targetMesh.visible = true;
     }
     setSceneItem('selection', selection);
     setSceneParam('selection', selectionIds);
@@ -149,7 +149,7 @@ export const selectObjects = (selectedObjects) => {
 
   // Hide possible target meshes when the selection changes
   for (let i = 0; i < prevSelection.length; i++) {
-    const targetMesh = getSceneItem('editorTargetMeshes').find(
+    const targetMesh = getSceneItem('editorTargetMeshes')?.find(
       (mesh) =>
         !selectionIds.includes(mesh.userData.params.id) &&
         !selectionIds.includes(mesh.userData.id) &&

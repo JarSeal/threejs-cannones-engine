@@ -58,7 +58,7 @@ class CameraMeshIcon {
 
   remove = () => {
     const transControls = getSceneItem('transformControls');
-    if (transControls.object?.userData.isTargetedCamera || transControls.object?.isCameraTarget) {
+    if (transControls.object?.userData.isTargetingCamera || transControls.object?.isCameraTarget) {
       transControls.detach();
     }
     const newEditorIcons = getSceneItem('editorIcons').filter(
@@ -72,7 +72,7 @@ class CameraMeshIcon {
 
   _createTargetMesh = () => {
     const params = this.icon.userData;
-    if (params.isTargetedCamera) {
+    if (params.isTargetingCamera) {
       const cameraTargetGeo = new THREE.BoxGeometry(0.2, 0.2, 0.2);
       const cameraTargetMat = new THREE.MeshBasicMaterial({ color: 0xffcc00 });
       const cameraTargetMesh = new THREE.Mesh(cameraTargetGeo, cameraTargetMat);
@@ -89,6 +89,7 @@ class CameraMeshIcon {
       const editorTargets = getSceneItem('editorTargetMeshes') || [];
       setSceneItem('editorTargetMeshes', [...editorTargets, cameraTargetMesh]);
       getSceneItem('scene').add(cameraTargetMesh);
+      console.log('HERE');
     }
   };
 

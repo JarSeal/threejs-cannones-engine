@@ -166,7 +166,7 @@ class Root {
               selection.push(editorIcons[i].iconMesh);
             }
           }
-          const editorTargetMeshes = this.sceneItems.editorTargetMeshes;
+          const editorTargetMeshes = this.sceneItems.editorTargetMeshes || [];
           for (let i = 0; i < editorTargetMeshes.length; i++) {
             if (editorTargetMeshes[i]?.userData.id === id) {
               editorTargetMeshes[i].visible = true;

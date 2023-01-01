@@ -134,10 +134,10 @@ export const addCamera = (params, initiatingCameras) => {
   } else {
     helpers.push(null);
     setSceneItem('curCamera', camera);
-    const targetMesh = getSceneItem('editorTargetMeshes').find(
+    const targetMesh = getSceneItem('editorTargetMeshes')?.find(
       (mesh) => mesh.userData.params.id === params.id
     );
-    targetMesh.visible = false;
+    if (targetMesh) targetMesh.visible = false;
   }
   setSceneItem('cameraHelpers', helpers);
 
@@ -295,7 +295,7 @@ export const toggleShowCameraHelper = (isTurnedOn, cameraIndex) => {
       helpers[cameraIndex].visible = isTurnedOn;
     }
     const curId = cameraParams[cameraIndex].id;
-    const targetMesh = getSceneItem('editorTargetMeshes').find(
+    const targetMesh = getSceneItem('editorTargetMeshes')?.find(
       (mesh) => mesh.userData.params.id === curId
     );
     if (

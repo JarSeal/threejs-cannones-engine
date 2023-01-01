@@ -144,7 +144,9 @@ export const updateElemTranslation = (id, newVal, prevVal, object) => {
         object = elem;
         objectFound = true;
       } else if (elem.userData?.id === id && elem.userData?.isTargetingObject) {
-        const editorIcon = getSceneItem('editorIcons').find((icon) => icon.icon.userData.id === id);
+        const editorIcon = getSceneItem('editorIcons')?.find(
+          (icon) => icon.icon.userData.id === id
+        );
         if (editorIcon) {
           object = editorIcon.icon;
           objectFound = true;
@@ -228,7 +230,7 @@ const _checkAndSetTargetingObjects = (object) => {
   const params = object.userData;
   const camHelpers = getSceneItem('cameraHelpers') || [];
   if (params.isTargetingObject) {
-    const targetMesh = getSceneItem('editorTargetMeshes').find(
+    const targetMesh = getSceneItem('editorTargetMeshes')?.find(
       (mesh) => mesh.userData.params.id === params.id
     );
     if (params.paramType === 'camera') {
