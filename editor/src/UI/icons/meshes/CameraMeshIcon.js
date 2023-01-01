@@ -14,20 +14,19 @@ class CameraMeshIcon {
     const cameraIconMat = new THREE.MeshBasicMaterial({ color: 0xff0000 });
     const cameraIconMesh = new THREE.Mesh(cameraIconGeo, cameraIconMat);
     cameraIconMesh.position.set(0, 0, 0.14);
+    const directionPointerMesh = new THREE.Mesh(
+      new THREE.BoxGeometry(0.05, 0.05, 0.05),
+      new THREE.MeshBasicMaterial({ color: 0xeeaa00 })
+    );
+    directionPointerMesh.position.set(0, 0.1, -0.115);
+    cameraIconMesh.add(directionPointerMesh);
     cameraIcon.add(cameraIconMesh);
 
     cameraIcon.userData = cameraParams;
     cameraIconMesh.userData = cameraParams;
 
-    const newPos = [camera.position.x, camera.position.y, camera.position.z];
-    const newQuat = [
-      camera.quaternion.x,
-      camera.quaternion.y,
-      camera.quaternion.z,
-      camera.quaternion.w,
-    ];
-    cameraIcon.position.set(...newPos);
-    cameraIcon.quaternion.set(...newQuat);
+    cameraIcon.position.set(...camera.position);
+    cameraIcon.quaternion.set(...camera.quaternion);
 
     this.cameraIcon = cameraIcon;
     this.iconMesh = cameraIconMesh;
