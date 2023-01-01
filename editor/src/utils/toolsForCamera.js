@@ -78,13 +78,13 @@ export const addCamera = (params, initiatingCameras) => {
   if (!params.defaultPosition) params.defaultPosition = NEW_CAMERA_DEFAULT_PARAMS.defaultPosition;
 
   // @TODO: check also for if the id is unique or not
-  let isTargetedCamera = false;
-  let isTargetedObject = false;
+  let isTargetingCamera = false;
+  let isTargetingObject = false;
   if (params.type === 'perspectiveTarget') {
     if (!params.fov) params.fov = NEW_CAMERA_DEFAULT_PARAMS.fov;
     camera = new THREE.PerspectiveCamera(params.fov, aspectRatio, params.near, params.far);
-    isTargetedCamera = true;
-    isTargetedObject = true;
+    isTargetingCamera = true;
+    isTargetingObject = true;
   } else if (params.type === 'orthographicTarget') {
     const viewSize = params.orthoViewSize || NEW_CAMERA_DEFAULT_PARAMS.orthoViewSize;
     camera = new THREE.OrthographicCamera(
@@ -95,20 +95,18 @@ export const addCamera = (params, initiatingCameras) => {
       params.near,
       params.far
     );
-    isTargetedCamera = true;
-    isTargetedObject = true;
+    isTargetingCamera = true;
+    isTargetingObject = true;
   }
-  camera.isTargetedCamera = isTargetedCamera;
-  camera.isTargetedObject = isTargetedObject;
-  params.isTargetedCamera = isTargetedCamera;
-  params.isTargetedObject = isTargetedObject;
+  params.isTargetingCamera = isTargetingCamera;
+  params.isTargetingObject = isTargetingObject;
   if (!camera) {
     console.error('Camera type invalid');
     return;
   }
 
   camera.position.set(...params.position);
-  if (isTargetedCamera) {
+  if (isTargetingCamera) {
     if (!params.target) params.target = NEW_CAMERA_DEFAULT_PARAMS.target;
     if (!params.defaultTarget) params.defaultTarget = NEW_CAMERA_DEFAULT_PARAMS.defaultTarget;
     camera.lookAt(new THREE.Vector3(...params.target));
@@ -302,7 +300,7 @@ export const toggleShowCameraHelper = (isTurnedOn, cameraIndex) => {
     );
     if (
       targetMesh &&
-      cameraParams[cameraIndex].isTargetedCamera &&
+      cameraParams[cameraIndex].isTargetingCamera &&
       !getSceneParam('selection').includes(curId) && // The camera is selected (target cannot be hidden)
       !getSceneParam('selection').includes(CAMERA_TARGET_ID + '--' + curId) // The target is selected (target cannot be hidden)
     ) {

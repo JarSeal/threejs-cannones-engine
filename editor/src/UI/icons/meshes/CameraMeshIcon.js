@@ -77,8 +77,6 @@ class CameraMeshIcon {
       const cameraTargetMat = new THREE.MeshBasicMaterial({ color: 0xffcc00 });
       const cameraTargetMesh = new THREE.Mesh(cameraTargetGeo, cameraTargetMat);
       cameraTargetMesh.position.set(...params.target);
-      cameraTargetMesh.isCameraTarget = true;
-      cameraTargetMesh.isTargetObject = true;
       cameraTargetMesh.userData = {
         params,
         paramType: 'cameraTarget',

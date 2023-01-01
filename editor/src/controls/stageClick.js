@@ -92,13 +92,13 @@ export const selectObjects = (selectedObjects) => {
     selectedObjects = selected3DObjects;
   }
 
-  // Check if there are targeted objects or target objects in the selections,
+  // Check if there are targeting objects or target objects in the selections,
   // then change and disable left tools accordingly (rotation and scale are disabled)
   const leftTools = getSceneItem('leftTools');
   let disabledLeftTools = [];
   for (let i = 0; i < selectedObjects.length; i++) {
     if (
-      selectedObjects[i].userData.isTargetedObject ||
+      selectedObjects[i].userData.isTargetingObject ||
       selectedObjects[i].userData.isTargetObject
     ) {
       disabledLeftTools = ['rotate', 'scale'];
@@ -130,7 +130,7 @@ export const selectObjects = (selectedObjects) => {
         transControls.attach(selection[0]); // @TODO: add multiselect
       }
     }
-    if (selection[0].userData.isTargetedObject) {
+    if (selection[0].userData.isTargetingObject) {
       const elemId = selection[0].userData.id;
       const targetMesh = getSceneItem('editorTargetMeshes').find(
         (mesh) => mesh.userData.params.id === elemId
@@ -153,7 +153,7 @@ export const selectObjects = (selectedObjects) => {
       (mesh) =>
         !selectionIds.includes(mesh.userData.params.id) &&
         !selectionIds.includes(mesh.userData.id) &&
-        (mesh.userData.params.id === prevSelection[i] || // Targeted item (like camera) was selected
+        (mesh.userData.params.id === prevSelection[i] || // Targeting item (like camera) was selected
           mesh.userData.id === prevSelection[i]) // Target mesh was selected
     );
     if (targetMesh) targetMesh.visible = targetMesh.userData.params.showHelper;
