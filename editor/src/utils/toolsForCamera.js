@@ -368,13 +368,22 @@ export const changeCurCamera = (newCamIndex) => {
 
   const transformControls = getSceneItem('transformControls');
   const newCamId = camParams[newCamIndex].id;
+  const targetMesh = getSceneItem('editorTargetMeshes').find(
+    (mesh) => mesh.userData.params.id === newCamId
+  );
   if (newCamId === transformControls.object?.userData.id) {
     // Remove the selection, if current camera icon is selected
     selectObjects(getSceneItem('selection').filter((sel) => sel.userData.id !== newCamId));
+    if (targetMesh) targetMesh.visible = false;
   }
   if (newCamId === transformControls.object?.userData.params?.id) {
     // Remove the selection, if current camera target mesh is selected
-    selectObjects(getSceneItem('selection').filter((sel) => sel.userData.id !== CAMERA_TARGET_ID));
+    selectObjects(
+      getSceneItem('selection').filter(
+        (sel) => sel.userData.id !== CAMERA_TARGET_ID + '--' + newCamId
+      )
+    );
+    if (targetMesh) targetMesh.visible = false;
   }
   removeOrbitControls();
   setSceneParam('curCameraIndex', newCameraIndex);
