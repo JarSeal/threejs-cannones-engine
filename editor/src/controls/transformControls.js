@@ -1,6 +1,6 @@
 import { saveStateByKey } from '../sceneData/saveSession';
 import { setSceneItem, getSceneItem } from '../sceneData/sceneItems';
-import { getSceneParam, setSceneParam, setSceneParamR } from '../sceneData/sceneParams';
+import { getSceneParam, setSceneParam } from '../sceneData/sceneParams';
 import { TransformControls } from './TransformControls/TransformControls.js';
 
 export const createTransformControls = () => {
@@ -83,6 +83,9 @@ export const createTransformControls = () => {
     } else if (controls.dragging && controls.mode === 'scale') {
       controls.object.position.x = startPosX;
     }
+    if (controls.dragging && controls.mode === 'translate') {
+      _checkAndSetTargetingObjects(controls.object);
+    }
   });
 
   controls.addEventListener('dragging-changed', (e) => {
@@ -131,26 +134,81 @@ export const createTransformControls = () => {
 };
 
 export const updateElemTranslation = (id, newVal, prevVal, object) => {
-  const newElemParams = getSceneParam('elements').map((elem) => {
-    if (elem.id === id)
-      return { ...elem, position: newVal.position, rotation: newVal.rotation, scale: newVal.scale };
-    return elem;
-  });
-  setSceneParam('elements', newElemParams);
-  saveStateByKey('elements', newElemParams);
   if (!object) {
+    // If the object is not in the params, we have to search it.
+    // For example the undo/redo needs to do this, since the object cannot
+    // be part of the saved undo/redo data.
     let objectFound = false;
-    getSceneItem('scene').traverse((elem) => {
-      if (elem.userData?.id === id) {
+    getSceneItem('scene').children.find((elem) => {
+      if (elem.userData?.id === id && !elem.userData?.isTargetingObject) {
         object = elem;
         objectFound = true;
+      } else if (elem.userData?.id === id && elem.userData?.isTargetingObject) {
+        const editorIcon = getSceneItem('editorIcons').find((icon) => icon.icon.userData.id === id);
+        if (editorIcon) {
+          object = editorIcon.icon;
+          objectFound = true;
+        }
       }
     });
     if (!objectFound) console.warn('ForThree: Could not find element in scene with id: ' + id);
   }
+  if (object?.userData.isTargetingObject) {
+    // Targeting object
+    if (
+      object.userData.type === 'perspectiveTarget' ||
+      object.userData.type === 'orthographicTarget'
+    ) {
+      // Targeting camera
+      const newCamParams = getSceneParam('cameras').map((cam) => {
+        if (cam.id === id)
+          return {
+            ...cam,
+            position: newVal.position,
+            rotation: newVal.rotation,
+            scale: newVal.scale,
+          };
+        return cam;
+      });
+      setSceneParam('cameras', newCamParams);
+      saveStateByKey('cameras', newCamParams);
+    }
+  } else if (object?.userData.isTargetObject) {
+    // Target object
+    if (object.userData.paramType === 'cameraTarget') {
+      // Camera target
+      const id = object.userData.params.id;
+      const newCamParams = getSceneParam('cameras').map((cam) => {
+        if (cam.id === id)
+          return {
+            ...cam,
+            target: [...newVal.position],
+          };
+        return cam;
+      });
+      setSceneParam('cameras', newCamParams);
+      saveStateByKey('cameras', newCamParams);
+    }
+  } else {
+    // Basic elements
+    const newElemParams = getSceneParam('elements').map((elem) => {
+      if (elem.id === id)
+        return {
+          ...elem,
+          position: newVal.position,
+          rotation: newVal.rotation,
+          scale: newVal.scale,
+        };
+      return elem;
+    });
+    setSceneParam('elements', newElemParams);
+    saveStateByKey('elements', newElemParams);
+  }
+
   object.position.set(...newVal.position);
   object.rotation.set(...newVal.rotation);
   object.scale.set(...newVal.scale);
+  _checkAndSetTargetingObjects(object);
   getSceneItem('undoRedo').addAction({
     type: 'updateElemTranslation',
     prevVal,
@@ -164,4 +222,39 @@ export const removeTransformControls = () => {
   if (!controls) return;
   controls.dispose();
   setSceneItem('transformControls', null);
+};
+
+const _checkAndSetTargetingObjects = (object) => {
+  const params = object.userData;
+  const camHelpers = getSceneItem('cameraHelpers') || [];
+  if (params.isTargetingObject) {
+    const targetMesh = getSceneItem('editorTargetMeshes').find(
+      (mesh) => mesh.userData.params.id === params.id
+    );
+    if (params.paramType === 'camera') {
+      // TARGETING CAMERA
+      const camera = getSceneItem('allCameras').find((c) => c.userData.id === params.id);
+      camera.position.set(...object.position);
+      camera.lookAt(...targetMesh.position);
+      const helper = camHelpers.find((h) => h?.userData?.id === params.id);
+      helper?.update();
+      camera.updateWorldMatrix();
+      object.position.set(...camera.position);
+      object.quaternion.set(...camera.quaternion);
+    }
+  } else if (params.isTargetObject) {
+    if (params.params.paramType === 'camera') {
+      // CAMERA TARGETS
+      const camera = getSceneItem('allCameras').find((c) => c.userData.id === params.params.id);
+      camera.lookAt(...object.position);
+      const helper = camHelpers.find((h) => h?.userData?.id === params.params.id);
+      helper?.update();
+      camera.updateWorldMatrix();
+      const editorIcon = getSceneItem('editorIcons').find(
+        (icon) => icon.icon.userData.id === params.params.id
+      );
+      editorIcon.icon.position.set(...camera.position);
+      editorIcon.icon.quaternion.set(...camera.quaternion);
+    }
+  }
 };

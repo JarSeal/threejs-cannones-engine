@@ -32,7 +32,6 @@ import UndoRedo from './UI/UndoRedo/UndoRedo';
 import KeyboardShortcuts from './UI/KeyboarShortcuts';
 import { createTransformControls } from './controls/transformControls';
 import { CAMERA_TARGET_ID } from './utils/defaultSceneValues';
-import { updateCameraTargetMesh } from './UI/icons/meshes/CameraMeshIcon';
 
 class Root {
   constructor() {
@@ -167,15 +166,18 @@ class Root {
               selection.push(editorIcons[i].iconMesh);
             }
           }
+          const editorTargetMeshes = this.sceneItems.editorTargetMeshes;
+          for (let i = 0; i < editorTargetMeshes.length; i++) {
+            if (editorTargetMeshes[i]?.userData.id === id) {
+              editorTargetMeshes[i].visible = true;
+              selection.push(editorTargetMeshes[i]);
+            }
+          }
           const elements = this.sceneItems.elements;
           for (let i = 0; i < elements.length; i++) {
             if (elements[i].userData.id === id) {
               selection.push(elements[i]);
             }
-          }
-          if (id === CAMERA_TARGET_ID) {
-            updateCameraTargetMesh(getSceneParamR('editor.cameraTargetParams'));
-            selection.push(getSceneItem('cameraTargetMesh'));
           }
         });
         setSceneItem('selection', selection);

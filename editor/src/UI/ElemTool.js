@@ -27,10 +27,10 @@ class ElemTool extends Component {
 
     let headerText = `[ ${selections.length} items ]`;
     if (selections.length === 1) {
-      if (selections[0].userData.paramType === 'cameraTarget') {
-        headerText = selections[0].userData.cameraParams.name || '';
+      if (selections[0]?.userData.paramType === 'cameraTarget') {
+        headerText = selections[0].userData.params.name || '';
       } else {
-        headerText = selections[0].userData.name || '';
+        headerText = selections[0]?.userData.name || '';
       }
     }
 
@@ -81,9 +81,9 @@ class ElemTool extends Component {
       parent.addChildDraw({
         id: parent.id + '-id-text',
         text:
-          selections[0].userData.paramType === 'cameraTarget'
-            ? '(camera target for..) ' + selections[0].userData.cameraParams.id
-            : selections[0].userData.id,
+          selections[0]?.userData.paramType === 'cameraTarget'
+            ? '(camera target for..) ' + selections[0].userData.params.id
+            : selections[0]?.userData.id || '[ ID NOT FOUND ]',
         class: [styles.idText],
       });
       // TODO: Create Tools here (buttons for group, copy, etc.)

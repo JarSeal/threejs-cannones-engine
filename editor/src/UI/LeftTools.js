@@ -14,6 +14,7 @@ class LeftTools extends Component {
     this.mainButtonsWrapper = null;
     this.selectedElemButtonsWrapper = null;
     this.selectAndTransformTool = getSceneParamR('editor.selectAndTransformTool', 'select'); // TODO: Get the value form editor params
+    this.disabledToolIds = [];
   }
 
   paint = () => {
@@ -29,6 +30,7 @@ class LeftTools extends Component {
             id: this.id + '-btn-select-button',
             icon: new SvgIcon({ id: this.id + '-add-icon', icon: 'pointer', width: 12 }),
             class: this.selectAndTransformTool === 'select' ? ['current'] : [],
+            disabled: this.disabledToolIds.includes('select'),
             onClick: () => this.changeTool('select'),
           })
         ),
@@ -39,6 +41,7 @@ class LeftTools extends Component {
             id: this.id + '-btn-translate-button',
             icon: new SvgIcon({ id: this.id + '-translate-icon', icon: 'moveArrows', width: 18 }),
             class: this.selectAndTransformTool === 'translate' ? ['current'] : [],
+            disabled: this.disabledToolIds.includes('translate'),
             onClick: () => this.changeTool('translate'),
           })
         ),
@@ -49,6 +52,7 @@ class LeftTools extends Component {
             id: this.id + '-btn-rotate-button',
             icon: new SvgIcon({ id: this.id + '-rotate-icon', icon: 'rotate', width: 18 }),
             class: this.selectAndTransformTool === 'rotate' ? ['current'] : [],
+            disabled: this.disabledToolIds.includes('rotate'),
             onClick: () => this.changeTool('rotate'),
           })
         ),
@@ -59,6 +63,7 @@ class LeftTools extends Component {
             id: this.id + '-btn-scale-button',
             icon: new SvgIcon({ id: this.id + '-scale-icon', icon: 'scale', width: 18 }),
             class: this.selectAndTransformTool === 'scale' ? ['current'] : [],
+            disabled: this.disabledToolIds.includes('scale'),
             onClick: () => this.changeTool('scale'),
           })
         ),
@@ -150,7 +155,11 @@ class LeftTools extends Component {
   changeTool = (toolId) => {
     if (
       this.selectAndTransformTool === toolId ||
-      (toolId !== 'select' && toolId !== 'translate' && toolId !== 'rotate' && toolId !== 'scale')
+      (toolId !== 'select' &&
+        toolId !== 'translate' &&
+        toolId !== 'rotate' &&
+        toolId !== 'scale') ||
+      this.disabledToolIds.includes(toolId)
     ) {
       return;
     }
@@ -170,6 +179,12 @@ class LeftTools extends Component {
       transControls.attach(getSceneItem('selection')[0]); // @TODO: add multiselection
       transControls.enabled = true;
     }
+    this.updateTools();
+  };
+
+  // toolIds: [string]
+  disableTools = (toolIds) => {
+    this.disabledToolIds = toolIds;
     this.updateTools();
   };
 }

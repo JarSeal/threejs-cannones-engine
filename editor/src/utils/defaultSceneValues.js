@@ -34,8 +34,8 @@ export const NEW_CAMERA_DEFAULT_PARAMS = {
 };
 
 export const CAMERA_TYPES = [
-  { value: 'perspectiveTarget', label: 'Targeted perspective camera' },
+  { value: 'perspectiveTarget', label: 'Targeting perspective camera' },
   { value: 'perspectiveFree', label: 'Free perspective camera (TODO)', disabled: true },
-  { value: 'orthographicTarget', label: 'Targeted orthographic camera' },
+  { value: 'orthographicTarget', label: 'Targeting orthographic camera' },
   { value: 'orthographicFree', label: 'Free orthographic camera (TODO)', disabled: true },
 ];
