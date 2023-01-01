@@ -1,4 +1,5 @@
 import { getSceneItem } from '../sceneData/sceneItems';
+import { toggleWorldAxesHelper, toggleWorldGridHelper } from '../utils/toolsForWorld';
 
 class KeyboardShortcuts {
   constructor() {
@@ -60,12 +61,24 @@ class KeyboardShortcuts {
   DEFAULT_SHORTCUTS = [
     { keys: ['Control', 'z'], actionKey: 'undo' },
     { keys: ['Control', 'Shift', 'Z'], actionKey: 'redo' },
+    { keys: ['s'], actionKey: 'selectElement' },
+    { keys: ['z'], actionKey: 'translateElement' },
+    { keys: ['r'], actionKey: 'rotateElement' },
+    { keys: ['x'], actionKey: 'scaleElement' },
+    { keys: ['g'], actionKey: 'toggleGrid' },
+    { keys: ['h'], actionKey: 'toggleAxes' },
   ];
 
-  // These are all the available shortcut actions for the user to configure in the settings (@TODO)
+  // These are all the available shortcut actions for the user to configure in the settings (@TODO users can reset these)
   ACTION_POOL = {
     undo: () => getSceneItem('undoRedo').undo(),
     redo: () => getSceneItem('undoRedo').redo(),
+    selectElement: () => getSceneItem('leftTools').changeTool('select'),
+    translateElement: () => getSceneItem('leftTools').changeTool('translate'),
+    rotateElement: () => getSceneItem('leftTools').changeTool('rotate'),
+    scaleElement: () => getSceneItem('leftTools').changeTool('scale'),
+    toggleGrid: () => toggleWorldGridHelper(),
+    toggleAxes: () => toggleWorldAxesHelper(),
   };
 }
 

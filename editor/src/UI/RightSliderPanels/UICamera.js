@@ -100,7 +100,6 @@ class UICamera extends Component {
             const value = e.target.value;
             updateCameraProperty(value, c.index, 'name');
             camPanels[c.index].updateTitle(printName({ name: value, id: c.id }));
-            // getSceneItem('elemTool').updateTool();
           },
         })
       );
@@ -117,7 +116,7 @@ class UICamera extends Component {
       );
 
       // Field of view (FOV)
-      if (c.type === 'perspective') {
+      if (c.type === 'perspectiveTarget') {
         this.addChildDraw(
           new NumberInput({
             id: 'fov-' + index + '-' + this.id,
@@ -127,12 +126,10 @@ class UICamera extends Component {
             min: 1,
             precision: 2,
             value: c.fov,
-            changeFn: (value) => {
-              updateCameraProperty(parseFloat(value), c.index, 'fov');
-            },
+            changeFn: (value) => updateCameraProperty(parseFloat(value), c.index, 'fov'),
           })
         );
-      } else if (c.type === 'orthographic') {
+      } else if (c.type === 'orthographicTarget') {
         this.addChildDraw(
           new NumberInput({
             id: 'view-size-' + index + '-' + this.id,
@@ -142,9 +139,7 @@ class UICamera extends Component {
             min: 0.1,
             precision: 3,
             value: c.orthoViewSize,
-            changeFn: (value) => {
-              updateCameraProperty(parseFloat(value), c.index, 'orthoViewSize');
-            },
+            changeFn: (value) => updateCameraProperty(parseFloat(value), c.index, 'orthoViewSize'),
           })
         );
       }
@@ -159,9 +154,7 @@ class UICamera extends Component {
           min: 0.1,
           precision: 3,
           value: c.near,
-          changeFn: (value) => {
-            updateCameraProperty(parseFloat(value), c.index, 'near');
-          },
+          changeFn: (value) => updateCameraProperty(parseFloat(value), c.index, 'near'),
         })
       );
 
@@ -175,9 +168,7 @@ class UICamera extends Component {
           min: 0.2,
           precision: 3,
           value: c.far,
-          changeFn: (value) => {
-            updateCameraProperty(parseFloat(value), c.index, 'far');
-          },
+          changeFn: (value) => updateCameraProperty(parseFloat(value), c.index, 'far'),
         })
       );
 

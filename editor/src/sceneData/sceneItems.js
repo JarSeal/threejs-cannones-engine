@@ -1,3 +1,5 @@
+import { removeMeshFromScene } from '../utils/utils';
+
 const emptyItems = {
   renderer: null,
   cameras: [],
@@ -37,19 +39,6 @@ export const resetSceneItems = () => {
 const _clearScene = (scene) => {
   if (!scene) return;
   scene.traverse((obj) => removeMeshFromScene(obj, scene));
-};
-
-export const removeMeshFromScene = (obj, scene) => {
-  if (obj.geometry) obj.geometry.dispose();
-  if (obj.material) {
-    if (Array.isArray(obj.material)) {
-      obj.material.forEach((mat) => mat.dispose());
-    } else {
-      obj.material.dispose();
-    }
-  }
-  obj.removeFromParent();
-  scene.remove(obj);
 };
 
 const _clearRenderer = (renderer) => renderer && renderer.dispose();

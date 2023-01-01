@@ -63,7 +63,7 @@ class NewCamera extends Component {
       })
     );
 
-    if (this.newCameraParams.type === 'perspective') {
+    if (this.newCameraParams.type === 'perspectiveTarget') {
       // Field of view (FOV) (Only for perspective camera)
       this.addChildDraw(
         new NumberInput({
@@ -78,7 +78,7 @@ class NewCamera extends Component {
           },
         })
       );
-    } else if (this.newCameraParams.type === 'orthographic') {
+    } else if (this.newCameraParams.type === 'orthographicTarget') {
       // View size (Only for orthographic camera)
       this.addChildDraw(
         new NumberInput({

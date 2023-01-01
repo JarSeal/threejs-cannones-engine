@@ -39,7 +39,7 @@ export const scene1 = {
     {
       id: 'editor-main',
       name: 'Editor main camera',
-      type: 'perspective',
+      type: 'perspectiveTarget',
       fov: 45,
       near: 0.1,
       far: 256,
@@ -50,7 +50,7 @@ export const scene1 = {
     },
     {
       id: 'editor-main2',
-      type: 'perspective',
+      type: 'perspectiveTarget',
       fov: 45,
       near: 0.1,
       far: 256,
@@ -66,13 +66,27 @@ export const scene1 = {
       id: 'my-blue-box',
       shape: 'box',
       position: [2, 2, 2],
-      rotation: [0, 75, 0],
+      rotation: [0, 0.7, 0],
       size: [1, 1, 1],
       castShadow: true,
       receiveShadow: true,
       material: {
         type: 'lambert',
         color: '#00ffff',
+      },
+    },
+    {
+      type: 'shape',
+      id: 'my-other-box',
+      shape: 'box',
+      position: [-2.5, 0.5, -2.5],
+      rotation: [0, 0, 0],
+      size: [1, 1, 1],
+      castShadow: true,
+      receiveShadow: true,
+      material: {
+        type: 'lambert',
+        color: '#ff2233',
       },
     },
     {

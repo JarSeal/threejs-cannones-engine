@@ -1,18 +1,19 @@
 import * as THREE from 'three';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-import { OutlinePass } from 'three/addons/postprocessing/OutlinePass.js';
 // import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 // import { FXAAShader } from 'three/addons/shaders/FXAAShader.js';
 import { SMAAPass } from 'three/addons/postprocessing/SMAAPass.js';
 
 import { Component } from '../LIGHTER';
+import { OutlinePass } from './postFX/OutlinePass/OutlinePass.js';
 import {
   getSceneParams,
   setSceneParam,
   resetSceneParams,
   setSceneParams,
   getSceneParam,
+  getSceneParamR,
 } from './sceneData/sceneParams';
 import { getSceneItem, getSceneItems, setSceneItem, resetSceneItems } from './sceneData/sceneItems';
 import { getScreenResolution } from './utils/utils';
@@ -22,13 +23,15 @@ import { scenes } from '../../data';
 import { getSceneStates, saveSceneId } from './sceneData/saveSession';
 import TopTools from './UI/TopTools';
 import Dialog from './UI/dialogs/Dialog';
-import { registerStageClick } from './controls/stageClick';
+import { registerStageClick, selectObjects } from './controls/stageClick';
 import SmallStats from './UI/stats/SmallStats';
 import styleVariables from './sass/variables.scss?raw';
 import LeftTools from './UI/LeftTools';
 import ElemTool from './UI/ElemTool';
 import UndoRedo from './UI/UndoRedo/UndoRedo';
 import KeyboardShortcuts from './UI/KeyboarShortcuts';
+import { createTransformControls } from './controls/transformControls';
+import { CAMERA_TARGET_ID } from './utils/defaultSceneValues';
 
 class Root {
   constructor() {
@@ -101,11 +104,10 @@ class Root {
         scene,
         this.sceneItems.curCamera
       );
-      editorOutlinePass.edgeStrength = 3.0;
-      editorOutlinePass.edgeGlow = 0.5;
-      editorOutlinePass.edgeThickness = 0.5;
+      editorOutlinePass.edgeStrength = 10.0;
+      editorOutlinePass.edgeGlow = 0.25;
+      editorOutlinePass.edgeThickness = 2.5;
       editorOutlinePass.pulsePeriod = 2;
-      editorOutlinePass.selectedObjects = getSceneParams('selections');
       editorOutlinePass.visibleEdgeColor.set('#f69909');
       editorOutlinePass.hiddenEdgeColor.set('#ff4500');
       editorOutlinePass.overlayMaterial.blending = THREE.NormalBlending;
@@ -164,6 +166,13 @@ class Root {
               selection.push(editorIcons[i].iconMesh);
             }
           }
+          const editorTargetMeshes = this.sceneItems.editorTargetMeshes;
+          for (let i = 0; i < editorTargetMeshes.length; i++) {
+            if (editorTargetMeshes[i]?.userData.id === id) {
+              editorTargetMeshes[i].visible = true;
+              selection.push(editorTargetMeshes[i]);
+            }
+          }
           const elements = this.sceneItems.elements;
           for (let i = 0; i < elements.length; i++) {
             if (elements[i].userData.id === id) {
@@ -176,7 +185,6 @@ class Root {
         setSceneParam('selection', []);
         setSceneItem('selection', []);
       }
-      this.editorOutlinePass.selectedObjects = selection;
 
       // Undo / Redo
       const undoRedo = new UndoRedo();
@@ -207,6 +215,21 @@ class Root {
 
       const keyboard = new KeyboardShortcuts();
       setSceneItem('keyboard', keyboard);
+
+      // Transform controls
+      const transControls = createTransformControls();
+      if (
+        selection.length &&
+        (leftTools.selectAndTransformTool === 'translate' ||
+          leftTools.selectAndTransformTool === 'rotate' ||
+          leftTools.selectAndTransformTool === 'scale')
+      ) {
+        transControls.mode = leftTools.selectAndTransformTool;
+        transControls.attach(selection[0]); // @TODO: add multiselection
+      }
+
+      // Select possible selected object(s)
+      selectObjects(selection);
     }
 
     this._resize();
@@ -246,7 +269,10 @@ class Root {
     for (let i = 0; SI.allCameras.length; i++) {
       const camera = SI.allCameras[i];
       if (!camera) break;
-      if (camParams[i] && camParams[i].type === 'orthographic') {
+      if (
+        camParams[i] &&
+        (camParams[i].type === 'orthographicTarget' || camParams[i].type === 'orthographicFree')
+      ) {
         const viewSize = camParams[i].orthoViewSize;
         camera.left = -viewSize * aspectRatio;
         camera.right = viewSize * aspectRatio;

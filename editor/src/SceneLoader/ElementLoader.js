@@ -29,14 +29,11 @@ class ElementLoader {
       const size = obj.size ? obj.size : [1, 1, 1];
       const mesh = new THREE.Mesh(new THREE.BoxGeometry(size[0], size[1], size[2]), material);
       const pos = obj.position ? obj.position : [0, 0, 0];
-      mesh.position.set(pos[0], pos[1], pos[2]);
-      const rot = [0, 0, 0];
-      if (obj.rotation) {
-        rot[0] = Math.PI * ((obj.rotation[0] / 360) * 2);
-        rot[1] = Math.PI * ((obj.rotation[1] / 360) * 2);
-        rot[2] = Math.PI * ((obj.rotation[2] / 360) * 2);
-      }
-      mesh.rotation.set(rot[0], rot[1], rot[2]);
+      mesh.position.set(...pos);
+      const rot = obj.rotation ? obj.rotation : [0, 0, 0];
+      mesh.rotation.set(...rot);
+      const scale = obj.scale ? obj.scale : [1, 1, 1];
+      mesh.scale.set(...scale);
       mesh.castShadow = obj.castShadow || false;
       mesh.receiveShadow = obj.receiveShadow || false;
       mesh.userData = obj;

@@ -3,9 +3,10 @@ import * as THREE from 'three';
 import { selectObjects } from '../../controls/stageClick';
 import { getSceneItem, setSceneItem } from '../../sceneData/sceneItems';
 import worldTools from '../../utils/toolsForWorld';
-import cameraTools from '../../utils/toolsForCamera';
+import cameraTools, { changeCurCamera } from '../../utils/toolsForCamera';
 import { getSceneParam, setSceneParam } from '../../sceneData/sceneParams';
 import { saveAllCamerasState } from '../../sceneData/saveSession';
+import { updateElemTranslation } from '../../controls/transformControls';
 
 const undoRedoOperations = {
   // ID
@@ -23,10 +24,17 @@ const undoRedoOperations = {
     getSceneItem('rightSidePanel').updatePanel();
     getSceneItem('elemTool').updateTool();
   },
-  // Selection
-  selection: (action, isUndo) => {
-    selectObjects(isUndo ? action.prevVal : action.newVal);
+  // Transform controls
+  updateElemTranslation: (action, isUndo) => {
+    const position = isUndo ? action.prevVal.position : action.newVal.position;
+    const rotation = isUndo ? action.prevVal.rotation : action.newVal.rotation;
+    const scale = isUndo ? action.prevVal.scale : action.newVal.scale;
+    updateElemTranslation(action.elemId, { position, rotation, scale }, {});
+    getSceneItem('rightSidePanel').updatePanel();
+    getSceneItem('elemTool').updateTool();
   },
+  // Selection
+  selection: (action, isUndo) => selectObjects(isUndo ? action.prevVal : action.newVal, action),
   // World
   toggleWorldAxesHelper: () => {
     worldTools.toggleWorldAxesHelper();
@@ -112,6 +120,7 @@ const undoRedoOperations = {
     cameraTools.toggleShowCameraHelper(isUndo ? action.prevVal : action.newVal, action.cameraIndex);
     getSceneItem('rightSidePanel').updatePanel();
   },
+  changeCurCamera: (action, isUndo) => changeCurCamera(isUndo ? action.prevVal : action.newVal),
   resetCameraTransforms: (action, isUndo) => {
     if (isUndo) {
       cameraTools.updateCameraTransforms('position', action.prevVal.pos[0], 0, action.cameraIndex);

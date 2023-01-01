@@ -25,6 +25,8 @@ const _mouseDownOnStage = (e) => {
   mouseClickStart.y = e.clientY;
 };
 
+export const getMouseClickStart = () => mouseClickStart;
+
 const _mouseUpOnStage = (e) => {
   e.preventDefault();
 
@@ -42,7 +44,7 @@ const _mouseUpOnStage = (e) => {
   rayClicker.setFromCamera(mouse, getSceneItem('curCamera'));
   const intersects = rayClicker.intersectObjects(getSceneItem('scene').children);
   let selectedObjects = [];
-  const selectableObjectTypes = ['camera', 'element', 'light'];
+  const selectableObjectTypes = ['camera', 'cameraTarget', 'element', 'light'];
   for (let i = 0; i < intersects.length; i++) {
     const hitObject = intersects[i].object;
     if (
@@ -63,36 +65,100 @@ const _mouseUpOnStage = (e) => {
   selectObjects(selectedObjects);
 };
 
+// **************************
+// SELECT OBJECTS
+// **************************
 // The selectedObjects can be an array of object IDs (strings) or array of 3D objects
 export const selectObjects = (selectedObjects) => {
+  const prevSelection = [...getSceneParam('selection')];
   let selectionIds = [];
-  if (selectedObjects?.length && !selectedObjects[0].isObject3D) {
+
+  if (selectedObjects?.length && !selectedObjects[0]?.isObject3D) {
     // The selectedObjects are object IDs, we need to get the 3D objects:
+    // For example the undo/redo uses only the IDs (since they need to be saved to the LS)
     selectionIds = [...selectedObjects];
     const selected3DObjects = [];
     selectedObjects.forEach((id) => {
       const object3D = getSceneItem('scene').children.find((obj) => obj.userData?.id === id);
-      if (object3D) selected3DObjects.push(object3D);
+      if (object3D?.isGroup && object3D?.userData.paramType === 'camera') {
+        selected3DObjects.push(object3D.children[0]);
+      } else if (object3D) {
+        selected3DObjects.push(object3D);
+        if (object3D.isTargetObject) {
+          object3D.visible = true;
+        }
+      }
     });
     selectedObjects = selected3DObjects;
   }
-  // TODO: Check if object is part of a group, then select all objects belonging into that group (selecting a group)
 
-  const prevSelection = [...getSceneParam('selection')];
+  // Check if there are targeting objects or target objects in the selections,
+  // then change and disable left tools accordingly (rotation and scale are disabled)
+  const leftTools = getSceneItem('leftTools');
+  let disabledLeftTools = [];
+  for (let i = 0; i < selectedObjects.length; i++) {
+    if (
+      selectedObjects[i].userData.isTargetingObject ||
+      selectedObjects[i].userData.isTargetObject
+    ) {
+      disabledLeftTools = ['rotate', 'scale'];
+      if (leftTools.selectAndTransformTool !== 'select') leftTools.changeTool('translate');
+      break;
+    }
+  }
+  leftTools.disableTools(disabledLeftTools);
+
+  // @TODO: Check if object is part of a group, then select all objects belonging into that group (selecting a group)
+
   const outlinePass = getSceneItem('editorOutlinePass');
+  const transControls = getSceneItem('transformControls');
   if (prevSelection && prevSelection.length) outlinePass.selectedObjects = [];
   if (selectedObjects?.length) {
     const selection = selectedObjects;
     selectionIds = selection.map((sel) => sel.userData?.id);
     outlinePass.selectedObjects = selection;
+    const leftToolSelected = leftTools.selectAndTransformTool;
+    if (
+      leftToolSelected === 'translate' ||
+      leftToolSelected === 'rotate' ||
+      leftToolSelected === 'scale'
+    ) {
+      transControls.enabled = true;
+      if (selection[0].userData.paramType === 'camera') {
+        transControls.attach(selection[0].parent); // @TODO: add multiselect
+      } else {
+        transControls.attach(selection[0]); // @TODO: add multiselect
+      }
+    }
+    if (selection[0].userData.isTargetingObject) {
+      const elemId = selection[0].userData.id;
+      const targetMesh = getSceneItem('editorTargetMeshes').find(
+        (mesh) => mesh.userData.params.id === elemId
+      );
+      targetMesh.visible = true;
+    }
     setSceneItem('selection', selection);
     setSceneParam('selection', selectionIds);
     saveSceneState({ selection: selectionIds });
   } else {
     setSceneItem('selection', []);
     setSceneParam('selection', []);
+    transControls.detach();
     saveSceneState({ selection: [] });
   }
+
+  // Hide possible target meshes when the selection changes
+  for (let i = 0; i < prevSelection.length; i++) {
+    const targetMesh = getSceneItem('editorTargetMeshes').find(
+      (mesh) =>
+        !selectionIds.includes(mesh.userData.params.id) &&
+        !selectionIds.includes(mesh.userData.id) &&
+        (mesh.userData.params.id === prevSelection[i] || // Targeting item (like camera) was selected
+          mesh.userData.id === prevSelection[i]) // Target mesh was selected
+    );
+    if (targetMesh) targetMesh.visible = targetMesh.userData.params.showHelper;
+  }
+
   getSceneItem('leftTools').updateTools();
   setSceneParamR('editor.scrollPositions.elemTool', 0);
   getSceneItem('elemTool').updateTool();
@@ -102,5 +168,10 @@ export const selectObjects = (selectedObjects) => {
     newVal: selectionIds,
   });
 
-  console.log('selection', getSceneParam('selection'), getSceneItem('selection'));
+  console.log(
+    'selection',
+    getSceneParam('selection'),
+    getSceneItem('selection'),
+    selectedObjects[0]?.userData.params?.id
+  );
 };
