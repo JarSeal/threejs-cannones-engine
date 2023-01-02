@@ -89,7 +89,6 @@ class CameraMeshIcon {
       const editorTargets = getSceneItem('editorTargetMeshes') || [];
       setSceneItem('editorTargetMeshes', [...editorTargets, cameraTargetMesh]);
       getSceneItem('scene').add(cameraTargetMesh);
-      console.log('HERE');
     }
   };
 

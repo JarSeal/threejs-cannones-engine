@@ -13,7 +13,6 @@ import {
   resetSceneParams,
   setSceneParams,
   getSceneParam,
-  getSceneParamR,
 } from './sceneData/sceneParams';
 import { getSceneItem, getSceneItems, setSceneItem, resetSceneItems } from './sceneData/sceneItems';
 import { getScreenResolution } from './utils/utils';
@@ -31,7 +30,7 @@ import ElemTool from './UI/ElemTool';
 import UndoRedo from './UI/UndoRedo/UndoRedo';
 import KeyboardShortcuts from './UI/KeyboarShortcuts';
 import { createTransformControls } from './controls/transformControls';
-import { CAMERA_TARGET_ID } from './utils/defaultSceneValues';
+import TextureLoader from './loaders/TextureLoader';
 
 class Root {
   constructor() {
@@ -67,6 +66,10 @@ class Root {
     resetSceneItems();
 
     setSceneParams(sceneParams);
+
+    // Setup textureLoader
+    const textureLoader = new TextureLoader();
+    setSceneItem('textureLoader', textureLoader);
 
     // Setup renderer
     const renderer = new THREE.WebGLRenderer({
@@ -111,6 +114,13 @@ class Root {
       editorOutlinePass.visibleEdgeColor.set('#f69909');
       editorOutlinePass.hiddenEdgeColor.set('#ff4500');
       editorOutlinePass.overlayMaterial.blending = THREE.NormalBlending;
+      const textureData = textureLoader.loadTexture(
+        'src/UI/textures/multiselect-stripe-pattern.png'
+      ); // @TODO: replace this texture with something nice
+      textureData.texture.wrapS = THREE.RepeatWrapping;
+      textureData.texture.wrapT = THREE.RepeatWrapping;
+      editorOutlinePass.usePatternTexture = false;
+      editorOutlinePass.patternTexture = textureData.texture;
       setSceneItem('editorOutlinePass', editorOutlinePass);
       this.editorOutlinePass = editorOutlinePass;
       this.editorComposer.addPass(editorOutlinePass);
@@ -120,7 +130,7 @@ class Root {
       //   1 / (reso.y * pixelRatio)
       // );
       // this.editorComposer.addPass(effectFXAA);
-      const SMAA = new SMAAPass(reso.x * pixelRatio, reso.y * pixelRatio);
+      const SMAA = new SMAAPass(reso.x * pixelRatio, reso.y * pixelRatio); // @TODO: change to this library: https://pmndrs.github.io/postprocessing/public/demo/#antialiasing
       this.editorComposer.addPass(SMAA);
       setSceneItem('editorComposer', this.editorComposer);
 
@@ -155,6 +165,11 @@ class Root {
       registerStageClick();
       setSceneItem('runningRenderStats', renderStats);
 
+      // Create selection group
+      const selectionGroup = new THREE.Group();
+      scene.add(selectionGroup);
+      setSceneItem('selectionGroup', selectionGroup);
+
       // Set selection(s)
       const selectionIds = sceneParams.selection;
       const selection = [];
@@ -180,6 +195,9 @@ class Root {
             }
           }
         });
+
+        // @TODO: add multiselections to the selection group here
+
         setSceneItem('selection', selection);
       } else {
         setSceneParam('selection', []);

@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { scene1 } from '../../../data/scene1/scene1';
 import { saveSceneState } from '../sceneData/saveSession';
 
 import { getSceneItem, setSceneItem } from '../sceneData/sceneItems';
@@ -57,7 +58,28 @@ const _mouseUpOnStage = (e) => {
       // Also check here if SHIFT is pressed and if the object is already selected,
       // then that object should be deselected.
       // TODO: Check if the object is part of a group, then select all objects in that group if it is (selecting a group)
-      selectedObjects = [hitObject];
+      const keysDown = getSceneItem('keyboard')?.keysDown || [];
+      let curSelection = getSceneItem('selection') || [];
+      if (!hitObject) {
+        break;
+      } else if (keysDown.includes('Shift')) {
+        let selectionFound = false;
+        const filteredSelection = [];
+        for (let i = 0; i < curSelection.length; i++) {
+          if (curSelection[i].uuid === hitObject.uuid) {
+            selectionFound = true;
+          } else {
+            filteredSelection.push(curSelection[i]);
+          }
+        }
+        if (selectionFound) {
+          selectedObjects = filteredSelection;
+        } else {
+          selectedObjects = [...curSelection, hitObject];
+        }
+      } else {
+        selectedObjects = [hitObject];
+      }
       break;
     }
   }
@@ -72,8 +94,16 @@ const _mouseUpOnStage = (e) => {
 export const selectObjects = (selectedObjects) => {
   const prevSelection = [...getSceneParam('selection')];
   let selectionIds = [];
+  let selectedObjectsHaveIds = false;
 
-  if (selectedObjects?.length && !selectedObjects[0]?.isObject3D) {
+  for (let i = 0; i < selectedObjects.length; i++) {
+    if (!selectedObjects[i]?.isObject3D) {
+      selectedObjectsHaveIds = true;
+      break;
+    }
+  }
+
+  if (selectedObjects?.length && selectedObjectsHaveIds) {
     // The selectedObjects are object IDs, we need to get the 3D objects:
     // For example the undo/redo uses only the IDs (since they need to be saved to the LS)
     selectionIds = [...selectedObjects];
@@ -96,17 +126,42 @@ export const selectObjects = (selectedObjects) => {
   // then change and disable left tools accordingly (rotation and scale are disabled)
   const leftTools = getSceneItem('leftTools');
   let disabledLeftTools = [];
+  if (selectedObjects.length > 1) disabledLeftTools = ['scale'];
   for (let i = 0; i < selectedObjects.length; i++) {
     if (
       selectedObjects[i].userData.isTargetingObject ||
       selectedObjects[i].userData.isTargetObject
     ) {
       disabledLeftTools = ['rotate', 'scale'];
-      if (leftTools.selectAndTransformTool !== 'select') leftTools.changeTool('translate');
       break;
     }
   }
+  if (disabledLeftTools.includes(leftTools.selectAndTransformTool)) {
+    leftTools.changeTool(disabledLeftTools.includes('translate') ? 'select' : 'translate');
+  }
   leftTools.disableTools(disabledLeftTools);
+
+  const outlineEffect = getSceneItem('editorOutlinePass');
+  if (selectedObjects.length > 1) {
+    outlineEffect.usePatternTexture = true;
+  } else {
+    outlineEffect.usePatternTexture = false;
+  }
+
+  const scene = getSceneItem('scene');
+  const selGroup = getSceneItem('selectionGroup');
+  if (selectedObjects.length > 1) {
+    selectedObjects.forEach((obj) => selGroup.attach(obj));
+  } else {
+    const removeFromSelGroup = [];
+    selGroup.children.forEach((obj) => {
+      const objIsSelected = selectedObjects.find((sel) => sel.uuid === obj.uuid);
+      if (!objIsSelected) {
+        removeFromSelGroup.push(obj);
+      }
+    });
+    removeFromSelGroup.forEach((obj) => scene.attach(obj));
+  }
 
   // @TODO: Check if object is part of a group, then select all objects belonging into that group (selecting a group)
 
@@ -124,10 +179,28 @@ export const selectObjects = (selectedObjects) => {
       leftToolSelected === 'scale'
     ) {
       transControls.enabled = true;
-      if (selection[0].userData.paramType === 'camera') {
-        transControls.attach(selection[0].parent); // @TODO: add multiselect
+      if (selectedObjects.length === 1) {
+        if (selection[0].userData.paramType === 'camera') {
+          transControls.attach(selection[0].parent); // @TODO: add multiselect
+        } else {
+          transControls.attach(selection[0]); // @TODO: add multiselect
+        }
       } else {
-        transControls.attach(selection[0]); // @TODO: add multiselect
+        // Count the group's bounding box
+        const aabb = new THREE.Box3().setFromObject(selGroup);
+        // Remove the selected items temporarily from the group (set them to the scene)
+        selectedObjects.forEach((sel) => scene.attach(sel));
+        // Position the group to the middle of the bounding box
+        selGroup.position.set(
+          aabb.min.x + 0.5 * (aabb.max.x - aabb.min.x),
+          aabb.min.y + 0.5 * (aabb.max.y - aabb.min.y),
+          aabb.min.z + 0.5 * (aabb.max.z - aabb.min.z)
+        );
+        selGroup.updateWorldMatrix();
+        // Add the selected item back to the group
+        selectedObjects.forEach((sel) => selGroup.attach(sel));
+        // Attach the transform controls
+        transControls.attach(selGroup);
       }
     }
     if (selection[0].userData.isTargetingObject) {
@@ -168,10 +241,5 @@ export const selectObjects = (selectedObjects) => {
     newVal: selectionIds,
   });
 
-  console.log(
-    'selection',
-    getSceneParam('selection'),
-    getSceneItem('selection'),
-    selectedObjects[0]?.userData.params?.id
-  );
+  console.log('selection', getSceneParam('selection'), getSceneItem('selection'));
 };
