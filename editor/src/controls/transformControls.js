@@ -1,6 +1,9 @@
+import * as THREE from 'three';
+
 import { saveStateByKey } from '../sceneData/saveSession';
 import { setSceneItem, getSceneItem } from '../sceneData/sceneItems';
 import { getSceneParam, setSceneParam } from '../sceneData/sceneParams';
+import { SELECTION_GROUP_ID } from '../utils/defaultSceneValues';
 import { TransformControls } from './TransformControls/TransformControls.js';
 
 export const createTransformControls = () => {
@@ -22,7 +25,7 @@ export const createTransformControls = () => {
   let startScaleX = null;
   let startScaleY = null;
   let startScaleZ = null;
-  // let undoRedoPrevVal = {};
+  let multiSelectStartTransforms = [];
 
   controls.addEventListener('change', () => {
     if (!controls.dragging) return;
@@ -104,6 +107,22 @@ export const createTransformControls = () => {
       startScaleY = controls.object.scale.y;
       startScaleX = controls.object.scale.x;
       startScaleZ = controls.object.scale.z;
+      if (controls.object.userData.isSelectionGroup) {
+        const selectedElems = getSceneItem('selection');
+        multiSelectStartTransforms = [];
+        for (let i = 0; i < selectedElems.length; i++) {
+          const worldPos = selectedElems[i].getWorldPosition(new THREE.Vector3());
+          const worldRot = new THREE.Euler().setFromQuaternion(
+            selectedElems[i].getWorldQuaternion(new THREE.Quaternion())
+          );
+          const worldScale = selectedElems[i].getWorldScale(new THREE.Vector3());
+          multiSelectStartTransforms.push({
+            position: [worldPos.x, worldPos.y, worldPos.z],
+            rotation: [worldRot.x, worldRot.y, worldRot.z],
+            scale: [worldScale.x, worldScale.y, worldScale.z],
+          });
+        }
+      }
     } else {
       // Dragging stopped
       controls.setTranslationSnap(null);
@@ -115,16 +134,14 @@ export const createTransformControls = () => {
       const position = [obj.position.x, obj.position.y, obj.position.z];
       const rotation = [obj.rotation.x, obj.rotation.y, obj.rotation.z];
       const scale = [obj.scale.x, obj.scale.y, obj.scale.z];
-      updateElemTranslation(
-        obj.userData.id,
-        { position, rotation, scale },
-        {
-          position: [startPosX, startPosY, startPosZ],
-          rotation: [startRotX, startRotY, startRotZ],
-          scale: [startScaleX, startScaleY, startScaleZ],
-        },
-        obj
-      );
+      const prevVal = controls.object.userData.isSelectionGroup
+        ? multiSelectStartTransforms
+        : {
+            position: [startPosX, startPosY, startPosZ],
+            rotation: [startRotX, startRotY, startRotZ],
+            scale: [startScaleX, startScaleY, startScaleZ],
+          };
+      updateElemTranslation(obj.userData.id, { position, rotation, scale }, prevVal, obj);
     }
   });
 
@@ -133,7 +150,7 @@ export const createTransformControls = () => {
   return controls;
 };
 
-export const updateElemTranslation = (id, newVal, prevVal, object) => {
+export const updateElemTranslation = (id, newVal, prevVal, object, doNotUpdateUndo) => {
   if (!object) {
     // If the object is not in the params, we have to search it.
     // For example the undo/redo needs to do this, since the object cannot
@@ -151,6 +168,8 @@ export const updateElemTranslation = (id, newVal, prevVal, object) => {
           object = editorIcon.icon;
           objectFound = true;
         }
+      } else if (elem.userData.id === SELECTION_GROUP_ID) {
+        object = elem;
       }
     });
     if (!objectFound) console.warn('ForThree: Could not find element in scene with id: ' + id);
@@ -191,6 +210,32 @@ export const updateElemTranslation = (id, newVal, prevVal, object) => {
       setSceneParam('cameras', newCamParams);
       saveStateByKey('cameras', newCamParams);
     }
+  } else if (object?.userData.isSelectionGroup) {
+    // Multiselection
+    const scene = getSceneItem('scene');
+    const selectionGroup = getSceneItem('selectionGroup');
+    const selectedElems = getSceneItem('selection');
+    for (let i = 0; i < selectedElems.length; i++) {
+      scene.attach(selectedElems[i]);
+      const worldPos = selectedElems[i].getWorldPosition(new THREE.Vector3());
+      const worldRot = new THREE.Euler().setFromQuaternion(
+        selectedElems[i].getWorldQuaternion(new THREE.Quaternion())
+      );
+      const worldScale = selectedElems[i].getWorldScale(new THREE.Vector3());
+      const idPerElem = selectedElems[i].userData.id;
+      const newValPerElem = {
+        position: [worldPos.x, worldPos.y, worldPos.z],
+        rotation: [worldRot.x, worldRot.y, worldRot.z],
+        scale: [worldScale.y, worldScale.z],
+      };
+      const prevValPerElem = {
+        position: prevVal[i].position,
+        rotation: prevVal[i].rotation,
+        scale: prevVal[i].scale,
+      };
+      updateElemTranslation(idPerElem, newValPerElem, prevValPerElem, selectedElems[i], true);
+      selectionGroup.attach(selectedElems[i]);
+    }
   } else {
     // Basic elements
     const newElemParams = getSceneParam('elements').map((elem) => {
@@ -211,12 +256,14 @@ export const updateElemTranslation = (id, newVal, prevVal, object) => {
   object.rotation.set(...newVal.rotation);
   object.scale.set(...newVal.scale);
   _checkAndSetTargetingObjects(object);
-  getSceneItem('undoRedo').addAction({
-    type: 'updateElemTranslation',
-    prevVal,
-    newVal,
-    elemId: id,
-  });
+  if (!doNotUpdateUndo) {
+    getSceneItem('undoRedo').addAction({
+      type: 'updateElemTranslation',
+      prevVal,
+      newVal,
+      elemId: id,
+    });
+  }
 };
 
 export const removeTransformControls = () => {

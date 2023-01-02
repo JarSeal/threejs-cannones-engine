@@ -31,6 +31,7 @@ import UndoRedo from './UI/UndoRedo/UndoRedo';
 import KeyboardShortcuts from './UI/KeyboarShortcuts';
 import { createTransformControls } from './controls/transformControls';
 import TextureLoader from './loaders/TextureLoader';
+import { SELECTION_GROUP_ID } from './utils/defaultSceneValues';
 
 class Root {
   constructor() {
@@ -167,6 +168,8 @@ class Root {
 
       // Create selection group
       const selectionGroup = new THREE.Group();
+      selectionGroup.userData.isSelectionGroup = true;
+      selectionGroup.userData.id = SELECTION_GROUP_ID;
       scene.add(selectionGroup);
       setSceneItem('selectionGroup', selectionGroup);
 
@@ -242,8 +245,11 @@ class Root {
           leftTools.selectAndTransformTool === 'rotate' ||
           leftTools.selectAndTransformTool === 'scale')
       ) {
+        transControls.enabled = true;
         transControls.mode = leftTools.selectAndTransformTool;
         transControls.attach(selection[0]); // @TODO: add multiselection
+      } else {
+        transControls.enabled = false;
       }
 
       // Select possible selected object(s)

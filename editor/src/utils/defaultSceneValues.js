@@ -1,4 +1,5 @@
 export const CAMERA_TARGET_ID = '__camera-target';
+export const SELECTION_GROUP_ID = '__selection-group';
 
 export const AMBIENT_LIGHT = {
   color: 0xffffff,

@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { scene1 } from '../../../data/scene1/scene1';
 import { saveSceneState } from '../sceneData/saveSession';
 
 import { getSceneItem, setSceneItem } from '../sceneData/sceneItems';
@@ -51,12 +50,9 @@ const _mouseUpOnStage = (e) => {
     if (
       hitObject &&
       hitObject.userData?.paramType &&
-      !hitObject.isLine && // CameraHelpers cannot be selected
+      !hitObject.isLine && // Helpers cannot be selected
       selectableObjectTypes.includes(hitObject.userData.paramType)
     ) {
-      // TODO: Add shift key addition to add multiple object and create a temp group for them
-      // Also check here if SHIFT is pressed and if the object is already selected,
-      // then that object should be deselected.
       // TODO: Check if the object is part of a group, then select all objects in that group if it is (selecting a group)
       const keysDown = getSceneItem('keyboard')?.keysDown || [];
       let curSelection = getSceneItem('selection') || [];
@@ -95,6 +91,7 @@ export const selectObjects = (selectedObjects) => {
   const prevSelection = [...getSceneParam('selection')];
   let selectionIds = [];
   let selectedObjectsHaveIds = false;
+  const scene = getSceneItem('scene');
 
   for (let i = 0; i < selectedObjects.length; i++) {
     if (!selectedObjects[i]?.isObject3D) {
@@ -108,8 +105,9 @@ export const selectObjects = (selectedObjects) => {
     // For example the undo/redo uses only the IDs (since they need to be saved to the LS)
     selectionIds = [...selectedObjects];
     const selected3DObjects = [];
+    getSceneItem('selectionGroup').children.forEach((elem) => scene.attach(elem));
     selectedObjects.forEach((id) => {
-      const object3D = getSceneItem('scene').children.find((obj) => obj.userData?.id === id);
+      const object3D = scene.children.find((obj) => obj.userData?.id === id);
       if (object3D?.isGroup && object3D?.userData.paramType === 'camera') {
         selected3DObjects.push(object3D.children[0]);
       } else if (object3D) {
@@ -148,7 +146,6 @@ export const selectObjects = (selectedObjects) => {
     outlineEffect.usePatternTexture = false;
   }
 
-  const scene = getSceneItem('scene');
   const selGroup = getSceneItem('selectionGroup');
   if (selectedObjects.length > 1) {
     selectedObjects.forEach((obj) => selGroup.attach(obj));
@@ -173,11 +170,13 @@ export const selectObjects = (selectedObjects) => {
     selectionIds = selection.map((sel) => sel.userData?.id);
     outlinePass.selectedObjects = selection;
     const leftToolSelected = leftTools.selectAndTransformTool;
+    transControls.enabled = false;
     if (
       leftToolSelected === 'translate' ||
       leftToolSelected === 'rotate' ||
       leftToolSelected === 'scale'
     ) {
+      transControls.mode = leftToolSelected;
       transControls.enabled = true;
       if (selectedObjects.length === 1) {
         if (selection[0].userData.paramType === 'camera') {
@@ -202,6 +201,9 @@ export const selectObjects = (selectedObjects) => {
         // Attach the transform controls
         transControls.attach(selGroup);
       }
+    } else {
+      // Selection tool (no transforms)
+      transControls.detach();
     }
     if (selection[0].userData.isTargetingObject) {
       const elemId = selection[0].userData.id;
@@ -217,6 +219,7 @@ export const selectObjects = (selectedObjects) => {
     setSceneItem('selection', []);
     setSceneParam('selection', []);
     transControls.detach();
+    transControls.enabled = false;
     saveSceneState({ selection: [] });
   }
 

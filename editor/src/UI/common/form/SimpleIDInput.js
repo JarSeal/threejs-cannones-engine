@@ -7,7 +7,7 @@ import TextInput from './TextInput';
 import SvgIcon from '../../icons/svg-icon';
 import './SimpleIDInput.scss';
 import { updateCamUserDataHelpersAndIcon } from '../../../utils/toolsForCamera';
-import { CAMERA_TARGET_ID } from '../../../utils/defaultSceneValues';
+import { CAMERA_TARGET_ID, SELECTION_GROUP_ID } from '../../../utils/defaultSceneValues';
 
 // Attributes:
 // - label = field label [String]
@@ -155,8 +155,14 @@ class SimpleIDInput extends Component {
         errorMsg: 'Only A-Z (a-z), 0-9, dash, and underscore allowed',
       };
     }
-    if (value.search(CAMERA_TARGET_ID) !== -1) {
-      return { hasError: true, errorMsg: `ID contains a reserved string ("${CAMERA_TARGET_ID}")` };
+    const reservedStrings = [CAMERA_TARGET_ID, SELECTION_GROUP_ID];
+    for (let i = 0; i < reservedStrings.length; i++) {
+      if (value.search(reservedStrings[i]) !== -1) {
+        return {
+          hasError: true,
+          errorMsg: `ID contains a reserved string ("${reservedStrings[i]}")`,
+        };
+      }
     }
     for (let g = 0; g < groups.length; g++) {
       const group = groups[g];
