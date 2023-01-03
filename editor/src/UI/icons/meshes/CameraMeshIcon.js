@@ -24,6 +24,7 @@ class CameraMeshIcon {
 
     cameraIcon.userData = cameraParams;
     cameraIconMesh.userData = cameraParams;
+    cameraIconMesh.userData.groupParentUuid = cameraIcon.uuid;
 
     cameraIcon.position.set(...camera.position);
     cameraIcon.quaternion.set(...camera.quaternion);

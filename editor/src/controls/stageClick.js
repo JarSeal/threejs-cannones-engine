@@ -105,11 +105,23 @@ export const selectObjects = (selectedObjects) => {
     // For example the undo/redo uses only the IDs (since they need to be saved to the LS)
     selectionIds = [...selectedObjects];
     const selected3DObjects = [];
-    getSceneItem('selectionGroup').children.forEach((elem) => scene.attach(elem));
+    // Empty the selection group
+    const selGroupChildren = [...getSceneItem('selectionGroup').children];
+    selGroupChildren.forEach((elem) => {
+      if (elem.groupParentUuid && elem.uuid !== elem.groupParentUuid) {
+        const parent = scene.getObjectByProperty('uuid', elem.groupParentUuid);
+        parent.attach(elem);
+      } else {
+        scene.attach(elem);
+      }
+    });
     selectedObjects.forEach((id) => {
-      const object3D = scene.children.find((obj) => obj.userData?.id === id);
-      if (object3D?.isGroup && object3D?.userData.paramType === 'camera') {
+      const object3D = scene.children.find(
+        (obj) => obj.userData?.id === id && (obj.isMesh || obj.isGroup)
+      );
+      if (object3D?.isGroup) {
         selected3DObjects.push(object3D.children[0]);
+        // selected3DObjects.push(object3D);
       } else if (object3D) {
         selected3DObjects.push(object3D);
         if (object3D.isTargetObject) {
@@ -179,16 +191,17 @@ export const selectObjects = (selectedObjects) => {
       transControls.mode = leftToolSelected;
       transControls.enabled = true;
       if (selectedObjects.length === 1) {
-        if (selection[0].userData.paramType === 'camera') {
-          transControls.attach(selection[0].parent); // @TODO: add multiselect
+        if (selection[0].parent.isGroup && selection[0].userData.paramType === 'camera') {
+          transControls.attach(selection[0].parent);
         } else {
-          transControls.attach(selection[0]); // @TODO: add multiselect
+          transControls.attach(selection[0]);
         }
       } else {
         // Count the group's bounding box
         const aabb = new THREE.Box3().setFromObject(selGroup);
         // Remove the selected items temporarily from the group (set them to the scene)
-        selectedObjects.forEach((sel) => scene.attach(sel));
+        const selGroupChildren = [...selGroup.children];
+        selGroupChildren.forEach((sel) => scene.attach(sel)); // Attach the selGroup children temporarily to the scene
         // Position the group to the middle of the bounding box
         selGroup.position.set(
           aabb.min.x + 0.5 * (aabb.max.x - aabb.min.x),
@@ -197,7 +210,7 @@ export const selectObjects = (selectedObjects) => {
         );
         selGroup.updateWorldMatrix();
         // Add the selected item back to the group
-        selectedObjects.forEach((sel) => selGroup.attach(sel));
+        selGroupChildren.forEach((sel) => selGroup.attach(sel));
         // Attach the transform controls
         transControls.attach(selGroup);
       }
@@ -206,6 +219,7 @@ export const selectObjects = (selectedObjects) => {
       transControls.detach();
     }
     if (selection[0].userData.isTargetingObject) {
+      // @TODO: FIX THIS
       const elemId = selection[0].userData.id;
       const targetMesh = getSceneItem('editorTargetMeshes')?.find(
         (mesh) => mesh.userData.params.id === elemId
