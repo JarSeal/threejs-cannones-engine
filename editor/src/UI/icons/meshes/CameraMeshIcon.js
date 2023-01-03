@@ -8,29 +8,32 @@ import { removeMeshFromScene } from '../../../utils/utils';
 class CameraMeshIcon {
   constructor(camera, cameraParams) {
     const scene = getSceneItem('scene');
-    const cameraIcon = new THREE.Group();
+
+    // This is the "group" mesh for the icon that gets transformed but is transparent
+    const cameraIconHolderGeo = new THREE.BoxGeometry(0.2, 0.2, 0.28);
+    const cameraIconHolderMat = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+    const cameraIcon = new THREE.Mesh(cameraIconHolderGeo, cameraIconHolderMat);
+
+    // This is the actual icon of the camera
     // @TODO: create (in Blender) and import a proper camera icon
     const cameraIconGeo = new THREE.BoxGeometry(0.2, 0.2, 0.28);
     const cameraIconMat = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-    const cameraIconMesh = new THREE.Mesh(cameraIconGeo, cameraIconMat);
-    cameraIconMesh.position.set(0, 0, 0.14);
+    const cameraIconMesh = new THREE.Mesh(cameraIconGeo, cameraIconMat); // The actual visible box (the bigger box)
+
+    cameraIcon.add(cameraIconMesh);
+    cameraIconMesh.position.set(0, 0, 0.14); // Offset the actual icon mesh (the inner mesh) to be at the beginning of the camera
     const directionPointerMesh = new THREE.Mesh(
       new THREE.BoxGeometry(0.05, 0.05, 0.05),
       new THREE.MeshBasicMaterial({ color: 0xeeaa00 })
     );
-    directionPointerMesh.position.set(0, 0.1, -0.115);
-    cameraIconMesh.add(directionPointerMesh);
-    cameraIcon.add(cameraIconMesh);
+    directionPointerMesh.position.set(0, 0.1, 0);
+    cameraIcon.add(directionPointerMesh);
 
     cameraIcon.userData = cameraParams;
-    cameraIconMesh.userData = cameraParams;
-    cameraIconMesh.userData.groupParentUuid = cameraIcon.uuid;
 
     cameraIcon.position.set(...camera.position);
     cameraIcon.quaternion.set(...camera.quaternion);
 
-    this.cameraIcon = cameraIcon;
-    this.iconMesh = cameraIconMesh;
     scene.add(cameraIcon);
     this.icon = cameraIcon;
     const editorIcons = getSceneItem('editorIcons') || [];
@@ -50,11 +53,7 @@ class CameraMeshIcon {
     ];
     this.icon.position.set(...newPos);
     this.icon.quaternion.set(...newQuat);
-    this.cameraIcon.userData = camera.userData;
-    this.iconMesh.userData = camera.userData;
-    if (this.cameraTargetMesh) {
-      this.cameraTargetMesh.userData.params = camera.userData;
-    }
+    this.icon.userData = camera.userData;
   };
 
   remove = () => {
@@ -63,11 +62,11 @@ class CameraMeshIcon {
       transControls.detach();
     }
     const newEditorIcons = getSceneItem('editorIcons').filter(
-      (icon) => this.cameraIcon.userData.id !== icon.cameraIcon.userData.id
+      (icon) => this.icon.userData.id !== icon.userData.id
     );
     setSceneItem('editorIcons', newEditorIcons);
-    this.cameraIcon.traverse((obj) => removeMeshFromScene(obj));
-    this.cameraIcon.removeFromParent();
+    this.icon.traverse((obj) => removeMeshFromScene(obj));
+    this.icon.removeFromParent();
     this._removeTargetMesh();
   };
 

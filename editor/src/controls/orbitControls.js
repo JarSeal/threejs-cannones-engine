@@ -33,16 +33,15 @@ export const createOrbitControls = () => {
     document.activeElement.blur(); // In case there are drop down menus open (with focus), this will close them.
     rootElem.style.transitionDelay = '0.5s';
     rootElem.style.opacity = 0.5;
-    const editorIcon = getSceneItem('editorIcons').find(
-      (icon) => curCamera.id === icon.iconMesh.userData.id
-    );
-    editorIcon.cameraIcon.visible = false;
+    const curCamera = cameras[sceneParams.curCameraIndex];
+    const camIcon = getSceneItem('editorIcons').find((i) => curCamera.id === i.icon.userData.id);
+    camIcon.icon.visible = false;
     const params = getSceneParam('cameras')[getSceneParam('curCameraIndex')];
     undoRedoPrevVal = {
       position: params.position,
       target: params.target,
     };
-    // TODO: Make this better by recording the start position of the movement and comparing
+    // @TODO: Make this better by recording the start position of the movement and comparing
     // at the end listener if it has moved enough
     setTimeout(() => {
       setSceneParam('orbiterMoving', true);
@@ -58,7 +57,8 @@ export const createOrbitControls = () => {
     };
     const saveState = { index: sceneParams.curCameraIndex, position, target };
     if (quaternion) saveState.quaternion = quaternion;
-    // TODO: Make the zoom handling update the view size instead (keep the zoom always 1 when scrolling the wheel)
+    // @TODO: Make the zoom handling update the view size instead for orthographic cams (keep the zoom always 1 when scrolling the wheel)
+    // (maybe do this, needs research)
     // if (curCamera && (curCamera.type === 'orthographicTarget' || curCamera.type === 'orthographicFree')) {
     //   console.log('CUR CAM', curCameraItem);
     //   saveState.orthoViewSize = curCameraItem.top + curCameraItem.bottom;
@@ -68,12 +68,10 @@ export const createOrbitControls = () => {
     if (rightSidePanel.tabId === 'UICamera') rightSidePanel.updatePanel();
     rootElem.style.transitionDelay = '0s';
     rootElem.style.opacity = 1;
-    const editorIcon = getSceneItem('editorIcons').find(
-      (icon) => curCamera.id === icon.iconMesh.userData.id
-    );
-    editorIcon.cameraIcon.visible = true;
-    editorIcon.update(curCameraItem);
-    // TODO: Make this better by recording the start position of the movement and comparing
+    const camIcon = getSceneItem('editorIcons').find((i) => curCamera.id === i.icon.userData.id);
+    camIcon.update(curCameraItem);
+    camIcon.icon.visible = true;
+    // @TODO: Make this better by recording the start position of the movement and comparing
     // at the end listener if it has moved enough
     setTimeout(() => {
       setSceneParam('orbiterMoving', false);
@@ -85,7 +83,7 @@ export const createOrbitControls = () => {
       cameraIndex: getSceneParam('curCameraIndex'),
     });
   });
-  // TODO: remove this when the view size scrolling is enabled
+  // @TODO: remove this when the view size scrolling is enabled
   if (
     curCamera &&
     (curCamera.type === 'orthographicTarget' || curCamera.type === 'orthographicFree')

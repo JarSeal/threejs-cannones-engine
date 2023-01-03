@@ -120,8 +120,8 @@ class Root {
       ); // @TODO: replace this texture with something nice
       textureData.texture.wrapS = THREE.RepeatWrapping;
       textureData.texture.wrapT = THREE.RepeatWrapping;
-      editorOutlinePass.usePatternTexture = false;
       editorOutlinePass.patternTexture = textureData.texture;
+      editorOutlinePass.usePatternTexture = false;
       setSceneItem('editorOutlinePass', editorOutlinePass);
       this.editorOutlinePass = editorOutlinePass;
       this.editorComposer.addPass(editorOutlinePass);
