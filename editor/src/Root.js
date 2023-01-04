@@ -180,8 +180,8 @@ class Root {
         selectionIds.forEach((id) => {
           const editorIcons = this.sceneItems.editorIcons;
           for (let i = 0; i < editorIcons.length; i++) {
-            if (editorIcons[i]?.iconMesh?.userData.id === id) {
-              selection.push(editorIcons[i].iconMesh);
+            if (editorIcons[i]?.icon.userData.id === id) {
+              selection.push(editorIcons[i].icon);
             }
           }
           const editorTargetMeshes = this.sceneItems.editorTargetMeshes || [];
