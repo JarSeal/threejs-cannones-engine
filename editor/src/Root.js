@@ -117,7 +117,7 @@ class Root {
       editorOutlinePass.overlayMaterial.blending = THREE.NormalBlending;
       const textureData = textureLoader.loadTexture(
         'src/UI/textures/multiselect-stripe-pattern.png'
-      ); // @TODO: replace this texture with something nice
+      );
       textureData.texture.wrapS = THREE.RepeatWrapping;
       textureData.texture.wrapT = THREE.RepeatWrapping;
       editorOutlinePass.usePatternTexture = false;
@@ -180,8 +180,8 @@ class Root {
         selectionIds.forEach((id) => {
           const editorIcons = this.sceneItems.editorIcons;
           for (let i = 0; i < editorIcons.length; i++) {
-            if (editorIcons[i]?.iconMesh?.userData.id === id) {
-              selection.push(editorIcons[i].iconMesh);
+            if (editorIcons[i]?.icon.userData.id === id) {
+              selection.push(editorIcons[i].icon);
             }
           }
           const editorTargetMeshes = this.sceneItems.editorTargetMeshes || [];

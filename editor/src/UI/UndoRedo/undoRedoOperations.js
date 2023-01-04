@@ -29,7 +29,7 @@ const undoRedoOperations = {
     const position = isUndo ? action.prevVal.position : action.newVal.position;
     const rotation = isUndo ? action.prevVal.rotation : action.newVal.rotation;
     const scale = isUndo ? action.prevVal.scale : action.newVal.scale;
-    updateElemTranslation(action.elemId, { position, rotation, scale }, {});
+    updateElemTranslation(action.elemId, { position, rotation, scale });
     getSceneItem('rightSidePanel').updatePanel();
     getSceneItem('elemTool').updateTool();
   },

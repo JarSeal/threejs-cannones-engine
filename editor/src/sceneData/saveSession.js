@@ -68,7 +68,9 @@ export const saveCameraState = (values) => {
     if (values.fov) newParams.fov = values.fov;
 
     const cameraParams = getSceneParam('cameras');
-    cameraParams[values.index] = { ...cameraParams[values.index], ...newParams };
+    if (values.index !== undefined) {
+      cameraParams[values.index] = { ...cameraParams[values.index], ...newParams };
+    }
     if (cameraParams.length) LS.setItem('cameras', JSON.stringify(cameraParams));
   } else if (values.removeIndex !== undefined) {
     // Remove a camera

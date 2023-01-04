@@ -62,7 +62,7 @@ export const addCamera = (params, initiatingCameras) => {
   params.paramType = 'camera';
   let camera;
   if (!params.id) {
-    console.error('Camera must have an ID and type');
+    console.error('Camera must have an ID');
     return;
   }
 
@@ -138,6 +138,8 @@ export const addCamera = (params, initiatingCameras) => {
       (mesh) => mesh.userData.params.id === params.id
     );
     if (targetMesh) targetMesh.visible = false;
+    const camIcon = getSceneItem('editorIcons').find((i) => i.icon.userData.id === params.id);
+    camIcon.icon.visible = false;
   }
   setSceneItem('cameraHelpers', helpers);
 
@@ -325,6 +327,7 @@ export const changeCurCamera = (newCamIndex) => {
   const camHelpers = getSceneItem('cameraHelpers');
   const camParams = getSceneParam('cameras');
   const camPanels = getSceneItem('cameraPanels');
+  const editorIcons = getSceneItem('editorIcons');
   let newCamera = null,
     newCameraIndex = 0,
     newCameraHasOrbitControls = false,
@@ -342,6 +345,7 @@ export const changeCurCamera = (newCamIndex) => {
     const targetMesh = getSceneItem('editorTargetMeshes').find(
       (mesh) => mesh.userData.params.id === camParams[i].id
     );
+    const camIcon = editorIcons.find((icon) => icon.icon.id === camParams[i].id);
     if (camParams[i].id === camParams[newCamIndex].id) {
       newCamera = camItems[i];
       newCameraIndex = i;
@@ -353,6 +357,9 @@ export const changeCurCamera = (newCamIndex) => {
       if (targetMesh) {
         targetMesh.visible = false;
       }
+      if (camIcon) {
+        camIcon.icon.visible = false;
+      }
     } else {
       const helper = new THREE.CameraHelper(camItems[i]);
       helper.userData = camParams[i];
@@ -362,6 +369,9 @@ export const changeCurCamera = (newCamIndex) => {
       scene.add(helper);
       if (targetMesh) {
         targetMesh.visible = camParams[i].showHelper;
+      }
+      if (camIcon) {
+        camIcon.icon.visible = true;
       }
     }
   }
@@ -474,7 +484,7 @@ export const destroyCamera = (cameraIndex, destroyWithoutDialogAndUndo) => {
         setSceneItem('selection', filteredSelection);
         const selectionIds = filteredSelection.map((sel) => sel.userData.id);
         setSceneParam('selection', selectionIds);
-        saveSceneState({ selection: filteredSelection.map((sel) => sel.userData.id) });
+        saveSceneState({ selection: selectionIds });
         break;
       }
     }
@@ -517,7 +527,7 @@ export const destroyCamera = (cameraIndex, destroyWithoutDialogAndUndo) => {
     // Update editor icons
     const editorIcons = getSceneItem('editorIcons');
     editorIcons.find((icon) => {
-      if (icon.cameraIcon.userData.id === destroyCameraParams.id) {
+      if (icon.icon.userData.id === destroyCameraParams.id) {
         icon.remove();
       }
     });
@@ -614,12 +624,13 @@ export const updateCamUserDataHelpersAndIcon = (cameraIndex, updateById) => {
       }
     }
   }
+  if (cameraIndex === null || cameraIndex === undefined) return;
   const params = allCamParams[cameraIndex];
   const cameraItem = getSceneItem('allCameras')[cameraIndex];
   const helpers = getSceneItem('cameraHelpers');
   cameraItem.userData = params;
   const editorIcon = getSceneItem('editorIcons').find(
-    (icon) => params.id === icon.iconMesh.userData.id
+    (icon) => params.id === icon.icon.userData.id
   );
   if (editorIcon) editorIcon.update(cameraItem);
   if (helpers && helpers.length && helpers[cameraIndex]) {

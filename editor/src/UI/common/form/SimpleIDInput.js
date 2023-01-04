@@ -14,6 +14,7 @@ import { CAMERA_TARGET_ID, SELECTION_GROUP_ID } from '../../../utils/defaultScen
 // - curId = current ID's value [Number]
 // - newId = boolean whether the undo button is shown on mistakes, default is false/undefined [Boolean]
 // - focus = boolean whether the input should have focus after initiation or not [Boolean]
+// - afterSuccessBlur(value) = function that is run after a successfull blur has been made (before the timeout)
 class SimpleIDInput extends Component {
   constructor(data) {
     super(data);
@@ -29,6 +30,7 @@ class SimpleIDInput extends Component {
     this.groups = ['lights', 'cameras', 'scenes', 'elements'];
     this.regex = new RegExp('^[a-zA-Z0-9-_]+$');
     this.focus = data.focus;
+    this.afterSuccessBlur = data.afterSuccessBlur;
     setSceneItem('IDComponents', { ...(getSceneItem('IDComponents') || {}), [this.id]: this });
   }
 
@@ -113,7 +115,8 @@ class SimpleIDInput extends Component {
         const nextElemId = document.activeElement.id;
         const rightSidePanel = getSceneItem('rightSidePanel');
         rightSidePanel.updatePanel();
-        updateCamUserDataHelpersAndIcon(null, this.curId);
+        // @TODO: update possible selectionIds (getSceneParam('selection'))
+        if (!this.newId) updateCamUserDataHelpersAndIcon(null, this.curId);
         if (!this.newId && !isUndo) {
           getSceneItem('undoRedo').addAction({
             type: 'updateId',
@@ -128,6 +131,7 @@ class SimpleIDInput extends Component {
           if (nextElem) nextElem.focus();
         }
       }, 400);
+      if (this.afterSuccessBlur) this.afterSuccessBlur(value);
     }
   };
 
