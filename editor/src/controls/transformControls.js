@@ -282,24 +282,24 @@ const _checkAndSetTargetingObjects = (object) => {
       const camera = getSceneItem('allCameras').find((c) => c.userData.id === params.id);
       camera.position.set(...object.position);
       camera.lookAt(...targetMesh.position);
+      camera.updateWorldMatrix();
       const helper = camHelpers.find((h) => h?.userData?.id === params.id);
       helper?.update();
-      const camIcon = getSceneItem('editorIcons').find((i) => i.icon.userData.id === params.id);
-      camIcon.update(camera);
-      camera.updateWorldMatrix();
+      object.position.set(...camera.position);
+      object.quaternion.set(...camera.quaternion);
     }
   } else if (params.isTargetObject) {
     if (params.params.paramType === 'camera') {
       // CAMERA TARGETS
       const camera = getSceneItem('allCameras').find((c) => c.userData.id === params.params.id);
       camera.lookAt(...object.position);
+      camera.updateWorldMatrix();
       const helper = camHelpers.find((h) => h?.userData?.id === params.params.id);
       helper?.update();
       const camIcon = getSceneItem('editorIcons').find(
         (i) => i.icon.userData.id === params.params.id
       );
-      camIcon.update(camera);
-      camera.updateWorldMatrix();
+      camIcon.icon.quaternion.set(...camera.quaternion);
     }
   }
 };
