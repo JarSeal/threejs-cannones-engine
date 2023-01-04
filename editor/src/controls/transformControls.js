@@ -94,6 +94,7 @@ export const createTransformControls = () => {
           getSceneItem('scene').attach(child);
           _checkAndSetTargetingObjects(child);
         });
+        // This needs to be in its own loop because if the user moves a targeting object and a target, the _checkAndSetTargetingObjects would get wrong params for these
         groupChildren.forEach((child) => controls.object.attach(child));
       } else {
         _checkAndSetTargetingObjects(controls.object);
@@ -258,9 +259,11 @@ export const updateElemTranslation = (id, newVal, prevVal, object, doNotUpdateUn
       updateElemTranslation(idPerElem, newValPerElem, undefined, selectedElems[i], true);
     }
     for (let i = 0; i < selectedElems.length; i++) {
+      // This needs to be in its own loop because all the elements' translations need to be saved before this is run (see comment on the next loop)
       _checkAndSetTargetingObjects(selectedElems[i]);
     }
     for (let i = 0; i < selectedElems.length; i++) {
+      // This needs to be in its own loop because if the user moves a targeting object and a target, the _checkAndSetTargetingObjects would get wrong params for these
       selectionGroup.attach(selectedElems[i]);
     }
   } else {
