@@ -100,6 +100,10 @@ export const addCamera = (params, initiatingCameras) => {
   }
   params.isTargetingCamera = isTargetingCamera;
   params.isTargetingObject = isTargetingObject;
+  params.toggleHelper = (isOn, index) => {
+    toggleShowCameraHelper(isOn, index);
+    getSceneItem('rightSidePanel').updatePanel();
+  };
   if (!camera) {
     console.error('Camera type invalid');
     return;
@@ -633,6 +637,10 @@ export const updateCamUserDataHelpersAndIcon = (cameraIndex, updateById) => {
     (icon) => params.id === icon.icon.userData.id
   );
   if (editorIcon) editorIcon.update(cameraItem);
+  const editorTarget = getSceneItem('editorTargetMeshes').find(
+    (mesh) => mesh.userData.params.id === params.id
+  );
+  editorTarget.userData.params = params;
   if (helpers && helpers.length && helpers[cameraIndex]) {
     helpers[cameraIndex].userData = params[cameraIndex];
     helpers[cameraIndex].update();

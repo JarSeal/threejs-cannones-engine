@@ -1,4 +1,6 @@
+import { selectObjects } from '../controls/stageClick';
 import { getSceneItem } from '../sceneData/sceneItems';
+import { getSceneParam } from '../sceneData/sceneParams';
 import { toggleWorldAxesHelper, toggleWorldGridHelper } from '../utils/toolsForWorld';
 
 class KeyboardShortcuts {
@@ -61,10 +63,11 @@ class KeyboardShortcuts {
   DEFAULT_SHORTCUTS = [
     { keys: ['Control', 'z'], actionKey: 'undo' },
     { keys: ['Control', 'Shift', 'Z'], actionKey: 'redo' },
-    { keys: ['s'], actionKey: 'selectElement' },
-    { keys: ['z'], actionKey: 'translateElement' },
-    { keys: ['r'], actionKey: 'rotateElement' },
-    { keys: ['x'], actionKey: 'scaleElement' },
+    { keys: ['Escape'], actionKey: 'escape' },
+    { keys: ['s'], actionKey: 'selectTool' },
+    { keys: ['z'], actionKey: 'translateTool' },
+    { keys: ['r'], actionKey: 'rotateTool' },
+    { keys: ['x'], actionKey: 'scaleTool' },
     { keys: ['g'], actionKey: 'toggleGrid' },
     { keys: ['h'], actionKey: 'toggleAxes' },
   ];
@@ -73,12 +76,37 @@ class KeyboardShortcuts {
   ACTION_POOL = {
     undo: () => getSceneItem('undoRedo').undo(),
     redo: () => getSceneItem('undoRedo').redo(),
-    selectElement: () => getSceneItem('leftTools').changeTool('select'),
-    translateElement: () => getSceneItem('leftTools').changeTool('translate'),
-    rotateElement: () => getSceneItem('leftTools').changeTool('rotate'),
-    scaleElement: () => getSceneItem('leftTools').changeTool('scale'),
+    escape: () => (getSceneParam('selection').length ? selectObjects([]) : null),
+    selectTool: () => getSceneItem('leftTools').changeTool('select'),
+    translateTool: () => getSceneItem('leftTools').changeTool('translate'),
+    rotateTool: () => getSceneItem('leftTools').changeTool('rotate'),
+    scaleTool: () => getSceneItem('leftTools').changeTool('scale'),
     toggleGrid: () => toggleWorldGridHelper(),
-    toggleAxes: () => toggleWorldAxesHelper(),
+    toggleAxes: () => {
+      const selections = getSceneItem('selection');
+      if (!selections.length) {
+        toggleWorldAxesHelper();
+        return;
+      }
+      if (selections.length === 1) {
+        const params = selections[0].userData;
+        if (params.isTargetingObject && params.toggleHelper) {
+          params.toggleHelper(!params.showHelper, params.index);
+        } else if (params.isTargetObject && params.params.toggleHelper) {
+          params.params.toggleHelper(!params.params.showHelper, params.params.index);
+        }
+      } else {
+        for (let i = 0; i < selections.length; i++) {
+          const params = selections[i].userData;
+          if (params.isTargetingObject && params.toggleHelper) {
+            // When multiselect, only when a targeting object (not target object) is present, this will work
+            // Otherwise if both are selected for the same cam, the toggleHelper would toggle right away back and nothing happens
+            // @CONSIDER: rewrite this to manage the problem described
+            params.toggleHelper(!params.showHelper, params.index);
+          }
+        }
+      }
+    },
   };
 }
 
