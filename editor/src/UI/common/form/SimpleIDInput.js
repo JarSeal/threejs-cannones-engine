@@ -7,13 +7,14 @@ import TextInput from './TextInput';
 import SvgIcon from '../../icons/svg-icon';
 import './SimpleIDInput.scss';
 import { updateCamUserDataHelpersAndIcon } from '../../../utils/toolsForCamera';
-import { CAMERA_TARGET_ID } from '../../../utils/defaultSceneValues';
+import { CAMERA_TARGET_ID, SELECTION_GROUP_ID } from '../../../utils/defaultSceneValues';
 
 // Attributes:
 // - label = field label [String]
 // - curId = current ID's value [Number]
 // - newId = boolean whether the undo button is shown on mistakes, default is false/undefined [Boolean]
 // - focus = boolean whether the input should have focus after initiation or not [Boolean]
+// - afterSuccessBlur(value) = function that is run after a successfull blur has been made (before the timeout)
 class SimpleIDInput extends Component {
   constructor(data) {
     super(data);
@@ -29,6 +30,7 @@ class SimpleIDInput extends Component {
     this.groups = ['lights', 'cameras', 'scenes', 'elements'];
     this.regex = new RegExp('^[a-zA-Z0-9-_]+$');
     this.focus = data.focus;
+    this.afterSuccessBlur = data.afterSuccessBlur;
     setSceneItem('IDComponents', { ...(getSceneItem('IDComponents') || {}), [this.id]: this });
   }
 
@@ -113,7 +115,8 @@ class SimpleIDInput extends Component {
         const nextElemId = document.activeElement.id;
         const rightSidePanel = getSceneItem('rightSidePanel');
         rightSidePanel.updatePanel();
-        updateCamUserDataHelpersAndIcon(null, this.curId);
+        // @TODO: update possible selectionIds (getSceneParam('selection'))
+        if (!this.newId) updateCamUserDataHelpersAndIcon(null, this.curId);
         if (!this.newId && !isUndo) {
           getSceneItem('undoRedo').addAction({
             type: 'updateId',
@@ -128,6 +131,7 @@ class SimpleIDInput extends Component {
           if (nextElem) nextElem.focus();
         }
       }, 400);
+      if (this.afterSuccessBlur) this.afterSuccessBlur(value);
     }
   };
 
@@ -155,8 +159,14 @@ class SimpleIDInput extends Component {
         errorMsg: 'Only A-Z (a-z), 0-9, dash, and underscore allowed',
       };
     }
-    if (value.search(CAMERA_TARGET_ID) !== -1) {
-      return { hasError: true, errorMsg: `ID contains a reserved string ("${CAMERA_TARGET_ID}")` };
+    const reservedStrings = [CAMERA_TARGET_ID, SELECTION_GROUP_ID];
+    for (let i = 0; i < reservedStrings.length; i++) {
+      if (value.search(reservedStrings[i]) !== -1) {
+        return {
+          hasError: true,
+          errorMsg: `ID contains a reserved string ("${reservedStrings[i]}")`,
+        };
+      }
     }
     for (let g = 0; g < groups.length; g++) {
       const group = groups[g];

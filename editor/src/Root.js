@@ -13,7 +13,6 @@ import {
   resetSceneParams,
   setSceneParams,
   getSceneParam,
-  getSceneParamR,
 } from './sceneData/sceneParams';
 import { getSceneItem, getSceneItems, setSceneItem, resetSceneItems } from './sceneData/sceneItems';
 import { getScreenResolution } from './utils/utils';
@@ -31,7 +30,8 @@ import ElemTool from './UI/ElemTool';
 import UndoRedo from './UI/UndoRedo/UndoRedo';
 import KeyboardShortcuts from './UI/KeyboarShortcuts';
 import { createTransformControls } from './controls/transformControls';
-import { CAMERA_TARGET_ID } from './utils/defaultSceneValues';
+import TextureLoader from './loaders/TextureLoader';
+import { SELECTION_GROUP_ID } from './utils/defaultSceneValues';
 
 class Root {
   constructor() {
@@ -67,6 +67,10 @@ class Root {
     resetSceneItems();
 
     setSceneParams(sceneParams);
+
+    // Setup textureLoader
+    const textureLoader = new TextureLoader();
+    setSceneItem('textureLoader', textureLoader);
 
     // Setup renderer
     const renderer = new THREE.WebGLRenderer({
@@ -111,6 +115,13 @@ class Root {
       editorOutlinePass.visibleEdgeColor.set('#f69909');
       editorOutlinePass.hiddenEdgeColor.set('#ff4500');
       editorOutlinePass.overlayMaterial.blending = THREE.NormalBlending;
+      const textureData = textureLoader.loadTexture(
+        'src/UI/textures/multiselect-stripe-pattern.png'
+      );
+      textureData.texture.wrapS = THREE.RepeatWrapping;
+      textureData.texture.wrapT = THREE.RepeatWrapping;
+      editorOutlinePass.usePatternTexture = false;
+      editorOutlinePass.patternTexture = textureData.texture;
       setSceneItem('editorOutlinePass', editorOutlinePass);
       this.editorOutlinePass = editorOutlinePass;
       this.editorComposer.addPass(editorOutlinePass);
@@ -120,7 +131,7 @@ class Root {
       //   1 / (reso.y * pixelRatio)
       // );
       // this.editorComposer.addPass(effectFXAA);
-      const SMAA = new SMAAPass(reso.x * pixelRatio, reso.y * pixelRatio);
+      const SMAA = new SMAAPass(reso.x * pixelRatio, reso.y * pixelRatio); // @TODO: change to this library: https://pmndrs.github.io/postprocessing/public/demo/#antialiasing
       this.editorComposer.addPass(SMAA);
       setSceneItem('editorComposer', this.editorComposer);
 
@@ -155,6 +166,13 @@ class Root {
       registerStageClick();
       setSceneItem('runningRenderStats', renderStats);
 
+      // Create selection group
+      const selectionGroup = new THREE.Group();
+      selectionGroup.userData.isSelectionGroup = true;
+      selectionGroup.userData.id = SELECTION_GROUP_ID;
+      scene.add(selectionGroup);
+      setSceneItem('selectionGroup', selectionGroup);
+
       // Set selection(s)
       const selectionIds = sceneParams.selection;
       const selection = [];
@@ -162,11 +180,11 @@ class Root {
         selectionIds.forEach((id) => {
           const editorIcons = this.sceneItems.editorIcons;
           for (let i = 0; i < editorIcons.length; i++) {
-            if (editorIcons[i]?.iconMesh?.userData.id === id) {
-              selection.push(editorIcons[i].iconMesh);
+            if (editorIcons[i]?.icon.userData.id === id) {
+              selection.push(editorIcons[i].icon);
             }
           }
-          const editorTargetMeshes = this.sceneItems.editorTargetMeshes;
+          const editorTargetMeshes = this.sceneItems.editorTargetMeshes || [];
           for (let i = 0; i < editorTargetMeshes.length; i++) {
             if (editorTargetMeshes[i]?.userData.id === id) {
               editorTargetMeshes[i].visible = true;
@@ -180,6 +198,9 @@ class Root {
             }
           }
         });
+
+        // @TODO: add multiselections to the selection group here
+
         setSceneItem('selection', selection);
       } else {
         setSceneParam('selection', []);
@@ -224,8 +245,11 @@ class Root {
           leftTools.selectAndTransformTool === 'rotate' ||
           leftTools.selectAndTransformTool === 'scale')
       ) {
+        transControls.enabled = true;
         transControls.mode = leftTools.selectAndTransformTool;
         transControls.attach(selection[0]); // @TODO: add multiselection
+      } else {
+        transControls.enabled = false;
       }
 
       // Select possible selected object(s)

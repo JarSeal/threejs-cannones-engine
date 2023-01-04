@@ -577,12 +577,13 @@ class OutlinePass extends Pass {
 					vec4 edgeValue1 = texture2D(edgeTexture1, vUv);
 					vec4 edgeValue2 = texture2D(edgeTexture2, vUv);
 					vec4 maskColor = texture2D(maskTexture, vUv);
-					vec4 patternColor = texture2D(patternTexture, 6.0 * vUv);
-					float visibilityFactor = 1.0 - maskColor.g > 0.0 ? 1.0 : 0.5;
+					vec4 patternColor = texture2D(patternTexture, 20.0 * vUv);
+					// float visibilityFactor = 1.0 - maskColor.g > 0.0 ? 1.0 : 0.5; // Removed by @JarSeal
+          float visibilityFactor = 1.0 - maskColor.g; // Added by @JarSeal to remove the pattern from the items that are in front of the element
 					vec4 edgeValue = edgeValue1 + edgeValue2 * edgeGlow;
 					vec4 finalColor = edgeStrength * maskColor.r * edgeValue;
 					if(usePatternTexture)
-						finalColor += + visibilityFactor * (1.0 - maskColor.r) * (1.0 - patternColor.r);
+						finalColor += + visibilityFactor * (1.0 - maskColor.r) * ((1.0 - patternColor.r) * 0.5);
 					gl_FragColor = finalColor;
 				}`,
       blending: AdditiveBlending,

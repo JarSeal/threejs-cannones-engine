@@ -34,6 +34,7 @@ class NewCamera extends Component {
         focus: true,
         onValidationErrors: () => (this.formHasErrors = true),
         onValidationSuccess: () => (this.formHasErrors = false),
+        afterSuccessBlur: (id) => (this.newCameraParams.id = id),
       })
     );
 
@@ -45,6 +46,7 @@ class NewCamera extends Component {
         value: this.newCameraParams.name,
         changeFn: (e) => {
           this.newCameraParams.name = e.target.value;
+          console.log(this.newCameraParams.id);
         },
       })
     );

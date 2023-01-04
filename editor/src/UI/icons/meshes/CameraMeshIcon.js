@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 
+import { saveSceneState } from '../../../sceneData/saveSession';
 import { getSceneItem, setSceneItem } from '../../../sceneData/sceneItems';
 import { getSceneParam, setSceneParam } from '../../../sceneData/sceneParams';
 import { CAMERA_TARGET_ID } from '../../../utils/defaultSceneValues';
@@ -8,28 +9,32 @@ import { removeMeshFromScene } from '../../../utils/utils';
 class CameraMeshIcon {
   constructor(camera, cameraParams) {
     const scene = getSceneItem('scene');
-    const cameraIcon = new THREE.Group();
+
+    // This is the "group" mesh (even though it is a mesh) for the icon that gets transformed
+    const cameraIconHolderGeo = new THREE.BoxGeometry(0.0001, 0.0001, 0.0001);
+    const cameraIconHolderMat = new THREE.MeshBasicMaterial({ opacity: 0, transparent: true });
+    const cameraIcon = new THREE.Mesh(cameraIconHolderGeo, cameraIconHolderMat);
+
+    // This is the actual icon of the camera
     // @TODO: create (in Blender) and import a proper camera icon
     const cameraIconGeo = new THREE.BoxGeometry(0.2, 0.2, 0.28);
     const cameraIconMat = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-    const cameraIconMesh = new THREE.Mesh(cameraIconGeo, cameraIconMat);
-    cameraIconMesh.position.set(0, 0, 0.14);
+    const cameraIconMesh = new THREE.Mesh(cameraIconGeo, cameraIconMat); // The actual visible box (the bigger box)
+
+    cameraIcon.add(cameraIconMesh);
+    cameraIconMesh.position.set(0, 0, 0.14); // Offset the actual icon mesh (the inner mesh) to be at the beginning of the camera
     const directionPointerMesh = new THREE.Mesh(
       new THREE.BoxGeometry(0.05, 0.05, 0.05),
       new THREE.MeshBasicMaterial({ color: 0xeeaa00 })
     );
-    directionPointerMesh.position.set(0, 0.1, -0.115);
-    cameraIconMesh.add(directionPointerMesh);
-    cameraIcon.add(cameraIconMesh);
+    directionPointerMesh.position.set(0, 0.1, 0);
+    cameraIcon.add(directionPointerMesh);
 
     cameraIcon.userData = cameraParams;
-    cameraIconMesh.userData = cameraParams;
 
     cameraIcon.position.set(...camera.position);
     cameraIcon.quaternion.set(...camera.quaternion);
 
-    this.cameraIcon = cameraIcon;
-    this.iconMesh = cameraIconMesh;
     scene.add(cameraIcon);
     this.icon = cameraIcon;
     const editorIcons = getSceneItem('editorIcons') || [];
@@ -40,6 +45,15 @@ class CameraMeshIcon {
   }
 
   update = (camera) => {
+    const selectionGroup = getSceneItem('selectionGroup');
+    const isInSelectionGroup = selectionGroup.children.find(
+      (child) => this.icon.userData.id === child.userData.id
+    );
+    let selectionGroupChildren;
+    if (isInSelectionGroup) {
+      selectionGroupChildren = [...selectionGroup.children];
+      selectionGroupChildren.forEach((child) => getSceneItem('scene').attach(child));
+    }
     const newPos = [camera.position.x, camera.position.y, camera.position.z];
     const newQuat = [
       camera.quaternion.x,
@@ -49,30 +63,28 @@ class CameraMeshIcon {
     ];
     this.icon.position.set(...newPos);
     this.icon.quaternion.set(...newQuat);
-    this.cameraIcon.userData = camera.userData;
-    this.iconMesh.userData = camera.userData;
-    if (this.cameraTargetMesh) {
-      this.cameraTargetMesh.userData.params = camera.userData;
+    this.icon.userData = camera.userData;
+    if (isInSelectionGroup) {
+      selectionGroupChildren.forEach((child) => selectionGroup.attach(child));
     }
   };
 
   remove = () => {
     const transControls = getSceneItem('transformControls');
-    if (transControls.object?.userData.isTargetedCamera || transControls.object?.isCameraTarget) {
+    if (transControls.object?.userData.isTargetingCamera) {
       transControls.detach();
     }
-    const newEditorIcons = getSceneItem('editorIcons').filter(
-      (icon) => this.cameraIcon.userData.id !== icon.cameraIcon.userData.id
-    );
-    setSceneItem('editorIcons', newEditorIcons);
-    this.cameraIcon.traverse((obj) => removeMeshFromScene(obj));
-    this.cameraIcon.removeFromParent();
+    removeMeshFromScene(this.icon);
     this._removeTargetMesh();
+    const newEditorIcons = getSceneItem('editorIcons').filter((icon) => {
+      this.icon.userData.id !== icon.icon.userData.id;
+    });
+    setSceneItem('editorIcons', newEditorIcons);
   };
 
   _createTargetMesh = () => {
     const params = this.icon.userData;
-    if (params.isTargetedCamera) {
+    if (params.isTargetingCamera) {
       const cameraTargetGeo = new THREE.BoxGeometry(0.2, 0.2, 0.2);
       const cameraTargetMat = new THREE.MeshBasicMaterial({ color: 0xffcc00 });
       const cameraTargetMesh = new THREE.Mesh(cameraTargetGeo, cameraTargetMat);
@@ -95,8 +107,12 @@ class CameraMeshIcon {
   _removeTargetMesh = () => {
     if (this.cameraTargetMesh) {
       let targetMeshId;
+      const transControls = getSceneItem('transformControls');
+      if (transControls.object?.userData.isCameraTarget) {
+        transControls.detach();
+      }
       const newEditorTargets = getSceneItem('editorTargetMeshes').filter((target) => {
-        if (this.cameraIcon.userData.id === target.userData.cameraParams.id) {
+        if (this.icon.userData.id === target.userData.params.id) {
           targetMeshId = target.userData.id;
           return false;
         }
@@ -106,10 +122,9 @@ class CameraMeshIcon {
       if (targetMeshId) {
         const selectionIds = getSceneParam('selection');
         const selectionItems = getSceneItem('selection');
-        setSceneParam(
-          'selection',
-          selectionIds.filter((id) => id !== targetMeshId)
-        );
+        const newSelectionIds = selectionIds.filter((id) => id !== targetMeshId);
+        setSceneParam('selection', newSelectionIds);
+        saveSceneState({ selection: newSelectionIds });
         setSceneItem(
           'selection',
           selectionItems.filter((item) => item.userData.id !== targetMeshId)

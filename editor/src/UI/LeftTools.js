@@ -165,7 +165,7 @@ class LeftTools extends Component {
     }
     this.selectAndTransformTool = toolId;
     setSceneParamR('editor.selectAndTransformTool', toolId);
-    saveEditorState({ editor: { selectAndTransformTool: toolId } });
+    saveEditorState({ selectAndTransformTool: toolId });
     const transControls = getSceneItem('transformControls');
     if (toolId === 'select') {
       transControls.detach();
@@ -176,7 +176,9 @@ class LeftTools extends Component {
     transControls.mode = toolId;
     const selections = getSceneItem('selection');
     if (selections.length) {
-      transControls.attach(getSceneItem('selection')[0]); // @TODO: add multiselection
+      transControls.attach(
+        selections.length === 1 ? selections[0] : getSceneItem('selectionGroup')
+      );
       transControls.enabled = true;
     }
     this.updateTools();

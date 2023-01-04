@@ -1,6 +1,9 @@
+import * as THREE from 'three';
+
 import { saveStateByKey } from '../sceneData/saveSession';
 import { setSceneItem, getSceneItem } from '../sceneData/sceneItems';
 import { getSceneParam, setSceneParam } from '../sceneData/sceneParams';
+import { SELECTION_GROUP_ID } from '../utils/defaultSceneValues';
 import { TransformControls } from './TransformControls/TransformControls.js';
 
 export const createTransformControls = () => {
@@ -22,7 +25,7 @@ export const createTransformControls = () => {
   let startScaleX = null;
   let startScaleY = null;
   let startScaleZ = null;
-  // let undoRedoPrevVal = {};
+  let multiSelectStartTransforms = [];
 
   controls.addEventListener('change', () => {
     if (!controls.dragging) return;
@@ -58,6 +61,7 @@ export const createTransformControls = () => {
     if (controls.dragging && controls.mode === 'scale' && keysDown.includes('Control')) {
       // Change the position of the object according to the scaled value
       // so that only one end of the object is scaled (even though the whole axis scales)
+      // @TODO: this does not currently work (test this with the "ground object")
       const curScaleX = controls.object.scale.x;
       const curScaleY = controls.object.scale.y;
       const curScaleZ = controls.object.scale.z;
@@ -84,7 +88,17 @@ export const createTransformControls = () => {
       controls.object.position.x = startPosX;
     }
     if (controls.dragging && controls.mode === 'translate') {
-      _checkAndSetTargetingObjects(controls.object);
+      if (controls.object.userData.isSelectionGroup) {
+        const groupChildren = [...controls.object.children];
+        groupChildren.forEach((child) => {
+          getSceneItem('scene').attach(child);
+          _checkAndSetTargetingObjects(child);
+        });
+        // This needs to be in its own loop because if the user moves a targeting object and a target, the _checkAndSetTargetingObjects would get wrong params for these
+        groupChildren.forEach((child) => controls.object.attach(child));
+      } else {
+        _checkAndSetTargetingObjects(controls.object);
+      }
     }
   });
 
@@ -104,6 +118,22 @@ export const createTransformControls = () => {
       startScaleY = controls.object.scale.y;
       startScaleX = controls.object.scale.x;
       startScaleZ = controls.object.scale.z;
+      if (controls.object.userData.isSelectionGroup) {
+        const selectedElems = getSceneItem('selection');
+        multiSelectStartTransforms = [];
+        for (let i = 0; i < selectedElems.length; i++) {
+          const worldPos = selectedElems[i].getWorldPosition(new THREE.Vector3());
+          const worldRot = new THREE.Euler().setFromQuaternion(
+            selectedElems[i].getWorldQuaternion(new THREE.Quaternion())
+          );
+          const worldScale = selectedElems[i].getWorldScale(new THREE.Vector3());
+          multiSelectStartTransforms.push({
+            position: [worldPos.x, worldPos.y, worldPos.z],
+            rotation: [worldRot.x, worldRot.y, worldRot.z],
+            scale: [worldScale.x, worldScale.y, worldScale.z],
+          });
+        }
+      }
     } else {
       // Dragging stopped
       controls.setTranslationSnap(null);
@@ -115,16 +145,19 @@ export const createTransformControls = () => {
       const position = [obj.position.x, obj.position.y, obj.position.z];
       const rotation = [obj.rotation.x, obj.rotation.y, obj.rotation.z];
       const scale = [obj.scale.x, obj.scale.y, obj.scale.z];
-      updateElemTranslation(
-        obj.userData.id,
-        { position, rotation, scale },
-        {
-          position: [startPosX, startPosY, startPosZ],
-          rotation: [startRotX, startRotY, startRotZ],
-          scale: [startScaleX, startScaleY, startScaleZ],
-        },
-        obj
-      );
+      // const prevVal = obj.userData.isSelectionGroup
+      //   ? multiSelectStartTransforms
+      //   : {
+      //       position: [startPosX, startPosY, startPosZ],
+      //       rotation: [startRotX, startRotY, startRotZ],
+      //       scale: [startScaleX, startScaleY, startScaleZ],
+      //     };
+      const prevVal = {
+        position: [startPosX, startPosY, startPosZ],
+        rotation: [startRotX, startRotY, startRotZ],
+        scale: [startScaleX, startScaleY, startScaleZ],
+      };
+      updateElemTranslation(obj.userData.id, { position, rotation, scale }, prevVal, obj);
     }
   });
 
@@ -133,22 +166,21 @@ export const createTransformControls = () => {
   return controls;
 };
 
-export const updateElemTranslation = (id, newVal, prevVal, object) => {
+export const updateElemTranslation = (id, newVal, prevVal, object, doNotUpdateUndo) => {
   if (!object) {
     // If the object is not in the params, we have to search it.
     // For example the undo/redo needs to do this, since the object cannot
     // be part of the saved undo/redo data.
     let objectFound = false;
     getSceneItem('scene').children.find((elem) => {
-      if (elem.userData?.id === id && !elem.userData?.isTargetingObject) {
+      if (elem.userData?.id === id && elem.isMesh) {
         object = elem;
         objectFound = true;
-      } else if (elem.userData?.id === id && elem.userData?.isTargetingObject) {
-        const editorIcon = getSceneItem('editorIcons').find((icon) => icon.icon.userData.id === id);
-        if (editorIcon) {
-          object = editorIcon.icon;
-          objectFound = true;
-        }
+        return true;
+      } else if (elem.userData?.id === id && elem.userData.id === SELECTION_GROUP_ID) {
+        object = elem;
+        objectFound = true;
+        return true;
       }
     });
     if (!objectFound) console.warn('ForThree: Could not find element in scene with id: ' + id);
@@ -208,19 +240,50 @@ export const updateElemTranslation = (id, newVal, prevVal, object) => {
   object.position.set(...newVal.position);
   object.rotation.set(...newVal.rotation);
   object.scale.set(...newVal.scale);
-  _checkAndSetTargetingObjects(object);
-  getSceneItem('undoRedo').addAction({
-    type: 'updateElemTranslation',
-    prevVal,
-    newVal,
-    elemId: id,
-  });
+  if (object?.userData.isSelectionGroup) {
+    // Multiselection
+    const scene = getSceneItem('scene');
+    const selectionGroup = getSceneItem('selectionGroup');
+    const selectedElems = getSceneItem('selection');
+    for (let i = 0; i < selectedElems.length; i++) {
+      scene.attach(selectedElems[i]);
+      const worldPos = selectedElems[i].position;
+      const worldRot = selectedElems[i].rotation;
+      const worldScale = selectedElems[i].scale;
+      const idPerElem = selectedElems[i].userData.id;
+      const newValPerElem = {
+        position: [worldPos.x, worldPos.y, worldPos.z],
+        rotation: [worldRot.x, worldRot.y, worldRot.z],
+        scale: [worldScale.x, worldScale.y, worldScale.z],
+      };
+      updateElemTranslation(idPerElem, newValPerElem, undefined, selectedElems[i], true);
+    }
+    for (let i = 0; i < selectedElems.length; i++) {
+      // This needs to be in its own loop because all the elements' translations need to be saved before this is run (see comment on the next loop)
+      _checkAndSetTargetingObjects(selectedElems[i]);
+    }
+    for (let i = 0; i < selectedElems.length; i++) {
+      // This needs to be in its own loop because if the user moves a targeting object and a target, the _checkAndSetTargetingObjects would get wrong params for these
+      selectionGroup.attach(selectedElems[i]);
+    }
+  } else {
+    _checkAndSetTargetingObjects(object);
+  }
+  if (!doNotUpdateUndo) {
+    getSceneItem('undoRedo').addAction({
+      type: 'updateElemTranslation',
+      prevVal,
+      newVal,
+      elemId: id,
+    });
+  }
 };
 
 export const removeTransformControls = () => {
   const controls = getSceneItem('transformControls');
   if (!controls) return;
   controls.dispose();
+  controls.detach();
   setSceneItem('transformControls', null);
 };
 
@@ -228,7 +291,7 @@ const _checkAndSetTargetingObjects = (object) => {
   const params = object.userData;
   const camHelpers = getSceneItem('cameraHelpers') || [];
   if (params.isTargetingObject) {
-    const targetMesh = getSceneItem('editorTargetMeshes').find(
+    const targetMesh = getSceneItem('editorTargetMeshes')?.find(
       (mesh) => mesh.userData.params.id === params.id
     );
     if (params.paramType === 'camera') {
@@ -236,9 +299,9 @@ const _checkAndSetTargetingObjects = (object) => {
       const camera = getSceneItem('allCameras').find((c) => c.userData.id === params.id);
       camera.position.set(...object.position);
       camera.lookAt(...targetMesh.position);
+      camera.updateWorldMatrix();
       const helper = camHelpers.find((h) => h?.userData?.id === params.id);
       helper?.update();
-      camera.updateWorldMatrix();
       object.position.set(...camera.position);
       object.quaternion.set(...camera.quaternion);
     }
@@ -247,14 +310,13 @@ const _checkAndSetTargetingObjects = (object) => {
       // CAMERA TARGETS
       const camera = getSceneItem('allCameras').find((c) => c.userData.id === params.params.id);
       camera.lookAt(...object.position);
+      camera.updateWorldMatrix();
       const helper = camHelpers.find((h) => h?.userData?.id === params.params.id);
       helper?.update();
-      camera.updateWorldMatrix();
-      const editorIcon = getSceneItem('editorIcons').find(
-        (icon) => icon.icon.userData.id === params.params.id
+      const camIcon = getSceneItem('editorIcons').find(
+        (i) => i.icon.userData.id === params.params.id
       );
-      editorIcon.icon.position.set(...camera.position);
-      editorIcon.icon.quaternion.set(...camera.quaternion);
+      camIcon.icon.quaternion.set(...camera.quaternion);
     }
   }
 };
