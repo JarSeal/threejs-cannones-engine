@@ -117,11 +117,11 @@ class Root {
       editorOutlinePass.overlayMaterial.blending = THREE.NormalBlending;
       const textureData = textureLoader.loadTexture(
         'src/UI/textures/multiselect-stripe-pattern.png'
-      ); // @TODO: replace this texture with something nice
+      );
       textureData.texture.wrapS = THREE.RepeatWrapping;
       textureData.texture.wrapT = THREE.RepeatWrapping;
-      editorOutlinePass.patternTexture = textureData.texture;
       editorOutlinePass.usePatternTexture = false;
+      editorOutlinePass.patternTexture = textureData.texture;
       setSceneItem('editorOutlinePass', editorOutlinePass);
       this.editorOutlinePass = editorOutlinePass;
       this.editorComposer.addPass(editorOutlinePass);

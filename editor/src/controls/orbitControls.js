@@ -33,9 +33,6 @@ export const createOrbitControls = () => {
     document.activeElement.blur(); // In case there are drop down menus open (with focus), this will close them.
     rootElem.style.transitionDelay = '0.5s';
     rootElem.style.opacity = 0.5;
-    const curCamera = cameras[sceneParams.curCameraIndex];
-    const camIcon = getSceneItem('editorIcons').find((i) => curCamera.id === i.icon.userData.id);
-    camIcon.icon.visible = false;
     const params = getSceneParam('cameras')[getSceneParam('curCameraIndex')];
     undoRedoPrevVal = {
       position: params.position,
@@ -70,7 +67,6 @@ export const createOrbitControls = () => {
     rootElem.style.opacity = 1;
     const camIcon = getSceneItem('editorIcons').find((i) => curCamera.id === i.icon.userData.id);
     camIcon.update(curCameraItem);
-    camIcon.icon.visible = true;
     // @TODO: Make this better by recording the start position of the movement and comparing
     // at the end listener if it has moved enough
     setTimeout(() => {

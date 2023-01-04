@@ -7,7 +7,6 @@ import cameraTools, { changeCurCamera } from '../../utils/toolsForCamera';
 import { getSceneParam, setSceneParam } from '../../sceneData/sceneParams';
 import { saveAllCamerasState } from '../../sceneData/saveSession';
 import { updateElemTranslation } from '../../controls/transformControls';
-import { SELECTION_GROUP_ID } from '../../utils/defaultSceneValues';
 
 const undoRedoOperations = {
   // ID
@@ -27,17 +26,9 @@ const undoRedoOperations = {
   },
   // Transform controls
   updateElemTranslation: (action, isUndo) => {
-    let position, rotation, scale;
-    if (action.elemId === SELECTION_GROUP_ID) {
-      console.log('PREVVAL', action.prevVal);
-      position = isUndo ? action.prevVal.position : action.newVal.position;
-      rotation = isUndo ? action.prevVal.rotation : action.newVal.rotation;
-      scale = isUndo ? action.prevVal.scale : action.newVal.scale;
-    } else {
-      position = isUndo ? action.prevVal.position : action.newVal.position;
-      rotation = isUndo ? action.prevVal.rotation : action.newVal.rotation;
-      scale = isUndo ? action.prevVal.scale : action.newVal.scale;
-    }
+    const position = isUndo ? action.prevVal.position : action.newVal.position;
+    const rotation = isUndo ? action.prevVal.rotation : action.newVal.rotation;
+    const scale = isUndo ? action.prevVal.scale : action.newVal.scale;
     updateElemTranslation(action.elemId, { position, rotation, scale });
     getSceneItem('rightSidePanel').updatePanel();
     getSceneItem('elemTool').updateTool();

@@ -182,7 +182,6 @@ export const updateElemTranslation = (id, newVal, prevVal, object, doNotUpdateUn
       object.userData.type === 'orthographicTarget'
     ) {
       // Targeting camera
-      console.log('TRÖÖT');
       const newCamParams = getSceneParam('cameras').map((cam) => {
         if (cam.id === id)
           return {
@@ -231,7 +230,6 @@ export const updateElemTranslation = (id, newVal, prevVal, object, doNotUpdateUn
   object.position.set(...newVal.position);
   object.rotation.set(...newVal.rotation);
   object.scale.set(...newVal.scale);
-  _checkAndSetTargetingObjects(object);
   if (object?.userData.isSelectionGroup) {
     // Multiselection
     const scene = getSceneItem('scene');
@@ -254,6 +252,7 @@ export const updateElemTranslation = (id, newVal, prevVal, object, doNotUpdateUn
       selectionGroup.attach(selectedElems[i]);
     }
   }
+  _checkAndSetTargetingObjects(object);
   if (!doNotUpdateUndo) {
     getSceneItem('undoRedo').addAction({
       type: 'updateElemTranslation',
@@ -285,9 +284,9 @@ const _checkAndSetTargetingObjects = (object) => {
       camera.lookAt(...targetMesh.position);
       const helper = camHelpers.find((h) => h?.userData?.id === params.id);
       helper?.update();
+      const camIcon = getSceneItem('editorIcons').find((i) => i.icon.userData.id === params.id);
+      camIcon.update(camera);
       camera.updateWorldMatrix();
-      object.position.set(...camera.position);
-      object.quaternion.set(...camera.quaternion);
     }
   } else if (params.isTargetObject) {
     if (params.params.paramType === 'camera') {
@@ -296,12 +295,11 @@ const _checkAndSetTargetingObjects = (object) => {
       camera.lookAt(...object.position);
       const helper = camHelpers.find((h) => h?.userData?.id === params.params.id);
       helper?.update();
-      camera.updateWorldMatrix();
       const camIcon = getSceneItem('editorIcons').find(
         (i) => i.icon.userData.id === params.params.id
       );
-      camIcon.icon.position.set(...camera.position);
-      camIcon.icon.quaternion.set(...camera.quaternion);
+      camIcon.update(camera);
+      camera.updateWorldMatrix();
     }
   }
 };

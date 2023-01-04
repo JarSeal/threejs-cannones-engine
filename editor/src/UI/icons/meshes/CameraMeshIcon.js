@@ -9,9 +9,9 @@ class CameraMeshIcon {
   constructor(camera, cameraParams) {
     const scene = getSceneItem('scene');
 
-    // This is the "group" mesh for the icon that gets transformed but is transparent
+    // This is the "group" mesh for the icon that gets transformed
     const cameraIconHolderGeo = new THREE.BoxGeometry(0.2, 0.2, 0.28);
-    const cameraIconHolderMat = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+    const cameraIconHolderMat = new THREE.MeshBasicMaterial({ opacity: 0, transparent: true });
     const cameraIcon = new THREE.Mesh(cameraIconHolderGeo, cameraIconHolderMat);
 
     // This is the actual icon of the camera

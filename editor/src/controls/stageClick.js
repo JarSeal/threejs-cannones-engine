@@ -92,9 +92,9 @@ export const selectObjects = (selectedObjects) => {
   let selectionIds = [];
   let selectedObjectsHaveIds = false;
   const scene = getSceneItem('scene');
-  let isMultiselect = selectedObjects?.length > 1;
+  let isMultiselect = selectedObjects.length > 1;
 
-  for (let i = 0; i < selectedObjects?.length; i++) {
+  for (let i = 0; i < selectedObjects.length; i++) {
     if (!selectedObjects[i]?.isObject3D) {
       selectedObjectsHaveIds = true;
       break;
@@ -149,10 +149,8 @@ export const selectObjects = (selectedObjects) => {
   const outlinePass = getSceneItem('editorOutlinePass');
   if (isMultiselect) {
     outlinePass.usePatternTexture = true;
-    getSceneItem('curCamera').updateProjectionMatrix();
   } else {
     outlinePass.usePatternTexture = false;
-    getSceneItem('curCamera').updateProjectionMatrix();
   }
 
   const selGroup = getSceneItem('selectionGroup');
@@ -201,7 +199,6 @@ export const selectObjects = (selectedObjects) => {
     }
     for (let i = 0; i < selection.length; i++) {
       if (selection[i].userData.isTargetingObject) {
-        // @TODO: FIX THIS
         const elemId = selection[i].userData.id;
         const targetMesh = getSceneItem('editorTargetMeshes')?.find(
           (mesh) => mesh.userData.params.id === elemId
