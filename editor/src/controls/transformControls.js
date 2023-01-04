@@ -88,7 +88,16 @@ export const createTransformControls = () => {
       controls.object.position.x = startPosX;
     }
     if (controls.dragging && controls.mode === 'translate') {
-      _checkAndSetTargetingObjects(controls.object);
+      if (controls.object.userData.isSelectionGroup) {
+        const groupChildren = [...controls.object.children];
+        groupChildren.forEach((child) => {
+          getSceneItem('scene').attach(child);
+          _checkAndSetTargetingObjects(child);
+        });
+        groupChildren.forEach((child) => controls.object.attach(child));
+      } else {
+        _checkAndSetTargetingObjects(controls.object);
+      }
     }
   });
 
@@ -163,11 +172,11 @@ export const updateElemTranslation = (id, newVal, prevVal, object, doNotUpdateUn
     // be part of the saved undo/redo data.
     let objectFound = false;
     getSceneItem('scene').children.find((elem) => {
-      if (elem.userData.id === id && elem.isMesh) {
+      if (elem.userData?.id === id && elem.isMesh) {
         object = elem;
         objectFound = true;
         return true;
-      } else if (elem.userData.id === id && elem.userData.id === SELECTION_GROUP_ID) {
+      } else if (elem.userData?.id === id && elem.userData.id === SELECTION_GROUP_ID) {
         object = elem;
         objectFound = true;
         return true;
@@ -237,11 +246,9 @@ export const updateElemTranslation = (id, newVal, prevVal, object, doNotUpdateUn
     const selectedElems = getSceneItem('selection');
     for (let i = 0; i < selectedElems.length; i++) {
       scene.attach(selectedElems[i]);
-      const worldPos = selectedElems[i].getWorldPosition(new THREE.Vector3());
-      const worldRot = new THREE.Euler().setFromQuaternion(
-        selectedElems[i].getWorldQuaternion(new THREE.Quaternion())
-      );
-      const worldScale = selectedElems[i].getWorldScale(new THREE.Vector3());
+      const worldPos = selectedElems[i].position;
+      const worldRot = selectedElems[i].rotation;
+      const worldScale = selectedElems[i].scale;
       const idPerElem = selectedElems[i].userData.id;
       const newValPerElem = {
         position: [worldPos.x, worldPos.y, worldPos.z],
@@ -249,10 +256,16 @@ export const updateElemTranslation = (id, newVal, prevVal, object, doNotUpdateUn
         scale: [worldScale.x, worldScale.y, worldScale.z],
       };
       updateElemTranslation(idPerElem, newValPerElem, undefined, selectedElems[i], true);
+    }
+    for (let i = 0; i < selectedElems.length; i++) {
+      _checkAndSetTargetingObjects(selectedElems[i]);
+    }
+    for (let i = 0; i < selectedElems.length; i++) {
       selectionGroup.attach(selectedElems[i]);
     }
+  } else {
+    _checkAndSetTargetingObjects(object);
   }
-  _checkAndSetTargetingObjects(object);
   if (!doNotUpdateUndo) {
     getSceneItem('undoRedo').addAction({
       type: 'updateElemTranslation',
@@ -267,6 +280,7 @@ export const removeTransformControls = () => {
   const controls = getSceneItem('transformControls');
   if (!controls) return;
   controls.dispose();
+  controls.detach();
   setSceneItem('transformControls', null);
 };
 

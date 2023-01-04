@@ -66,7 +66,7 @@ export const createOrbitControls = () => {
     rootElem.style.transitionDelay = '0s';
     rootElem.style.opacity = 1;
     const camIcon = getSceneItem('editorIcons').find((i) => curCamera.id === i.icon.userData.id);
-    camIcon.update(curCameraItem);
+    if (camIcon) camIcon.update(curCameraItem);
     // @TODO: Make this better by recording the start position of the movement and comparing
     // at the end listener if it has moved enough
     setTimeout(() => {

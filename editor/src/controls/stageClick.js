@@ -38,22 +38,31 @@ const _mouseUpOnStage = (e) => {
     return;
   }
 
+  const selectableObjectTypes = ['camera', 'cameraTarget', 'element', 'light'];
+  const checkHitObjectParamType = (hitObject) => {
+    // Check the hitObject and its' parent
+    let paramTypeFound = selectableObjectTypes.includes(hitObject.userData.paramType);
+    if (!paramTypeFound) {
+      paramTypeFound = selectableObjectTypes.includes(hitObject.parent.userData.paramType);
+    }
+    return paramTypeFound;
+  };
+
   const mouse = { x: 0, y: 0 };
   mouse.x = (parseInt(e.clientX) / document.documentElement.clientWidth) * 2 - 1;
   mouse.y = -(parseInt(e.clientY) / document.documentElement.clientHeight) * 2 + 1;
   rayClicker.setFromCamera(mouse, getSceneItem('curCamera'));
   const intersects = rayClicker.intersectObjects(getSceneItem('scene').children);
   let selectedObjects = [];
-  const selectableObjectTypes = ['camera', 'cameraTarget', 'element', 'light'];
   for (let i = 0; i < intersects.length; i++) {
-    const hitObject = intersects[i].object;
+    let hitObject = intersects[i].object;
     if (
       hitObject &&
-      hitObject.userData?.paramType &&
       !hitObject.isLine && // Helpers cannot be selected
-      selectableObjectTypes.includes(hitObject.userData.paramType)
+      hitObject.visible &&
+      checkHitObjectParamType(hitObject)
     ) {
-      // TODO: Check if the object is part of a group, then select all objects in that group if it is (selecting a group)
+      if (!hitObject.userData.paramType) hitObject = hitObject.parent; // The hit is on one of the direct children elements, make the parent the hitObject
       const keysDown = getSceneItem('keyboard')?.keysDown || [];
       let curSelection = getSceneItem('selection') || [];
       if (!hitObject) {
@@ -101,7 +110,7 @@ export const selectObjects = (selectedObjects) => {
     }
   }
 
-  if (isMultiselect) {
+  if (isMultiselect || getSceneItem('selectionGroup').children.length) {
     // Empty the selection group
     const selGroupChildren = [...getSceneItem('selectionGroup').children];
     selGroupChildren.forEach((elem) => {
@@ -115,10 +124,10 @@ export const selectObjects = (selectedObjects) => {
     selectionIds = [...selectedObjects];
     const selected3DObjects = [];
     selectedObjects.forEach((id) => {
-      const object3D = scene.children.find((obj) => obj.userData.id === id && obj.isMesh);
+      const object3D = scene.children.find((obj) => obj.isMesh && obj.userData?.id === id);
       if (object3D) {
         selected3DObjects.push(object3D);
-        if (object3D.isTargetObject) {
+        if (object3D.userData.isTargetObject) {
           object3D.visible = true;
         }
       }

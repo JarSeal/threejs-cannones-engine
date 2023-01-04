@@ -42,13 +42,18 @@ export const getElemParamsById = (id) => {
 };
 
 export const removeMeshFromScene = (obj) => {
-  if (!obj) return;
+  if (!obj || !obj.isMesh) return;
   if (obj.geometry) obj.geometry.dispose();
   if (obj.material) {
     if (Array.isArray(obj.material)) {
       obj.material.forEach((mat) => mat.dispose());
     } else {
       obj.material.dispose();
+    }
+  }
+  if (obj.children.length) {
+    for (let i = 0; i < obj.children.length; i++) {
+      removeMeshFromScene(obj.children[i]);
     }
   }
   obj.removeFromParent();

@@ -484,7 +484,7 @@ export const destroyCamera = (cameraIndex, destroyWithoutDialogAndUndo) => {
         setSceneItem('selection', filteredSelection);
         const selectionIds = filteredSelection.map((sel) => sel.userData.id);
         setSceneParam('selection', selectionIds);
-        saveSceneState({ selection: filteredSelection.map((sel) => sel.userData.id) });
+        saveSceneState({ selection: selectionIds });
         break;
       }
     }
@@ -624,6 +624,7 @@ export const updateCamUserDataHelpersAndIcon = (cameraIndex, updateById) => {
       }
     }
   }
+  if (cameraIndex === null || cameraIndex === undefined) return;
   const params = allCamParams[cameraIndex];
   const cameraItem = getSceneItem('allCameras')[cameraIndex];
   const helpers = getSceneItem('cameraHelpers');

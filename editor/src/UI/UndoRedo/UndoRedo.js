@@ -25,8 +25,8 @@ class UndoRedo {
     // then don't record the undo/redo
     const newValStringified = JSON.stringify(action.newVal);
     if (
-      (action.type === this.stack[this.stackPointer].type &&
-        newValStringified === JSON.stringify(this.stack[this.stackPointer].newVal)) ||
+      (action.type === this.stack[this.stackPointer]?.type &&
+        newValStringified === JSON.stringify(this.stack[this.stackPointer]?.newVal)) ||
       newValStringified === JSON.stringify(action.prevVal)
     ) {
       return;
