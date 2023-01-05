@@ -2,7 +2,7 @@ import { Component } from '../../../LIGHTER';
 import { getSceneParam } from '../../sceneData/sceneParams';
 import SettingsPanel from '../common/SettingsPanel';
 import NumberInput from '../common/form/NumberInput';
-import { getSceneItem, setSceneItem } from '../../sceneData/sceneItems';
+import { setSceneItem } from '../../sceneData/sceneItems';
 import InfoField from '../common/form/InfoField';
 import Checkbox from '../common/form/Checbox';
 import ActionButtons from '../common/form/ActionButtons';
@@ -190,7 +190,7 @@ class UICamera extends Component {
           id: 'cam-pos-' + index + '-' + this.id,
           attach: transformsId,
           label: 'Position',
-          step: 0.5,
+          step: 0.5, // @TODO: change this to round to the next possible half of whole number for the position (also change to elem tool)
           inputLabels: ['X', 'Y', 'Z'],
           values: c.position,
           onChange: (value, index) => {
@@ -209,7 +209,7 @@ class UICamera extends Component {
           id: 'cam-target-' + index + '-' + this.id,
           attach: transformsId,
           label: 'Target',
-          step: 0.5,
+          step: 0.5, // @TODO: change this to round to the next 1/8 of PI (also change to elem tool)
           inputLabels: ['X', 'Y', 'Z'],
           values: c.target,
           onChange: (value, index) => {

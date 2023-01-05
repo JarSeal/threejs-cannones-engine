@@ -7,6 +7,7 @@ import { getSelectedElemIcon } from '../utils/utils';
 import styles from './ElemTool.module.scss';
 import Button from './common/Button';
 import SvgIcon from './icons/svg-icon';
+import Transforms from './ElemToolPanels/Transforms';
 
 class ElemTool extends Component {
   constructor(data) {
@@ -142,7 +143,8 @@ class ElemTool extends Component {
           saveEditorState({ scrollPositions: { elemTool: amount } });
         },
       });
-      if (this._allTabs[currentTabId]) this._allTabs[currentTabId].content(tabsContentWrapper);
+      if (this._allTabs[currentTabId])
+        this._allTabs[currentTabId].content(tabsContentWrapper, selections[0]);
       setTimeout(() => {
         if (tabsContentWrapper && tabsContentWrapper.elem) {
           tabsContentWrapper.elem.scrollTop =
@@ -155,13 +157,13 @@ class ElemTool extends Component {
   _allTabs = {
     transforms: {
       iconData: { icon: 'moveArrows', width: 14 },
-      content: (parent) => {
-        parent.addChildDraw({ id: this.id + '-tab-content-transforms', text: 'Transforms' });
+      content: (parent, selection) => {
+        parent.addChildDraw(new Transforms({ id: this.id + '-tab-content-transforms', selection }));
       },
     },
     info: {
       iconData: { icon: 'info', width: 4 },
-      content: (parent) => {
+      content: (parent, selection) => {
         for (let i = 0; i < 30; i++) {
           parent.addChildDraw({
             id: this.id + '-tab-content-info-' + i, // TEMP: remove i

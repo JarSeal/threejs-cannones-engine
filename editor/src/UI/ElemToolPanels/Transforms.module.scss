@@ -1,0 +1,19 @@
+@import '../../sass/variables';
+
+.panelHeading {
+  @include basetext-font-bold;
+  font-size: 1.2rem;
+  color: $mid-grey1;
+}
+
+.vector3 {
+  > :global(span.form-elem__label) {
+    background-color: $light-grey7;
+  }
+  + :global(div.inputVector) {
+    margin-top: 0rem;
+  }
+  :global(div.inputNumber) {
+    width: 10.24rem;
+  }
+}

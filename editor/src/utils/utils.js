@@ -58,3 +58,18 @@ export const removeMeshFromScene = (obj) => {
   }
   obj.removeFromParent();
 };
+
+export const getObjectParams = (obj) => {
+  if (!obj || !obj.userData) return null;
+  if (obj.userData.isTargetObject) return obj.userData.params;
+  return obj.userData;
+};
+
+export const isCameraObject = (obj) => {
+  if (!obj || !obj.isObject3D || !obj.userData) {
+    console.warn('Object provided for isCameraObject util is not a proper 3D object. Object:', obj);
+    return null;
+  }
+  if (obj.userData.paramType === 'camera' || obj.userData.paramType === 'cameraTarget') return true;
+  return false;
+};

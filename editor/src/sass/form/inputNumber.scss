@@ -83,4 +83,10 @@
       cursor: auto;
     }
   }
+  &.readOnly {
+    opacity: 1;
+    button {
+      display: none;
+    }
+  }
 }

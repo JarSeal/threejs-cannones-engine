@@ -140,14 +140,17 @@ export const selectObjects = (selectedObjects) => {
   // then change and disable left tools accordingly (rotation and scale are disabled)
   const leftTools = getSceneItem('leftTools');
   let disabledLeftTools = [];
-  if (isMultiselect) disabledLeftTools = ['scale'];
-  for (let i = 0; i < selectedObjects.length; i++) {
-    if (
-      selectedObjects[i].userData.isTargetingObject ||
-      selectedObjects[i].userData.isTargetObject
-    ) {
-      disabledLeftTools = ['rotate', 'scale'];
-      break;
+  if (isMultiselect) {
+    disabledLeftTools = ['scale'];
+  } else {
+    for (let i = 0; i < selectedObjects.length; i++) {
+      if (
+        selectedObjects[i].userData.isTargetingObject ||
+        selectedObjects[i].userData.isTargetObject
+      ) {
+        disabledLeftTools = ['rotate', 'scale'];
+        break;
+      }
     }
   }
   if (disabledLeftTools.includes(leftTools.selectAndTransformTool)) {
