@@ -7,6 +7,7 @@ import cameraTools, { changeCurCamera } from '../../utils/toolsForCamera';
 import { getSceneParam, setSceneParam } from '../../sceneData/sceneParams';
 import { saveAllCamerasState } from '../../sceneData/saveSession';
 import { updateElemTranslation } from '../../controls/transformControls';
+import { updateElemTransforms } from '../../utils/toolsForElems';
 
 const undoRedoOperations = {
   // ID
@@ -98,7 +99,7 @@ const undoRedoOperations = {
       isUndo ? action.prevVal : action.newVal,
       action.valueIndex,
       action.cameraIndex,
-      false
+      { updateRightPanel: true }
     );
     getSceneItem('rightSidePanel').updatePanel();
   },
@@ -108,9 +109,10 @@ const undoRedoOperations = {
       isUndo ? action.prevVal : action.newVal,
       action.valueIndex,
       action.cameraIndex,
-      false
+      action.args
     );
     getSceneItem('rightSidePanel').updatePanel();
+    getSceneItem('elemTool').updateTool();
   },
   toggleOrbitControls: (action, isUndo) => {
     cameraTools.toggleOrbitControls(isUndo ? action.prevVal : action.newVal, action.cameraIndex);
@@ -191,6 +193,16 @@ const undoRedoOperations = {
     } else {
       cameraTools.destroyCamera(action.cameraIndex, true);
     }
+  },
+  updateElemTransforms: (action, isUndo) => {
+    updateElemTransforms(
+      action.key,
+      isUndo ? action.prevVal : action.newVal,
+      action.valueIndex,
+      action.elemId,
+      action.args
+    );
+    getSceneItem('elemTool').updateTool();
   },
 };
 

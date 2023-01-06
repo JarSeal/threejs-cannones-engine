@@ -1,6 +1,7 @@
 import * as THREE from 'three';
+import { NEW_MATERIAL, NEW_SHAPE_BOX } from '../utils/defaultSceneValues';
 
-// obj: {
+// objParams: {
 // - type: String ('shape' | 'physicsshape' | 'particles' | 'particlesphysics' | 'custom' | 'physics')
 // - id: String
 // - shape: String (primitive shape type that three.js and cannon-es support, does not apply to custom shape)
@@ -9,39 +10,45 @@ import * as THREE from 'three';
 // - position: Number[] ([x, y, z])
 // }
 class ElementLoader {
-  constructor(obj) {
+  constructor(objParams) {
     this.obj;
-    if (obj) this._createObj(obj);
+    if (objParams) this._createObj(objParams);
   }
 
   getObject = () => this.obj;
 
-  _createObj = (obj) => {
-    switch (obj.type) {
+  _createObj = (objParams) => {
+    switch (objParams.type) {
       case 'shape':
-        this.obj = this._createShape(obj);
+        this.obj = this._createShape(objParams);
     }
   };
 
-  _createShape = (obj) => {
-    if (obj.shape === 'box') {
-      const material = this._createMaterial(obj.material);
-      const size = obj.size ? obj.size : [1, 1, 1];
-      const mesh = new THREE.Mesh(new THREE.BoxGeometry(size[0], size[1], size[2]), material);
-      const pos = obj.position ? obj.position : [0, 0, 0];
+  _createShape = (objParams) => {
+    // @TODO: move this to toolsForElems.js
+    if (objParams.shape === 'box') {
+      const material = this._createMaterial(objParams.material);
+      if (!objParams.shapeParams) {
+        objParams.shapeParams = { size: NEW_SHAPE_BOX.size };
+      }
+      const size = objParams.shapeParams.size;
+      const mesh = new THREE.Mesh(new THREE.BoxGeometry(...size), material);
+      const pos = objParams.position ? objParams.position : [0, 0, 0];
       mesh.position.set(...pos);
-      const rot = obj.rotation ? obj.rotation : [0, 0, 0];
+      const rot = objParams.rotation ? objParams.rotation : [0, 0, 0];
       mesh.rotation.set(...rot);
-      const scale = obj.scale ? obj.scale : [1, 1, 1];
+      const scale = objParams.scale ? objParams.scale : [1, 1, 1];
       mesh.scale.set(...scale);
-      mesh.castShadow = obj.castShadow || false;
-      mesh.receiveShadow = obj.receiveShadow || false;
-      mesh.userData = obj;
+      mesh.castShadow = objParams.castShadow || false;
+      mesh.receiveShadow = objParams.receiveShadow || false;
+      mesh.userData = objParams;
       return mesh;
     }
   };
 
   _createMaterial = (mat) => {
+    // @TODO: move this to toolsForElems.js
+    if (!mat) mat = NEW_MATERIAL;
     if (!mat.type) mat.type = 'basic';
     if (mat.type === 'basic') {
       const material = new THREE.MeshBasicMaterial({ color: mat.color });

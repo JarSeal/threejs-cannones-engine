@@ -4,7 +4,13 @@ import { setSceneParam } from '../sceneData/sceneParams';
 import { setSceneItem } from '../sceneData/sceneItems';
 import ElementLoader from './ElementLoader';
 import { saveStateByKey } from '../sceneData/saveSession';
-import { AMBIENT_LIGHT, HEMI_LIGHT, POINT_LIGHT } from '../utils/defaultSceneValues';
+import {
+  AMBIENT_LIGHT,
+  HEMI_LIGHT,
+  NEW_CAMERA_DEFAULT_PARAMS,
+  NEW_ELEM_DEFAULT_PARAMS,
+  POINT_LIGHT,
+} from '../utils/defaultSceneValues';
 import { addCamera } from '../utils/toolsForCamera';
 
 class SceneLoader {
@@ -29,92 +35,14 @@ class SceneLoader {
     if (sceneParams.curCameraIndex === undefined || sceneParams.curCameraIndex === null) {
       setSceneParam('curCameraIndex', 0);
     }
+    const defaultParamsKeys = Object.keys(NEW_CAMERA_DEFAULT_PARAMS);
     for (let i = 0; i < camerasA.length; i++) {
+      defaultParamsKeys.forEach((key) => {
+        if (camerasA[i][key] === undefined) camerasA[i][key] = NEW_CAMERA_DEFAULT_PARAMS[key];
+      });
       addCamera(camerasA[i], true);
     }
     setSceneParam('cameras', camerasA);
-
-    // @TODO: remove the commented code when this (addCamera approach) has been fully tested
-
-    // const reso = getScreenResolution();
-    // const aspectRatio = reso.x / reso.y;
-    // const allCameras = [];
-    // const helpers = [];
-    // const ids = [];
-    // for (let i = 0; i < camerasA.length; i++) {
-    //   const c = camerasA[i];
-    //   c.paramType = 'camera';
-    //   if (!c.id) {
-    //     console.error('Camera must have an ID and type');
-    //     continue;
-    //   }
-    //   if (ids.includes(c.id)) {
-    //     console.error('Multiple cameras with the same ID: ' + c.id);
-    //     continue;
-    //   }
-    //   ids.push(c.id);
-    //   let camera;
-    //   c.index = i;
-    //   const near = c.near || 0.1;
-    //   const far = c.far || 256;
-    //   if (c.type === 'perspectiveTarget') {
-    //     const fov = c.fov || 45;
-    //     camera = new THREE.PerspectiveCamera(fov, aspectRatio, near, far);
-    //   } else if (c.type === 'orthographicTarget') {
-    //     const viewSize = c.viewSize || 1;
-    //     camera = new THREE.OrthographicCamera(
-    //       -viewSize * aspectRatio,
-    //       viewSize * aspectRatio,
-    //       viewSize,
-    //       -viewSize,
-    //       near,
-    //       far
-    //     );
-    //   }
-
-    //   if (c.name === undefined) c.name = '';
-
-    //   camera.userData = c;
-    //   camera.userData.id = c.id || 'camera' + i;
-    //   const pos = c.position ? c.position : [5, 5, 5];
-    //   camera.position.set(pos[0], pos[1], pos[2]);
-
-    //   const target = c.target ? c.target : [0, 0, 0];
-    //   camera.lookAt(new THREE.Vector3(target[0], target[1], target[2]));
-
-    //   allCameras.push(camera);
-    //   new CameraMeshIcon(camera, c);
-    //   if (
-    //     i === sceneParams.curCameraIndex ||
-    //     camerasA.length <= sceneParams.curCameraIndex ||
-    //     ((sceneParams.curCameraIndex === null || sceneParams.curCameraIndex === undefined) &&
-    //       i === 0)
-    //   ) {
-    //     setSceneItem('curCamera', camera);
-    //     if (sceneParams.curCameraIndex === null || sceneParams.curCameraIndex === undefined) {
-    //       setSceneParam('curCameraIndex', 0);
-    //     } else {
-    //       setSceneParam('curCameraIndex', i);
-    //     }
-    //     helpers.push(null);
-    //   } else {
-    //     // Create camera helpers
-    //     const helper = new THREE.CameraHelper(camera);
-    //     helper.userData = c;
-    //     if (!c.showHelper) helper.visible = false;
-    //     helpers.push(helper);
-    //     helper.update();
-    //     this.scene.add(helper);
-    //     camera.updateWorldMatrix();
-    //   }
-
-    //   if (c.orbitControls && getSceneParam('curCameraIndex') === i) {
-    //     createOrbitControls();
-    //   }
-    // }
-    // setSceneItem('allCameras', allCameras);
-    // setSceneItem('cameraHelpers', helpers);
-    // setSceneParam('cameras', camerasA);
   };
 
   _createLights = (lightsA) => {
@@ -164,14 +92,16 @@ class SceneLoader {
     }
   };
 
-  _createObjects = (objects) => {
+  _createObjects = (objectParams) => {
+    // @TODO: move this into toolsForElems.js
     const objectMeshes = [];
-    const objectParams = [];
-    for (let i = 0; i < objects.length; i++) {
-      const objLoader = new ElementLoader(objects[i]);
+    const defaultParamsKeys = Object.keys(NEW_ELEM_DEFAULT_PARAMS);
+    for (let i = 0; i < objectParams.length; i++) {
+      defaultParamsKeys.forEach((key) => {
+        if (objectParams[i][key] === undefined) objectParams[i][key] = NEW_ELEM_DEFAULT_PARAMS[key];
+      });
+      const objLoader = new ElementLoader(objectParams[i]);
       const obj = objLoader.getObject();
-      objects[i].paramType = 'element';
-      objectParams.push(objects[i]);
       objectMeshes.push(obj);
       if (obj) this.scene.add(obj);
     }

@@ -221,7 +221,7 @@ class UICamera extends Component {
         })
       );
 
-      // TODO: ADD A FREE CAMERA WHERE THE ROTATION CAN BE SET
+      // @TODO: ADD A FREE CAMERA WHERE THE ROTATION CAN BE SET
       // Rotation
       // const rot = getSceneItem('allCameras')[c.index].rotation;
       // const rotationComponent = this.addChildDraw(

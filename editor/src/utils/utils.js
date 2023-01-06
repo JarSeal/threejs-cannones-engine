@@ -60,16 +60,20 @@ export const removeMeshFromScene = (obj) => {
 };
 
 export const getObjectParams = (obj) => {
-  if (!obj || !obj.userData) return null;
+  if (!obj || !obj.userData) {
+    console.warn('Could not find object or object userData', obj);
+    return null;
+  }
   if (obj.userData.isTargetObject) return obj.userData.params;
   return obj.userData;
 };
 
-export const isCameraObject = (obj) => {
+// Checks if object is camera or cameraTarget (can be set to check only for the camera object)
+export const isCameraObject = (obj, checkOnlyForCamera) => {
   if (!obj || !obj.isObject3D || !obj.userData) {
     console.warn('Object provided for isCameraObject util is not a proper 3D object. Object:', obj);
     return null;
   }
-  if (obj.userData.paramType === 'camera' || obj.userData.paramType === 'cameraTarget') return true;
-  return false;
+  if (checkOnlyForCamera) return obj.userData.paramType === 'camera';
+  return obj.userData.paramType === 'camera' || obj.userData.paramType === 'cameraTarget';
 };

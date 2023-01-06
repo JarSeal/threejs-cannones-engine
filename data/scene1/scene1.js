@@ -65,9 +65,11 @@ export const scene1 = {
       type: 'shape',
       id: 'my-blue-box',
       shape: 'box',
+      shapeParams: {
+        size: [1, 1, 1],
+      },
       position: [2, 2, 2],
       rotation: [0, 0.7, 0],
-      size: [1, 1, 1],
       castShadow: true,
       receiveShadow: true,
       material: {
@@ -79,9 +81,11 @@ export const scene1 = {
       type: 'shape',
       id: 'my-other-box',
       shape: 'box',
+      shapeParams: {
+        size: [1, 1, 1],
+      },
       position: [-2.5, 0.5, -2.5],
       rotation: [0, 0, 0],
-      size: [1, 1, 1],
       castShadow: true,
       receiveShadow: true,
       material: {
@@ -93,8 +97,10 @@ export const scene1 = {
       type: 'shape',
       id: 'ground',
       shape: 'box',
+      shapeParams: {
+        size: [20, 0.125, 20],
+      },
       position: [0, -0.0625, 0],
-      size: [20, 0.125, 20],
       receiveShadow: true,
       material: {
         type: 'lambert',

@@ -46,7 +46,7 @@ class NumberInput extends Component {
                 </label>
             </div>
         `;
-    this.value = data.value;
+    this.value = parseFloat(data.value);
     this.step = data.step;
     this.precision = data.precision;
     this.errorComp = this.addChild({
@@ -96,7 +96,7 @@ class NumberInput extends Component {
       fn: (e) => {
         const value = checkMinMaxValue(this._parsePrecision(e.target.value));
         const prevValue = this.value;
-        this.setValue(value);
+        this.setValue(value, true);
         if (data.changeFn) data.changeFn(value, prevValue, this.setValue);
       },
     });
@@ -134,7 +134,7 @@ class NumberInput extends Component {
       type: 'click',
       fn: () => {
         this.setValue(checkMinMaxValue(this._parsePrecision(this.value + (this.step || 1))));
-        inputElem.focus();
+        // inputElem.focus();
       },
     });
     this.addListener({
@@ -143,7 +143,7 @@ class NumberInput extends Component {
       type: 'click',
       fn: () => {
         this.setValue(checkMinMaxValue(this._parsePrecision(this.value - (this.step || 1))));
-        inputElem.focus();
+        // inputElem.focus();
       },
     });
   }

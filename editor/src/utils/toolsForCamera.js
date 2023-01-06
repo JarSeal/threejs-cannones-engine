@@ -170,13 +170,7 @@ export const addCamera = (params, initiatingCameras) => {
   }
 };
 
-export const updateCameraTransforms = (
-  posOrTar,
-  value,
-  valueIndex,
-  cameraIndex,
-  updateRightPanel
-) => {
+export const updateCameraTransforms = (posOrTar, value, valueIndex, cameraIndex, args) => {
   const cam = getSceneItem('allCameras')[cameraIndex];
   const curPos = getSceneParam('cameras')[cameraIndex].position;
   const curTarget = getSceneParam('cameras')[cameraIndex].target;
@@ -202,8 +196,9 @@ export const updateCameraTransforms = (
     getSceneItem('orbitControls').target = new THREE.Vector3(...curTarget);
   }
   const rightPanel = getSceneItem('rightSidePanel');
-  if (updateRightPanel && rightPanel.tabId === 'UICamera') rightPanel.updatePanel();
-  updateCamUserDataHelpersAndIcon(cameraIndex);
+  updateCamUserDataHelpersAndIcon(cameraIndex, undefined, args);
+  if (args?.updateRightPanel && rightPanel.tabId === 'UICamera') rightPanel.updatePanel();
+  if (args?.updateElemTool !== false) getSceneItem('elemTool').updateTool();
   getSceneItem('undoRedo').addAction({
     type: 'updateCameraTransforms',
     prevVal: prevVal,
@@ -241,13 +236,7 @@ export const updateCameraTransforms = (
   // }
 };
 
-export const updateCameraDefaultTransforms = (
-  posOrTar,
-  value,
-  valueIndex,
-  cameraIndex,
-  updateRightPanel
-) => {
+export const updateCameraDefaultTransforms = (posOrTar, value, valueIndex, cameraIndex, args) => {
   const cameraParams = getSceneParam('cameras');
   let prevVal;
   if (posOrTar === 'position') {
@@ -265,8 +254,8 @@ export const updateCameraDefaultTransforms = (
   setSceneParam('cameras', cameraParams);
   saveAllCamerasState(cameraParams);
   const rightPanel = getSceneItem('rightSidePanel');
-  if (updateRightPanel && rightPanel.tabId === 'UICamera') rightPanel.updatePanel();
-  updateCamUserDataHelpersAndIcon(cameraIndex);
+  if (args?.updateRightPanel && rightPanel.tabId === 'UICamera') rightPanel.updatePanel();
+  updateCamUserDataHelpersAndIcon(cameraIndex, undefined, args);
   getSceneItem('undoRedo').addAction({
     type: 'updateCameraDefaultTransforms',
     prevVal,
@@ -274,6 +263,7 @@ export const updateCameraDefaultTransforms = (
     valueIndex,
     cameraIndex,
     posOrTar,
+    args,
   });
 };
 
@@ -493,7 +483,7 @@ export const destroyCamera = (cameraIndex, destroyWithoutDialogAndUndo) => {
       }
     }
 
-    // Update camera helpers
+    // Remove camera helpers
     const helpers = getSceneItem('cameraHelpers');
     if (helpers[index]) {
       helpers[index].dispose();
@@ -528,7 +518,7 @@ export const destroyCamera = (cameraIndex, destroyWithoutDialogAndUndo) => {
         })
     );
 
-    // Update editor icons
+    // Remove editor icons
     const editorIcons = getSceneItem('editorIcons');
     editorIcons.find((icon) => {
       if (icon.icon.userData.id === destroyCameraParams.id) {
@@ -618,7 +608,7 @@ export const setNewCameraTransforms = (transforms, cameraIndex) => {
   });
 };
 
-export const updateCamUserDataHelpersAndIcon = (cameraIndex, updateById) => {
+export const updateCamUserDataHelpersAndIcon = (cameraIndex, updateById, args) => {
   const allCamParams = getSceneParam('cameras');
   if (updateById) {
     for (let i = 0; i < allCamParams.length; i++) {
@@ -637,15 +627,11 @@ export const updateCamUserDataHelpersAndIcon = (cameraIndex, updateById) => {
     (icon) => params.id === icon.icon.userData.id
   );
   if (editorIcon) editorIcon.update(cameraItem);
-  const editorTarget = getSceneItem('editorTargetMeshes').find(
-    (mesh) => mesh.userData.params.id === params.id
-  );
-  editorTarget.userData.params = params;
   if (helpers && helpers.length && helpers[cameraIndex]) {
     helpers[cameraIndex].userData = params[cameraIndex];
     helpers[cameraIndex].update();
   }
-  getSceneItem('elemTool').updateTool();
+  if (args?.updateElemTool !== false) getSceneItem('elemTool').updateTool();
 };
 
 export default {

@@ -64,6 +64,10 @@ class CameraMeshIcon {
     this.icon.position.set(...newPos);
     this.icon.quaternion.set(...newQuat);
     this.icon.userData = camera.userData;
+    if (this.cameraTargetMesh) {
+      this.cameraTargetMesh.position.set(...camera.userData.target);
+      this.cameraTargetMesh.userData.params = camera.userData;
+    }
     if (isInSelectionGroup) {
       selectionGroupChildren.forEach((child) => selectionGroup.attach(child));
     }
