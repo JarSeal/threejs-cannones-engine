@@ -42,6 +42,26 @@ class Transforms extends Component {
       })
     );
 
+    // Target (if the actual camera icon is selected)
+    if (isTargetingObject) {
+      this.addChildDraw(
+        new VectorInput({
+          id: this.id + '-target',
+          label: 'Target position',
+          step: 0.5,
+          attach: this.transformsWrapperId,
+          class: [styles.vector3],
+          inputLabels: ['X', 'Y', 'Z'],
+          values: params.target,
+          onChange: (value, index) => {
+            updateElemTransforms('target', value, index, this.selection, {
+              updateElemTool: false,
+            });
+          },
+        })
+      );
+    }
+
     // Rotation
     if (!isTargetObject) {
       this.addChildDraw(
@@ -83,26 +103,6 @@ class Transforms extends Component {
       );
     }
 
-    // Target (if the actual camera icon is selected)
-    if (isTargetingObject) {
-      this.addChildDraw(
-        new VectorInput({
-          id: this.id + '-target',
-          label: 'Target position',
-          step: 0.5,
-          attach: this.transformsWrapperId,
-          class: [styles.vector3],
-          inputLabels: ['X', 'Y', 'Z'],
-          values: params.target,
-          onChange: (value, index) => {
-            updateElemTransforms('target', value, index, this.selection, {
-              updateElemTool: false,
-            });
-          },
-        })
-      );
-    }
-
     // DEFAULT TRANSFORMS
     // ************************************
 
@@ -124,8 +124,28 @@ class Transforms extends Component {
       })
     );
 
+    // Default TARGET (if the actual camera icon is selected)
+    if (isTargetingObject) {
+      this.addChildDraw(
+        new VectorInput({
+          id: this.id + '-default-target',
+          label: 'Default target position',
+          step: 0.5,
+          attach: this.defaultTransformsWrapperId,
+          class: [styles.vector3],
+          inputLabels: ['X', 'Y', 'Z'],
+          values: params.defaultTarget,
+          onChange: (value, index) => {
+            updateElemTransforms('defaultTarget', value, index, this.selection, {
+              updateElemTool: false,
+            });
+          },
+        })
+      );
+    }
+
     // Default ROTATION
-    if (!isTargetObject) {
+    if (!isTargetObject && !isTargetingObject) {
       this.addChildDraw(
         new VectorInput({
           id: this.id + '-default-rotation',
@@ -158,26 +178,6 @@ class Transforms extends Component {
           values: params.defaultScale,
           onChange: (value, index) => {
             updateElemTransforms('defaultScale', value, index, this.selection, {
-              updateElemTool: false,
-            });
-          },
-        })
-      );
-    }
-
-    // Default TARGET (if the actual camera icon is selected)
-    if (isTargetingObject) {
-      this.addChildDraw(
-        new VectorInput({
-          id: this.id + '-default-target',
-          label: 'Default target position',
-          step: 0.5,
-          attach: this.defaultTransformsWrapperId,
-          class: [styles.vector3],
-          inputLabels: ['X', 'Y', 'Z'],
-          values: params.defaultTarget,
-          onChange: (value, index) => {
-            updateElemTransforms('defaultTarget', value, index, this.selection, {
               updateElemTool: false,
             });
           },

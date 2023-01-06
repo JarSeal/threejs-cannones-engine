@@ -85,6 +85,10 @@
   }
   &.readOnly {
     opacity: 1;
+    background-color: transparent;
+    input {
+      background-color: transparent;
+    }
     button {
       display: none;
     }
