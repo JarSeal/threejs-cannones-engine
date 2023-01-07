@@ -1,4 +1,5 @@
 import { Component } from '../../LIGHTER';
+import { selectObjects } from '../controls/stageClick';
 import { saveEditorState } from '../sceneData/saveSession';
 import { getSceneItem } from '../sceneData/sceneItems';
 import { getSceneParamR, setSceneParamR } from '../sceneData/sceneParams';
@@ -181,6 +182,7 @@ class LeftTools extends Component {
       );
       transControls.enabled = true;
     }
+    selectObjects(selections); // This is to recalculate the new selection group size (this does not add a new undo history item)
     this.updateTools();
   };
 
