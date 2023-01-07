@@ -134,7 +134,6 @@ class NumberInput extends Component {
       type: 'click',
       fn: () => {
         this.setValue(checkMinMaxValue(this._parsePrecision(this.value + (this.step || 1))));
-        // inputElem.focus();
       },
     });
     this.addListener({
@@ -143,7 +142,6 @@ class NumberInput extends Component {
       type: 'click',
       fn: () => {
         this.setValue(checkMinMaxValue(this._parsePrecision(this.value - (this.step || 1))));
-        // inputElem.focus();
       },
     });
   }
