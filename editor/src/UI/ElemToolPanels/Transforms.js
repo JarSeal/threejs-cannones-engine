@@ -1,4 +1,5 @@
 import { Component } from '../../../LIGHTER';
+import { getSceneItem } from '../../sceneData/sceneItems';
 import { updateElemTransforms } from '../../utils/toolsForElems';
 import { getObjectParams, isCameraObject } from '../../utils/utils';
 import VectorInput from '../common/form/VectorInput';
@@ -13,18 +14,31 @@ class Transforms extends Component {
     data.template = `<div>
       <span class="${styles.panelHeading}">Transforms</span>
       <div id="${this.transformsWrapperId}"></div>
-      <span class="${styles.panelHeading}">Default transforms</span>
-      <div id="${this.defaultTransformsWrapperId}"></div>
+      ${
+        data.selections.length === 1
+          ? `<span class="${styles.panelHeading}">Default transforms</span>
+        <div id="${this.defaultTransformsWrapperId}"></div>`
+          : ''
+      }
     </div>`;
-    this.selection = data.selection;
+    this.selection;
+    this.selections = data.selections;
   }
 
   paint = () => {
+    const isMultiselect = this.selections.length > 1;
+    let isTargetingObject, isTargetObject;
+    if (isMultiselect) {
+      this.selection = getSceneItem('selectionGroup');
+      isTargetingObject = false;
+      isTargetObject = false;
+    } else {
+      this.selection = this.data.selections[0];
+      isTargetingObject = this.selection.userData.isTargetingObject;
+      isTargetObject = this.selection.userData.isTargetObject;
+    }
     const params = getObjectParams(this.selection);
     const isCamera = isCameraObject(this.selection);
-    const isTargetingObject = this.selection.userData.isTargetingObject;
-    const isTargetObject = this.selection.userData.isTargetObject;
-    const isMultiselect = this.selection.length > 1;
 
     // Position
     this.addChildDraw(
@@ -35,7 +49,7 @@ class Transforms extends Component {
         attach: this.transformsWrapperId,
         class: [styles.vector3],
         inputLabels: ['X', 'Y', 'Z'],
-        values: isTargetObject ? [...this.selection.position] : params.position,
+        values: isTargetObject || isMultiselect ? [...this.selection.position] : params.position,
         onChange: (value, index) => {
           updateElemTransforms('position', value, index, this.selection, { updateElemTool: false });
         },
@@ -43,7 +57,7 @@ class Transforms extends Component {
     );
 
     // Target (if the actual camera icon is selected)
-    if (isTargetingObject) {
+    if (isTargetingObject && !isMultiselect) {
       this.addChildDraw(
         new VectorInput({
           id: this.id + '-target',
@@ -63,7 +77,7 @@ class Transforms extends Component {
     }
 
     // Rotation
-    if (!isTargetObject) {
+    if (!isTargetObject || isMultiselect) {
       this.addChildDraw(
         new VectorInput({
           id: this.id + '-rotation',
@@ -73,7 +87,9 @@ class Transforms extends Component {
           class: [styles.vector3],
           readOnly: isTargetingObject,
           inputLabels: ['X', 'Y', 'Z'],
-          values: params.rotation,
+          values: isMultiselect
+            ? [this.selection.rotation.x, this.selection.rotation.y, this.selection.rotation.z]
+            : params.rotation,
           onChange: (value, index) => {
             updateElemTransforms('rotation', value, index, this.selection, {
               updateElemTool: false,
@@ -107,82 +123,84 @@ class Transforms extends Component {
     // ************************************
 
     // Default POSITION
-    this.addChildDraw(
-      new VectorInput({
-        id: this.id + '-default-position',
-        label: 'Default position',
-        step: 0.5,
-        attach: this.defaultTransformsWrapperId,
-        class: [styles.vector3],
-        inputLabels: ['X', 'Y', 'Z'],
-        values: isTargetObject ? params.defaultTarget : params.defaultPosition,
-        onChange: (value, index) => {
-          updateElemTransforms('defaultPosition', value, index, this.selection, {
-            updateElemTool: false,
-          });
-        },
-      })
-    );
-
-    // Default TARGET (if the actual camera icon is selected)
-    if (isTargetingObject) {
+    if (!isMultiselect) {
       this.addChildDraw(
         new VectorInput({
-          id: this.id + '-default-target',
-          label: 'Default target position',
+          id: this.id + '-default-position',
+          label: 'Default position',
           step: 0.5,
           attach: this.defaultTransformsWrapperId,
           class: [styles.vector3],
           inputLabels: ['X', 'Y', 'Z'],
-          values: params.defaultTarget,
+          values: isTargetObject ? params.defaultTarget : params.defaultPosition,
           onChange: (value, index) => {
-            updateElemTransforms('defaultTarget', value, index, this.selection, {
+            updateElemTransforms('defaultPosition', value, index, this.selection, {
               updateElemTool: false,
             });
           },
         })
       );
-    }
 
-    // Default ROTATION
-    if (!isTargetObject && !isTargetingObject) {
-      this.addChildDraw(
-        new VectorInput({
-          id: this.id + '-default-rotation',
-          label: 'Default rotation',
-          step: 0.5,
-          attach: this.defaultTransformsWrapperId,
-          class: [styles.vector3],
-          readOnly: isTargetingObject,
-          inputLabels: ['X', 'Y', 'Z'],
-          values: params.defaultRotation,
-          onChange: (value, index) => {
-            updateElemTransforms('defaultRotation', value, index, this.selection, {
-              updateElemTool: false,
-            });
-          },
-        })
-      );
-    }
+      // Default TARGET (if the actual camera icon is selected)
+      if (isTargetingObject) {
+        this.addChildDraw(
+          new VectorInput({
+            id: this.id + '-default-target',
+            label: 'Default target position',
+            step: 0.5,
+            attach: this.defaultTransformsWrapperId,
+            class: [styles.vector3],
+            inputLabels: ['X', 'Y', 'Z'],
+            values: params.defaultTarget,
+            onChange: (value, index) => {
+              updateElemTransforms('defaultTarget', value, index, this.selection, {
+                updateElemTool: false,
+              });
+            },
+          })
+        );
+      }
 
-    // Default SCALE
-    if (!isCamera && !isMultiselect) {
-      this.addChildDraw(
-        new VectorInput({
-          id: this.id + '-default-scale',
-          label: 'Default scale',
-          step: 0.5,
-          attach: this.defaultTransformsWrapperId,
-          class: [styles.vector3],
-          inputLabels: ['X', 'Y', 'Z'],
-          values: params.defaultScale,
-          onChange: (value, index) => {
-            updateElemTransforms('defaultScale', value, index, this.selection, {
-              updateElemTool: false,
-            });
-          },
-        })
-      );
+      // Default ROTATION
+      if (!isTargetObject && !isTargetingObject) {
+        this.addChildDraw(
+          new VectorInput({
+            id: this.id + '-default-rotation',
+            label: 'Default rotation',
+            step: 0.5,
+            attach: this.defaultTransformsWrapperId,
+            class: [styles.vector3],
+            readOnly: isTargetingObject,
+            inputLabels: ['X', 'Y', 'Z'],
+            values: params.defaultRotation,
+            onChange: (value, index) => {
+              updateElemTransforms('defaultRotation', value, index, this.selection, {
+                updateElemTool: false,
+              });
+            },
+          })
+        );
+      }
+
+      // Default SCALE
+      if (!isCamera && !isMultiselect) {
+        this.addChildDraw(
+          new VectorInput({
+            id: this.id + '-default-scale',
+            label: 'Default scale',
+            step: 0.5,
+            attach: this.defaultTransformsWrapperId,
+            class: [styles.vector3],
+            inputLabels: ['X', 'Y', 'Z'],
+            values: params.defaultScale,
+            onChange: (value, index) => {
+              updateElemTransforms('defaultScale', value, index, this.selection, {
+                updateElemTool: false,
+              });
+            },
+          })
+        );
+      }
     }
   };
 }
