@@ -19,6 +19,7 @@ export const updateCameraProperty = (value, i, key, args) => {
     return cam;
   });
   const cam = getSceneItem('allCameras')[i];
+  cam.userData[key] = value;
   if (key === 'orthoViewSize') {
     const reso = getScreenResolution();
     const aspectRatio = reso.x / reso.y;
@@ -26,6 +27,15 @@ export const updateCameraProperty = (value, i, key, args) => {
     cam.right = value * aspectRatio;
     cam.top = value;
     cam.bottom = -value;
+  } else if (key === 'id') {
+    const selectionIds = getSceneParam('selection');
+    const newSelectionIds = selectionIds.map((id) => {
+      if (id === args?.prevVal) return value;
+      if (id === CAMERA_TARGET_ID + '--' + args?.prevVal) return CAMERA_TARGET_ID + '--' + value;
+      return id;
+    });
+    setSceneParam('selection', newSelectionIds);
+    saveSceneState({ selection: newSelectionIds });
   } else {
     cam[key] = value;
   }

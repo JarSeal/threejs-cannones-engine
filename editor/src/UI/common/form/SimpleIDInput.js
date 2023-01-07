@@ -131,7 +131,7 @@ class SimpleIDInput extends Component {
           if (nextElem) nextElem.focus();
         }
       }, 400);
-      if (this.afterSuccessBlur) this.afterSuccessBlur(value);
+      if (this.afterSuccessBlur) this.afterSuccessBlur(value, this.undoValue);
     }
   };
 

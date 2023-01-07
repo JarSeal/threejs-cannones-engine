@@ -2,7 +2,7 @@ import { Component } from '../../../LIGHTER';
 import { getSceneParam } from '../../sceneData/sceneParams';
 import SettingsPanel from '../common/SettingsPanel';
 import NumberInput from '../common/form/NumberInput';
-import { setSceneItem } from '../../sceneData/sceneItems';
+import { getSceneItem, setSceneItem } from '../../sceneData/sceneItems';
 import InfoField from '../common/form/InfoField';
 import Checkbox from '../common/form/Checbox';
 import ActionButtons from '../common/form/ActionButtons';
@@ -86,6 +86,12 @@ class UICamera extends Component {
           label: 'ID',
           attach: contentId,
           curId: c.id,
+          afterSuccessBlur: (value, prevVal) => {
+            c.id = value;
+            updateCameraProperty(value, c.index, 'id', { prevVal });
+            camPanels[c.index].updateTitle(printName({ name: value, id: c.id }));
+            getSceneItem('elemTool').updateTool();
+          },
         })
       );
 
