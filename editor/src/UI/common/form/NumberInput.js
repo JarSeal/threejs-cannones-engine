@@ -13,6 +13,7 @@ import SvgIcon from '../../icons/svg-icon';
 // - error = an error boolean or object to tell if the field has errors {hasError:Boolean, errorMsg:String} [Boolean/Object]
 // - doNotSelectOnFocus = boolean whether to select all content or not [Boolean]
 // - doNotBlurOnEnter = boolean whether to blur from the input field when Enter key is pressed [Boolean]
+// - readOnly = boolean that works the same way as disabled, but removes the arrows from the inputs
 class NumberInput extends Component {
   constructor(data) {
     super(data);
@@ -24,7 +25,9 @@ class NumberInput extends Component {
     this.min = data.min;
     this.max = data.max;
     this.template = `
-            <div class="form-elem form-elem--number-input inputNumber">
+            <div class="form-elem form-elem--number-input inputNumber${
+              data.readOnly ? ' readOnly' : ''
+            }">
                 <label for="${this.inputId}">
                     <span class="form-elem__label">${data.label}</span>
                     <input
@@ -43,7 +46,7 @@ class NumberInput extends Component {
                 </label>
             </div>
         `;
-    this.value = data.value;
+    this.value = parseFloat(data.value);
     this.step = data.step;
     this.precision = data.precision;
     this.errorComp = this.addChild({
@@ -52,6 +55,7 @@ class NumberInput extends Component {
     });
     if (data.error) data.class = 'form-elem--error';
     this.disabled = data.disabled;
+    this.readOnly = data.readOnly;
   }
 
   paint = () => {
@@ -71,7 +75,7 @@ class NumberInput extends Component {
         attach: this.buttonDownId,
       })
     );
-    this.toggleDisabled(this.disabled);
+    this.toggleDisabled(this.disabled || this.readOnly);
   };
 
   addListeners(data) {
@@ -92,7 +96,7 @@ class NumberInput extends Component {
       fn: (e) => {
         const value = checkMinMaxValue(this._parsePrecision(e.target.value));
         const prevValue = this.value;
-        this.setValue(value);
+        this.setValue(value, true);
         if (data.changeFn) data.changeFn(value, prevValue, this.setValue);
       },
     });
@@ -130,7 +134,6 @@ class NumberInput extends Component {
       type: 'click',
       fn: () => {
         this.setValue(checkMinMaxValue(this._parsePrecision(this.value + (this.step || 1))));
-        inputElem.focus();
       },
     });
     this.addListener({
@@ -139,7 +142,6 @@ class NumberInput extends Component {
       type: 'click',
       fn: () => {
         this.setValue(checkMinMaxValue(this._parsePrecision(this.value - (this.step || 1))));
-        inputElem.focus();
       },
     });
   }

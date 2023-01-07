@@ -7,6 +7,7 @@ import { getSelectedElemIcon } from '../utils/utils';
 import styles from './ElemTool.module.scss';
 import Button from './common/Button';
 import SvgIcon from './icons/svg-icon';
+import Transforms from './ElemToolPanels/Transforms';
 
 class ElemTool extends Component {
   constructor(data) {
@@ -86,9 +87,16 @@ class ElemTool extends Component {
             : selections[0]?.userData.id || '[ ID NOT FOUND ]',
         class: [styles.idText],
       });
-      // TODO: Create Tools here (buttons for group, copy, etc.)
-      this._createElemTabs(parent, selections);
+    } else {
+      // Multiselection
+      parent.addChildDraw({
+        id: parent.id + '-id-text',
+        text: '(multiselection)',
+        class: [styles.idText],
+      });
     }
+    // TODO: Create Action button tools here (buttons for group, copy, etc.)
+    this._createElemTabs(parent, selections);
   };
 
   _createElemTabs = (parent, selections) => {
@@ -98,70 +106,70 @@ class ElemTool extends Component {
     });
     let currentTabId = getSceneParamR('editor.show.elemToolCurTabId');
 
-    if (selections.length === 1) {
-      // Only one selection
-      const tabs = ['transforms', 'info'];
-      if (!tabs.includes(currentTabId)) currentTabId = tabs[0];
-      tabs.forEach((tabId) => {
-        if (!this._allTabs[tabId]) {
-          console.warn(`Could not find tabId "${tabId}" in allTabs`);
-          return;
-        }
-        const tabData = this._allTabs[tabId];
-        tabsWrapper.addChildDraw(
-          new Button({
-            id: this.id + '-tab-' + tabId,
-            class: tabId === currentTabId ? ['current'] : [],
-            icon: new SvgIcon({
-              id: this.id + '-tab-icon-' + tabId,
-              ...tabData.iconData,
-            }),
-            onClick: () => {
-              if (tabId === currentTabId) return;
-              setSceneParamR('editor.show.elemToolCurTabId', tabId);
-              setSceneParamR('editor.scrollPositions.elemTool', 0);
-              saveEditorState({
-                show: { elemToolCurTabId: tabId },
-                scrollPositions: { elemTool: 0 },
-              });
-              getSceneItem('elemTool').updateTool();
-            },
-          })
-        );
-      });
-      const tabsContentWrapper = parent.addChildDraw({
-        id: parent.id + '-tabs-content',
-        class: [styles.tabsContent, 'scrollbar'],
-      });
-      tabsContentWrapper.addListener({
-        id: parent.id + '-tabs-content-scroll-listener',
-        type: 'scroll',
-        fn: (e) => {
-          const amount = e.target.scrollTop;
-          setSceneParamR('editor.scrollPositions.elemTool', amount);
-          saveEditorState({ scrollPositions: { elemTool: amount } });
-        },
-      });
-      if (this._allTabs[currentTabId]) this._allTabs[currentTabId].content(tabsContentWrapper);
-      setTimeout(() => {
-        if (tabsContentWrapper && tabsContentWrapper.elem) {
-          tabsContentWrapper.elem.scrollTop =
-            getSceneParamR('editor.scrollPositions.elemTool') || 0;
-        }
-      }, 200);
-    }
+    // Only one selection
+    const tabs = ['transforms', 'info'];
+    if (!tabs.includes(currentTabId)) currentTabId = tabs[0];
+    tabs.forEach((tabId) => {
+      if (!this._allTabs[tabId]) {
+        console.warn(`Could not find tabId "${tabId}" in allTabs`);
+        return;
+      }
+      const tabData = this._allTabs[tabId];
+      tabsWrapper.addChildDraw(
+        new Button({
+          id: this.id + '-tab-' + tabId,
+          class: tabId === currentTabId ? ['current'] : [],
+          icon: new SvgIcon({
+            id: this.id + '-tab-icon-' + tabId,
+            ...tabData.iconData,
+          }),
+          onClick: () => {
+            if (tabId === currentTabId) return;
+            setSceneParamR('editor.show.elemToolCurTabId', tabId);
+            setSceneParamR('editor.scrollPositions.elemTool', 0);
+            saveEditorState({
+              show: { elemToolCurTabId: tabId },
+              scrollPositions: { elemTool: 0 },
+            });
+            getSceneItem('elemTool').updateTool();
+          },
+        })
+      );
+    });
+    const tabsContentWrapper = parent.addChildDraw({
+      id: parent.id + '-tabs-content',
+      class: [styles.tabsContent, 'scrollbar'],
+    });
+    tabsContentWrapper.addListener({
+      id: parent.id + '-tabs-content-scroll-listener',
+      type: 'scroll',
+      fn: (e) => {
+        const amount = e.target.scrollTop;
+        setSceneParamR('editor.scrollPositions.elemTool', amount);
+        saveEditorState({ scrollPositions: { elemTool: amount } });
+      },
+    });
+    if (this._allTabs[currentTabId])
+      this._allTabs[currentTabId].content(tabsContentWrapper, selections);
+    setTimeout(() => {
+      if (tabsContentWrapper && tabsContentWrapper.elem) {
+        tabsContentWrapper.elem.scrollTop = getSceneParamR('editor.scrollPositions.elemTool') || 0;
+      }
+    }, 200);
   };
 
   _allTabs = {
     transforms: {
       iconData: { icon: 'moveArrows', width: 14 },
-      content: (parent) => {
-        parent.addChildDraw({ id: this.id + '-tab-content-transforms', text: 'Transforms' });
+      content: (parent, selections) => {
+        parent.addChildDraw(
+          new Transforms({ id: this.id + '-tab-content-transforms', selections })
+        );
       },
     },
     info: {
       iconData: { icon: 'info', width: 4 },
-      content: (parent) => {
+      content: (parent, selections) => {
         for (let i = 0; i < 30; i++) {
           parent.addChildDraw({
             id: this.id + '-tab-content-info-' + i, // TEMP: remove i

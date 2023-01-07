@@ -140,14 +140,17 @@ export const selectObjects = (selectedObjects) => {
   // then change and disable left tools accordingly (rotation and scale are disabled)
   const leftTools = getSceneItem('leftTools');
   let disabledLeftTools = [];
-  if (isMultiselect) disabledLeftTools = ['scale'];
-  for (let i = 0; i < selectedObjects.length; i++) {
-    if (
-      selectedObjects[i].userData.isTargetingObject ||
-      selectedObjects[i].userData.isTargetObject
-    ) {
-      disabledLeftTools = ['rotate', 'scale'];
-      break;
+  if (isMultiselect) {
+    disabledLeftTools = ['scale'];
+  } else {
+    for (let i = 0; i < selectedObjects.length; i++) {
+      if (
+        selectedObjects[i].userData.isTargetingObject ||
+        selectedObjects[i].userData.isTargetObject
+      ) {
+        disabledLeftTools = ['rotate', 'scale'];
+        break;
+      }
     }
   }
   if (disabledLeftTools.includes(leftTools.selectAndTransformTool)) {
@@ -175,6 +178,29 @@ export const selectObjects = (selectedObjects) => {
     outlinePass.selectedObjects = selection;
     const leftToolSelected = leftTools.selectAndTransformTool;
     transControls.enabled = false;
+
+    if (selectedObjects.length === 1) {
+      transControls.attach(selection[0]);
+    } else {
+      // Count the group's bounding box
+      const aabb = new THREE.Box3().setFromObject(selGroup);
+      // Remove the selected items temporarily from the group (set them to the scene)
+      const selGroupChildren = [...selGroup.children];
+      selGroupChildren.forEach((sel) => scene.attach(sel)); // Attach the selGroup children temporarily to the scene
+      // Position the group to the middle of the bounding box
+      selGroup.position.set(
+        aabb.min.x + 0.5 * (aabb.max.x - aabb.min.x),
+        aabb.min.y + 0.5 * (aabb.max.y - aabb.min.y),
+        aabb.min.z + 0.5 * (aabb.max.z - aabb.min.z)
+      );
+      selGroup.rotation.set(0, 0, 0);
+      selGroup.updateWorldMatrix();
+      // Add the selected item back to the group
+      selGroupChildren.forEach((sel) => selGroup.attach(sel));
+      // Attach the transform controls
+      transControls.attach(selGroup);
+    }
+
     if (
       leftToolSelected === 'translate' ||
       leftToolSelected === 'rotate' ||
@@ -182,26 +208,6 @@ export const selectObjects = (selectedObjects) => {
     ) {
       transControls.mode = leftToolSelected;
       transControls.enabled = true;
-      if (selectedObjects.length === 1) {
-        transControls.attach(selection[0]);
-      } else {
-        // Count the group's bounding box
-        const aabb = new THREE.Box3().setFromObject(selGroup);
-        // Remove the selected items temporarily from the group (set them to the scene)
-        const selGroupChildren = [...selGroup.children];
-        selGroupChildren.forEach((sel) => scene.attach(sel)); // Attach the selGroup children temporarily to the scene
-        // Position the group to the middle of the bounding box
-        selGroup.position.set(
-          aabb.min.x + 0.5 * (aabb.max.x - aabb.min.x),
-          aabb.min.y + 0.5 * (aabb.max.y - aabb.min.y),
-          aabb.min.z + 0.5 * (aabb.max.z - aabb.min.z)
-        );
-        selGroup.updateWorldMatrix();
-        // Add the selected item back to the group
-        selGroupChildren.forEach((sel) => selGroup.attach(sel));
-        // Attach the transform controls
-        transControls.attach(selGroup);
-      }
     } else {
       // Selection tool (no transforms)
       transControls.detach();

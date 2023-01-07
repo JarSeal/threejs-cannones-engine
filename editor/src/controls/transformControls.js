@@ -167,6 +167,9 @@ export const createTransformControls = () => {
 };
 
 export const updateElemTranslation = (id, newVal, prevVal, object, doNotUpdateUndo) => {
+  let newPos = newVal.position,
+    newRot = newVal.rotation,
+    newScale = newVal.scale;
   if (!object) {
     // If the object is not in the params, we have to search it.
     // For example the undo/redo needs to do this, since the object cannot
@@ -198,12 +201,18 @@ export const updateElemTranslation = (id, newVal, prevVal, object, doNotUpdateUn
             ...cam,
             position: newVal.position,
             rotation: newVal.rotation,
-            scale: newVal.scale,
+            scale: [1, 1, 1],
           };
         return cam;
       });
       setSceneParam('cameras', newCamParams);
       saveStateByKey('cameras', newCamParams);
+    }
+    newScale = [1, 1, 1];
+    if (object) {
+      object.userData.position = newVal.position;
+      object.userData.rotation = newVal.rotation;
+      object.userData.scale = newScale;
     }
   } else if (object?.userData.isTargetObject) {
     // Target object
@@ -215,11 +224,20 @@ export const updateElemTranslation = (id, newVal, prevVal, object, doNotUpdateUn
           return {
             ...cam,
             target: [...newVal.position],
+            rotation: [0, 0, 0],
+            scale: [1, 1, 1],
           };
         return cam;
       });
       setSceneParam('cameras', newCamParams);
       saveStateByKey('cameras', newCamParams);
+    }
+    newRot = [0, 0, 0];
+    newScale = [1, 1, 1];
+    if (object) {
+      object.userData.params.position = newVal.position;
+      object.userData.params.rotation = newRot;
+      object.userData.params.scale = newScale;
     }
   } else {
     // Basic elements
@@ -233,13 +251,18 @@ export const updateElemTranslation = (id, newVal, prevVal, object, doNotUpdateUn
         };
       return elem;
     });
+    if (object && !object.userData.isSelectionGroup) {
+      object.userData.position = newVal.position;
+      object.userData.rotation = newVal.rotation;
+      object.userData.scale = newVal.scale;
+    }
     setSceneParam('elements', newElemParams);
     saveStateByKey('elements', newElemParams);
   }
 
-  object.position.set(...newVal.position);
-  object.rotation.set(...newVal.rotation);
-  object.scale.set(...newVal.scale);
+  object.position.set(...newPos);
+  object.rotation.set(...newRot);
+  object.scale.set(...newScale);
   if (object?.userData.isSelectionGroup) {
     // Multiselection
     const scene = getSceneItem('scene');
@@ -269,6 +292,7 @@ export const updateElemTranslation = (id, newVal, prevVal, object, doNotUpdateUn
   } else {
     _checkAndSetTargetingObjects(object);
   }
+  getSceneItem('elemTool').updateTool();
   if (!doNotUpdateUndo) {
     getSceneItem('undoRedo').addAction({
       type: 'updateElemTranslation',
@@ -282,8 +306,8 @@ export const updateElemTranslation = (id, newVal, prevVal, object, doNotUpdateUn
 export const removeTransformControls = () => {
   const controls = getSceneItem('transformControls');
   if (!controls) return;
-  controls.dispose();
   controls.detach();
+  controls.dispose();
   setSceneItem('transformControls', null);
 };
 

@@ -86,6 +86,12 @@ class UICamera extends Component {
           label: 'ID',
           attach: contentId,
           curId: c.id,
+          afterSuccessBlur: (value, prevVal) => {
+            c.id = value;
+            updateCameraProperty(value, c.index, 'id', { prevVal });
+            camPanels[c.index].updateTitle(printName({ name: value, id: c.id }));
+            getSceneItem('elemTool').updateTool();
+          },
         })
       );
 
@@ -190,7 +196,7 @@ class UICamera extends Component {
           id: 'cam-pos-' + index + '-' + this.id,
           attach: transformsId,
           label: 'Position',
-          step: 0.5,
+          step: 0.5, // @TODO: change this to round to the next possible half of whole number for the position (also change to elem tool)
           inputLabels: ['X', 'Y', 'Z'],
           values: c.position,
           onChange: (value, index) => {
@@ -209,7 +215,7 @@ class UICamera extends Component {
           id: 'cam-target-' + index + '-' + this.id,
           attach: transformsId,
           label: 'Target',
-          step: 0.5,
+          step: 0.5, // @TODO: change this to round to the next 1/8 of PI (also change to elem tool)
           inputLabels: ['X', 'Y', 'Z'],
           values: c.target,
           onChange: (value, index) => {
@@ -221,7 +227,7 @@ class UICamera extends Component {
         })
       );
 
-      // TODO: ADD A FREE CAMERA WHERE THE ROTATION CAN BE SET
+      // @TODO: ADD A FREE CAMERA WHERE THE ROTATION CAN BE SET
       // Rotation
       // const rot = getSceneItem('allCameras')[c.index].rotation;
       // const rotationComponent = this.addChildDraw(
