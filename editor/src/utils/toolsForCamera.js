@@ -2,6 +2,7 @@ import * as THREE from 'three';
 
 import { createOrbitControls, removeOrbitControls } from '../controls/orbitControls';
 import { selectObjects } from '../controls/stageClick';
+import { createTransformControls, removeTransformControls } from '../controls/transformControls';
 import { saveAllCamerasState, saveCameraState, saveSceneState } from '../sceneData/saveSession';
 import { getSceneItem, setSceneItem } from '../sceneData/sceneItems';
 import { getSceneParam, setSceneParam } from '../sceneData/sceneParams';
@@ -390,12 +391,15 @@ export const changeCurCamera = (newCamIndex) => {
     if (targetMesh) targetMesh.visible = false;
   }
   removeOrbitControls();
+  removeTransformControls();
   setSceneParam('curCameraIndex', newCameraIndex);
   saveSceneState();
   setSceneItem('curCamera', newCamera);
   setSceneItem('cameraHelpers', helpers);
   newCamera.updateProjectionMatrix();
   if (newCameraHasOrbitControls) createOrbitControls();
+  createTransformControls();
+  selectObjects(getSceneItem('selection'));
 
   const rightPanel = getSceneItem('rightSidePanel');
   if (rightPanel.tabId === 'UICamera') rightPanel.updatePanel();

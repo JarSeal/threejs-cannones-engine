@@ -306,8 +306,8 @@ export const updateElemTranslation = (id, newVal, prevVal, object, doNotUpdateUn
 export const removeTransformControls = () => {
   const controls = getSceneItem('transformControls');
   if (!controls) return;
-  controls.dispose();
   controls.detach();
+  controls.dispose();
   setSceneItem('transformControls', null);
 };
 
