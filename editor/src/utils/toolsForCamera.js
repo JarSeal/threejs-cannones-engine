@@ -125,6 +125,7 @@ export const addCamera = (params, initiatingCameras) => {
     if (!params.target) params.target = NEW_CAMERA_DEFAULT_PARAMS.target;
     if (!params.defaultTarget) params.defaultTarget = NEW_CAMERA_DEFAULT_PARAMS.defaultTarget;
     camera.lookAt(new THREE.Vector3(...params.target));
+    params.rotation = [camera.rotation.x, camera.rotation.y, camera.rotation.z];
   }
 
   camera.userData = params;
