@@ -55,3 +55,34 @@
 .tabsContent {
   padding: 0 0 2rem 2rem;
 }
+
+.elemInfoText {
+  background-color: rgba($light-grey7, 0.5);
+  width: 46rem;
+  height: 2.8rem;
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 0.4rem 0.4rem 0 0;
+  text-align: center;
+  color: $dark-grey1;
+  line-height: 0;
+  padding-top: 0.2rem;
+  backdrop-filter: blur(10px);
+}
+.elemName {
+  @include heading-font;
+  font-size: 1.1rem;
+  line-height: 1.2rem;
+  display: inline-block;
+}
+.elemTransforms {
+  @include basetext-font-bold;
+  font-size: 1.1rem;
+  line-height: 1.2rem;
+}
+.translationValue {
+  display: inline-block;
+  width: 10rem;
+}

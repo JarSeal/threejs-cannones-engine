@@ -3,7 +3,12 @@ import { getSceneParamR, setSceneParamR } from '../sceneData/sceneParams';
 import { saveEditorState } from '../sceneData/saveSession';
 import { getSceneItem } from '../sceneData/sceneItems';
 import FloatingView from './FloatingView';
-import { getSelectedElemIcon } from '../utils/utils';
+import {
+  getObjectParams,
+  getPreciseNumberString,
+  getSelectedElemIcon,
+  printName,
+} from '../utils/utils';
 import styles from './ElemTool.module.scss';
 import Button from './common/Button';
 import SvgIcon from './icons/svg-icon';
@@ -13,17 +18,23 @@ class ElemTool extends Component {
   constructor(data) {
     super(data);
     this.elemToolWrapper = null;
+    this.elemInfoText = null;
   }
 
   paint = () => {
     this.updateTool();
   };
 
-  _createTool = () => {
+  _createTool = (onlyInfoText) => {
     const toolWrapperId = this.id + '-main-wrapper';
-    if (this.elemToolWrapper) this.elemToolWrapper.discard(true);
-
     const selections = getSceneItem('selection') || [];
+
+    if (this.elemInfoText) this.elemInfoText.discard(true);
+    if (selections.length) {
+      this._createElemInfoText(selections);
+      if (onlyInfoText) return;
+    }
+    if (this.elemToolWrapper) this.elemToolWrapper.discard(true);
     if (!getSceneParamR('editor.show.elemTool') || !selections.length) return;
 
     let headerText = `[ ${selections.length} items ]`;
@@ -66,8 +77,8 @@ class ElemTool extends Component {
     );
   };
 
-  updateTool = () => {
-    this._createTool();
+  updateTool = (onlyInfoText) => {
+    this._createTool(onlyInfoText);
   };
 
   setPosition = (x, y) => {
@@ -178,6 +189,71 @@ class ElemTool extends Component {
         }
       },
     },
+  };
+
+  _createElemInfoText = (selections) => {
+    const objectName =
+      selections.length > 1
+        ? `[ ${selections.length} items ]`
+        : printName(getObjectParams(selections[0]));
+    let infoTextData = '';
+    const transToolMode = getSceneParamR('editor.selectAndTransformTool');
+    const object = selections.length === 1 ? selections[0] : getSceneItem('selectionGroup');
+    if (transToolMode === 'select' || transToolMode === 'translate') {
+      infoTextData =
+        'Position: ' +
+        `<span class="${styles.translationValue}">x: ${getPreciseNumberString(
+          object.position.x,
+          12
+        )}</span>` +
+        `<span class="${styles.translationValue}">y: ${getPreciseNumberString(
+          object.position.y,
+          12
+        )}</span>` +
+        `<span class="${styles.translationValue}">z: ${getPreciseNumberString(
+          object.position.z,
+          12
+        )}</span>`;
+    } else if (transToolMode === 'rotate') {
+      infoTextData =
+        'Rotation: ' +
+        `<span class="${styles.translationValue}">x: ${getPreciseNumberString(
+          object.rotation.x,
+          12
+        )}</span>` +
+        `<span class="${styles.translationValue}">y: ${getPreciseNumberString(
+          object.rotation.y,
+          12
+        )}</span>` +
+        `<span class="${styles.translationValue}">z: ${getPreciseNumberString(
+          object.rotation.z,
+          12
+        )}</span>`;
+    } else if (transToolMode === 'scale') {
+      infoTextData =
+        'Scale: ' +
+        `<span class="${styles.translationValue}">x: ${getPreciseNumberString(
+          object.scale.x,
+          12
+        )}</span>` +
+        `<span class="${styles.translationValue}">y: ${getPreciseNumberString(
+          object.scale.y,
+          12
+        )}</span>` +
+        `<span class="${styles.translationValue}">z: ${getPreciseNumberString(
+          object.scale.z,
+          12
+        )}</span>`;
+    }
+    this.elemInfoText = this.addChildDraw({
+      id: this.id + '-elem-infoText-wrapper',
+      attach: 'doc-body',
+      class: styles.elemInfoText,
+      template: `<div>
+        <span class="${styles.elemName}">${objectName}</span><br />
+        <span class="${styles.elemTransforms}">${infoTextData}</span>
+      </div>`,
+    });
   };
 }
 

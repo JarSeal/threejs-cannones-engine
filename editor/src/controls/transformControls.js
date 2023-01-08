@@ -100,6 +100,7 @@ export const createTransformControls = () => {
         _checkAndSetTargetingObjects(controls.object);
       }
     }
+    getSceneItem('elemTool').updateTool(true);
   });
 
   controls.addEventListener('dragging-changed', (e) => {

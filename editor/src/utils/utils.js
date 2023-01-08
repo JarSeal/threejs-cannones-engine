@@ -77,3 +77,10 @@ export const isCameraObject = (obj, checkOnlyForCamera) => {
   if (checkOnlyForCamera) return obj.userData.paramType === 'camera';
   return obj.userData.paramType === 'camera' || obj.userData.paramType === 'cameraTarget';
 };
+
+export const getPreciseNumberString = (value, precision) => {
+  if (!value) value = 0;
+  if (precision === 0) return parseInt(value);
+  if (!precision) return parseFloat(value);
+  return parseFloat(value).toFixed(precision);
+};
