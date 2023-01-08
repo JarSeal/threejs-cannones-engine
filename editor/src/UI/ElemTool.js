@@ -192,10 +192,11 @@ class ElemTool extends Component {
   };
 
   _createElemInfoText = (selections) => {
-    const objectName =
+    let objectName =
       selections.length > 1
         ? `[ ${selections.length} items ]`
         : printName(getObjectParams(selections[0]));
+    if (selections[0].userData.isTargetObject) objectName += ' (target)';
     let infoTextData = '';
     const transToolMode = getSceneParamR('editor.selectAndTransformTool');
     const object = selections.length === 1 ? selections[0] : getSceneItem('selectionGroup');
