@@ -61,7 +61,6 @@ export const createTransformControls = () => {
     if (controls.dragging && controls.mode === 'scale' && keysDown.includes('Control')) {
       // Change the position of the object according to the scaled value
       // so that only one end of the object is scaled (even though the whole axis scales)
-      // @TODO: this does not currently work (test this with the "ground object")
       const curScaleX = controls.object.scale.x;
       const curScaleY = controls.object.scale.y;
       const curScaleZ = controls.object.scale.z;
