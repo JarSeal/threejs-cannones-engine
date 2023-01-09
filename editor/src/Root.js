@@ -221,7 +221,7 @@ class Root {
       leftTools.draw();
       setSceneItem('leftTools', leftTools);
 
-      const elemTool = new ElemTool({ id: 'elem-tool', parentId: 'root' });
+      const elemTool = new ElemTool({ id: 'elem-tool', parentId: 'root', class: 'elemTool' });
       elemTool.draw();
       setSceneItem('elemTool', elemTool);
 

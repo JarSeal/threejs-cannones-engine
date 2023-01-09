@@ -12,11 +12,11 @@ class Transforms extends Component {
     this.transformsWrapperId = this.id + '-transforms-wrapper';
     this.defaultTransformsWrapperId = this.id + '-default-transforms-wrapper';
     data.template = `<div>
-      <span class="${styles.panelHeading}">Transforms</span>
+      <span class="elemPanelHeading">Transforms</span>
       <div id="${this.transformsWrapperId}"></div>
       ${
         data.selections.length === 1
-          ? `<span class="${styles.panelHeading}">Default transforms</span>
+          ? `<span class="elemPanelHeading">Default transforms</span>
         <div id="${this.defaultTransformsWrapperId}"></div>`
           : ''
       }

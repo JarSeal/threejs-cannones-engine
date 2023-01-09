@@ -7,7 +7,7 @@ import cameraTools, { changeCurCamera } from '../../utils/toolsForCamera';
 import { getSceneParam, setSceneParam } from '../../sceneData/sceneParams';
 import { saveAllCamerasState } from '../../sceneData/saveSession';
 import { updateElemTranslation } from '../../controls/transformControls';
-import { updateElemTransforms } from '../../utils/toolsForElems';
+import { updateElemProperty, updateElemTransforms } from '../../utils/toolsForElems';
 
 const undoRedoOperations = {
   // ID
@@ -193,6 +193,12 @@ const undoRedoOperations = {
     } else {
       cameraTools.destroyCamera(action.cameraIndex, true);
     }
+  },
+  // ELEMENTS
+  updateElemProperty: (action, isUndo) => {
+    updateElemProperty(isUndo ? action.prevVal : action.newVal, action.id, action.key, {
+      prevVal: isUndo ? action.newVal : action.prevVal,
+    });
   },
   updateElemTransforms: (action, isUndo) => {
     updateElemTransforms(
