@@ -70,23 +70,29 @@ export const createTransformControls = () => {
       if (controls.axis === 'X') {
         const length = aabb.max.x - aabb.min.x;
         if (controls.pointerDownPoint.x > startPosX) {
-          controls.object.position.x = startPosX + ((curScaleX - startScaleX) * length) / 6;
-          // pos = 0 + (1.5 - 1) * 30 / 6 = 5 (WRONG!)
-          console.log('HERE', aabb, length);
+          controls.object.position.x =
+            startPosX + (length / curScaleX / 2) * (curScaleX - startScaleX);
         } else {
-          controls.object.position.x = startPosX + (startScaleX - curScaleX) / 2;
+          controls.object.position.x =
+            startPosX + (length / curScaleX / 2) * (startScaleX - curScaleX);
         }
       } else if (controls.axis === 'Y') {
+        const length = aabb.max.y - aabb.min.y;
         if (controls.pointerDownPoint.y > startPosY) {
-          controls.object.position.y = startPosY + (curScaleY - startScaleY) / 2;
+          controls.object.position.y =
+            startPosY + (length / curScaleY / 2) * (curScaleY - startScaleY);
         } else {
-          controls.object.position.y = startPosY + (startScaleY - curScaleY) / 2;
+          controls.object.position.y =
+            startPosY + (length / curScaleY / 2) * (startScaleY - curScaleY);
         }
       } else if (controls.axis === 'Z') {
+        const length = aabb.max.z - aabb.min.z;
         if (controls.pointerDownPoint.z > startPosZ) {
-          controls.object.position.z = startPosZ + (curScaleZ - startScaleZ) / 2;
+          controls.object.position.z =
+            startPosZ + (length / curScaleZ / 2) * (curScaleZ - startScaleZ);
         } else {
-          controls.object.position.z = startPosZ + (startScaleZ - curScaleZ) / 2;
+          controls.object.position.z =
+            startPosZ + (length / curScaleZ / 2) * (startScaleZ - curScaleZ);
         }
       }
     } else if (controls.dragging && controls.mode === 'scale') {
