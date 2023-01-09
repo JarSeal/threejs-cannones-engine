@@ -144,13 +144,14 @@ class Root {
       const styleVars = styleVariables.split('\n');
       for (let i = 0; i < styleVars.length; i++) {
         if (styleVars[i].includes('$smallStats-fg')) {
-          const value = styleVars[i].split(' ')[1].replace(';\r', '');
+          const value = styleVars[i].split(' ')[1].replace(';\r', '').replace(';', '');
+          console.log('TADAA', value);
           smallStatsColors.FPS.fg = value;
           smallStatsColors.MS.fg = value;
           smallStatsColors.MB.fg = value;
         }
         if (styleVars[i].includes('$smallStats-bg')) {
-          const value = styleVars[i].split(' ')[1].replace(';\r', '');
+          const value = styleVars[i].split(' ')[1].replace(';\r', '').replace(';', '');
           smallStatsColors.FPS.bg = value;
           smallStatsColors.MS.bg = value;
           smallStatsColors.MB.bg = value;

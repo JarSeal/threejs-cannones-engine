@@ -61,27 +61,37 @@ export const createTransformControls = () => {
     if (controls.dragging && controls.mode === 'scale' && keysDown.includes('Control')) {
       // Change the position of the object according to the scaled value
       // so that only one end of the object is scaled (even though the whole axis scales)
-      // @TODO: this does not currently work (test this with the "ground object")
       const curScaleX = controls.object.scale.x;
       const curScaleY = controls.object.scale.y;
       const curScaleZ = controls.object.scale.z;
+      const aabb = new THREE.Box3();
+      aabb.setFromObject(controls.object);
       if (controls.axis === 'X') {
+        const length = aabb.max.x - aabb.min.x;
         if (controls.pointerDownPoint.x > startPosX) {
-          controls.object.position.x = startPosX + (curScaleX - startScaleX) / 2;
+          controls.object.position.x =
+            startPosX + (length / curScaleX / 2) * (curScaleX - startScaleX);
         } else {
-          controls.object.position.x = startPosX + (startScaleX - curScaleX) / 2;
+          controls.object.position.x =
+            startPosX + (length / curScaleX / 2) * (startScaleX - curScaleX);
         }
       } else if (controls.axis === 'Y') {
+        const length = aabb.max.y - aabb.min.y;
         if (controls.pointerDownPoint.y > startPosY) {
-          controls.object.position.y = startPosY + (curScaleY - startScaleY) / 2;
+          controls.object.position.y =
+            startPosY + (length / curScaleY / 2) * (curScaleY - startScaleY);
         } else {
-          controls.object.position.y = startPosY + (startScaleY - curScaleY) / 2;
+          controls.object.position.y =
+            startPosY + (length / curScaleY / 2) * (startScaleY - curScaleY);
         }
       } else if (controls.axis === 'Z') {
+        const length = aabb.max.z - aabb.min.z;
         if (controls.pointerDownPoint.z > startPosZ) {
-          controls.object.position.z = startPosZ + (curScaleZ - startScaleZ) / 2;
+          controls.object.position.z =
+            startPosZ + (length / curScaleZ / 2) * (curScaleZ - startScaleZ);
         } else {
-          controls.object.position.z = startPosZ + (startScaleZ - curScaleZ) / 2;
+          controls.object.position.z =
+            startPosZ + (length / curScaleZ / 2) * (startScaleZ - curScaleZ);
         }
       }
     } else if (controls.dragging && controls.mode === 'scale') {
