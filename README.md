@@ -1,4 +1,4 @@
-# Three.js, Cannon-es, threaded physics 3D engine starter project
+# Three.js, Cannon-es, threaded physics 3D engine editor and project compiler
 
 ## Requirements
 
