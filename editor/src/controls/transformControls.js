@@ -65,9 +65,14 @@ export const createTransformControls = () => {
       const curScaleX = controls.object.scale.x;
       const curScaleY = controls.object.scale.y;
       const curScaleZ = controls.object.scale.z;
+      const aabb = new THREE.Box3();
+      aabb.setFromObject(controls.object);
       if (controls.axis === 'X') {
+        const length = aabb.max.x - aabb.min.x;
         if (controls.pointerDownPoint.x > startPosX) {
-          controls.object.position.x = startPosX + (curScaleX - startScaleX) / 2;
+          controls.object.position.x = startPosX + ((curScaleX - startScaleX) * length) / 6;
+          // pos = 0 + (1.5 - 1) * 30 / 6 = 5 (WRONG!)
+          console.log('HERE', aabb, length);
         } else {
           controls.object.position.x = startPosX + (startScaleX - curScaleX) / 2;
         }

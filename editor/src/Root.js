@@ -159,7 +159,7 @@ class Root {
       }
       const smallStatsContainer = document.createElement('div');
       smallStatsContainer.id = 'smallStats-container';
-      const renderStats = new SmallStats(smallStatsColors);
+      const renderStats = new SmallStats();
       renderStats.domElement.id = 'smallStats';
       smallStatsContainer.appendChild(renderStats.domElement);
       document.getElementById('root').appendChild(smallStatsContainer);
