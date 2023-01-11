@@ -117,14 +117,6 @@ class SimpleIDInput extends Component {
         rightSidePanel.updatePanel();
         // @TODO: update possible selectionIds (getSceneParam('selection'))
         if (!this.newId) updateCamUserDataHelpersAndIcon(null, this.curId);
-        if (!this.newId && !isUndo) {
-          getSceneItem('undoRedo').addAction({
-            type: 'updateId',
-            prevVal: this.undoValue,
-            newVal: this.curId,
-            compoId: this.id,
-          });
-        }
         if (nextElemId) {
           // Because the timeout will rerender, the possible active elem needs to be refocused
           const nextElem = document.getElementById(nextElemId);

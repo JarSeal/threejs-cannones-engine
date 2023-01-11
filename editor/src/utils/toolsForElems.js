@@ -5,8 +5,6 @@ import { updateCameraDefaultTransforms, updateCameraTransforms } from './toolsFo
 import { getObjectParams, isCameraObject } from './utils';
 
 export const updateElemProperty = (value, id, key, args) => {
-  console.log('FIND ID', id, args?.prevVal, value);
-  // @TODO: UNDO DOES NOT WORK (somehow it undoes the id change twice)
   const findId = key === 'id' ? args?.prevVal : id;
   const elem = getSceneItem('elements').find((e) => e.userData.id === findId);
   const params = getObjectParams(elem);

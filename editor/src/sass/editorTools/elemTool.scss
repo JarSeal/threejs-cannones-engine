@@ -5,7 +5,25 @@
 }
 
 .elemTool {
+  color: $dark-grey2;
   .infoField {
     margin: -0.2rem 0 0;
+  }
+  ul {
+    padding: 0 0 0 2rem;
+    margin-top: 0.2rem;
+    li {
+      line-height: 1.6rem;
+      + li {
+        margin-top: 0.7rem;
+      }
+    }
+    span {
+      font-size: 1.1rem;
+      color: $mid-grey1;
+    }
+  }
+  .elemBasicInfo {
+    margin-bottom: 0.7rem;
   }
 }

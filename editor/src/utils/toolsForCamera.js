@@ -13,7 +13,7 @@ import { CAMERA_TARGET_ID, NEW_CAMERA_DEFAULT_PARAMS } from './defaultSceneValue
 import { getScreenResolution } from './utils';
 
 export const updateCameraProperty = (value, i, key, args) => {
-  let prevVal = getSceneParam('cameras')[i][key];
+  let prevVal = args?.prevVal || getSceneParam('cameras')[i][key];
   const newCamParams = getSceneParam('cameras').map((cam, index) => {
     if (index === i) return { ...cam, [key]: value };
     return cam;
@@ -30,8 +30,8 @@ export const updateCameraProperty = (value, i, key, args) => {
   } else if (key === 'id') {
     const selectionIds = getSceneParam('selection');
     const newSelectionIds = selectionIds.map((id) => {
-      if (id === args?.prevVal) return value;
-      if (id === CAMERA_TARGET_ID + '--' + args?.prevVal) return CAMERA_TARGET_ID + '--' + value;
+      if (id === prevVal) return value;
+      if (id === CAMERA_TARGET_ID + '--' + prevVal) return CAMERA_TARGET_ID + '--' + value;
       return id;
     });
     setSceneParam('selection', newSelectionIds);
