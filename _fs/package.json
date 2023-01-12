@@ -1,0 +1,39 @@
+{
+  "name": "threejs-cannon-boiler",
+  "version": "0.0.1",
+  "description": "Three.js, cannon-es, threaded physics 3D engine project starter.",
+  "main": "./index.js",
+  "author": "Kai Forsman",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development nodemon --es-module-specifier-resolution=node index.js",
+    "lint": "eslint ./",
+    "prettify": "prettier --write ./**/*.js"
+  },
+  "dependencies": {
+    "axios": "^0.27.2",
+    "dotenv": "^16.0.1",
+    "express": "^4.17.1",
+    "express-async-errors": "^3.1.1"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.18.2",
+    "cross-env": "^7.0.2",
+    "eslint": "^7.28.0",
+    "eslint-config-import": "^0.13.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "2.25.4",
+    "eslint-plugin-prettier": "4.0.0",
+    "nodemon": "^2.0.4",
+    "prettier": "^2.6.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JarSeal"
+  },
+  "engines": {
+    "node": ">=16.13.2",
+    "yarn": ">=1.22.15"
+  }
+}

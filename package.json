@@ -3,14 +3,14 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "setup": "cd editor && yarn install && cd .. && yarn install && yarn envFiles",
-    "dev": "yarn envFiles && concurrently --kill-others --names \"EDITOR\" -c \"bgBlue.bold\" \"cd editor && yarn dev\"",
-    "lint:editor": "cd editor && yarn lint",
+    "setup": "cd _editor && yarn install && cd .. && yarn install && yarn envFiles",
+    "dev": "yarn envFiles && concurrently --kill-others --names \"EDITOR,FS\" -c \"bgBlue.bold,bgGreen.bold\" \"yarn --cwd ./_editor/ dev\" \"yarn --cwd ./_fs/ dev\"",
+    "lint:editor": "cd _editor && yarn lint",
     "lint": "eslint .",
     "prettify": "prettier --write ./**/*.js",
     "envFiles": "node createEnvFiles.js",
-    "test": "cd editor && yarn test",
-    "build": "yarn install && cd editor && yarn install && yarn build"
+    "test": "cd _editor && yarn test",
+    "build": "yarn install && cd _editor && yarn install && yarn build"
   },
   "repository": {
     "type": "git",
@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
-    "concurrently": "^7.2.0",
+    "concurrently": "^7.6.0",
     "eslint": "^7.28.0",
     "eslint-config-import": "^0.13.0",
     "eslint-config-prettier": "^8.3.0",

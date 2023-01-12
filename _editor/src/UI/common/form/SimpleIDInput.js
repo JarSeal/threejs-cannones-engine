@@ -77,7 +77,7 @@ class SimpleIDInput extends Component {
     }
   };
 
-  saveValue = (value, isUndo) => {
+  saveValue = (value) => {
     this.undoValue = this.curId;
     const error = this._validate(value);
     if (!error.hasError && value !== this.curId) {

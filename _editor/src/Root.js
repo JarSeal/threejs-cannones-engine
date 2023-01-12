@@ -271,13 +271,15 @@ class Root {
   _renderLoop = () => {
     const SI = this.sceneItems;
     if (SI.looping) {
+      requestAnimationFrame(this._renderLoop);
       // SI.renderer.render(SI.scene, SI.curCamera);
       this.editorComposer.camera = SI.curCamera;
       this.editorOutlinePass.renderCamera = SI.curCamera;
       this.renderPass.camera = SI.curCamera;
       this.editorComposer.render();
       SI.runningRenderStats.update(); // Debug statistics
-      requestAnimationFrame(this._renderLoop);
+      const controls = getSceneItem('orbitControls');
+      if (controls) controls.update(); // @TODO: also add the ability to turn the damping off which also turns this updating off (more performant)
     }
   };
 

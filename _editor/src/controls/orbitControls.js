@@ -18,6 +18,8 @@ export const createOrbitControls = () => {
 
   const curCameraItem = getSceneItem('curCamera');
   const controls = new OrbitControls(curCameraItem, getSceneItem('renderer').domElement);
+  controls.enableDamping = true; // @TODO: make an editor setting for this
+  controls.dampingFactor = 0.12; // @TODO: make an editor setting for this
   if (curCamera.quaternion) {
     curCameraItem.quaternion.set(...curCamera.quaternion);
   }
