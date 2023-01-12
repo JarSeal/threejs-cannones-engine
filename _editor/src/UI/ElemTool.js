@@ -13,6 +13,7 @@ import styles from './ElemTool.module.scss';
 import Button from './common/Button';
 import SvgIcon from './icons/svg-icon';
 import Transforms from './ElemToolPanels/Transforms';
+import Information from './ElemToolPanels/Information';
 
 class ElemTool extends Component {
   constructor(data) {
@@ -181,12 +182,9 @@ class ElemTool extends Component {
     info: {
       iconData: { icon: 'info', width: 4 },
       content: (parent, selections) => {
-        for (let i = 0; i < 30; i++) {
-          parent.addChildDraw({
-            id: this.id + '-tab-content-info-' + i, // TEMP: remove i
-            text: 'Information ' + i, // TEMP: remove i
-          });
-        }
+        parent.addChildDraw(
+          new Information({ id: this.id + '-tab-content-information', selections })
+        );
       },
     },
   };

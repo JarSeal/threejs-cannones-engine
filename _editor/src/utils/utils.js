@@ -84,3 +84,22 @@ export const getPreciseNumberString = (value, precision) => {
   if (!precision) return parseFloat(value);
   return parseFloat(value).toFixed(precision);
 };
+
+export const getObjectStats = (object) => {
+  let objects = 0,
+    vertices = 0,
+    triangles = 0;
+  object.traverseVisible((object) => {
+    if (object.isMesh) {
+      objects++;
+      const geometry = object.geometry;
+      vertices += geometry.attributes.position.count;
+      if (geometry.index !== null) {
+        triangles += geometry.index.count / 3;
+      } else {
+        triangles += geometry.attributes.position.count / 3;
+      }
+    }
+  });
+  return { objects, triangles, vertices };
+};

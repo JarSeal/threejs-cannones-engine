@@ -1,8 +1,43 @@
-import { saveStateByKey } from '../sceneData/saveSession';
+import { saveSceneState, saveStateByKey } from '../sceneData/saveSession';
 import { getSceneItem } from '../sceneData/sceneItems';
 import { getSceneParam, setSceneParam } from '../sceneData/sceneParams';
 import { updateCameraDefaultTransforms, updateCameraTransforms } from './toolsForCamera';
 import { getObjectParams, isCameraObject } from './utils';
+
+export const updateElemProperty = (value, id, key, args) => {
+  const findId = key === 'id' ? args?.prevVal : id;
+  const elem = getSceneItem('elements').find((e) => e.userData.id === findId);
+  const params = getObjectParams(elem);
+  const prevVal = args?.prevVal || params[key];
+  const newElemParams = getSceneParam('elements').map((elem) => {
+    if (elem.id === findId) return { ...elem, [key]: value };
+    return elem;
+  });
+  params[key] = value;
+  elem.userData[key] = value;
+  if (key === 'id') {
+    const selectionIds = getSceneParam('selection');
+    const newSelectionIds = selectionIds.map((selId) => {
+      if (selId === prevVal) return value;
+      return selId;
+    });
+    setSceneParam('selection', newSelectionIds);
+    saveSceneState({ selection: newSelectionIds });
+  }
+  setSceneParam('elements', newElemParams);
+  saveStateByKey('elements', newElemParams);
+  getSceneItem('elemTool').updateTool();
+  getSceneItem('rightSidePanel').updatePanel();
+  if (args?.doNotUpdateUndo !== true) {
+    getSceneItem('undoRedo').addAction({
+      type: 'updateElemProperty',
+      prevVal: prevVal,
+      newVal: value,
+      id,
+      key,
+    });
+  }
+};
 
 export const updateElemTransforms = (key, value, valueIndex, obj, args) => {
   if (typeof obj === 'string') {

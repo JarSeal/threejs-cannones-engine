@@ -145,7 +145,6 @@ class Root {
       for (let i = 0; i < styleVars.length; i++) {
         if (styleVars[i].includes('$smallStats-fg')) {
           const value = styleVars[i].split(' ')[1].replace(';\r', '').replace(';', '');
-          console.log('TADAA', value);
           smallStatsColors.FPS.fg = value;
           smallStatsColors.MS.fg = value;
           smallStatsColors.MB.fg = value;
@@ -221,7 +220,7 @@ class Root {
       leftTools.draw();
       setSceneItem('leftTools', leftTools);
 
-      const elemTool = new ElemTool({ id: 'elem-tool', parentId: 'root' });
+      const elemTool = new ElemTool({ id: 'elem-tool', parentId: 'root', class: 'elemTool' });
       elemTool.draw();
       setSceneItem('elemTool', elemTool);
 
@@ -272,13 +271,15 @@ class Root {
   _renderLoop = () => {
     const SI = this.sceneItems;
     if (SI.looping) {
+      requestAnimationFrame(this._renderLoop);
       // SI.renderer.render(SI.scene, SI.curCamera);
       this.editorComposer.camera = SI.curCamera;
       this.editorOutlinePass.renderCamera = SI.curCamera;
       this.renderPass.camera = SI.curCamera;
       this.editorComposer.render();
       SI.runningRenderStats.update(); // Debug statistics
-      requestAnimationFrame(this._renderLoop);
+      const controls = getSceneItem('orbitControls');
+      if (controls) controls.update(); // @TODO: also add the ability to turn the damping off which also turns this updating off (more performant)
     }
   };
 

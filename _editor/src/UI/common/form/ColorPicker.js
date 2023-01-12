@@ -79,6 +79,10 @@ class ColorPicker extends Component {
       .toString();
   };
 
+  erase = () => {
+    if (this.widget && this.widget.destroy) this.widget.destroy();
+  };
+
   /**
    * @param newColor:
    *  | alwan colorObject (doc: https://www.npmjs.com/package/alwan)
