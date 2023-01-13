@@ -8,7 +8,7 @@
   "rendererClearColor": "#cccccc",
   "grid": true,
   "gridSize": 26,
-  "shadowType": "PCFSoftShadowMap",
+  "shadowType": null,
   "lights": [
     {
       "id": "ambient",
@@ -22,16 +22,6 @@
       "colorTop": "#ffffbb",
       "colorBottom": "#080820",
       "intensity": 0.25
-    },
-    {
-      "type": "point",
-      "position": [0, 5, 0],
-      "color": "#ffffff",
-      "intensity": 10,
-      "distance": 200,
-      "decay": 150,
-      "castShadow": true,
-      "showHelper": true
     }
   ],
   "cameras": [
@@ -69,8 +59,6 @@
       },
       "position": [2, 2, 2],
       "rotation": [0, 0.7, 0],
-      "castShadow": true,
-      "receiveShadow": true,
       "material": {
         "type": "lambert",
         "color": "#00ffff"
@@ -85,8 +73,6 @@
       },
       "position": [-2.5, 0.5, -2.5],
       "rotation": [0, 0, 0],
-      "castShadow": true,
-      "receiveShadow": true,
       "material": {
         "type": "lambert",
         "color": "#ff2233"
@@ -100,7 +86,6 @@
         "size": [20, 0.125, 20]
       },
       "position": [0, -0.0625, 0],
-      "receiveShadow": true,
       "material": {
         "type": "lambert",
         "color": "#cccccc"
