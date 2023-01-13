@@ -51,6 +51,8 @@ class Root {
     const sessionParams = await getSceneStates();
 
     // Load scene data from FS
+    sessionParams.projectFolder = 'devProject1'; // TEMP
+    sessionParams.sceneId = 'scene1'; // TEMP
     if (sessionParams.projectFolder && sessionParams.sceneId) {
       const response = await axios.post(getFSUrl('loadScene'), {
         projectFolder: sessionParams.projectFolder,
