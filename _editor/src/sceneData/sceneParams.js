@@ -2,7 +2,6 @@ const emptyScene = {
   sceneId: null,
   name: '',
   rendererElemId: 'main-stage',
-  rendererAntialias: false,
   rendererClearColor: '#000000',
   orbitControls: true,
   shadowType: null,

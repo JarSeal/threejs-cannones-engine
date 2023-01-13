@@ -4,7 +4,7 @@ import { getSceneParam, getSceneParams } from './sceneParams';
 const LS = new LocalStorage('ft_');
 
 const LSKeysJson = ['cameras', 'editor', 'sceneState', 'elements', 'lights'];
-const LSKeysStrings = ['sceneId'];
+const LSKeysStrings = ['sceneId', 'projectFolder'];
 
 // Get all scene state values
 export const getSceneStates = async () =>
@@ -30,6 +30,7 @@ export const getSceneStates = async () =>
   });
 
 export const saveSceneId = (id) => LS.setItem('sceneId', id);
+export const saveProjectFolder = (name) => LS.setItem('projectFolder', name);
 
 export const saveCameraState = (values) => {
   if (values === undefined) return;

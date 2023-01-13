@@ -17,13 +17,8 @@ const errorHandler = (error, request, response, next) => {
     logger.error(error.message, request.session);
   }
 
-  if (error.name === 'CastError') {
-    return response.status(400).json({ error: 'malformatted id' });
-  } else if (error.name === 'ValidationError') {
+  if (error.name === 'ValidationError') {
     return response.status(400).json({ error: error.message, errors: error.errors });
-  } else if (error.code === 'EBADCSRFTOKEN') {
-    // CSRF Token error
-    response.status(403).json({ error: 'CSRF token fail' });
   }
 
   next(error);

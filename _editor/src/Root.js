@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import axios from 'axios';
+
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 // import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
@@ -18,8 +20,7 @@ import { getSceneItem, getSceneItems, setSceneItem, resetSceneItems } from './sc
 import { getScreenResolution } from './utils/utils';
 import SceneLoader from './SceneLoader/SceneLoader';
 import RightSidePanel from './UI/RightSliderPanel';
-import { scenes } from '../../data';
-import { getSceneStates, saveSceneId } from './sceneData/saveSession';
+import { getSceneStates, saveProjectFolder, saveSceneId } from './sceneData/saveSession';
 import TopTools from './UI/TopTools';
 import Dialog from './UI/dialogs/Dialog';
 import { registerStageClick, selectObjects } from './controls/stageClick';
@@ -31,7 +32,8 @@ import UndoRedo from './UI/UndoRedo/UndoRedo';
 import KeyboardShortcuts from './UI/KeyboarShortcuts';
 import { createTransformControls } from './controls/transformControls';
 import TextureLoader from './loaders/TextureLoader';
-import { SELECTION_GROUP_ID } from './utils/defaultSceneValues';
+import { CREATE_DEFAULT_SCENE, SELECTION_GROUP_ID } from './utils/defaultSceneValues';
+import { getFSUrl } from './utils/getFSUrl';
 
 class Root {
   constructor() {
@@ -48,12 +50,24 @@ class Root {
     // If not found, show project picker UI view
     const sessionParams = await getSceneStates();
 
-    // Load scene data from file
-    let curScene = scenes.scene1; // TODO: Create File System where to load via an API
+    // Load scene data from FS
+    const response = await axios.post(getFSUrl('loadScene'), {
+      projectFolder: 'devProject1', // TEMP, @TODO: Get this data either from LS or "Projects view"
+      sceneId: 'scene1', // TEMP, @TODO: Get this data either from LS or "Projects view"
+    });
+    let curScene;
+    if (response.data && !response.data.error) {
+      curScene = response.data;
+      saveSceneId(curScene.sceneId);
+      saveProjectFolder(curScene.projectFolder);
+    } else {
+      // @TODO: show user the error while loading scene (toast) and maybe redirect back to Projects view
+      curScene = CREATE_DEFAULT_SCENE();
+    }
+    // @TODO: we need to compare also the dateSaved values here
     if (curScene.sceneId === sessionParams.sceneId) {
       curScene = { ...curScene, ...sessionParams };
     }
-    saveSceneId(curScene.sceneId);
 
     this.loadScene(curScene, true);
 
