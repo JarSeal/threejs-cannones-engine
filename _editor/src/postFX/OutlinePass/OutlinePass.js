@@ -426,10 +426,20 @@ class OutlinePass extends Pass {
 					#include <morphtarget_vertex>
 					#include <skinning_vertex>
 					#include <project_vertex>
-					#include <worldpos_vertex>
 
 					vPosition = mvPosition;
-					projTexCoord = textureMatrix * worldPosition;
+
+					vec4 worldPosition = vec4( transformed, 1.0 );
+
+					#ifdef USE_INSTANCING
+
+						worldPosition = instanceMatrix * worldPosition;
+
+					#endif
+					
+					worldPosition = modelMatrix * worldPosition;
+
+          projTexCoord = textureMatrix * worldPosition;
 
 				}`,
 
