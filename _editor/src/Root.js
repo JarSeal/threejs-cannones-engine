@@ -198,7 +198,7 @@ class Root {
       const selection = [];
       if (selectionIds && selectionIds.length) {
         selectionIds.forEach((id) => {
-          const editorIcons = getSceneItem('editoIcons');
+          const editorIcons = getSceneItem('editorIcons');
           for (let i = 0; i < editorIcons.length; i++) {
             if (editorIcons[i]?.icon.userData.id === id) {
               selection.push(editorIcons[i].icon);
