@@ -32,48 +32,52 @@ import UndoRedo from './UI/UndoRedo/UndoRedo';
 import KeyboardShortcuts from './UI/KeyboarShortcuts';
 import { createTransformControls } from './controls/transformControls';
 import TextureLoader from './loaders/TextureLoader';
-import { CREATE_DEFAULT_SCENE, SELECTION_GROUP_ID } from './utils/defaultSceneValues';
+import {
+  CANVAS_ELEM_ID,
+  CREATE_DEFAULT_SCENE,
+  SELECTION_GROUP_ID,
+} from './utils/defaultSceneValues';
 import { getFSUrl } from './utils/getFSUrl';
 
 class Root {
   constructor() {
-    // Get empty scene params and items
-    this.sceneParams = getSceneParams();
-    this.sceneItems = getSceneItems();
-
     // initialise the app
     this._initApp();
   }
 
   _initApp = async () => {
     // Load data from LocalStorage
-    // If not found, show project picker UI view
+    // If not found, show Projects view
     const sessionParams = await getSceneStates();
 
     // Load scene data from FS
-    const response = await axios.post(getFSUrl('loadScene'), {
-      projectFolder: 'devProject1', // TEMP, @TODO: Get this data either from LS or "Projects view"
-      sceneId: 'scene1', // TEMP, @TODO: Get this data either from LS or "Projects view"
-    });
-    let curScene;
-    if (response.data && !response.data.error) {
-      curScene = response.data;
-      saveSceneId(curScene.sceneId);
-      saveProjectFolder(curScene.projectFolder);
+    if (sessionParams.projectFolder && sessionParams.sceneId) {
+      const response = await axios.post(getFSUrl('loadScene'), {
+        projectFolder: sessionParams.projectFolder,
+        sceneId: sessionParams.sceneId,
+      });
+      let curScene;
+      if (response.data && !response.data.error) {
+        curScene = response.data;
+        saveSceneId(curScene.sceneId);
+        saveProjectFolder(curScene.projectFolder);
+      } else {
+        // @TODO: show user the error while loading scene (toast) and maybe redirect back to Projects view
+        curScene = CREATE_DEFAULT_SCENE();
+      }
+      // @TODO: we need to compare also the dateSaved values here
+      if (curScene.sceneId === sessionParams.sceneId) {
+        curScene = { ...curScene, ...sessionParams };
+      }
+
+      this.loadScene(curScene, true);
+
+      // Start the show...
+      setSceneItem('looping', true);
+      this._renderLoop();
     } else {
-      // @TODO: show user the error while loading scene (toast) and maybe redirect back to Projects view
-      curScene = CREATE_DEFAULT_SCENE();
+      // Show Projects view
     }
-    // @TODO: we need to compare also the dateSaved values here
-    if (curScene.sceneId === sessionParams.sceneId) {
-      curScene = { ...curScene, ...sessionParams };
-    }
-
-    this.loadScene(curScene, true);
-
-    // Start the show...
-    setSceneItem('looping', true);
-    this._renderLoop();
   };
 
   loadScene = (sceneParams, isEditor) => {
@@ -99,8 +103,8 @@ class Root {
       renderer.shadowMap.type = THREE[sceneParams.shadowType];
     }
     renderer.setClearColor(sceneParams.rendererClearColor || '#000000');
-    if (isEditor) renderer.debug.checkShaderErrors = true; // Disable this for production (performance gain), TODO: create an env variable to control this
-    renderer.domElement.id = this.sceneParams.rendererElemId;
+    if (isEditor) renderer.debug.checkShaderErrors = true; // Disable this for production (performance gain), @TODO: create an env variable to control this
+    renderer.domElement.id = CANVAS_ELEM_ID;
     document.body.appendChild(renderer.domElement);
     setSceneItem('renderer', renderer);
 
@@ -115,12 +119,12 @@ class Root {
         samples: 4,
       });
       this.editorComposer = new EffectComposer(renderer, renderTarget);
-      this.renderPass = new RenderPass(scene, this.sceneItems.curCamera);
+      this.renderPass = new RenderPass(scene, getSceneItem('curCamera'));
       this.editorComposer.addPass(this.renderPass);
       const editorOutlinePass = new OutlinePass(
         new THREE.Vector2(reso.x * pixelRatio, reso.y * pixelRatio),
         scene,
-        this.sceneItems.curCamera
+        getSceneItem('curCamera')
       );
       editorOutlinePass.edgeStrength = 10.0;
       editorOutlinePass.edgeGlow = 0.25;
@@ -192,20 +196,20 @@ class Root {
       const selection = [];
       if (selectionIds && selectionIds.length) {
         selectionIds.forEach((id) => {
-          const editorIcons = this.sceneItems.editorIcons;
+          const editorIcons = getSceneItem('editoIcons');
           for (let i = 0; i < editorIcons.length; i++) {
             if (editorIcons[i]?.icon.userData.id === id) {
               selection.push(editorIcons[i].icon);
             }
           }
-          const editorTargetMeshes = this.sceneItems.editorTargetMeshes || [];
+          const editorTargetMeshes = getSceneItem('editorTargetMeshes') || [];
           for (let i = 0; i < editorTargetMeshes.length; i++) {
             if (editorTargetMeshes[i]?.userData.id === id) {
               editorTargetMeshes[i].visible = true;
               selection.push(editorTargetMeshes[i]);
             }
           }
-          const elements = this.sceneItems.elements;
+          const elements = getSceneItems('elements');
           for (let i = 0; i < elements.length; i++) {
             if (elements[i].userData.id === id) {
               selection.push(elements[i]);
@@ -275,15 +279,15 @@ class Root {
     this._initResizer();
 
     if (isEditor) {
-      console.log('SCENE PARAMS', this.sceneParams);
-      console.log('SCENE ITEMS', this.sceneItems);
+      console.log('SCENE PARAMS', getSceneParams());
+      console.log('SCENE ITEMS', getSceneItems());
       console.log('RENDERER', renderer);
       console.log('SCENE', scene, this.editorOutlinePass);
     }
   };
 
   _renderLoop = () => {
-    const SI = this.sceneItems;
+    const SI = getSceneItems();
     if (SI.looping) {
       requestAnimationFrame(this._renderLoop);
       // SI.renderer.render(SI.scene, SI.curCamera);
@@ -298,7 +302,7 @@ class Root {
   };
 
   _resize = () => {
-    const SI = this.sceneItems;
+    const SI = getSceneItems();
     const camParams = getSceneParam('cameras');
     const reso = getScreenResolution();
     const width = reso.x;
