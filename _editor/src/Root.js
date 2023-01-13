@@ -100,7 +100,7 @@ class Root {
     renderer.setPixelRatio(pixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.autoClear = false;
-    if (sceneParams.shadowType !== undefined || sceneParams.shadowType !== null) {
+    if (sceneParams.shadowType !== undefined && sceneParams.shadowType !== null) {
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE[sceneParams.shadowType];
     }
