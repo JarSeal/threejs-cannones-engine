@@ -1,17 +1,37 @@
 import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+// import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+// import { FXAAShader } from 'three/addons/shaders/FXAAShader.js';
+import { SMAAPass } from 'three/addons/postprocessing/SMAAPass.js';
 
-import { setSceneParam } from '../sceneData/sceneParams';
-import { setSceneItem } from '../sceneData/sceneItems';
+import { OutlinePass } from '../postFX/OutlinePass/OutlinePass.js';
+import { setSceneParam, setSceneParams } from '../sceneData/sceneParams';
+import { getSceneItem, setSceneItem } from '../sceneData/sceneItems';
 import ElementLoader from './ElementLoader';
 import { saveStateByKey } from '../sceneData/saveSession';
 import {
   AMBIENT_LIGHT,
+  CANVAS_ELEM_ID,
   HEMI_LIGHT,
   NEW_CAMERA_DEFAULT_PARAMS,
   NEW_ELEM_DEFAULT_PARAMS,
   POINT_LIGHT,
+  SELECTION_GROUP_ID,
 } from '../utils/defaultSceneValues';
 import { addCamera } from '../utils/toolsForCamera';
+import TextureLoader from '../loaders/TextureLoader';
+import { getScreenResolution } from '../utils/utils';
+import styleVariables from '../sass/variables.scss?raw';
+import SmallStats from '../UI/stats/SmallStats.js';
+import { registerStageClick, selectObjects } from '../controls/stageClick.js';
+import UndoRedo from '../UI/UndoRedo/UndoRedo.js';
+import TopTools from '../UI/TopTools.js';
+import LeftTools from '../UI/LeftTools.js';
+import ElemTool from '../UI/ElemTool.js';
+import RightSidePanel from '../UI/RightSliderPanel.js';
+import KeyboardShortcuts from '../UI/KeyboarShortcuts.js';
+import { createTransformControls } from '../controls/transformControls.js';
 
 class SceneLoader {
   constructor(scene, isEditor) {
@@ -22,6 +42,30 @@ class SceneLoader {
   }
 
   _createScene = (sceneParams) => {
+    setSceneParams(sceneParams);
+
+    // Setup textureLoader
+    const textureLoader = new TextureLoader();
+    setSceneItem('textureLoader', textureLoader);
+
+    // Setup renderer
+    const renderer = new THREE.WebGLRenderer({
+      antialias: false,
+    });
+    const pixelRatio = window.devicePixelRatio;
+    renderer.setPixelRatio(pixelRatio);
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.autoClear = false; // Because we do post processing, this needs to be false
+    if (sceneParams.shadowType !== undefined && sceneParams.shadowType !== null) {
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE[sceneParams.shadowType];
+    }
+    renderer.setClearColor(sceneParams.rendererClearColor || '#000000');
+    if (this.isEditor) renderer.debug.checkShaderErrors = true; // Disable this for production (performance gain), @TODO: create an env variable to control this
+    renderer.domElement.id = CANVAS_ELEM_ID;
+    document.body.appendChild(renderer.domElement);
+    setSceneItem('renderer', renderer);
+
     // Create three.js Scene object
     this.scene = new THREE.Scene();
     setSceneItem('scene', this.scene);
@@ -32,6 +76,160 @@ class SceneLoader {
     this._createObjects(sceneParams.elements);
     this._createGrid(sceneParams);
     this._createAxesHelper(sceneParams);
+
+    if (this.isEditor) {
+      // Editor post processing (outline and SMAA/FXAA)
+      const reso = getScreenResolution();
+      const size = renderer.getDrawingBufferSize(new THREE.Vector2());
+      const renderTarget = new THREE.WebGLRenderTarget(size.width, size.height, {
+        samples: 4,
+      });
+      const editorComposer = new EffectComposer(renderer, renderTarget);
+      const renderPass = new RenderPass(this.scene, getSceneItem('curCamera'));
+      editorComposer.addPass(renderPass);
+      setSceneItem('renderPass', renderPass);
+      const editorOutlinePass = new OutlinePass(
+        new THREE.Vector2(reso.x * pixelRatio, reso.y * pixelRatio),
+        this.scene,
+        getSceneItem('curCamera')
+      );
+      editorOutlinePass.edgeStrength = 10.0;
+      editorOutlinePass.edgeGlow = 0.25;
+      editorOutlinePass.edgeThickness = 2.5;
+      editorOutlinePass.pulsePeriod = 2;
+      editorOutlinePass.visibleEdgeColor.set('#f69909');
+      editorOutlinePass.hiddenEdgeColor.set('#ff4500');
+      editorOutlinePass.overlayMaterial.blending = THREE.NormalBlending;
+      const textureData = textureLoader.loadTexture(
+        'src/UI/textures/multiselect-stripe-pattern.png'
+      );
+      textureData.texture.wrapS = THREE.RepeatWrapping;
+      textureData.texture.wrapT = THREE.RepeatWrapping;
+      editorOutlinePass.usePatternTexture = false;
+      editorOutlinePass.patternTexture = textureData.texture;
+      setSceneItem('editorOutlinePass', editorOutlinePass);
+      editorComposer.addPass(editorOutlinePass);
+      // const effectFXAA = new ShaderPass(FXAAShader);
+      // effectFXAA.uniforms['resolution'].value.set(
+      //   1 / (reso.x * pixelRatio),
+      //   1 / (reso.y * pixelRatio)
+      // );
+      // this.editorComposer.addPass(effectFXAA);
+      const SMAA = new SMAAPass(reso.x * pixelRatio, reso.y * pixelRatio); // @TODO: change to this library: https://pmndrs.github.io/postprocessing/public/demo/#antialiasing
+      editorComposer.addPass(SMAA);
+      setSceneItem('editorComposer', editorComposer);
+
+      // Stats
+      const smallStatsColors = {
+        FPS: { fg: null, bg: null },
+        MS: { fg: null, bg: null },
+        MB: { fg: null, bg: null },
+      };
+      const styleVars = styleVariables.split('\n');
+      for (let i = 0; i < styleVars.length; i++) {
+        if (styleVars[i].includes('$smallStats-fg')) {
+          const value = styleVars[i].split(' ')[1].replace(';\r', '').replace(';', '');
+          smallStatsColors.FPS.fg = value;
+          smallStatsColors.MS.fg = value;
+          smallStatsColors.MB.fg = value;
+        }
+        if (styleVars[i].includes('$smallStats-bg')) {
+          const value = styleVars[i].split(' ')[1].replace(';\r', '').replace(';', '');
+          smallStatsColors.FPS.bg = value;
+          smallStatsColors.MS.bg = value;
+          smallStatsColors.MB.bg = value;
+          break;
+        }
+      }
+      const smallStatsContainer = document.createElement('div');
+      smallStatsContainer.id = 'smallStats-container';
+      const renderStats = new SmallStats(smallStatsColors);
+      renderStats.domElement.id = 'smallStats';
+      smallStatsContainer.appendChild(renderStats.domElement);
+      document.getElementById('root').appendChild(smallStatsContainer);
+      registerStageClick();
+      setSceneItem('runningRenderStats', renderStats);
+
+      // Create selection group
+      const selectionGroup = new THREE.Group();
+      selectionGroup.userData.isSelectionGroup = true;
+      selectionGroup.userData.id = SELECTION_GROUP_ID;
+      this.scene.add(selectionGroup);
+      setSceneItem('selectionGroup', selectionGroup);
+
+      // Set selection(s)
+      const selectionIds = sceneParams.selection;
+      const selection = [];
+      if (selectionIds && selectionIds.length) {
+        selectionIds.forEach((id) => {
+          const editorIcons = getSceneItem('editorIcons');
+          for (let i = 0; i < editorIcons.length; i++) {
+            if (editorIcons[i]?.icon.userData.id === id) {
+              selection.push(editorIcons[i].icon);
+            }
+          }
+          const editorTargetMeshes = getSceneItem('editorTargetMeshes') || [];
+          for (let i = 0; i < editorTargetMeshes.length; i++) {
+            if (editorTargetMeshes[i]?.userData.id === id) {
+              editorTargetMeshes[i].visible = true;
+              selection.push(editorTargetMeshes[i]);
+            }
+          }
+          const elements = getSceneItem('elements');
+          for (let i = 0; i < elements.length; i++) {
+            if (elements[i].userData.id === id) {
+              selection.push(elements[i]);
+            }
+          }
+        });
+        setSceneItem('selection', selection);
+      } else {
+        setSceneParam('selection', []);
+        setSceneItem('selection', []);
+      }
+
+      // Undo / Redo
+      const undoRedo = new UndoRedo();
+      setSceneItem('undoRedo', undoRedo);
+
+      // Init UI
+      const topTools = new TopTools({ id: 'top-tools', parentId: 'root' });
+      topTools.draw();
+      setSceneItem('topTools', topTools);
+
+      const leftTools = new LeftTools({ id: 'left-tools', parentId: 'root' });
+      leftTools.draw();
+      setSceneItem('leftTools', leftTools);
+
+      const elemTool = new ElemTool({ id: 'elem-tool', parentId: 'root', class: 'elemTool' });
+      elemTool.draw();
+      setSceneItem('elemTool', elemTool);
+
+      const rightSidePanel = new RightSidePanel({ id: 'right-side-panel', parentId: 'root' });
+      rightSidePanel.draw();
+      setSceneItem('rightSidePanel', rightSidePanel);
+
+      const keyboard = new KeyboardShortcuts();
+      setSceneItem('keyboard', keyboard);
+
+      // Transform controls
+      const transControls = createTransformControls();
+      if (
+        selection.length &&
+        (leftTools.selectAndTransformTool === 'translate' ||
+          leftTools.selectAndTransformTool === 'rotate' ||
+          leftTools.selectAndTransformTool === 'scale')
+      ) {
+        transControls.enabled = true;
+        transControls.mode = leftTools.selectAndTransformTool;
+        transControls.attach(selection[0]); // @TODO: add multiselection
+      } else {
+        transControls.enabled = false;
+      }
+
+      // Select possible selected object(s)
+      selectObjects(selection);
+    }
   };
 
   _createCameras = (camerasA, sceneParams) => {
