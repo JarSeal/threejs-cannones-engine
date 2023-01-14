@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import axios from 'axios';
 
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
@@ -12,11 +11,10 @@ import { OutlinePass } from './postFX/OutlinePass/OutlinePass.js';
 import {
   getSceneParams,
   setSceneParam,
-  resetSceneParams,
   setSceneParams,
   getSceneParam,
 } from './sceneData/sceneParams';
-import { getSceneItem, getSceneItems, setSceneItem, resetSceneItems } from './sceneData/sceneItems';
+import { getSceneItem, getSceneItems, setSceneItem } from './sceneData/sceneItems';
 import { getScreenResolution } from './utils/utils';
 import SceneLoader from './SceneLoader/SceneLoader';
 import RightSidePanel from './UI/RightSliderPanel';
@@ -37,7 +35,7 @@ import {
   CREATE_DEFAULT_SCENE,
   SELECTION_GROUP_ID,
 } from './utils/defaultSceneValues';
-import { getFSUrl } from './utils/getFSUrl';
+import { loadSceneApi } from './api/loadScene';
 
 class Root {
   constructor() {
@@ -54,13 +52,10 @@ class Root {
     sessionParams.projectFolder = 'devProject1'; // TEMP
     sessionParams.sceneId = 'scene1'; // TEMP
     if (sessionParams.projectFolder && sessionParams.sceneId) {
-      const response = await axios.post(getFSUrl('loadScene'), {
-        projectFolder: sessionParams.projectFolder,
-        sceneId: sessionParams.sceneId,
-      });
+      const response = await loadSceneApi(sessionParams);
       let curScene;
-      if (response.data && !response.data.error) {
-        curScene = response.data;
+      if (response && !response.error) {
+        curScene = response;
         saveSceneId(curScene.sceneId);
         saveProjectFolder(curScene.projectFolder);
       } else {
@@ -83,9 +78,6 @@ class Root {
   };
 
   loadScene = (sceneParams, isEditor) => {
-    // resetSceneParams();
-    // resetSceneItems();
-
     setSceneParams(sceneParams);
 
     // Setup textureLoader

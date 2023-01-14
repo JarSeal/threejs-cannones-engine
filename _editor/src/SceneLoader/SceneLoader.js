@@ -22,8 +22,11 @@ class SceneLoader {
   }
 
   _createScene = (sceneParams) => {
+    // Create three.js Scene object
     this.scene = new THREE.Scene();
     setSceneItem('scene', this.scene);
+
+    // Create entities according to params
     this._createCameras(sceneParams.cameras, sceneParams);
     this._createLights(sceneParams.lights);
     this._createObjects(sceneParams.elements);
