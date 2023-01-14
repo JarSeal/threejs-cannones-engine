@@ -6,6 +6,7 @@ import { setSceneItem, getSceneItem } from '../sceneData/sceneItems';
 import { saveCameraState } from '../sceneData/saveSession';
 
 export const createOrbitControls = () => {
+  let dampingTimeout;
   const sceneParams = getSceneParams();
   const cameras = sceneParams.cameras;
   const curCamera = cameras[sceneParams.curCameraIndex];
@@ -31,22 +32,8 @@ export const createOrbitControls = () => {
     quaternion: curCamera.quaternion,
     target: curCamera.target,
   };
-  controls.addEventListener('start', () => {
-    document.activeElement.blur(); // In case there are drop down menus open (with focus), this will close them.
-    rootElem.style.transitionDelay = '0.5s';
-    rootElem.style.opacity = 0.5;
-    const params = getSceneParam('cameras')[getSceneParam('curCameraIndex')];
-    undoRedoPrevVal = {
-      position: params.position,
-      target: params.target,
-    };
-    // @TODO: Make this better by recording the start position of the movement and comparing
-    // at the end listener if it has moved enough
-    setTimeout(() => {
-      setSceneParam('orbiterMoving', true);
-    }, 100);
-  });
-  controls.addEventListener('end', () => {
+
+  const endOrbiterMove = (saveUndoRedo) => {
     const position = curCameraItem.position;
     const quaternion = curCameraItem.quaternion;
     const target = controls.target;
@@ -65,21 +52,75 @@ export const createOrbitControls = () => {
     saveCameraState(saveState);
     const rightSidePanel = getSceneItem('rightSidePanel');
     if (rightSidePanel.tabId === 'UICamera') rightSidePanel.updatePanel();
+    const rootElem = document.getElementById('root');
     rootElem.style.transitionDelay = '0s';
     rootElem.style.opacity = 1;
     const camIcon = getSceneItem('editorIcons').find((i) => curCamera.id === i.icon.userData.id);
     if (camIcon) camIcon.update(curCameraItem);
+    if (saveUndoRedo) {
+      // @TODO: Make this better by recording the start position of the movement and comparing
+      // at the end listener if it has moved enough
+      setTimeout(() => {
+        setSceneParam('orbiterMoving', false);
+      }, 200);
+      getSceneItem('undoRedo').addAction({
+        type: 'setNewCameraTransforms',
+        prevVal: undoRedoPrevVal,
+        newVal: undoRedoNewVal,
+        cameraIndex: getSceneParam('curCameraIndex'),
+      });
+    }
+  };
+  let prevPosX, prevPosY, prevPosZ;
+  const dampingTimeoutFn = () => {
+    // Check if the camera is still moving
+    const roundedDecimals = 100;
+    const camIsStill =
+      prevPosX ===
+        (prevPosX
+          ? Math.round(curCameraItem.position.x * roundedDecimals) / roundedDecimals
+          : prevPosX + 1) &&
+      (prevPosY === prevPosY
+        ? Math.round(curCameraItem.position.y * roundedDecimals) / roundedDecimals
+        : prevPosY + 1) &&
+      (prevPosZ === prevPosZ
+        ? Math.round(curCameraItem.position.z * roundedDecimals) / roundedDecimals
+        : prevPosZ + 1);
+    prevPosX = Math.round(curCameraItem.position.x * roundedDecimals) / roundedDecimals;
+    prevPosY = Math.round(curCameraItem.position.y * roundedDecimals) / roundedDecimals;
+    prevPosZ = Math.round(curCameraItem.position.z * roundedDecimals) / roundedDecimals;
+    if (camIsStill) {
+      endOrbiterMove(true);
+    } else {
+      endOrbiterMove(false);
+      clearTimeout(dampingTimeout);
+      dampingTimeout = setTimeout(dampingTimeoutFn, 100);
+    }
+  };
+
+  controls.addEventListener('start', () => {
+    document.activeElement.blur(); // In case there are drop down menus open (with focus), this will close them.
+    rootElem.style.transitionDelay = '0.5s';
+    rootElem.style.opacity = 0.5;
+    const params = getSceneParam('cameras')[getSceneParam('curCameraIndex')];
+    undoRedoPrevVal = {
+      position: params.position,
+      target: params.target,
+    };
     // @TODO: Make this better by recording the start position of the movement and comparing
     // at the end listener if it has moved enough
     setTimeout(() => {
-      setSceneParam('orbiterMoving', false);
-    }, 200);
-    getSceneItem('undoRedo').addAction({
-      type: 'setNewCameraTransforms',
-      prevVal: undoRedoPrevVal,
-      newVal: undoRedoNewVal,
-      cameraIndex: getSceneParam('curCameraIndex'),
-    });
+      setSceneParam('orbiterMoving', true);
+    }, 100);
+  });
+  controls.addEventListener('end', () => {
+    if (controls.enableDamping) {
+      endOrbiterMove(false);
+      clearTimeout(dampingTimeout);
+      dampingTimeout = setTimeout(dampingTimeoutFn, 100);
+    } else {
+      endOrbiterMove(true);
+    }
   });
   // @TODO: remove this when the view size scrolling is enabled
   if (
