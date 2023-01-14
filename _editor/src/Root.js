@@ -83,8 +83,8 @@ class Root {
   };
 
   loadScene = (sceneParams, isEditor) => {
-    resetSceneParams();
-    resetSceneItems();
+    // resetSceneParams();
+    // resetSceneItems();
 
     setSceneParams(sceneParams);
 
@@ -211,16 +211,13 @@ class Root {
               selection.push(editorTargetMeshes[i]);
             }
           }
-          const elements = getSceneItems('elements');
+          const elements = getSceneItem('elements');
           for (let i = 0; i < elements.length; i++) {
             if (elements[i].userData.id === id) {
               selection.push(elements[i]);
             }
           }
         });
-
-        // @TODO: add multiselections to the selection group here
-
         setSceneItem('selection', selection);
       } else {
         setSceneParam('selection', []);
