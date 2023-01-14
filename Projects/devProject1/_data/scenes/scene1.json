@@ -51,10 +51,10 @@
   "curCameraIndex": 0,
   "elements": [
     {
-      "type": "shape",
+      "type": "shape3D",
       "id": "my-blue-box",
-      "shape": "box",
       "shapeParams": {
+        "shape3D": "box",
         "size": [1, 1, 1]
       },
       "position": [2, 2, 2],
@@ -65,10 +65,10 @@
       }
     },
     {
-      "type": "shape",
+      "type": "shape3D",
       "id": "my-other-box",
-      "shape": "box",
       "shapeParams": {
+        "shape3D": "box",
         "size": [1, 1, 1]
       },
       "position": [-2.5, 0.5, -2.5],
@@ -79,10 +79,11 @@
       }
     },
     {
-      "type": "shape",
+      "type": "shape3D",
       "id": "ground",
-      "shape": "box",
+      "shape3D": "box",
       "shapeParams": {
+        "shape3D": "box",
         "size": [20, 0.125, 20]
       },
       "position": [0, -0.0625, 0],

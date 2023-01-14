@@ -31,7 +31,7 @@ export const NEW_MATERIAL = {
 
 export const NEW_ELEM_DEFAULT_PARAMS = {
   name: '',
-  type: 'shape',
+  type: 'shape3D',
   shapeParams: NEW_SHAPE_BOX,
   paramType: 'element',
   position: [0, 0, 0],
@@ -120,10 +120,10 @@ export const CREATE_DEFAULT_SCENE = () => ({
       id: 'default-cube',
     },
     {
-      type: 'shape',
+      type: 'shape3D',
       id: 'default-ground',
-      shape: 'box',
       shapeParams: {
+        shape3D: 'box',
         size: [20, 0.125, 20],
       },
       position: [0, -0.0625, 0],

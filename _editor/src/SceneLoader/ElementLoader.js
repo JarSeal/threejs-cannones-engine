@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { NEW_MATERIAL, NEW_SHAPE_BOX } from '../utils/defaultSceneValues';
 
 // objParams: {
-// - type: String ('shape' | 'physicsshape' | 'particles' | 'particlesphysics' | 'custom' | 'physics')
+// - type: String ('shape3D' | @TODO: defined more types)
 // - id: String
 // - shape: String (primitive shape type that three.js and cannon-es support, does not apply to custom shape)
 // - compoundId: String (cannon-es/physics compound group id)
@@ -19,14 +19,14 @@ class ElementLoader {
 
   _createObj = (objParams) => {
     switch (objParams.type) {
-      case 'shape':
+      case 'shape3D':
         this.obj = this._createShape(objParams);
     }
   };
 
   _createShape = (objParams) => {
     // @TODO: move this to toolsForElems.js
-    if (objParams.shape === 'box') {
+    if (objParams.shapeParams.shape3D === 'box') {
       const material = this._createMaterial(objParams.material);
       if (!objParams.shapeParams) {
         objParams.shapeParams = { size: NEW_SHAPE_BOX.size };
