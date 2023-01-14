@@ -1,5 +1,5 @@
 import { Component } from '../LIGHTER';
-import { setSceneParam, getSceneParam } from './sceneData/sceneParams';
+import { setSceneParam, getSceneParam, getSceneParams } from './sceneData/sceneParams';
 import { getSceneItem, getSceneItems, setSceneItem } from './sceneData/sceneItems';
 import { getScreenResolution } from './utils/utils';
 import SceneLoader from './SceneLoader/SceneLoader';
@@ -51,6 +51,11 @@ class Root {
       // Start the show...
       setSceneItem('looping', true);
       this._renderLoop();
+
+      console.log('SCENE PARAMS', getSceneParams());
+      console.log('SCENE ITEMS', getSceneItems());
+      console.log('RENDERER', getSceneItem('renderer'));
+      console.log('SCENE', getSceneItem('scene'), getSceneItem('editorOutlinePass'));
     } else {
       // Show Projects view
     }
