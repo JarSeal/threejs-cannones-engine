@@ -41,8 +41,9 @@ export const getElemParamsById = (id) => {
   return foundParams;
 };
 
-export const removeMeshFromScene = (obj) => {
-  if (!obj || !obj.isMesh) return;
+export const removeMeshFromScene = (obj, canBeAnyType) => {
+  if (!obj) return;
+  if (!obj.isMesh && !canBeAnyType) return;
   if (obj.geometry) obj.geometry.dispose();
   if (obj.material) {
     if (Array.isArray(obj.material)) {
@@ -53,7 +54,7 @@ export const removeMeshFromScene = (obj) => {
   }
   if (obj.children.length) {
     for (let i = 0; i < obj.children.length; i++) {
-      removeMeshFromScene(obj.children[i]);
+      removeMeshFromScene(obj.children[i], canBeAnyType);
     }
   }
   obj.removeFromParent();

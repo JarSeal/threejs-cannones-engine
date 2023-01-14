@@ -44,7 +44,7 @@ export const setWorldGridHelperSize = (value, prevValue, setValue) => {
   saveSceneState({ gridSize: value });
   const scene = getSceneItem('scene');
   let gridHelper = scene.children.find((item) => item.type === 'GridHelper');
-  removeMeshFromScene(gridHelper, scene);
+  removeMeshFromScene(gridHelper, true);
   gridHelper = new THREE.GridHelper(value, value);
   if (!getSceneParam('grid')) gridHelper.visible = false;
   scene.add(gridHelper);

@@ -38,7 +38,7 @@ export const resetSceneItems = () => {
 
 const _clearScene = (scene) => {
   if (!scene) return;
-  scene.traverse((obj) => removeMeshFromScene(obj, scene));
+  scene.traverse((obj) => removeMeshFromScene(obj));
 };
 
 const _clearRenderer = (renderer) => renderer && renderer.dispose();
