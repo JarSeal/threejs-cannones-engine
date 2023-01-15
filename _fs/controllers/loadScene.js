@@ -3,23 +3,40 @@ import fs from 'fs';
 
 import logger from '../utils/logger';
 import config from '../utils/config';
+import ERRORS from '../utils/errors';
 
 const router = Router();
 
 router.post('/', async (request, response) => {
-  const { projectFolder, sceneId } = request.body;
-  const path = `${config.PROJECTS_FOLDER_FROM_FS(projectFolder)}/_data/scenes/${sceneId}.json`;
-  let data = {},
-    errorMsg = null;
+  const data = loadSceneData(request.body);
+  return response.json(data);
+});
+
+export const loadSceneData = ({ projectFolder, sceneId }) => {
+  const folderPath = config.PROJECTS_FOLDER_FROM_FS(projectFolder);
+  const sceneFilePath = `${folderPath}/_data/scenes/${sceneId}.json`;
+  if (!projectFolder || !sceneId) {
+    const error = !projectFolder ? ERRORS.projectFolderParamMissing : ERRORS.sceneIdParamMissing;
+    logger.error(error.errorMsg);
+    return { error: true, errorCode: error.errorCode, errorMsg: error.errorMsg };
+  }
+  if (!fs.existsSync(folderPath)) {
+    const error = ERRORS.couldNotFindProjectFolder;
+    const errorMsg = error.errorMsg.replace('${path}', folderPath);
+    logger.error(error.errorMsg);
+    return { error: true, errorCode: error.errorCode, errorMsg };
+  }
+  let data = {};
   try {
-    const rawdata = fs.readFileSync(path);
+    const rawdata = fs.readFileSync(sceneFilePath);
     data = JSON.parse(rawdata);
   } catch (err) {
-    errorMsg = `Error: Could not find scene file in "${path}"`; // @TODO: create an errors object
-    logger.error(errorMsg, JSON.stringify(err));
-    return response.json({ error: true, errorMsg });
+    const error = ERRORS.couldNotFindSceneFile;
+    const errorMsg = error.errorMsg.replace('${path}', sceneFilePath);
+    logger.error(error.errorMsg);
+    return { error: true, errorCode: error.errorCode, errorMsg };
   }
-  response.json({ ...data, projectFolder });
-});
+  return { ...data, projectFolder };
+};
 
 export default router;

@@ -74,6 +74,9 @@ export const createOrbitControls = () => {
   let prevPosX, prevPosY, prevPosZ;
   const dampingTimeoutFn = () => {
     // Check if the camera is still moving
+    // by rounding the camera position (and the prev cam pos) and comparing them
+    // (if these are not rounded, the LS save is then done much later as the damping
+    // takes much longer to finish)
     const roundedDecimals = 100;
     const camIsStill =
       prevPosX ===

@@ -9,7 +9,9 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon --es-module-specifier-resolution=node index.js",
     "lint": "eslint ./",
-    "prettify": "prettier --write ./**/*.js"
+    "prettify": "prettier --write ./**/*.js",
+    "test": "cross-env NODE_ENV=test TZ=UTC NODE_OPTIONS=--es-module-specifier-resolution=node jest --verbose --runInBand --detectOpenHandles --coverage",
+    "test:watch": "cross-env NODE_ENV=test WATCH=true TZ=UTC NODE_OPTIONS=--es-module-specifier-resolution=node jest --watchAll --verbose --runInBand --detectOpenHandles"
   },
   "dependencies": {
     "axios": "1.2.2",
@@ -19,6 +21,7 @@
   },
   "devDependencies": {
     "@babel/preset-env": "^7.18.2",
+    "babel-jest": "^28.1.0",
     "cors": "^2.8.5",
     "cross-env": "^7.0.2",
     "eslint": "^7.28.0",
@@ -26,6 +29,7 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "2.25.4",
     "eslint-plugin-prettier": "4.0.0",
+    "jest": "27.5.1",
     "nodemon": "^2.0.4",
     "prettier": "^2.6.2"
   },
@@ -36,5 +40,19 @@
   "engines": {
     "node": ">=16.13.2",
     "yarn": ">=1.22.15"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "moduleFileExtensions": [
+      "js"
+    ],
+    "modulePathIgnorePatterns": [
+      "<rootDir>/dist",
+      "<rootDir>/mongo"
+    ],
+    "transform": {
+      "^.+\\.(js)$": "babel-jest"
+    },
+    "testTimeout": 30000
   }
 }
