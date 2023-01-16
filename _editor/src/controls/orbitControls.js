@@ -6,7 +6,7 @@ import { setSceneItem, getSceneItem } from '../sceneData/sceneItems';
 import { saveCameraState } from '../sceneData/saveSession';
 
 export const createOrbitControls = () => {
-  let dampingTimeout;
+  let dampingTimeout, startingSelections;
   const sceneParams = getSceneParams();
   const cameras = sceneParams.cameras;
   const curCamera = cameras[sceneParams.curCameraIndex];
@@ -20,7 +20,7 @@ export const createOrbitControls = () => {
   const curCameraItem = getSceneItem('curCamera');
   const controls = new OrbitControls(curCameraItem, getSceneItem('renderer').domElement);
   controls.enableDamping = true; // @TODO: make an editor setting for this
-  controls.dampingFactor = 0.12; // @TODO: make an editor setting for this
+  controls.dampingFactor = 0.2; // @TODO: make an editor setting for this
   if (curCamera.quaternion) {
     curCameraItem.quaternion.set(...curCamera.quaternion);
   }
@@ -33,23 +33,24 @@ export const createOrbitControls = () => {
     target: curCamera.target,
   };
 
-  const endOrbiterMove = (saveUndoRedo) => {
+  const saveCameraPosition = (saveUndoRedo) => {
     const position = curCameraItem.position;
     const quaternion = curCameraItem.quaternion;
     const target = controls.target;
     const undoRedoNewVal = {
       position: [position.x, position.y, position.z],
+      quaternion: [quaternion.x, quaternion.y, quaternion.z, quaternion.w],
       target: [target.x, target.y, target.z],
     };
     const saveState = { index: sceneParams.curCameraIndex, position, target };
     if (quaternion) saveState.quaternion = quaternion;
+    saveCameraState(saveState);
     // @TODO: Make the zoom handling update the view size instead for orthographic cams (keep the zoom always 1 when scrolling the wheel)
     // (maybe do this, needs research)
     // if (curCamera && (curCamera.type === 'orthographicTarget' || curCamera.type === 'orthographicFree')) {
     //   console.log('CUR CAM', curCameraItem);
     //   saveState.orthoViewSize = curCameraItem.top + curCameraItem.bottom;
     // }
-    saveCameraState(saveState);
     const rightSidePanel = getSceneItem('rightSidePanel');
     if (rightSidePanel.tabId === 'UICamera') rightSidePanel.updatePanel();
     const rootElem = document.getElementById('root');
@@ -57,12 +58,11 @@ export const createOrbitControls = () => {
     rootElem.style.opacity = 1;
     const camIcon = getSceneItem('editorIcons').find((i) => curCamera.id === i.icon.userData.id);
     if (camIcon) camIcon.update(curCameraItem);
-    if (saveUndoRedo) {
-      // @TODO: Make this better by recording the start position of the movement and comparing
-      // at the end listener if it has moved enough
-      setTimeout(() => {
-        setSceneParam('orbiterMoving', false);
-      }, 200);
+    setSceneParam('orbiterMoving', false);
+
+    // This checks if a selection is made, and if it is, then don't save undoRedo
+    const endingSelections = JSON.stringify(getSceneParam('selection'));
+    if (saveUndoRedo && startingSelections === endingSelections) {
       getSceneItem('undoRedo').addAction({
         type: 'setNewCameraTransforms',
         prevVal: undoRedoPrevVal,
@@ -71,14 +71,17 @@ export const createOrbitControls = () => {
       });
     }
   };
-  let prevPosX, prevPosY, prevPosZ;
+  let prevPosX,
+    prevPosY,
+    prevPosZ,
+    camIsStill = true;
   const dampingTimeoutFn = () => {
     // Check if the camera is still moving
     // by rounding the camera position (and the prev cam pos) and comparing them
     // (if these are not rounded, the LS save is then done much later as the damping
     // takes much longer to finish)
-    const roundedDecimals = 100;
-    const camIsStill =
+    const roundedDecimals = 10;
+    camIsStill =
       prevPosX ===
         (prevPosX
           ? Math.round(curCameraItem.position.x * roundedDecimals) / roundedDecimals
@@ -93,11 +96,11 @@ export const createOrbitControls = () => {
     prevPosY = Math.round(curCameraItem.position.y * roundedDecimals) / roundedDecimals;
     prevPosZ = Math.round(curCameraItem.position.z * roundedDecimals) / roundedDecimals;
     if (camIsStill) {
-      endOrbiterMove(true);
+      saveCameraPosition(true);
     } else {
-      endOrbiterMove(false);
+      saveCameraPosition(false);
       clearTimeout(dampingTimeout);
-      dampingTimeout = setTimeout(dampingTimeoutFn, 100);
+      dampingTimeout = setTimeout(dampingTimeoutFn, 50);
     }
   };
 
@@ -105,11 +108,20 @@ export const createOrbitControls = () => {
     document.activeElement.blur(); // In case there are drop down menus open (with focus), this will close them.
     rootElem.style.transitionDelay = '0.5s';
     rootElem.style.opacity = 0.5;
-    const params = getSceneParam('cameras')[getSceneParam('curCameraIndex')];
-    undoRedoPrevVal = {
-      position: params.position,
-      target: params.target,
-    };
+    if (camIsStill) {
+      startingSelections = JSON.stringify(getSceneParam('selection'));
+      undoRedoPrevVal = {
+        position: [curCameraItem.position.x, curCameraItem.position.y, curCameraItem.position.z],
+        quaternion: [
+          curCameraItem.quaternion.x,
+          curCameraItem.quaternion.y,
+          curCameraItem.quaternion.z,
+          curCameraItem.quaternion.w,
+        ],
+        target: [controls.target.x, controls.target.y, controls.target.z],
+      };
+      clearTimeout(dampingTimeout);
+    }
     // @TODO: Make this better by recording the start position of the movement and comparing
     // at the end listener if it has moved enough
     setTimeout(() => {
@@ -118,11 +130,11 @@ export const createOrbitControls = () => {
   });
   controls.addEventListener('end', () => {
     if (controls.enableDamping) {
-      endOrbiterMove(false);
+      saveCameraPosition(false);
       clearTimeout(dampingTimeout);
-      dampingTimeout = setTimeout(dampingTimeoutFn, 100);
+      dampingTimeout = setTimeout(dampingTimeoutFn, 50);
     } else {
-      endOrbiterMove(true);
+      saveCameraPosition(true);
     }
   });
   // @TODO: remove this when the view size scrolling is enabled

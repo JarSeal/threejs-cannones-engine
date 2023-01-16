@@ -8,7 +8,7 @@ export const loadSceneApi = async (props) => {
     projectFolder,
     sceneId,
   });
-  if (response.data) {
+  if (response?.data) {
     return response.data;
   } else {
     console.error('ForThree: Could not load data.');

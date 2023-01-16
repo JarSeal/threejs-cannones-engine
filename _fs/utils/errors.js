@@ -11,9 +11,13 @@ const ERRORS = {
     errorCode: 404,
     errorMsg: 'Error: Could not find project folder in "${path}"',
   },
-  couldNotFindSceneFile: {
+  couldNotFindOrReadSceneFile: {
     errorCode: 404,
-    errorMsg: 'Error: Could not find scene file in "${path}"',
+    errorMsg: 'Error: Could not find or read scene file in "${path}"',
+  },
+  couldNotFindOrWriteSceneFile: {
+    errorCode: 500,
+    errorMsg: 'Error: Could not write scene file in "${path}"',
   },
 };
 

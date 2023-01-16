@@ -1,6 +1,7 @@
 import { Component } from '../../LIGHTER';
+import { saveSceneApi } from '../api/saveScene';
 import { getSceneItem } from '../sceneData/sceneItems';
-import { getSceneParam } from '../sceneData/sceneParams';
+import { getSceneParam, getSceneParams } from '../sceneData/sceneParams';
 import { changeCurCamera, newCameraDialog } from '../utils/toolsForCamera';
 import { printName } from '../utils/utils';
 import Button from './common/Button';
@@ -22,6 +23,29 @@ class TopTools extends Component {
   _mainButtons = () => {
     const buttonWrapperId = this.id + '-main-buttons-wrapper';
     const buttons = [
+      {
+        type: 'menu',
+        btn: this.addChild(
+          new Button({
+            id: this.id + '-btn-main-menu-button',
+            class: ['menuButton'],
+            icon: new SvgIcon({ id: this.id + '-main-menu-icon', icon: 'bars', width: 18 }),
+            ...this._menuButtonListeners,
+          })
+        ),
+        options: [
+          {
+            icon: new SvgIcon({ id: this.id + '-save-scene-icon', icon: 'save', width: 18 }),
+            text: 'Save scene',
+            onClick: async () => {
+              const response = await saveSceneApi(getSceneParams());
+              // @TODO: add toast to notify user about successfull save or error
+              console.log('SCENE SAVED...', response);
+              document.activeElement.blur();
+            },
+          },
+        ],
+      },
       {
         type: 'menu',
         btn: this.addChild(

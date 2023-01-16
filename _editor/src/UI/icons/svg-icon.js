@@ -1,5 +1,6 @@
 import { Component } from '../../../LIGHTER';
 
+import barsMenuIcon from './svg/bars.svg?raw';
 import cameraIcon from './svg/video.svg?raw';
 import caretUpIcon from './svg/caret-up.svg?raw';
 import caretDownIcon from './svg/caret-down.svg?raw';
@@ -12,6 +13,7 @@ import plusIcon from './svg/plus.svg?raw';
 import pointerIcon from './svg/arrow-pointer.svg?raw';
 import redoIcon from './svg/rotate-right.svg?raw';
 import rotateIcon from './svg/rotate.svg?raw';
+import saveIcon from './svg/floppy-disk.svg?raw';
 import scaleIcon from './svg/crop-simple.svg?raw';
 import trashIcon from './svg/trash.svg?raw';
 import undoIcon from './svg/rotate-left.svg?raw';
@@ -38,6 +40,8 @@ class SvgIcon extends Component {
 
   _getIcon = (icon) => {
     switch (icon) {
+      case 'bars':
+        return barsMenuIcon;
       case 'camera':
         return cameraIcon;
       case 'caretUp':
@@ -62,6 +66,8 @@ class SvgIcon extends Component {
         return redoIcon;
       case 'rotate':
         return rotateIcon;
+      case 'save':
+        return saveIcon;
       case 'scale':
         return scaleIcon;
       case 'trash':

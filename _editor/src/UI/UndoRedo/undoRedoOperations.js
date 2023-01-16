@@ -162,10 +162,10 @@ const undoRedoOperations = {
       });
       cameraParams = cameraParams.map((c, i) => {
         c.index = i;
-        const icon = icons.find((icon) => icon.cameraIcon.userData.id === c.id);
+        const icon = icons.find((icon) => icon.icon.userData.id === c.id);
         if (icon) {
-          icon.cameraIcon.userData = c;
-          icon.iconMesh.userData = c;
+          icon.icon.userData = c;
+          icon.icon.userData = c;
         }
         if (i === getSceneItem('curCameraIndex')) {
           newHelpers.push(null);

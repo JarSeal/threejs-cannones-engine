@@ -46,6 +46,6 @@ describe('loadScene controller', () => {
     const data = loadSceneData({ projectFolder, sceneId });
     expect(data.error).toBeTruthy();
     expect(data.errorCode).toEqual(404);
-    expect(data.errorMsg.startsWith('Error: Could not find scene file')).toBeTruthy();
+    expect(data.errorMsg.startsWith('Error: Could not find or read scene file')).toBeTruthy();
   });
 });

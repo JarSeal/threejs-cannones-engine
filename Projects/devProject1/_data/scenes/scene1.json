@@ -3,25 +3,31 @@
   "name": "Development scene 1",
   "dateCreated": 1663229534337,
   "dateSaved": 1663229534337,
-  "axesHelper": true,
+  "axesHelper": false,
   "axesHelperLength": 100,
-  "rendererClearColor": "#cccccc",
-  "grid": true,
+  "rendererClearColor": "#0c0b1e",
+  "grid": false,
   "gridSize": 26,
   "shadowType": null,
   "lights": [
     {
-      "id": "ambient",
+      "id": "ba6680b0-9ff2-4b83-a3e5-a1c16bf392f4",
       "type": "ambient",
       "color": "#ffffff",
-      "intensity": 0.2
+      "intensity": 0.2,
+      "disabled": false,
+      "paramType": "light",
+      "index": 0
     },
     {
-      "id": "hemi",
+      "id": "ba846c06-04bd-4005-89bb-92e65ee7784c",
       "type": "hemisphere",
       "colorTop": "#ffffbb",
       "colorBottom": "#080820",
-      "intensity": 0.25
+      "intensity": 0.25,
+      "disabled": false,
+      "paramType": "light",
+      "index": 1
     }
   ],
   "cameras": [
@@ -32,10 +38,60 @@
       "fov": 45,
       "near": 0.1,
       "far": 256,
-      "position": [5, 5, 5],
-      "target": [0, 0, 0],
+      "position": [
+        -35.80044189733824,
+        10.616626219851533,
+        -9.747793232794196
+      ],
+      "target": [
+        -1.3751176225965565,
+        3.3796165916353207,
+        -0.339815317056589
+      ],
       "orbitControls": true,
-      "showHelper": true
+      "showHelper": true,
+      "paramType": "camera",
+      "orthoViewSize": 1,
+      "rotation": [
+        -2.4858901131699183,
+        -1.2387713842432262,
+        -2.512824936775147
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "defaultPosition": [
+        5,
+        5,
+        5
+      ],
+      "defaultRotation": [
+        0,
+        0,
+        0
+      ],
+      "defaultScale": [
+        1,
+        1,
+        1
+      ],
+      "defaultTarget": [
+        0,
+        0,
+        0
+      ],
+      "isTargetingCamera": true,
+      "isTargetingObject": true,
+      "index": 0,
+      "quaternion": [
+        -0.060599958301583226,
+        -0.790890662859561,
+        -0.07938333671849329,
+        0.6037531700180538
+      ],
+      "lookAt": null
     },
     {
       "id": "editor-main2",
@@ -43,9 +99,54 @@
       "fov": 45,
       "near": 0.1,
       "far": 256,
-      "position": [10, 5, 10],
-      "target": [0, 0, 0],
-      "showHelper": true
+      "position": [
+        10,
+        5,
+        10
+      ],
+      "target": [
+        0,
+        0,
+        0
+      ],
+      "showHelper": true,
+      "name": "",
+      "paramType": "camera",
+      "orthoViewSize": 1,
+      "rotation": [
+        -0.4636476090008061,
+        0.7297276562269661,
+        0.3217505543966421
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "defaultPosition": [
+        5,
+        5,
+        5
+      ],
+      "defaultRotation": [
+        0,
+        0,
+        0
+      ],
+      "defaultScale": [
+        1,
+        1,
+        1
+      ],
+      "defaultTarget": [
+        0,
+        0,
+        0
+      ],
+      "orbitControls": false,
+      "isTargetingCamera": true,
+      "isTargetingObject": true,
+      "index": 1
     }
   ],
   "curCameraIndex": 0,
@@ -55,28 +156,100 @@
       "id": "my-blue-box",
       "shapeParams": {
         "shape3D": "box",
-        "size": [1, 1, 1]
+        "size": [
+          1,
+          1,
+          1
+        ]
       },
-      "position": [2, 2, 2],
-      "rotation": [0, 0.7, 0],
+      "position": [
+        2,
+        2,
+        2.0000000000000004
+      ],
+      "rotation": [
+        0,
+        0.7000000000000001,
+        0
+      ],
       "material": {
         "type": "lambert",
         "color": "#00ffff"
-      }
+      },
+      "name": "",
+      "paramType": "element",
+      "scale": [
+        0.9999999999999999,
+        1,
+        0.9999999999999999
+      ],
+      "defaultPosition": [
+        0,
+        0,
+        0
+      ],
+      "defaultRotation": [
+        0,
+        0,
+        0
+      ],
+      "defaultScale": [
+        1,
+        1,
+        1
+      ],
+      "castShadow": false,
+      "receiveShadow": false
     },
     {
       "type": "shape3D",
       "id": "my-other-box",
       "shapeParams": {
         "shape3D": "box",
-        "size": [1, 1, 1]
+        "size": [
+          1,
+          1,
+          1
+        ]
       },
-      "position": [-2.5, 0.5, -2.5],
-      "rotation": [0, 0, 0],
+      "position": [
+        -2.5,
+        0.5,
+        -2.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
       "material": {
         "type": "lambert",
         "color": "#ff2233"
-      }
+      },
+      "name": "",
+      "paramType": "element",
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "defaultPosition": [
+        0,
+        0,
+        0
+      ],
+      "defaultRotation": [
+        0,
+        0,
+        0
+      ],
+      "defaultScale": [
+        1,
+        1,
+        1
+      ],
+      "castShadow": false,
+      "receiveShadow": false
     },
     {
       "type": "shape3D",
@@ -84,13 +257,135 @@
       "shape3D": "box",
       "shapeParams": {
         "shape3D": "box",
-        "size": [20, 0.125, 20]
+        "size": [
+          20,
+          0.125,
+          20
+        ]
       },
-      "position": [0, -0.0625, 0],
+      "position": [
+        0,
+        -0.0625,
+        0
+      ],
       "material": {
         "type": "lambert",
         "color": "#cccccc"
-      }
+      },
+      "name": "",
+      "paramType": "element",
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "defaultPosition": [
+        0,
+        0,
+        0
+      ],
+      "defaultRotation": [
+        0,
+        0,
+        0
+      ],
+      "defaultScale": [
+        1,
+        1,
+        1
+      ],
+      "castShadow": false,
+      "receiveShadow": false
     }
-  ]
+  ],
+  "projectFolder": "devProject1",
+  "editor": {
+    "scrollPositions": {
+      "elemTool": 0
+    },
+    "undoredo": {
+      "stack": [
+        {
+          "type": "changeWorldBackgroundColor",
+          "prevVal": "#141325",
+          "newVal": "#0c0b1e"
+        },
+        {
+          "type": "changeWorldBackgroundColor",
+          "prevVal": "#060425",
+          "newVal": "#141325"
+        },
+        {
+          "type": "changeWorldBackgroundColor",
+          "prevVal": "#090727",
+          "newVal": "#060425"
+        },
+        {
+          "type": "changeWorldBackgroundColor",
+          "prevVal": "#0b0923",
+          "newVal": "#090727"
+        },
+        {
+          "type": "changeWorldBackgroundColor",
+          "prevVal": "#1909ff",
+          "newVal": "#0b0923"
+        },
+        {
+          "type": "changeWorldBackgroundColor",
+          "prevVal": "#ff0909",
+          "newVal": "#1909ff"
+        },
+        {
+          "type": "changeWorldBackgroundColor",
+          "prevVal": "#0a0a25",
+          "newVal": "#250a0a"
+        },
+        {
+          "type": "selection",
+          "prevVal": [
+            "my-other-box"
+          ],
+          "newVal": []
+        },
+        {
+          "type": "changeWorldBackgroundColor",
+          "prevVal": "#cccccc",
+          "newVal": "#0a0a25"
+        },
+        {
+          "type": "selection",
+          "prevVal": [],
+          "newVal": [
+            "ground"
+          ]
+        }
+      ],
+      "pointer": 0
+    },
+    "show": {
+      "rightPanelTab": "UIWorld",
+      "elemTool": false,
+      "elemToolContent": true
+    },
+    "rightPanelScrollTop": {
+      "UICamera": 289
+    },
+    "heights": {
+      "elemTool": null
+    },
+    "positions": {
+      "elemTool": {
+        "x": 59,
+        "y": 192.25
+      }
+    },
+    "selectAndTransformTool": "select"
+  },
+  "selection": [],
+  "orbiterMoving": false
 }

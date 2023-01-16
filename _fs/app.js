@@ -5,9 +5,10 @@ import cors from 'cors';
 import middleware from './utils/middleware.js';
 
 import loadSceneRouter from './controllers/loadScene.js';
+import saveSceneRouter from './controllers/saveScene.js';
 
 const app = express();
-process.env.TZ = 'Europe/London';
+process.env.TZ = 'Europe/London'; // @TODO: add ForThree setting for this
 
 app.use(
   cors({
@@ -19,6 +20,7 @@ app.use(express.json());
 app.use(middleware.requestLogger);
 
 app.use('/api/load-scene', loadSceneRouter);
+app.use('/api/save-scene', saveSceneRouter);
 
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);

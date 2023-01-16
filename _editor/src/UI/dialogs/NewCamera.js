@@ -46,7 +46,6 @@ class NewCamera extends Component {
         value: this.newCameraParams.name,
         changeFn: (e) => {
           this.newCameraParams.name = e.target.value;
-          console.log(this.newCameraParams.id);
         },
       })
     );
