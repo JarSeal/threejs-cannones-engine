@@ -7,15 +7,22 @@ import { getSceneStates, saveProjectFolder, saveSceneId } from './sceneData/save
 import Dialog from './UI/dialogs/Dialog';
 import { CREATE_DEFAULT_SCENE } from './utils/defaultSceneValues';
 import { loadSceneApi } from './api/loadScene';
+import Toaster from './UI/Toaster';
 
 class Root {
   constructor() {
     // Overlays and dialog
-    new Component({ id: 'overlays', parentId: 'root' }).draw();
+    const overlay = new Component({ id: 'overlays', parentId: 'root' });
+    overlay.draw();
     const dialog = new Dialog({ id: 'dialog', parentId: 'overlays' });
     dialog.draw();
     dialog.disappear();
     setSceneItem('dialog', dialog);
+
+    // Toaster
+    const toaster = new Toaster({ id: 'toaster', parentId: 'overlays' });
+    toaster.draw();
+    setSceneItem('toaster', toaster);
 
     // initialise the app
     this._initApp();

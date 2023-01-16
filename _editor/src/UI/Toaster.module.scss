@@ -1,0 +1,118 @@
+@import '../sass/variables.scss';
+
+.toaster {
+  position: fixed;
+  width: 30rem;
+  height: auto;
+  z-index: 400;
+  left: 0;
+  bottom: 5.8rem;
+  padding-right: 0.3rem;
+  overflow-wrap: break-word;
+}
+.toast {
+  display: flex;
+  position: relative;
+  width: 100%;
+  padding: 1.4rem 2.4rem 1rem 2rem;
+  transform: translate3d(-102%, 0, 0);
+  opacity: 0;
+  margin-bottom: 0.3rem;
+  font-size: 1.4rem;
+  @include basetext-font-bold;
+  overflow-wrap: break-word;
+  transition-property: transform, opacity;
+  transition-timing-function: ease-out;
+  border-radius: 0.4rem;
+  background-color: rgba($dark-grey1, 0.35);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  span {
+    display: inline-block;
+    width: 100%;
+    overflow-wrap: break-word;
+  }
+  &__show {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+  &__info {
+    color: $mid-grey3;
+    .toast__close {
+      &:before,
+      &:after {
+        background-color: $mid-grey3;
+      }
+    }
+  }
+  &__error {
+    color: $error;
+    .toast__close {
+      &:before,
+      &:after {
+        background-color: $error;
+      }
+    }
+  }
+  &__success {
+    color: $success;
+    .toast__close {
+      &:before,
+      &:after {
+        background-color: $success;
+      }
+    }
+  }
+  &__warning {
+    color: $warning;
+    .toast__close {
+      &:before,
+      &:after {
+        background-color: $warning;
+      }
+    }
+  }
+}
+.toast.toast__beforeHide {
+  overflow: hidden;
+  transition-property: height, opacity, margin-bottom, padding-top, padding-bottom;
+  transition-timing-function: ease-out;
+  transform: translate3d(0, 0, 0);
+}
+.toast.toast__hide {
+  height: 0 !important;
+  opacity: 0;
+  margin-bottom: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+.toast__close {
+  background: none;
+  border: none;
+  position: absolute;
+  top: 0.3rem;
+  right: 0.3rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background-color: rgba(#fff, 0.05);
+  transition: background-color 0.2s ease-in-out;
+  &:hover {
+    background-color: rgba(#fff, 0.15);
+    border: none;
+  }
+  &:before,
+  &:after {
+    position: absolute;
+    content: '';
+    width: 0.1rem;
+    height: 0.8rem;
+    top: 0.6rem;
+  }
+  &:before {
+    transform: rotate(45deg);
+  }
+  &:after {
+    transform: rotate(-45deg);
+  }
+}
