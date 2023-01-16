@@ -1,6 +1,7 @@
 import { selectObjects } from '../controls/stageClick';
 import { getSceneItem } from '../sceneData/sceneItems';
 import { getSceneParam } from '../sceneData/sceneParams';
+import { saveScene } from '../utils/toolsForFS';
 import { toggleWorldAxesHelper, toggleWorldGridHelper } from '../utils/toolsForWorld';
 
 class KeyboardShortcuts {
@@ -17,7 +18,7 @@ class KeyboardShortcuts {
     if (document.activeElement?.nodeName === 'INPUT') return;
     const actionKey = this.keysDown.sort().join('');
     const action = this.shortCuts[actionKey];
-    if (action) action();
+    if (action) action(e);
     // console.log('KEYS DOWN', this.keysDown, actionKey);
   };
 
@@ -63,6 +64,7 @@ class KeyboardShortcuts {
   DEFAULT_SHORTCUTS = [
     { keys: ['Control', 'z'], actionKey: 'undo' },
     { keys: ['Control', 'Shift', 'Z'], actionKey: 'redo' },
+    { keys: ['Control', 's'], actionKey: 'saveScene' },
     { keys: ['Escape'], actionKey: 'escape' },
     { keys: ['s'], actionKey: 'selectTool' },
     { keys: ['z'], actionKey: 'translateTool' },
@@ -76,6 +78,10 @@ class KeyboardShortcuts {
   ACTION_POOL = {
     undo: () => getSceneItem('undoRedo').undo(),
     redo: () => getSceneItem('undoRedo').redo(),
+    saveScene: async (e) => {
+      e.preventDefault();
+      await saveScene();
+    },
     escape: () => (getSceneParam('selection').length ? selectObjects([]) : null),
     selectTool: () => getSceneItem('leftTools').changeTool('select'),
     translateTool: () => getSceneItem('leftTools').changeTool('translate'),

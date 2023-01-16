@@ -1,8 +1,8 @@
 import { Component } from '../../LIGHTER';
-import { saveSceneApi } from '../api/saveScene';
 import { getSceneItem } from '../sceneData/sceneItems';
-import { getSceneParam, getSceneParams } from '../sceneData/sceneParams';
+import { getSceneParam } from '../sceneData/sceneParams';
 import { changeCurCamera, newCameraDialog } from '../utils/toolsForCamera';
+import { saveScene } from '../utils/toolsForFS';
 import { printName } from '../utils/utils';
 import Button from './common/Button';
 import SvgIcon from './icons/svg-icon';
@@ -38,9 +38,7 @@ class TopTools extends Component {
             icon: new SvgIcon({ id: this.id + '-save-scene-icon', icon: 'save', width: 18 }),
             text: 'Save scene',
             onClick: async () => {
-              const response = await saveSceneApi(getSceneParams());
-              // @TODO: add toast to notify user about successfull save or error
-              console.log('SCENE SAVED...', response);
+              await saveScene();
               document.activeElement.blur();
             },
           },
