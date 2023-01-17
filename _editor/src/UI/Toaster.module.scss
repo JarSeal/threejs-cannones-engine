@@ -24,7 +24,7 @@
   transition-property: transform, opacity;
   transition-timing-function: ease-out;
   border-radius: 0.4rem;
-  background-color: rgba($dark-grey1, 0.35);
+  background-color: rgba($mid-grey1, 0.5);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   span {
@@ -46,20 +46,22 @@
     }
   }
   &__error {
-    color: $error;
+    color: $white;
+    background-color: rgba($error, 0.5);
     .toast__close {
       &:before,
       &:after {
-        background-color: $error;
+        background-color: $white;
       }
     }
   }
   &__success {
-    color: $success;
+    color: $white;
+    background-color: rgba($success, 0.5);
     .toast__close {
       &:before,
       &:after {
-        background-color: $success;
+        background-color: $white;
       }
     }
   }
@@ -97,6 +99,7 @@
   border-radius: 50%;
   background-color: rgba(#fff, 0.05);
   transition: background-color 0.2s ease-in-out;
+  cursor: pointer;
   &:hover {
     background-color: rgba(#fff, 0.15);
     border: none;

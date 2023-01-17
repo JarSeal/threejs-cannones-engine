@@ -1,12 +1,13 @@
 const emptyScene = {
   sceneId: null,
   name: '',
-  rendererElemId: 'main-stage',
   rendererClearColor: '#000000',
-  orbitControls: true,
+  grid: false,
+  gridSize: 26,
+  axesHelper: false,
+  axesHelperLength: 100,
   shadowType: null,
   cameraIndex: 0,
-  screenResolution: { x: 0, y: 0 },
   aspectRatio: 0,
   pixelRatio: 0,
   cameras: [],
@@ -15,7 +16,7 @@ const emptyScene = {
   selection: [],
 };
 
-let sceneParams = emptyScene;
+let sceneParams = { ...emptyScene };
 
 export const getSceneParams = () => sceneParams;
 
@@ -49,4 +50,4 @@ export const setSceneParamR = (keys, value) => {
 
 export const setSceneParams = (params) => (sceneParams = params);
 
-export const resetSceneParams = () => (sceneParams = emptyScene);
+export const resetSceneParams = () => (sceneParams = { ...emptyScene });

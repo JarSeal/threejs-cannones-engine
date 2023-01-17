@@ -37,10 +37,14 @@ const globalSetup = () => {
     writeJsonFile(`${folderPath}/project.json`, {
       projectFolder: proj.projectFolder,
       rootScene: proj.rootScene,
+      name: proj.name || '',
+      dateCreated: 1663229534337,
+      dateSaved: 1673976003949,
+      scenes: proj.scenes,
     });
 
     // Create scene files
-    proj.scenes.forEach((scn) => {
+    proj.scenesData.forEach((scn) => {
       writeJsonFile(
         `${folderPath}/${APP_CONFIG.SINGLE_PROJECT_SCENE_FILES_FOLDER}/${scn.sceneId}.json`,
         scn

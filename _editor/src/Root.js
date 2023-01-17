@@ -3,17 +3,26 @@ import { setSceneParam, getSceneParam, getSceneParams } from './sceneData/sceneP
 import { getSceneItem, getSceneItems, setSceneItem } from './sceneData/sceneItems';
 import { getScreenResolution } from './utils/utils';
 import SceneLoader from './SceneLoader/SceneLoader';
-import { getSceneStates, saveProjectFolder, saveSceneId } from './sceneData/saveSession';
+import {
+  getSceneStates,
+  removeProjectFolderAndSceneId,
+  saveProjectFolder,
+  saveSceneId,
+} from './sceneData/saveSession';
 import Dialog from './UI/dialogs/Dialog';
-import { CREATE_DEFAULT_SCENE } from './utils/defaultSceneValues';
 import { loadSceneApi } from './api/loadScene';
 import Toaster from './UI/Toaster';
+import InitView from './UI/views/InitView';
 
 class Root {
   constructor() {
+    // Root component
+    const rootWrap = new Component({ id: 'root-wrap', parentId: 'root' });
+    rootWrap.draw();
+    setSceneItem('rootWrap', rootWrap);
+
     // Overlays and dialog
-    const overlay = new Component({ id: 'overlays', parentId: 'root' });
-    overlay.draw();
+    rootWrap.addChildDraw(new Component({ id: 'overlays' }));
     const dialog = new Dialog({ id: 'dialog', parentId: 'overlays' });
     dialog.draw();
     dialog.disappear();
@@ -25,17 +34,17 @@ class Root {
     setSceneItem('toaster', toaster);
 
     // initialise the app
-    this._initApp();
+    this.initApp();
   }
 
-  _initApp = async () => {
+  initApp = async () => {
     // Load data from LocalStorage
     // If not found, show Projects view
     const sessionParams = await getSceneStates();
 
     // Load scene data from FS
-    sessionParams.projectFolder = 'devProject1'; // TEMP
-    sessionParams.sceneId = 'scene1'; // TEMP
+    // sessionParams.projectFolder = 'devProject1'; // TEMP
+    // sessionParams.sceneId = 'scene1'; // TEMP
     if (sessionParams.projectFolder && sessionParams.sceneId) {
       const response = await loadSceneApi(sessionParams);
       let curScene;
@@ -44,8 +53,14 @@ class Root {
         saveSceneId(curScene.sceneId);
         saveProjectFolder(curScene.projectFolder);
       } else {
-        // @TODO: show user the error while loading scene (toast) and maybe redirect back to Projects view
-        curScene = CREATE_DEFAULT_SCENE();
+        removeProjectFolderAndSceneId();
+        getSceneItem('toaster').addToast({
+          type: 'error',
+          delay: 8000,
+          content: response.errorMsg,
+        });
+        this.initApp();
+        return;
       }
       // @TODO: we need to compare also the dateSaved values here
       if (curScene.sceneId === sessionParams.sceneId) {
@@ -57,27 +72,30 @@ class Root {
 
       // Start the show...
       setSceneItem('looping', true);
-      this._renderLoop();
+      this.renderLoop();
 
       console.log('SCENE PARAMS', getSceneParams());
       console.log('SCENE ITEMS', getSceneItems());
       console.log('RENDERER', getSceneItem('renderer'));
       console.log('SCENE', getSceneItem('scene'), getSceneItem('editorOutlinePass'));
     } else {
-      // Show Projects view
+      // Show Init view
+      const initView = new InitView({ id: 'projects-view', parentId: 'root' });
+      setSceneItem('initView', initView);
+      getSceneItem('rootWrap').addChildDraw(initView);
     }
   };
 
-  _renderLoop = () => {
+  renderLoop = () => {
     const SI = getSceneItems();
     if (SI.looping) {
-      requestAnimationFrame(this._renderLoop);
+      requestAnimationFrame(this.renderLoop);
       // SI.renderer.render(SI.scene, SI.curCamera);
       SI.editorComposer.camera = SI.curCamera;
       SI.editorOutlinePass.renderCamera = SI.curCamera;
       SI.renderPass.camera = SI.curCamera;
       SI.editorComposer.render();
-      SI.runningRenderStats.update(); // Debug statistics
+      SI.smallStats.update(); // Debug statistics
       const controls = getSceneItem('orbitControls');
       if (controls) controls.update(); // @TODO: also add the ability to turn the damping off which also turns this updating off (more performant)
     }

@@ -31,6 +31,18 @@ export const getSceneStates = async () =>
 
 export const saveSceneId = (id) => LS.setItem('sceneId', id);
 export const saveProjectFolder = (name) => LS.setItem('projectFolder', name);
+export const removeProjectFolderAndSceneId = () =>
+  LS.removeItem('sceneId') && LS.removeItem('projectFolder');
+export const clearProjectData = () => {
+  for (let i = 0; i < LSKeysJson.length; i++) {
+    const key = LSKeysJson[i];
+    LS.removeItem(key);
+  }
+  for (let i = 0; i < LSKeysStrings.length; i++) {
+    const key = LSKeysStrings[i];
+    LS.removeItem(key);
+  }
+};
 
 export const saveCameraState = (values) => {
   if (values === undefined) return;

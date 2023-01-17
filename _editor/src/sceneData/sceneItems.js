@@ -8,18 +8,17 @@ const emptyItems = {
   particles: [],
   helpers: [],
   scene: null,
-  physicsNonMoving: [],
-  physicsMoving: [],
-  physicsParticles: [],
   uiWorld: null,
+  topTools: null,
+  leftTools: null,
   resizers: [],
-  renderStats: null,
+  smallStats: null,
   orbitControls: null,
   looping: false,
   editorIcons: [],
 };
 
-let sceneItems = emptyItems;
+let sceneItems = { ...emptyItems };
 
 export const getSceneItems = () => sceneItems;
 
@@ -30,15 +29,18 @@ export const setSceneItem = (key, value) => (sceneItems[key] = value);
 export const resetSceneItems = () => {
   setSceneItem('looping', false);
   const scene = getSceneItem('scene');
-  _clearScene(scene);
+  removeMeshFromScene(scene);
   const renderer = getSceneItem('renderer');
   _clearRenderer(renderer);
-  sceneItems = emptyItems;
-};
-
-const _clearScene = (scene) => {
-  if (!scene) return;
-  scene.traverse((obj) => removeMeshFromScene(obj));
+  emptySceneItems();
 };
 
 const _clearRenderer = (renderer) => renderer && renderer.dispose();
+
+export const emptySceneItems = () => {
+  const root = getSceneItem('root');
+  const rootWrap = getSceneItem('rootWrap');
+  const dialog = getSceneItem('dialog');
+  const toaster = getSceneItem('toaster');
+  sceneItems = { ...emptyItems, root, rootWrap, dialog, toaster };
+};

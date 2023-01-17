@@ -1,0 +1,10 @@
+{
+  "projectFolder": "devProject2",
+  "name": "My dev project 2",
+  "rootScene": "scene1",
+  "dateCreated": 1663229534337,
+  "dateSaved": 1673995670147,
+  "scenes": [
+    "scene1"
+  ]
+}

@@ -4,7 +4,7 @@ import logger from '../utils/logger';
 import config from '../utils/config';
 import ERRORS from '../utils/errors';
 import { validateProjectFolderAndSceneId } from '../utils/validation';
-import { writeJsonFile } from '../utils/writeFile';
+import { updateProjectFile, writeJsonFile } from '../utils/writeFile';
 
 const router = Router();
 
@@ -21,14 +21,18 @@ export const saveSceneData = (sceneParams) => {
   const propsInvalid = validateProjectFolderAndSceneId({ projectFolder, sceneId });
   if (propsInvalid) return propsInvalid;
 
+  const recentDateSaved = sceneParams.dateSaved;
+
   try {
-    // Write file
+    // Write scene file and update project file
     sceneParams.dateSaved = new Date().getTime();
     writeJsonFile(sceneFilePath, sceneParams);
+    updateProjectFile(projectFolder, { dateSaved: sceneParams.dateSaved });
   } catch (err) {
+    sceneParams.dateSaved = recentDateSaved;
     const error = ERRORS.couldNotFindOrWriteSceneFile;
     const errorMsg = error.errorMsg.replace('${path}', sceneFilePath);
-    logger.error(error.errorMsg, err);
+    logger.error(error.errorMsg, err, sceneParams);
     return {
       error: true,
       errorCode: error.errorCode,

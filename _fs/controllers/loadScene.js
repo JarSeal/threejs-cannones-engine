@@ -5,6 +5,7 @@ import logger from '../utils/logger';
 import config from '../utils/config';
 import ERRORS from '../utils/errors';
 import { validateProjectFolderAndSceneId } from '../utils/validation';
+import APP_CONFIG from '../../APP_CONFIG';
 
 const router = Router();
 
@@ -15,7 +16,7 @@ router.post('/', async (request, response) => {
 
 export const loadSceneData = ({ projectFolder, sceneId }) => {
   const folderPath = config.PROJECTS_FOLDER_FROM_FS(projectFolder);
-  const sceneFilePath = `${folderPath}/_data/scenes/${sceneId}.json`;
+  const sceneFilePath = `${folderPath}/${APP_CONFIG.SINGLE_PROJECT_SCENE_FILES_FOLDER}/${sceneId}.json`;
   const hasMissingProps = validateProjectFolderAndSceneId({ projectFolder, sceneId });
 
   if (hasMissingProps) return hasMissingProps;
@@ -27,7 +28,7 @@ export const loadSceneData = ({ projectFolder, sceneId }) => {
   } catch (err) {
     const error = ERRORS.couldNotFindOrReadSceneFile;
     const errorMsg = error.errorMsg.replace('${path}', sceneFilePath);
-    logger.error(error.errorMsg);
+    logger.error(error.errorMsg, err);
     return { error: true, errorCode: error.errorCode, errorMsg };
   }
   return { ...data, projectFolder };

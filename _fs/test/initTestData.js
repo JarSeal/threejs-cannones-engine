@@ -95,20 +95,33 @@ export const BASIC_SCENE1 = {
   ],
 };
 
+// The "scenesData" property is only to setup the test data
 export const initTestData = [
   {
-    projectFolder: 'saveScene2',
-    rootScene: null,
-    scenes: [],
-  },
-  {
     projectFolder: 'saveScene1',
+    name: 'Save scene 1',
     rootScene: null,
-    scenes: [BASIC_SCENE1],
+    scenes: [BASIC_SCENE1.sceneId],
+    scenesData: [BASIC_SCENE1],
+    dateCreated: 1663229534337,
+    dateSaved: null,
   },
   {
     projectFolder: 'testProject1',
+    name: 'Test project 1',
     rootScene: 'scene1',
-    scenes: [BASIC_SCENE1],
+    scenes: [BASIC_SCENE1.sceneId, 'scene2'],
+    scenesData: [BASIC_SCENE1, { ...BASIC_SCENE1, sceneId: 'scene2' }],
+    dateCreated: 1663229534337,
+    dateSaved: null,
+  },
+  {
+    projectFolder: 'testProject2',
+    name: 'Test project 2',
+    rootScene: null,
+    scenes: [],
+    scenesData: [],
+    dateCreated: 1663229534337,
+    dateSaved: null,
   },
 ];

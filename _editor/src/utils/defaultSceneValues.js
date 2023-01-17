@@ -1,6 +1,8 @@
 export const CAMERA_TARGET_ID = '__camera-target';
 export const SELECTION_GROUP_ID = '__selection-group';
 export const CANVAS_ELEM_ID = 'main-stage';
+export const SMALL_STATS_CONTAINER_ID = 'smallStats-container';
+export const SMALL_STATS_ID = 'smallStats';
 
 export const AMBIENT_LIGHT = {
   color: 0xffffff,
@@ -74,6 +76,15 @@ export const CAMERA_TYPES = [
   { value: 'orthographicTarget', label: 'Targeting orthographic camera' },
   { value: 'orthographicFree', label: 'Free orthographic camera (TODO)', disabled: true },
 ];
+
+export const DEFAULT_PROJECT_VALUES = {
+  // projectFolder must be unique and is always validated when new project is created
+  name: '',
+  rootScene: null,
+  scenes: [],
+  dateCreated: null,
+  dateSaved: null,
+};
 
 export const CREATE_DEFAULT_SCENE = () => ({
   sceneId: null,

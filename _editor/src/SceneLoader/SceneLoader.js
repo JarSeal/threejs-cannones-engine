@@ -18,6 +18,8 @@ import {
   NEW_ELEM_DEFAULT_PARAMS,
   POINT_LIGHT,
   SELECTION_GROUP_ID,
+  SMALL_STATS_CONTAINER_ID,
+  SMALL_STATS_ID,
 } from '../utils/defaultSceneValues';
 import { addCamera } from '../utils/toolsForCamera';
 import TextureLoader from '../loaders/TextureLoader';
@@ -142,13 +144,13 @@ class SceneLoader {
         }
       }
       const smallStatsContainer = document.createElement('div');
-      smallStatsContainer.id = 'smallStats-container';
+      smallStatsContainer.id = SMALL_STATS_CONTAINER_ID;
       const renderStats = new SmallStats(smallStatsColors);
-      renderStats.domElement.id = 'smallStats';
+      renderStats.domElement.id = SMALL_STATS_ID;
       smallStatsContainer.appendChild(renderStats.domElement);
       document.getElementById('root').appendChild(smallStatsContainer);
       registerStageClick();
-      setSceneItem('runningRenderStats', renderStats);
+      setSceneItem('smallStats', renderStats);
 
       // Create selection group
       const selectionGroup = new THREE.Group();

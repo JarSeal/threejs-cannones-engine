@@ -1,4 +1,7 @@
-import { getSceneParam } from '../sceneData/sceneParams';
+import { clearProjectData } from '../sceneData/saveSession';
+import { getSceneItem, resetSceneItems, setSceneItem } from '../sceneData/sceneItems';
+import { getSceneParam, resetSceneParams } from '../sceneData/sceneParams';
+import { CANVAS_ELEM_ID, SMALL_STATS_CONTAINER_ID } from './defaultSceneValues';
 
 export const getScreenResolution = () => ({
   x: Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0),
@@ -7,8 +10,18 @@ export const getScreenResolution = () => ({
 
 export const printName = (obj) => {
   if (obj?.name) return obj.name;
+  if (obj?.sceneName) return obj.sceneName;
   if (obj?.id) return `[ ${obj.id} ]`;
-  console.warn('No name or id found in object');
+  if (obj?.sceneId) return `[ ${obj.sceneId} ]`;
+  console.warn('No name, id, sceneName, or sceneId found in object');
+  return '';
+};
+
+export const printProjectName = (prj) => {
+  if (prj?.name) return prj.name;
+  if (prj?.projectName) return prj.projectName;
+  if (prj?.projectFolder) return `[ ${prj.projectFolder} ]`;
+  console.warn('No name, projectFolder, or projectName found in project object');
   return '';
 };
 
@@ -103,4 +116,23 @@ export const getObjectStats = (object) => {
     }
   });
   return { objects, triangles, vertices };
+};
+
+export const removeTools = () => {
+  getSceneItem('rightSidePanel').discard(true);
+  getSceneItem('elemTool').discard(true);
+  getSceneItem('leftTools').discard(true);
+  getSceneItem('topTools').discard(true);
+  document.getElementById(SMALL_STATS_CONTAINER_ID).remove();
+};
+
+export const closeProject = () => {
+  setSceneItem('looping', false);
+  getSceneItem('keyboard').removeListeners();
+  clearProjectData();
+  removeTools();
+  resetSceneItems();
+  resetSceneParams();
+  document.getElementById(CANVAS_ELEM_ID).remove();
+  getSceneItem('root').initApp();
 };

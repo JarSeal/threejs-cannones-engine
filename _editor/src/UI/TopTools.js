@@ -1,9 +1,9 @@
 import { Component } from '../../LIGHTER';
-import { getSceneItem } from '../sceneData/sceneItems';
+import { getSceneItem, resetSceneItems } from '../sceneData/sceneItems';
 import { getSceneParam } from '../sceneData/sceneParams';
 import { changeCurCamera, newCameraDialog } from '../utils/toolsForCamera';
 import { saveScene } from '../utils/toolsForFS';
-import { printName } from '../utils/utils';
+import { closeProject, printName } from '../utils/utils';
 import Button from './common/Button';
 import SvgIcon from './icons/svg-icon';
 import styles from './TopTools.module.scss';
@@ -29,16 +29,24 @@ class TopTools extends Component {
           new Button({
             id: this.id + '-btn-main-menu-button',
             class: ['menuButton'],
-            icon: new SvgIcon({ id: this.id + '-main-menu-icon', icon: 'bars', width: 18 }),
+            icon: new SvgIcon({ id: this.id + '-main-menu-icon', icon: 'bars', width: 16 }),
             ...this._menuButtonListeners,
           })
         ),
         options: [
           {
-            icon: new SvgIcon({ id: this.id + '-save-scene-icon', icon: 'save', width: 18 }),
+            icon: new SvgIcon({ id: this.id + '-save-scene-icon', icon: 'save' }),
             text: 'Save scene',
             onClick: async () => {
               await saveScene();
+              document.activeElement.blur();
+            },
+          },
+          {
+            icon: new SvgIcon({ id: this.id + '-close-project-icon', icon: 'xMark' }),
+            text: 'Close project',
+            onClick: async () => {
+              closeProject();
               document.activeElement.blur();
             },
           },
