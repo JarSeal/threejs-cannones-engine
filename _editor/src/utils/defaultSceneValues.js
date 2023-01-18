@@ -85,6 +85,8 @@ export const DEFAULT_PROJECT_VALUES = {
   dateCreated: null,
   dateSaved: null,
 };
+export const DEFAULT_NEW_PROJECT_SCENE_ID = 'root-scene';
+export const DEFAULT_NEW_PROJECT_SCENE_NAME = 'Root scene';
 
 export const CREATE_DEFAULT_SCENE = () => ({
   sceneId: null,

@@ -5,6 +5,8 @@ import { saveProjectFolder, saveSceneId } from '../../sceneData/saveSession';
 import { getSceneItem } from '../../sceneData/sceneItems';
 import { printName, printProjectName } from '../../utils/utils';
 import Button from '../common/Button';
+import Spinner from '../common/Spinner';
+import NewProject from '../dialogs/NewProject';
 import styles from './InitView.module.scss';
 
 class InitView extends Component {
@@ -13,6 +15,7 @@ class InitView extends Component {
     this.startColId = this.id + '-start-col';
     this.recentProjectsColId = this.id + '-recent-projects-col';
     this.recentScenesColId = this.id + '-recent-scenes-col';
+    this.allProjects = [];
     data.template = `<div class="${styles.initView}">
       <div class="${styles.wrapper}">
         <h1>ForThree.js</h1>
@@ -26,6 +29,17 @@ class InitView extends Component {
   }
 
   paint = async () => {
+    // Load all projects
+    const loaderIcon = this.addChildDraw(
+      new Spinner({
+        id: this.id + '-loader-icon',
+        class: ['center', 'middle'],
+        width: 50,
+      })
+    );
+    this.allProjects = await loadRecentProjectsApi({ amount: Infinity });
+    loaderIcon.discard(true);
+
     // Column headings
     this.addChildDraw(
       new Component({
@@ -58,7 +72,13 @@ class InitView extends Component {
         id: this.id + '-start-new-project-btn',
         text: 'Start a new project...',
         attach: this.startColId,
-        onClick: () => console.log('CLICK start a new project'),
+        onClick: () => {
+          getSceneItem('dialog').appear({
+            component: NewProject,
+            componentData: { allProjects: this.allProjects },
+            title: 'Start new project',
+          });
+        },
       })
     );
     this.addChildDraw(
@@ -81,17 +101,9 @@ class InitView extends Component {
 
   _getRecentProjectsButtons = async () => {
     // Get recent projects from FS
-    const response = await loadRecentProjectsApi({ amount: 5 });
-    if (response.error) {
-      console.error(response?.errorMsg);
-      getSceneItem('toaster').addToast({
-        type: 'error',
-        delay: 8000,
-        content: response?.errorMsg,
-      });
-      return [];
-    }
-    return response.map((prj, index) =>
+    const amount = 5;
+    const recentProjectsResponse = this.allProjects.filter((prj, index) => index < amount);
+    return recentProjectsResponse.map((prj, index) =>
       this.addChild(
         new Button({
           id: this.id + '-recent-project-btn-' + index,
@@ -109,30 +121,7 @@ class InitView extends Component {
   };
 
   _getRecentScenesButtons = async () => {
-    const recentScenes = [
-      {
-        projectFolder: 'jotain1',
-        projectName: 'Mun projekti',
-        sceneId: 'munScene1',
-        sceneName: '',
-      },
-      {
-        projectFolder: 'devProject1',
-        projectName: '',
-        sceneId: 'munScene1',
-        sceneName: 'Testi scene',
-      },
-    ];
     const response = await loadRecentScenesApi({ amount: 5 });
-    if (response.error) {
-      console.error(response?.errorMsg);
-      getSceneItem('toaster').addToast({
-        type: 'error',
-        delay: 8000,
-        content: response?.errorMsg,
-      });
-      return [];
-    }
     return response.map((scene, index) =>
       this.addChild(
         new Button({

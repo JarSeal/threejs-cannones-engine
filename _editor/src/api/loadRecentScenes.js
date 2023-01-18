@@ -1,14 +1,8 @@
-import axios from 'axios';
-
-import { getFSUrl } from '../utils/getFSUrl';
+import { postRequest } from './utils/connect';
 
 export const loadRecentScenesApi = async (props) => {
   const { amount } = props;
-  const response = await axios.post(getFSUrl('recentScenes'), { amount });
-  if (response?.data) {
-    return response.data;
-  } else {
-    console.error('ForThree: Could not load data.');
-    return { error: `Error in loading recent scenes.` };
-  }
+  const response = await postRequest('recentScenes', { amount });
+  if (response.error) return [];
+  return response;
 };

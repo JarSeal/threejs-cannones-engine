@@ -54,11 +54,6 @@ class Root {
         saveProjectFolder(curScene.projectFolder);
       } else {
         removeProjectFolderAndSceneId();
-        getSceneItem('toaster').addToast({
-          type: 'error',
-          delay: 8000,
-          content: response.errorMsg,
-        });
         this.initApp();
         return;
       }
