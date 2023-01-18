@@ -15,6 +15,7 @@ import { CAMERA_TARGET_ID, SELECTION_GROUP_ID } from '../../../utils/defaultScen
 // - newId = boolean whether the undo button is shown on mistakes, default is false/undefined [Boolean]
 // - focus = boolean whether the input should have focus after initiation or not [Boolean]
 // - afterSuccessBlur(value) = function that is run after a successfull blur has been made (before the timeout)
+// - validateOnInit = boolean whether the validation should be performed on component initiation
 class SimpleIDInput extends Component {
   constructor(data) {
     super(data);
@@ -75,6 +76,10 @@ class SimpleIDInput extends Component {
         })
       );
     }
+    if (this.data.validateOnInit) {
+      const error = this._validate(this.curId);
+      if (error.hasError) this.inputComponent.error(error);
+    }
   };
 
   saveValue = (value) => {
@@ -114,7 +119,7 @@ class SimpleIDInput extends Component {
         if (!this.newId) this.returnOriginalValueButton.discard();
         const nextElemId = document.activeElement.id;
         const rightSidePanel = getSceneItem('rightSidePanel');
-        rightSidePanel.updatePanel();
+        if (rightSidePanel) rightSidePanel.updatePanel();
         // @TODO: update possible selectionIds (getSceneParam('selection'))
         if (!this.newId) updateCamUserDataHelpersAndIcon(null, this.curId);
         if (nextElemId) {
@@ -140,12 +145,12 @@ class SimpleIDInput extends Component {
     if (!this.idGroup) {
       groups = this.groups;
     }
-    if (value === undefined || value.length === 0) {
-      if (this.data.onValidationErrors) this.data.onValidationErrors();
+    if (value === undefined || value === null || value.length === 0) {
+      if (this.data.onValidationErrors) this.data.onValidationErrors(value);
       return { hasError: true, errorMsg: 'Required' };
     }
     if (!this.regex.test(value)) {
-      if (this.data.onValidationErrors) this.data.onValidationErrors();
+      if (this.data.onValidationErrors) this.data.onValidationErrors(value);
       return {
         hasError: true,
         errorMsg: 'Only A-Z (a-z), 0-9, dash, and underscore allowed',
@@ -166,12 +171,19 @@ class SimpleIDInput extends Component {
       if (!items) continue;
       for (let i = 0; i < items.length; i++) {
         if (items[i].id === value.trim() && this.curId !== value.trim()) {
-          if (this.data.onValidationErrors) this.data.onValidationErrors();
+          if (this.data.onValidationErrors) this.data.onValidationErrors(value);
           return { hasError: true, errorMsg: 'ID is already in use' };
         }
       }
     }
-    if (this.data.onValidationSuccess) this.data.onValidationSuccess();
+    if (this.data.additionalValidationFn) {
+      const error = this.data.additionalValidationFn(value);
+      if (error?.hasError) {
+        if (this.data.onValidationErrors) this.data.onValidationErrors(value);
+        return error;
+      }
+    }
+    if (this.data.onValidationSuccess) this.data.onValidationSuccess(value);
     return { hasError: false };
   };
 }

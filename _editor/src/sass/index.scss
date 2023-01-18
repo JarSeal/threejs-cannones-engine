@@ -16,6 +16,8 @@
 @import './editorTools/floatingUIButtons';
 @import './editorTools/elemTool';
 
+@import './common/spinner';
+
 html {
   font-size: 62.5%;
   @include basetext-font;

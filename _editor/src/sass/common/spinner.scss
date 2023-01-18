@@ -1,0 +1,35 @@
+@keyframes rotating {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spinner {
+  position: fixed;
+  path {
+    fill: $white;
+  }
+
+  &.bottom {
+    bottom: 2rem;
+  }
+  &.middle {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  &.center {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  &.middle.center {
+    transform: translateY(-50%);
+    transform: translateX(-50%);
+  }
+
+  > div {
+    animation: rotating 2s linear infinite;
+  }
+}

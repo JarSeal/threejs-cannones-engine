@@ -91,6 +91,20 @@ $sidePadding: 4rem;
         background-color: darken($error, 10%);
       }
     }
+    :global(.sectionTitle) {
+      width: 100%;
+      border-top: 0.1rem solid $light-grey3;
+      margin: 1rem 0 0.5rem;
+      padding-top: 1.5rem;
+      @include heading-font;
+      font-size: 1.6rem;
+      color: $mid-grey1;
+      &:first-child {
+        margin-top: 0;
+        padding-top: 0;
+        border-top: none;
+      }
+    }
   }
   &.hasTitle .innerBox {
     padding-top: 0.2rem;
