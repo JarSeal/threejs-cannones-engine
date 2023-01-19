@@ -24,6 +24,7 @@ export const POINT_LIGHT = {
 
 export const NEW_SHAPE_BOX = {
   size: [1, 1, 1],
+  shape3D: 'box',
 };
 
 export const NEW_MATERIAL = {
@@ -36,10 +37,10 @@ export const NEW_ELEM_DEFAULT_PARAMS = {
   type: 'shape3D',
   shapeParams: NEW_SHAPE_BOX,
   paramType: 'element',
-  position: [0, 0, 0],
+  position: [0, 0.5, 0],
   rotation: [0, 0, 0],
   scale: [1, 1, 1],
-  defaultPosition: [0, 0, 0],
+  defaultPosition: [0, 0.5, 0],
   defaultRotation: [0, 0, 0],
   defaultScale: [1, 1, 1],
   castShadow: false,
@@ -88,7 +89,7 @@ export const DEFAULT_PROJECT_VALUES = {
 export const DEFAULT_NEW_PROJECT_SCENE_ID = 'root-scene';
 export const DEFAULT_NEW_PROJECT_SCENE_NAME = 'Root scene';
 
-export const CREATE_DEFAULT_SCENE = () => ({
+export const DEFAULT_SCENE = {
   sceneId: null,
   name: '',
   dateCreated: new Date().getTime(),
@@ -146,4 +147,4 @@ export const CREATE_DEFAULT_SCENE = () => ({
       },
     },
   ],
-});
+};

@@ -1,9 +1,12 @@
 import { Component } from '../../../LIGHTER';
+import { createProjectApi } from '../../api/createProject';
+import { saveProjectFolder, saveSceneId } from '../../sceneData/saveSession';
 import { getSceneItem } from '../../sceneData/sceneItems';
 import {
   DEFAULT_NEW_PROJECT_SCENE_ID,
   DEFAULT_NEW_PROJECT_SCENE_NAME,
   DEFAULT_PROJECT_VALUES,
+  DEFAULT_SCENE,
 } from '../../utils/defaultSceneValues';
 import Button from '../common/Button';
 import SimpleIDInput from '../common/form/SimpleIDInput';
@@ -134,7 +137,7 @@ class NewProject extends Component {
         class: ['saveButton'],
         attach: buttonDivId,
         text: 'Create',
-        onClick: () => {
+        onClick: async () => {
           if (!this.newProjectParams.projectFolder) {
             const prjFolderError = this.prjFolderInput._validate(
               this.prjFolderInput.inputComponent.value
@@ -142,7 +145,26 @@ class NewProject extends Component {
             if (prjFolderError.hasError) this.prjFolderInput.inputComponent.error(prjFolderError);
           }
           if (this.formErrors.length) return;
+
+          // Send the data to FS
+          getSceneItem('dialog').lock();
+          const params = {
+            projectFolder: this.newProjectParams.projectFolder,
+            name: this.newProjectParams.name,
+            sceneId: this.newProjectParams.sceneId,
+            sceneName: this.newProjectParams.sceneName,
+            sceneParams: DEFAULT_SCENE,
+          };
+          const response = await createProjectApi(params);
+          getSceneItem('dialog').unlock();
           getSceneItem('dialog').disappear();
+          if (response.projectCreated) {
+            // Open the new project
+            saveProjectFolder(this.newProjectParams.projectFolder);
+            saveSceneId(this.newProjectParams.sceneId);
+            getSceneItem('initView').discard(true);
+            getSceneItem('root').initApp();
+          }
         },
       })
     );
