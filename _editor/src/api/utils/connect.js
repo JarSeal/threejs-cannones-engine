@@ -1,6 +1,7 @@
 import axios from 'axios';
-import { getSceneItem } from '../../sceneData/sceneItems';
 
+import { APP_DEFAULTS } from '../../../../APP_CONFIG';
+import { getSceneItem } from '../../sceneData/sceneItems';
 import { getFSUrl } from '../../utils/getFSUrl';
 
 export const postRequest = async (urlId, payload) => {
@@ -9,7 +10,7 @@ export const postRequest = async (urlId, payload) => {
   try {
     response = await axios.post(url, payload);
   } catch (err) {
-    const errorMsg = `ForThree: Could not get a response from url ${url}. Is the FS server running?`;
+    const errorMsg = `${APP_DEFAULTS.APP_NAME}: Could not get a response from url ${url}. Is the FS server running?`;
     console.error(errorMsg, err);
     getSceneItem('toaster').addToast({
       type: 'error',
@@ -29,7 +30,7 @@ export const postRequest = async (urlId, payload) => {
     }
     return response.data;
   } else {
-    const errorMsg = `ForThree: Could not get a response from url ${url} for an unknown reason.`;
+    const errorMsg = `${APP_DEFAULTS.APP_NAME}: Could not get a response from url ${url} for an unknown reason.`;
     console.error(errorMsg);
     return { error: true, errorMsg };
   }

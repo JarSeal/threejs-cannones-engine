@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 
+import { APP_DEFAULTS } from '../../../APP_CONFIG';
+
 class TextureLoader {
   constructor() {
     this.textureLoader = new THREE.TextureLoader();
@@ -42,7 +44,7 @@ class TextureLoader {
       undefined, // onProgress callback currently not supported
       (error) => {
         // Error
-        console.error(`ForThree: Could not load texture from url ${url}.`, error);
+        console.error(`${APP_DEFAULTS.APP_NAME}: Could not load texture from url ${url}.`, error);
         returnObject.thisTextureLoading = false;
         this.loadingCounts.loading -= 1;
         if (this.loadingCounts.loading === 0) {

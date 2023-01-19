@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 
+import { APP_DEFAULTS } from '../../../APP_CONFIG';
 import { saveStateByKey } from '../sceneData/saveSession';
 import { setSceneItem, getSceneItem } from '../sceneData/sceneItems';
 import { getSceneParam, setSceneParam } from '../sceneData/sceneParams';
@@ -197,7 +198,8 @@ export const updateElemTranslation = (id, newVal, prevVal, object, doNotUpdateUn
         return true;
       }
     });
-    if (!objectFound) console.warn('ForThree: Could not find element in scene with id: ' + id);
+    if (!objectFound)
+      console.warn(`${APP_DEFAULTS.APP_NAME}: Could not find element in scene with id: ${id}`);
   }
   if (object?.userData.isTargetingObject) {
     // Targeting object

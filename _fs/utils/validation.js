@@ -2,7 +2,7 @@ import fs from 'fs';
 
 import logger from '../utils/logger';
 import ERRORS from '../utils/errors';
-import config from './config';
+import { getProjectFolderPath } from './config';
 
 export const validateProjectFolderAndSceneId = (props) => {
   const { projectFolder, sceneId } = props;
@@ -11,7 +11,7 @@ export const validateProjectFolderAndSceneId = (props) => {
     logger.error(error.errorMsg);
     return { error: true, errorCode: error.errorCode, errorMsg: error.errorMsg };
   }
-  const folderPath = config.PROJECTS_FOLDER_FROM_FS(projectFolder);
+  const folderPath = getProjectFolderPath(projectFolder);
   if (!fs.existsSync(folderPath)) {
     const error = ERRORS.couldNotFindProjectFolder;
     const errorMsg = error.errorMsg.replace('${path}', folderPath);

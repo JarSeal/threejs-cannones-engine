@@ -2,7 +2,7 @@ import { Router } from 'express';
 import fs from 'fs';
 
 import APP_CONFIG from '../../APP_CONFIG';
-import config from '../utils/config';
+import { getProjectFolderPath } from '../utils/config';
 import logger from '../utils/logger';
 import ERRORS from '../utils/errors';
 
@@ -15,7 +15,7 @@ router.post('/recent-projects', async (request, response) => {
 
 export const loadRecentProjectsList = ({ amount }) => {
   if (!amount || amount < 1) amount = Infinity;
-  const projectsPath = config.PROJECTS_FOLDER_FROM_FS('').slice(0, -1);
+  const projectsPath = getProjectFolderPath();
   const directories = fs
     .readdirSync(projectsPath, { withFileTypes: true })
     .filter((dirent) => dirent.isDirectory())
@@ -46,7 +46,7 @@ router.post('/recent-scenes', async (request, response) => {
 
 export const loadRecentScenesList = ({ amount }) => {
   if (!amount || amount < 1) amount = Infinity;
-  const projectsPath = config.PROJECTS_FOLDER_FROM_FS('');
+  const projectsPath = getProjectFolderPath();
   const projects = loadRecentProjectsList({ amount: 0 });
   let scenes = [];
   for (let i = 0; i < projects.length; i++) {
@@ -54,7 +54,7 @@ export const loadRecentScenesList = ({ amount }) => {
     if (!prj.scenes) continue;
     for (let j = 0; j < prj.scenes.length; j++) {
       const sceneId = prj.scenes[j];
-      const sceneFilePath = `${projectsPath}${prj.projectFolder}/${APP_CONFIG.SINGLE_PROJECT_SCENE_FILES_FOLDER}/${sceneId}.json`;
+      const sceneFilePath = `${projectsPath}/${prj.projectFolder}/${APP_CONFIG.SINGLE_PROJECT_SCENE_FILES_FOLDER}/${sceneId}.json`;
       let sceneParams = null;
       try {
         const rawdata = fs.readFileSync(sceneFilePath);

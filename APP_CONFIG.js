@@ -10,4 +10,8 @@ const APP_CONFIG = {
 // ----- _data (folder)
 // -------- scenes (folder)
 
+export const APP_DEFAULTS = {
+  APP_NAME: 'ForThree.js',
+};
+
 export default APP_CONFIG;

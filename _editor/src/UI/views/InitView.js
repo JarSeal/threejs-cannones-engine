@@ -1,3 +1,4 @@
+import { APP_DEFAULTS } from '../../../../APP_CONFIG';
 import { Component } from '../../../LIGHTER';
 import { loadRecentProjectsApi } from '../../api/loadRecentProjects';
 import { loadRecentScenesApi } from '../../api/loadRecentScenes';
@@ -18,7 +19,7 @@ class InitView extends Component {
     this.allProjects = [];
     data.template = `<div class="${styles.initView}">
       <div class="${styles.wrapper}">
-        <h1>ForThree.js</h1>
+        <h1>${APP_DEFAULTS.APP_NAME}</h1>
         <div class="${styles.colWrapper}">
           <div id="${this.startColId}"></div>
           <div id="${this.recentProjectsColId}"></div>
@@ -37,8 +38,9 @@ class InitView extends Component {
         width: 50,
       })
     );
-    this.allProjects = await loadRecentProjectsApi({ amount: Infinity });
+    this.allProjects = await loadRecentProjectsApi({ amount: Infinity, returnErrors: true });
     loaderIcon.discard(true);
+    if (this.allProjects.error) return;
 
     // Column headings
     this.addChildDraw(

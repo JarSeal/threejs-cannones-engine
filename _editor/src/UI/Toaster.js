@@ -1,4 +1,5 @@
 import { Component } from '../../LIGHTER';
+import SvgIcon from './icons/svg-icon';
 
 import styles from './Toaster.module.scss';
 
@@ -51,6 +52,7 @@ class Toast extends Component {
     this.showTransitionTime = data.showTransitionTime;
     this.hideTransitionTime = data.hideTransitionTime;
     data.class = [styles.toast, this._getToastClass(data.toastData.type)];
+    this.closeBtnId = `${this.id}-closeBtn`;
     this.template = `<div>
       <button id="${this.id}-closeBtn" class="${styles.toast__close}"></button>
       <span>${data.toastData.content}</span>
@@ -69,6 +71,14 @@ class Toast extends Component {
   };
 
   paint = () => {
+    this.addChildDraw(
+      new SvgIcon({
+        id: this.id + '-closebtn-icon',
+        icon: 'xMark',
+        width: 8,
+        attach: this.closeBtnId,
+      })
+    );
     if (!this.toastData.initted) {
       setTimeout(() => {
         this.data.animating = true;

@@ -1,10 +1,11 @@
 import { Router } from 'express';
 
 import logger from '../utils/logger';
-import config from '../utils/config';
-import ERRORS from '../utils/errors';
+import { getProjectFolderPath } from '../utils/config';
+import { getError } from '../utils/errors';
 import { validateProjectFolderAndSceneId } from '../utils/validation';
 import { updateProjectFile, writeJsonFile } from '../utils/writeFile';
+import APP_CONFIG from '../../APP_CONFIG';
 
 const router = Router();
 
@@ -15,31 +16,48 @@ router.post('/', async (request, response) => {
 
 export const saveSceneData = (sceneParams) => {
   const { projectFolder, sceneId } = sceneParams;
-  const folderPath = config.PROJECTS_FOLDER_FROM_FS(projectFolder);
-  const sceneFilePath = `${folderPath}/_data/scenes/${sceneId}.json`;
+  const folderPath = getProjectFolderPath(projectFolder);
+  const sceneFilePath = `${folderPath}/${APP_CONFIG.SINGLE_PROJECT_SCENE_FILES_FOLDER}/${sceneId}.json`;
 
   const propsInvalid = validateProjectFolderAndSceneId({ projectFolder, sceneId });
   if (propsInvalid) return propsInvalid;
 
   const recentDateSaved = sceneParams.dateSaved;
 
+  // @TODO: compare the recentDateSaved time and the current dateSaved on FS file
+  // and if the one on file is newer (bigger timestamp value), then warn the user
+  // that the FS has a newer version of the scene and saving the new params would
+  // overwrite those changes.
+
+  sceneParams.dateSaved = new Date().getTime();
+
   try {
-    // Write scene file and update project file
-    sceneParams.dateSaved = new Date().getTime();
+    // Write scene file
     writeJsonFile(sceneFilePath, sceneParams);
-    updateProjectFile(projectFolder, { dateSaved: sceneParams.dateSaved });
   } catch (err) {
     sceneParams.dateSaved = recentDateSaved;
-    const error = ERRORS.couldNotFindOrWriteSceneFile;
-    const errorMsg = error.errorMsg.replace('${path}', sceneFilePath);
+    const error = getError('couldNotFindOrWriteSceneFile', { path: sceneFilePath });
     logger.error(error.errorMsg, err, sceneParams);
     return {
+      ...error,
       error: true,
-      errorCode: error.errorCode,
-      errorMsg,
       sceneParams,
     };
   }
+
+  try {
+    // Update dateSaved for project file
+    updateProjectFile(projectFolder, { dateSaved: sceneParams.dateSaved });
+  } catch (err) {
+    const error = getError('couldNotUpdateProjectFile', { projectFolder: projectFolder });
+    logger.error(error.errorMsg, err, sceneParams);
+    return {
+      ...error,
+      error: true,
+      sceneParams,
+    };
+  }
+
   return { saveComplete: true, sceneParams: { ...sceneParams, projectFolder } };
 };
 

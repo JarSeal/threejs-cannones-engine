@@ -53,7 +53,7 @@ class NewProject extends Component {
           for (let i = 0; i < this.data.allProjects.length; i++) {
             const prj = this.data.allProjects[i];
             if (value === prj.projectFolder) {
-              return { hasError: true, errorMsg: 'Project folder already exists' };
+              return { hasError: true, errorMsg: 'Project ID / folder already exists' };
             }
           }
         },
