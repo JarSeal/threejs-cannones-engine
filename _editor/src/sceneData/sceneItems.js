@@ -35,6 +35,8 @@ export const resetSceneItems = () => {
   emptySceneItems();
 };
 
+export const removeSceneItem = (key) => delete sceneItems[key];
+
 const _clearRenderer = (renderer) => renderer && renderer.dispose();
 
 export const emptySceneItems = () => {

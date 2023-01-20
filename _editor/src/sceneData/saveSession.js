@@ -7,27 +7,26 @@ const LSKeysJson = ['cameras', 'editor', 'sceneState', 'elements', 'lights'];
 const LSKeysStrings = ['sceneId', 'projectFolder'];
 
 // Get all scene state values
-export const getSceneStates = async () =>
-  Promise.resolve().then(() => {
-    let states = {};
-    for (let i = 0; i < LSKeysJson.length; i++) {
-      const key = LSKeysJson[i];
-      const value = LS.getItem(key);
-      if (!value) continue;
-      if (key === 'sceneState') {
-        const values = JSON.parse(value);
-        states = { ...states, ...values };
-      } else {
-        states[key] = JSON.parse(value);
-      }
+export const getSceneStates = () => {
+  let states = {};
+  for (let i = 0; i < LSKeysJson.length; i++) {
+    const key = LSKeysJson[i];
+    const value = LS.getItem(key);
+    if (!value) continue;
+    if (key === 'sceneState') {
+      const values = JSON.parse(value);
+      states = { ...states, ...values };
+    } else {
+      states[key] = JSON.parse(value);
     }
-    for (let i = 0; i < LSKeysStrings.length; i++) {
-      const key = LSKeysStrings[i];
-      const value = LS.getItem(key);
-      if (value) states[key] = value;
-    }
-    return states;
-  });
+  }
+  for (let i = 0; i < LSKeysStrings.length; i++) {
+    const key = LSKeysStrings[i];
+    const value = LS.getItem(key);
+    if (value) states[key] = value;
+  }
+  return states;
+};
 
 export const saveSceneId = (id) => LS.setItem('sceneId', id);
 export const saveProjectFolder = (name) => LS.setItem('projectFolder', name);
@@ -42,6 +41,7 @@ export const clearProjectData = () => {
     const key = LSKeysStrings[i];
     LS.removeItem(key);
   }
+  LS.removeItem('hasUnsavedChanges');
 };
 
 export const saveCameraState = (values) => {
@@ -90,15 +90,18 @@ export const saveCameraState = (values) => {
     const cameras = getSceneParam('cameras');
     LS.setItem('cameras', JSON.stringify(cameras && cameras.length ? cameras : []));
   }
+  setHasUnsavedChanges();
 };
 
 export const saveAllCamerasState = (cameras) => {
   if (cameras?.length) LS.setItem('cameras', JSON.stringify(cameras));
+  setHasUnsavedChanges();
 };
 
 export const saveAllLightsState = () => {
   const lights = getSceneParam('lights');
   if (lights?.length) LS.setItem('lights', JSON.stringify(lights));
+  setHasUnsavedChanges();
 };
 
 export const saveEditorState = (values) => {
@@ -128,6 +131,7 @@ export const saveEditorState = (values) => {
     newParams = { ...editorParams, ...values };
   }
   if (newParams) LS.setItem('editor', JSON.stringify(newParams));
+  setHasUnsavedChanges();
 };
 
 export const saveSceneState = (values) => {
@@ -140,8 +144,18 @@ export const saveSceneState = (values) => {
   delete sceneParams.editor;
   const newParams = { ...sceneParams, ...values };
   if (newParams) LS.setItem('sceneState', JSON.stringify(newParams));
+  setHasUnsavedChanges();
 };
 
 export const saveStateByKey = (key, values) => {
   if (LSKeysJson.includes(key)) LS.setItem(key, JSON.stringify(values));
+  setHasUnsavedChanges();
+};
+
+export const getHasUnsavedChanges = () => LS.getItem('hasUnsavedChanges', false);
+const setHasUnsavedChanges = () => {
+  LS.setItem('hasUnsavedChanges', true);
+};
+export const unsetHasUnsavedChanges = () => {
+  LS.setItem('hasUnsavedChanges', false);
 };

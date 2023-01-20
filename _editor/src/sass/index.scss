@@ -18,6 +18,9 @@
 
 @import './common/spinner';
 
+@import './views/initView';
+@import './views/sceneLoaderView';
+
 html {
   font-size: 62.5%;
   @include basetext-font;

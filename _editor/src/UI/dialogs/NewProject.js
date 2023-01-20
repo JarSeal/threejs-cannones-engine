@@ -43,6 +43,7 @@ class NewProject extends Component {
         curId: this.newProjectParams.projectFolder,
         newId: true,
         focus: true,
+        isProjectId: true,
         onValidationErrors: () => {
           if (!this.formErrors.includes('projectFolder')) {
             this.formErrors.push('projectFolder');
@@ -90,6 +91,7 @@ class NewProject extends Component {
         label: 'Main scene ID',
         curId: this.newProjectParams.sceneId,
         newId: true,
+        isSceneId: true,
         onValidationErrors: () => {
           if (!this.formErrors.includes('sceneId')) {
             this.formErrors.push('sceneId');
@@ -157,13 +159,16 @@ class NewProject extends Component {
           };
           const response = await createProjectApi(params);
           getSceneItem('dialog').unlock();
-          getSceneItem('dialog').disappear();
           if (response.projectCreated) {
             // Open the new project
-            saveProjectFolder(this.newProjectParams.projectFolder);
-            saveSceneId(this.newProjectParams.sceneId);
-            getSceneItem('initView').discard(true);
-            getSceneItem('root').initApp();
+            getSceneItem('dialog').disappear(() => {
+              saveProjectFolder(this.newProjectParams.projectFolder);
+              saveSceneId(this.newProjectParams.sceneId);
+              getSceneItem('initView').discard(true);
+              getSceneItem('root').initApp();
+            });
+          } else {
+            getSceneItem('dialog').disappear();
           }
         },
       })

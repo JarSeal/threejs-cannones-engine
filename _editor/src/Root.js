@@ -1,18 +1,21 @@
 import { Component } from '../LIGHTER';
 import { setSceneParam, getSceneParam, getSceneParams } from './sceneData/sceneParams';
-import { getSceneItem, getSceneItems, setSceneItem } from './sceneData/sceneItems';
+import { getSceneItem, getSceneItems, removeSceneItem, setSceneItem } from './sceneData/sceneItems';
 import { getScreenResolution } from './utils/utils';
 import SceneLoader from './SceneLoader/SceneLoader';
 import {
+  getHasUnsavedChanges,
   getSceneStates,
   removeProjectFolderAndSceneId,
   saveProjectFolder,
   saveSceneId,
+  unsetHasUnsavedChanges,
 } from './sceneData/saveSession';
 import Dialog from './UI/dialogs/Dialog';
 import { loadSceneApi } from './api/loadScene';
 import Toaster from './UI/Toaster';
 import InitView from './UI/views/InitView';
+import SceneLoaderView from './UI/views/SceneLoaderView';
 
 class Root {
   constructor() {
@@ -40,12 +43,19 @@ class Root {
   initApp = async () => {
     // Load data from LocalStorage
     // If not found, show Projects view
-    const sessionParams = await getSceneStates();
+    const sessionParams = getSceneStates();
 
-    // Load scene data from FS
-    // sessionParams.projectFolder = 'devProject1'; // TEMP
-    // sessionParams.sceneId = 'scene1'; // TEMP
     if (sessionParams.projectFolder && sessionParams.sceneId) {
+      // scene loader view
+      const sceneLoaderView = new SceneLoaderView({
+        id: 'scene-loader-view',
+        parentId: 'overlays',
+      });
+      sceneLoaderView.draw();
+      setSceneItem('sceneLoaderView', sceneLoaderView);
+
+      // Load scene data from FS
+      sceneLoaderView.updateText('Loading data...');
       const response = await loadSceneApi(sessionParams);
       let curScene;
       if (response && !response.error) {
@@ -63,11 +73,18 @@ class Root {
       }
 
       // Load the scene
+      const hasUnsavedChanges = getHasUnsavedChanges();
+      sceneLoaderView.updateText('Creating scene...');
       new SceneLoader(curScene, true);
+      if (hasUnsavedChanges !== 'true') unsetHasUnsavedChanges();
 
       // Start the show...
       setSceneItem('looping', true);
       this.renderLoop();
+
+      // Remove scene loader view
+      sceneLoaderView.discard(true);
+      removeSceneItem('sceneLoaderView');
 
       console.log('SCENE PARAMS', getSceneParams());
       console.log('SCENE ITEMS', getSceneItems());

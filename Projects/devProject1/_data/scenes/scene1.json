@@ -2,16 +2,16 @@
   "sceneId": "scene1",
   "name": "Development scene 1",
   "dateCreated": 1663229534337,
-  "dateSaved": 1673976003949,
+  "dateSaved": 1674251658161,
   "axesHelper": false,
   "axesHelperLength": 100,
-  "rendererClearColor": "#090917",
+  "rendererClearColor": "#000001",
   "grid": false,
   "gridSize": 26,
   "shadowType": null,
   "lights": [
     {
-      "id": "ba6680b0-9ff2-4b83-a3e5-a1c16bf392f4",
+      "id": "5d6910ad-9d91-4061-8f07-ea0b183715e6",
       "type": "ambient",
       "color": "#ffffff",
       "intensity": 0.2,
@@ -20,7 +20,7 @@
       "index": 0
     },
     {
-      "id": "ba846c06-04bd-4005-89bb-92e65ee7784c",
+      "id": "f15041a4-54bb-4f38-ab10-58ca6d96b9c4",
       "type": "hemisphere",
       "colorTop": "#ffffbb",
       "colorBottom": "#080820",
@@ -39,23 +39,23 @@
       "near": 0.1,
       "far": 256,
       "position": [
-        11.553667360742178,
-        10.395852502117974,
-        16.622024037404024
+        -10.33805367874368,
+        10.22660212254452,
+        -14.012692805469772
       ],
       "target": [
-        1.8484819883928996,
-        0.9518690516030627,
-        2.346370150656927
+        1.2076757853877107,
+        2.6135147673499755,
+        -0.015879865277108975
       ],
       "orbitControls": true,
       "showHelper": false,
       "paramType": "camera",
       "orthoViewSize": 1,
       "rotation": [
-        -0.5844482528690778,
-        0.5158007688526054,
-        0.3154025163381359
+        -2.6336799878175228,
+        -0.4709127426116114,
+        -2.8942256861249183
       ],
       "scale": [
         1,
@@ -86,10 +86,10 @@
       "isTargetingObject": true,
       "index": 0,
       "quaternion": [
-        -0.23674135271740898,
-        0.28495405930071643,
-        0.07285263717066663,
-        0.925984454112948
+        0.06671279504921293,
+        0.9226150705192626,
+        0.18571556549580517,
+        -0.3314220320980955
       ],
       "lookAt": null
     },
@@ -163,7 +163,7 @@
         ]
       },
       "position": [
-        2,
+        0.6378513592514672,
         2,
         2.0000000000000004
       ],
@@ -213,7 +213,7 @@
         ]
       },
       "position": [
-        -2.5,
+        -1.5,
         0.5,
         -2.5
       ],
@@ -305,7 +305,7 @@
   ],
   "projectFolder": "devProject1",
   "selection": [
-    "my-blue-box"
+    "my-other-box"
   ],
   "orbiterMoving": false
 }

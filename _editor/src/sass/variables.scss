@@ -55,3 +55,7 @@ $rightPanelButtonHeight: 3.8rem;
   font-family: ArchivoNarrow, sans-serif;
   font-weight: 600;
 }
+@mixin radial-view-gradient {
+  background: rgb(129, 129, 129);
+  background: radial-gradient(circle, $mid-grey1 0%, $dark-grey2 100%);
+}

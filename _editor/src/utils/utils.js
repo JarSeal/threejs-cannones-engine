@@ -1,7 +1,9 @@
-import { clearProjectData } from '../sceneData/saveSession';
+import { clearProjectData, getHasUnsavedChanges } from '../sceneData/saveSession';
 import { getSceneItem, resetSceneItems, setSceneItem } from '../sceneData/sceneItems';
 import { getSceneParam, resetSceneParams } from '../sceneData/sceneParams';
+import SaveBeforeCloseDialog from '../UI/dialogs/SaveBeforeClose';
 import { CANVAS_ELEM_ID, SMALL_STATS_CONTAINER_ID } from './defaultSceneValues';
+import { saveScene } from './toolsForFS';
 
 export const getScreenResolution = () => ({
   x: Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0),
@@ -127,12 +129,35 @@ export const removeTools = () => {
 };
 
 export const closeProject = () => {
-  setSceneItem('looping', false);
-  getSceneItem('keyboard').removeListeners();
-  clearProjectData();
-  removeTools();
-  resetSceneItems();
-  resetSceneParams();
-  document.getElementById(CANVAS_ELEM_ID).remove();
-  getSceneItem('root').initApp();
+  const closeFn = () => {
+    setSceneItem('looping', false);
+    getSceneItem('keyboard').removeListeners();
+    clearProjectData();
+    removeTools();
+    resetSceneItems();
+    resetSceneParams();
+    document.getElementById(CANVAS_ELEM_ID).remove();
+    getSceneItem('root').initApp();
+  };
+  const hasUnsavedChanges = getHasUnsavedChanges();
+  if (hasUnsavedChanges === 'true') {
+    // Cancel, Don't save, or Save Dialog
+    getSceneItem('dialog').appear({
+      component: SaveBeforeCloseDialog,
+      componentData: {
+        id: 'close-project-unsaved-changes-dialog',
+        message:
+          'You have unsaved changes on the scene. Do you want to save the changes before closing this scene?',
+        cancelButtonFn: () => getSceneItem('dialog').disappear(),
+        dontSaveButtonFn: () => closeFn(),
+        saveButtonFn: async () => {
+          await saveScene();
+          closeFn();
+        },
+      },
+      title: 'Unsaved changes!',
+    });
+  } else {
+    closeFn();
+  }
 };

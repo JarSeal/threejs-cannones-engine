@@ -1,4 +1,5 @@
 import { saveSceneApi } from '../api/saveScene';
+import { unsetHasUnsavedChanges } from '../sceneData/saveSession';
 import { getSceneItem } from '../sceneData/sceneItems';
 import { getSceneParams } from '../sceneData/sceneParams';
 
@@ -12,4 +13,5 @@ export const saveScene = async () => {
       content: 'Scene saved!',
     });
   }
+  unsetHasUnsavedChanges();
 };

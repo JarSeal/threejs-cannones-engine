@@ -46,7 +46,7 @@ class SceneLoader {
   _createScene = (sceneParams) => {
     setSceneParams(sceneParams);
 
-    // Setup textureLoader
+    // Setup textureLoader @TODO: create TextureLoader class
     const textureLoader = new TextureLoader();
     setSceneItem('textureLoader', textureLoader);
 
@@ -224,7 +224,7 @@ class SceneLoader {
       ) {
         transControls.enabled = true;
         transControls.mode = leftTools.selectAndTransformTool;
-        transControls.attach(selection[0]); // @TODO: add multiselection
+        transControls.attach(selection[0]);
       } else {
         transControls.enabled = false;
       }

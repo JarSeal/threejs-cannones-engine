@@ -8,7 +8,6 @@ import { printName, printProjectName } from '../../utils/utils';
 import Button from '../common/Button';
 import Spinner from '../common/Spinner';
 import NewProject from '../dialogs/NewProject';
-import styles from './InitView.module.scss';
 
 class InitView extends Component {
   constructor(data) {
@@ -17,10 +16,10 @@ class InitView extends Component {
     this.recentProjectsColId = this.id + '-recent-projects-col';
     this.recentScenesColId = this.id + '-recent-scenes-col';
     this.allProjects = [];
-    data.template = `<div class="${styles.initView}">
-      <div class="${styles.wrapper}">
+    data.template = `<div class="initView">
+      <div class="wrapper">
         <h1>${APP_DEFAULTS.APP_NAME}</h1>
-        <div class="${styles.colWrapper}">
+        <div class="colWrapper">
           <div id="${this.startColId}"></div>
           <div id="${this.recentProjectsColId}"></div>
           <div id="${this.recentScenesColId}"></div>

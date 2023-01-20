@@ -10,11 +10,11 @@ class LocalStorage {
 
   getItem(key, defaultValue) {
     // defaultValue is returned (if provided) if local storage is not available or the key is not found
-    if (!this.localStorageAvailable) return defaultValue || null;
+    if (!this.localStorageAvailable) return defaultValue;
     if (this.checkIfItemExists(key)) {
       return localStorage.getItem(this.keyPrefix + key);
     } else {
-      return defaultValue || null;
+      return defaultValue;
     }
   }
 
@@ -72,11 +72,11 @@ class SessionStorage {
 
   getItem(key, defaultValue) {
     // defaultValue is returned (if provided) if session storage is not available or the key is not found
-    if (!this.sessionStorageAvailable) return defaultValue || null;
+    if (!this.sessionStorageAvailable) return defaultValue;
     if (this.checkIfItemExists(key)) {
       return sessionStorage.getItem(this.keyPrefix + key);
     } else {
-      return defaultValue || null;
+      return defaultValue;
     }
   }
 

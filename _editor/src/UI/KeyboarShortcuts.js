@@ -3,6 +3,7 @@ import { getSceneItem } from '../sceneData/sceneItems';
 import { getSceneParam } from '../sceneData/sceneParams';
 import { saveScene } from '../utils/toolsForFS';
 import { toggleWorldAxesHelper, toggleWorldGridHelper } from '../utils/toolsForWorld';
+import { closeProject } from '../utils/utils';
 
 class KeyboardShortcuts {
   constructor() {
@@ -72,6 +73,7 @@ class KeyboardShortcuts {
     { keys: ['x'], actionKey: 'scaleTool' },
     { keys: ['g'], actionKey: 'toggleGrid' },
     { keys: ['h'], actionKey: 'toggleAxes' },
+    { keys: ['Control', 'Backspace'], actionKey: 'closeProject' },
   ];
 
   // These are all the available shortcut actions for the user to configure in the settings (@TODO users can reset these)
@@ -113,6 +115,7 @@ class KeyboardShortcuts {
         }
       }
     },
+    closeProject: () => closeProject(),
   };
 }
 

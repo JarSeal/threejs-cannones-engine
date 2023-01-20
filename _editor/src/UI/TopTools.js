@@ -1,5 +1,5 @@
 import { Component } from '../../LIGHTER';
-import { getSceneItem, resetSceneItems } from '../sceneData/sceneItems';
+import { getSceneItem } from '../sceneData/sceneItems';
 import { getSceneParam } from '../sceneData/sceneParams';
 import { changeCurCamera, newCameraDialog } from '../utils/toolsForCamera';
 import { saveScene } from '../utils/toolsForFS';
@@ -24,6 +24,7 @@ class TopTools extends Component {
     const buttonWrapperId = this.id + '-main-buttons-wrapper';
     const buttons = [
       {
+        // MAIN MENU
         type: 'menu',
         btn: this.addChild(
           new Button({
@@ -35,6 +36,7 @@ class TopTools extends Component {
         ),
         options: [
           {
+            // MAIN MENU: SAVE SCENE
             icon: new SvgIcon({ id: this.id + '-save-scene-icon', icon: 'save' }),
             text: 'Save scene',
             onClick: async () => {
@@ -43,6 +45,7 @@ class TopTools extends Component {
             },
           },
           {
+            // MAIN MENU: CLOSE PROJECT
             icon: new SvgIcon({ id: this.id + '-close-project-icon', icon: 'xMark' }),
             text: 'Close project',
             onClick: async () => {
@@ -53,6 +56,7 @@ class TopTools extends Component {
         ],
       },
       {
+        // ADD MENU
         type: 'menu',
         btn: this.addChild(
           new Button({
@@ -64,6 +68,7 @@ class TopTools extends Component {
         ),
         options: [
           {
+            // ADD MENU: ADD NEW CAMERA
             icon: new SvgIcon({ id: this.id + '-add-camera-icon', icon: 'camera', width: 18 }),
             text: 'Add Camera',
             onClick: () => newCameraDialog(),
@@ -71,6 +76,7 @@ class TopTools extends Component {
         ],
       },
       {
+        // CAMERA SELECTOR
         type: 'cameraSelector',
         btn: this.addChild(
           new Button({
@@ -82,6 +88,7 @@ class TopTools extends Component {
         ),
       },
     ];
+
     if (this.mainButtonsWrapper) this.mainButtonsWrapper.discard(true);
     this.mainButtonsWrapper = this.addChildDraw({
       id: buttonWrapperId,

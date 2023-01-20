@@ -16,6 +16,8 @@ import { CAMERA_TARGET_ID, SELECTION_GROUP_ID } from '../../../utils/defaultScen
 // - focus = boolean whether the input should have focus after initiation or not [Boolean]
 // - afterSuccessBlur(value) = function that is run after a successfull blur has been made (before the timeout)
 // - validateOnInit = boolean whether the validation should be performed on component initiation
+// - isProjectId = boolean whether to update other IDs or not after a successfull edit
+// - isSceneId = boolean whether to update other IDs or not after a successfull edit (same as isProjectId)
 class SimpleIDInput extends Component {
   constructor(data) {
     super(data);
@@ -90,38 +92,38 @@ class SimpleIDInput extends Component {
       clearTimeout(this.timeout);
       this.timeout = setTimeout(() => {
         // Loop through all ids and change the matching curId to the new one
-        for (let g = 0; g < this.groups.length; g++) {
-          const group = this.groups[g];
-          const items = getSceneParam(group);
-          if (!items) continue;
-          for (let i = 0; i < items.length; i++) {
-            if (this.idGroup) {
-              if (items[i].id === this.curId && this.idGroup === group) {
-                items[i].id = value;
+        if (!this.isProjectId && !this.isSceneId) {
+          for (let g = 0; g < this.groups.length; g++) {
+            const group = this.groups[g];
+            const items = getSceneParam(group);
+            if (!items) continue;
+            for (let i = 0; i < items.length; i++) {
+              if (this.idGroup) {
+                if (items[i].id === this.curId && this.idGroup === group) {
+                  items[i].id = value;
+                }
+              } else {
+                if (items[i].id === this.curId) {
+                  items[i].id = value;
+                }
               }
-            } else {
-              if (items[i].id === this.curId) {
-                items[i].id = value;
+              if (items[i].referenceId === this.curId) {
+                // TODO: Use the keyword referenceId for all referenced ids everywhere!
+                items[i].referenceId = value;
               }
             }
-            if (items[i].referenceId === this.curId) {
-              // TODO: Use the keyword referenceId for all referenced ids everywhere!
-              items[i].referenceId = value;
-            }
+            setSceneParam(group, items);
+            saveStateByKey(group, items);
           }
-          setSceneParam(group, items);
-          saveStateByKey(group, items);
         }
         this.curId = value;
-
         getSceneItem('topTools')?.updateTools();
-
         if (!this.newId) this.returnOriginalValueButton.discard();
-        const nextElemId = document.activeElement.id;
         const rightSidePanel = getSceneItem('rightSidePanel');
         if (rightSidePanel) rightSidePanel.updatePanel();
         // @TODO: update possible selectionIds (getSceneParam('selection'))
         if (!this.newId) updateCamUserDataHelpersAndIcon(null, this.curId);
+        const nextElemId = document.activeElement.id;
         if (nextElemId) {
           // Because the timeout will rerender, the possible active elem needs to be refocused
           const nextElem = document.getElementById(nextElemId);

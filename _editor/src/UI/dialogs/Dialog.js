@@ -106,7 +106,7 @@ class Dialog extends Component {
     }, this.transitionTime + 50);
   };
 
-  disappear = () => {
+  disappear = (callback) => {
     if (!this.elem || this.isTransitioning) return;
     this.isTransitioning = true;
     this.elem.classList.remove(styles.appear);
@@ -121,6 +121,7 @@ class Dialog extends Component {
       this.discard(true, () => {
         setTimeout(() => {
           this.isTransitioning = false;
+          if (callback) callback();
         }, 300);
       });
     }, this.transitionTime);
