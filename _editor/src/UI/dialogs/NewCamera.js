@@ -13,7 +13,7 @@ import TextInput from '../common/form/TextInput';
 import VectorInput from '../common/form/VectorInput';
 import SettingsPanel from '../common/SettingsPanel';
 
-class NewCamera extends Component {
+class NewCameraDialog extends Component {
   constructor() {
     super({ id: 'new-camera-dialog', class: 'dialog-form' });
     this.formHasErrors = false;
@@ -223,4 +223,4 @@ class NewCamera extends Component {
   };
 }
 
-export default NewCamera;
+export default NewCameraDialog;

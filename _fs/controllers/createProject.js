@@ -6,6 +6,7 @@ import { getError } from '../utils/errors';
 import logger from '../utils/logger';
 import { createProjectFolderStructure, writeJsonFile } from '../utils/writeFile';
 import APP_CONFIG from '../../APP_CONFIG';
+import { validateProjectFolderAndSceneId } from '../utils/validation';
 
 const router = Router();
 
@@ -20,6 +21,12 @@ export const createProject = (params) => {
   const folderPath = getProjectFolderPath(projectFolder);
   const sceneFilePath = `${folderPath}/${APP_CONFIG.SINGLE_PROJECT_SCENE_FILES_FOLDER}/${sceneId}.json`;
   const timeNow = new Date().getTime();
+
+  const validation = validateProjectFolderAndSceneId({ projectFolder, sceneId });
+  if (validation.error) {
+    logger.error(validation.errorMsg);
+    return { error: true, ...validation };
+  }
 
   // Check if "Projects" folder exists and create it if it doesn't
   try {

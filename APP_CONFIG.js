@@ -3,6 +3,7 @@ const APP_CONFIG = {
   PROJECTS_FOLDER_NAME: 'Projects',
   SINGLE_PROJECT_CHILD_FOLDERS: ['_data/scenes'],
   SINGLE_PROJECT_SCENE_FILES_FOLDER: '_data/scenes',
+  SIMPLE_ID_REGEX: '^[a-zA-Z0-9-_]+$',
 };
 
 // Projects (folder)

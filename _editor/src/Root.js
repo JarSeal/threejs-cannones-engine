@@ -16,6 +16,7 @@ import { loadSceneApi } from './api/loadScene';
 import Toaster from './UI/Toaster';
 import InitView from './UI/views/InitView';
 import SceneLoaderView from './UI/views/SceneLoaderView';
+import { loadRecentScenesApi } from './api/loadRecentScenes';
 
 class Root {
   constructor() {
@@ -56,10 +57,10 @@ class Root {
 
       // Load scene data from FS
       sceneLoaderView.updateText('Loading data...');
-      const response = await loadSceneApi(sessionParams);
+      const responseLoadScene = await loadSceneApi(sessionParams);
       let curScene;
-      if (response && !response.error) {
-        curScene = response;
+      if (responseLoadScene && !responseLoadScene.error) {
+        curScene = responseLoadScene;
         saveSceneId(curScene.sceneId);
         saveProjectFolder(curScene.projectFolder);
       } else {
@@ -77,6 +78,16 @@ class Root {
       sceneLoaderView.updateText('Creating scene...');
       new SceneLoader(curScene, true);
       if (hasUnsavedChanges !== 'true') unsetHasUnsavedChanges();
+
+      // Create loader for all the scenes list for this project
+      const getAllProjectScenes = async () => {
+        const projectFolder = curScene.projectFolder;
+        const responseAllProjectScenes = await loadRecentScenesApi({
+          projectFolder: projectFolder,
+        });
+        return responseAllProjectScenes;
+      };
+      setSceneItem('getAllProjectScenes', getAllProjectScenes);
 
       // Start the show...
       setSceneItem('looping', true);
@@ -108,7 +119,7 @@ class Root {
       SI.renderPass.camera = SI.curCamera;
       SI.editorComposer.render();
       SI.smallStats.update(); // Debug statistics
-      const controls = getSceneItem('orbitControls');
+      const controls = SI.orbitControls;
       if (controls) controls.update(); // @TODO: also add the ability to turn the damping off which also turns this updating off (more performant)
     }
   };

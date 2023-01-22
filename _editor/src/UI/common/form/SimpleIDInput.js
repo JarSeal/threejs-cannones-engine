@@ -8,6 +8,7 @@ import SvgIcon from '../../icons/svg-icon';
 import './SimpleIDInput.scss';
 import { updateCamUserDataHelpersAndIcon } from '../../../utils/toolsForCamera';
 import { CAMERA_TARGET_ID, SELECTION_GROUP_ID } from '../../../utils/defaultSceneValues';
+import APP_CONFIG from '../../../../../APP_CONFIG';
 
 // Attributes:
 // - label = field label [String]
@@ -18,6 +19,7 @@ import { CAMERA_TARGET_ID, SELECTION_GROUP_ID } from '../../../utils/defaultScen
 // - validateOnInit = boolean whether the validation should be performed on component initiation
 // - isProjectId = boolean whether to update other IDs or not after a successfull edit
 // - isSceneId = boolean whether to update other IDs or not after a successfull edit (same as isProjectId)
+// - additionalValidationFn = function to be run on every validation round
 class SimpleIDInput extends Component {
   constructor(data) {
     super(data);
@@ -31,9 +33,11 @@ class SimpleIDInput extends Component {
     this.returnOriginalValueButton = null;
     this.timeout = null;
     this.groups = ['lights', 'cameras', 'scenes', 'elements'];
-    this.regex = new RegExp('^[a-zA-Z0-9-_]+$');
+    this.regex = new RegExp(APP_CONFIG.SIMPLE_ID_REGEX);
     this.focus = data.focus;
     this.afterSuccessBlur = data.afterSuccessBlur;
+    this.isProjectId = data.isProjectId;
+    this.isSceneId = data.isSceneId;
     setSceneItem('IDComponents', { ...(getSceneItem('IDComponents') || {}), [this.id]: this });
   }
 

@@ -13,6 +13,8 @@ export const getFSUrl = (target) => {
       return baseUrl + '/api/projects-and-scenes-lists/recent-scenes';
     case 'saveScene':
       return baseUrl + '/api/save-scene';
+    case 'createScene':
+      return baseUrl + '/api/create-scene';
     default:
       console.error(`The target param for getFSURL was unknown: ${target}`);
       return '';

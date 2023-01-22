@@ -1,8 +1,13 @@
-import { clearProjectData, getHasUnsavedChanges } from '../sceneData/saveSession';
+import {
+  clearProjectData,
+  getHasUnsavedChanges,
+  saveProjectFolder,
+  saveSceneId,
+} from '../sceneData/saveSession';
 import { getSceneItem, resetSceneItems, setSceneItem } from '../sceneData/sceneItems';
 import { getSceneParam, resetSceneParams } from '../sceneData/sceneParams';
 import SaveBeforeCloseDialog from '../UI/dialogs/SaveBeforeClose';
-import { CANVAS_ELEM_ID, SMALL_STATS_CONTAINER_ID } from './defaultSceneValues';
+import { CANVAS_ELEM_ID, SMALL_STATS_CONTAINER_ID, SMALL_STATS_ID } from './defaultSceneValues';
 import { saveScene } from './toolsForFS';
 
 export const getScreenResolution = () => ({
@@ -125,10 +130,13 @@ export const removeTools = () => {
   getSceneItem('elemTool').discard(true);
   getSceneItem('leftTools').discard(true);
   getSceneItem('topTools').discard(true);
+  const smallStats = getSceneItem('smallStats');
+  smallStats.container.removeEventListener('click', smallStats.containerClick);
+  document.getElementById(SMALL_STATS_ID).remove();
   document.getElementById(SMALL_STATS_CONTAINER_ID).remove();
 };
 
-export const closeProject = () => {
+export const closeProject = (beforeInitAppFn) => {
   const closeFn = () => {
     setSceneItem('looping', false);
     getSceneItem('keyboard').removeListeners();
@@ -137,6 +145,7 @@ export const closeProject = () => {
     resetSceneItems();
     resetSceneParams();
     document.getElementById(CANVAS_ELEM_ID).remove();
+    if (beforeInitAppFn) beforeInitAppFn();
     getSceneItem('root').initApp();
   };
   const hasUnsavedChanges = getHasUnsavedChanges();
@@ -160,4 +169,20 @@ export const closeProject = () => {
   } else {
     closeFn();
   }
+};
+
+export const changeScene = (projectFolder, sceneId) => {
+  if (!projectFolder) {
+    console.error('Param "projectFolder" is missing for "changeScene".');
+    return;
+  }
+  if (!sceneId) {
+    console.error('Param "sceneId" is missing for "changeScene".');
+    return;
+  }
+  const beforeInitAppFn = () => {
+    saveSceneId(sceneId);
+    saveProjectFolder(projectFolder);
+  };
+  closeProject(beforeInitAppFn);
 };

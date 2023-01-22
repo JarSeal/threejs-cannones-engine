@@ -2,10 +2,10 @@
   "sceneId": "scene1",
   "name": "Development scene 1",
   "dateCreated": 1663229534337,
-  "dateSaved": 1674251658161,
+  "dateSaved": 1674334338569,
   "axesHelper": false,
   "axesHelperLength": 100,
-  "rendererClearColor": "#000001",
+  "rendererClearColor": "#030320",
   "grid": false,
   "gridSize": 26,
   "shadowType": null,
@@ -39,23 +39,23 @@
       "near": 0.1,
       "far": 256,
       "position": [
-        -10.33805367874368,
-        10.22660212254452,
-        -14.012692805469772
+        -5.534271498747132,
+        8.276773932413032,
+        -13.847454941200976
       ],
       "target": [
-        1.2076757853877107,
-        2.6135147673499755,
-        -0.015879865277108975
+        0.28757241543547124,
+        2.9784816363605877,
+        1.073755097860744
       ],
       "orbitControls": true,
       "showHelper": false,
       "paramType": "camera",
       "orthoViewSize": 1,
       "rotation": [
-        -2.6336799878175228,
-        -0.4709127426116114,
-        -2.8942256861249183
+        -0.2687684892015521,
+        0.7460531128967895,
+        0.18481537481603272
       ],
       "scale": [
         1,
@@ -86,10 +86,10 @@
       "isTargetingObject": true,
       "index": 0,
       "quaternion": [
-        0.06671279504921293,
-        0.9226150705192626,
-        0.18571556549580517,
-        -0.3314220320980955
+        0.029414317323180252,
+        0.9702406507083763,
+        0.156311140352361,
+        -0.18257794240034156
       ],
       "lookAt": null
     },
@@ -109,7 +109,7 @@
         0,
         0
       ],
-      "showHelper": false,
+      "showHelper": true,
       "name": "",
       "paramType": "camera",
       "orthoViewSize": 1,
@@ -305,7 +305,7 @@
   ],
   "projectFolder": "devProject1",
   "selection": [
-    "my-other-box"
+    "my-blue-box"
   ],
   "orbiterMoving": false
 }

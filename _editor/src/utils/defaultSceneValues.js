@@ -99,7 +99,7 @@ export const DEFAULT_SCENE = {
   rendererClearColor: '#cccccc',
   grid: true,
   gridSize: 26,
-  shadowType: 'PCFSoftShadowMap',
+  shadowType: null,
   lights: [
     {
       ...AMBIENT_LIGHT,

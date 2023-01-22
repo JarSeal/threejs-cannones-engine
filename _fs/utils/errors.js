@@ -13,6 +13,10 @@ const ERRORS = {
     errorCode: 404,
     errorMsg: 'Error: Could not find project folder in "$[path]".',
   },
+  couldNotFindOrReadProjectFile: {
+    errorCode: 404,
+    errorMsg: 'Error: Could not find or read project file in "$[path]".',
+  },
   couldNotCreateProjectFolderStructure: {
     errorCode: 500,
     errorMsg:
@@ -45,6 +49,22 @@ const ERRORS = {
   genericError: {
     errorCode: 500,
     errorMsg: 'Error: Something went wrong.',
+  },
+  projectFolderContainsInvalidChars: {
+    errorCode: 400,
+    errorMsg: 'Error: Project folder contains invalid characters.',
+  },
+  sceneIdContainsInvalidChars: {
+    errorCode: 400,
+    errorMsg: 'Error: Scene ID contains invalid characters.',
+  },
+  sceneFileAlreadyExists: {
+    errorCode: 400,
+    errorMsg: 'Error: Scene file with ID "$[sceneId]" already exists.',
+  },
+  couldNotCreateSceneFile: {
+    errorCode: 500,
+    errorMsg: 'Error: Could not create scene file at "$[path]".',
   },
 };
 

@@ -2,7 +2,7 @@
   "sceneId": "scene1",
   "name": "Development scene 1",
   "dateCreated": 1663229534337,
-  "dateSaved": 1674242620710,
+  "dateSaved": 1674425066436,
   "axesHelper": false,
   "axesHelperLength": 100,
   "rendererClearColor": "#cdcdcd",
@@ -11,13 +11,14 @@
   "shadowType": null,
   "lights": [
     {
-      "id": "ba6680b0-9ff2-4b83-a3e5-a1c16bf392f4",
+      "id": "309107e2-b8b9-414d-b2d7-a256d17bb9f3",
       "type": "ambient",
       "color": "#ffffff",
       "intensity": 0.2,
       "disabled": false,
       "paramType": "light",
-      "index": 0
+      "index": 0,
+      "referenceId": "scene2"
     },
     {
       "id": "ba846c06-04bd-4005-89bb-92e65ee7784c",
@@ -27,7 +28,8 @@
       "intensity": 0.25,
       "disabled": false,
       "paramType": "light",
-      "index": 1
+      "index": 1,
+      "referenceId": "scene1"
     }
   ],
   "cameras": [
@@ -39,9 +41,9 @@
       "near": 0.1,
       "far": 256,
       "position": [
-        4.614542502885785,
-        10.160353172468497,
-        19.049693995948502
+        10.819917360815941,
+        13.568814859323185,
+        -13.520276517774725
       ],
       "target": [
         2.285890578735144,
@@ -53,9 +55,9 @@
       "paramType": "camera",
       "orthoViewSize": 1,
       "rotation": [
-        -0.3979707591192392,
-        -0.4005677818935181,
-        -0.16248731197363733
+        -2.7245639865708022,
+        0.6616468056387097,
+        2.875836156564812
       ],
       "scale": [
         1,
@@ -86,12 +88,13 @@
       "isTargetingObject": true,
       "index": 0,
       "quaternion": [
-        -0.18108104648703363,
-        0.0624180572305067,
-        0.011516732723376168,
-        0.9814178547398189
+        -0.07313762324692365,
+        0.926803006762765,
+        0.26585924444974973,
+        0.2549626185578929
       ],
-      "lookAt": null
+      "lookAt": null,
+      "referenceId": "scene1"
     },
     {
       "id": "editor-main2",
@@ -109,7 +112,7 @@
         0,
         0
       ],
-      "showHelper": true,
+      "showHelper": false,
       "name": "",
       "paramType": "camera",
       "orthoViewSize": 1,
@@ -146,7 +149,8 @@
       "orbitControls": false,
       "isTargetingCamera": true,
       "isTargetingObject": true,
-      "index": 1
+      "index": 1,
+      "referenceId": "scene1"
     }
   ],
   "curCameraIndex": 0,
@@ -199,7 +203,8 @@
         1
       ],
       "castShadow": false,
-      "receiveShadow": false
+      "receiveShadow": false,
+      "referenceId": "scene1"
     },
     {
       "type": "shape3D",
@@ -249,7 +254,8 @@
         1
       ],
       "castShadow": false,
-      "receiveShadow": false
+      "receiveShadow": false,
+      "referenceId": "scene1"
     },
     {
       "type": "shape3D",
@@ -300,7 +306,8 @@
         1
       ],
       "castShadow": false,
-      "receiveShadow": false
+      "receiveShadow": false,
+      "referenceId": "scene1"
     }
   ],
   "projectFolder": "devProject2",

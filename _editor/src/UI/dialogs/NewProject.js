@@ -140,6 +140,7 @@ class NewProject extends Component {
         attach: buttonDivId,
         text: 'Create',
         onClick: async () => {
+          // Check if the project ID is empty and show "Required" error
           if (!this.newProjectParams.projectFolder) {
             const prjFolderError = this.prjFolderInput._validate(
               this.prjFolderInput.inputComponent.value

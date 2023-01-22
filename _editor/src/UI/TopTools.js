@@ -2,7 +2,7 @@ import { Component } from '../../LIGHTER';
 import { getSceneItem } from '../sceneData/sceneItems';
 import { getSceneParam } from '../sceneData/sceneParams';
 import { changeCurCamera, newCameraDialog } from '../utils/toolsForCamera';
-import { saveScene } from '../utils/toolsForFS';
+import { newSceneDialog, saveScene } from '../utils/toolsForFS';
 import { closeProject, printName } from '../utils/utils';
 import Button from './common/Button';
 import SvgIcon from './icons/svg-icon';
@@ -67,6 +67,12 @@ class TopTools extends Component {
           })
         ),
         options: [
+          {
+            // ADD MENU: ADD SCENE
+            icon: new SvgIcon({ id: this.id + '-add-camera-icon', icon: 'camera', width: 18 }),
+            text: 'Add Scene',
+            onClick: () => newSceneDialog(),
+          },
           {
             // ADD MENU: ADD NEW CAMERA
             icon: new SvgIcon({ id: this.id + '-add-camera-icon', icon: 'camera', width: 18 }),

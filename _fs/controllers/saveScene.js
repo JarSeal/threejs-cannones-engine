@@ -19,8 +19,11 @@ export const saveSceneData = (sceneParams) => {
   const folderPath = getProjectFolderPath(projectFolder);
   const sceneFilePath = `${folderPath}/${APP_CONFIG.SINGLE_PROJECT_SCENE_FILES_FOLDER}/${sceneId}.json`;
 
-  const propsInvalid = validateProjectFolderAndSceneId({ projectFolder, sceneId });
-  if (propsInvalid) return propsInvalid;
+  const validation = validateProjectFolderAndSceneId({ projectFolder, sceneId });
+  if (validation.error) {
+    logger.error(validation.errorMsg);
+    return { error: true, ...validation };
+  }
 
   const recentDateSaved = sceneParams.dateSaved;
 
@@ -49,7 +52,7 @@ export const saveSceneData = (sceneParams) => {
     // Update dateSaved for project file
     updateProjectFile(projectFolder, { dateSaved: sceneParams.dateSaved });
   } catch (err) {
-    const error = getError('couldNotUpdateProjectFile', { projectFolder: projectFolder });
+    const error = getError('couldNotUpdateProjectFile', { projectFolder });
     logger.error(error.errorMsg, err, sceneParams);
     return {
       ...error,

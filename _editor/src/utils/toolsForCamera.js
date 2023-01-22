@@ -7,7 +7,7 @@ import { saveAllCamerasState, saveCameraState, saveSceneState } from '../sceneDa
 import { getSceneItem, setSceneItem } from '../sceneData/sceneItems';
 import { getSceneParam, setSceneParam } from '../sceneData/sceneParams';
 import ConfirmationDialog from '../UI/dialogs/Confirmation';
-import NewCamera from '../UI/dialogs/NewCamera';
+import NewCameraDialog from '../UI/dialogs/NewCamera';
 import CameraMeshIcon from '../UI/icons/meshes/CameraMeshIcon';
 import { CAMERA_TARGET_ID, NEW_CAMERA_DEFAULT_PARAMS } from './defaultSceneValues';
 import { getScreenResolution } from './utils';
@@ -61,7 +61,7 @@ export const updateCameraProperty = (value, i, key, args) => {
 
 export const newCameraDialog = () =>
   getSceneItem('dialog').appear({
-    component: NewCamera,
+    component: NewCameraDialog,
     title: 'Add new camera',
   });
 

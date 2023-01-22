@@ -4,7 +4,7 @@ import fs from 'fs';
 import APP_CONFIG from '../../APP_CONFIG';
 import { getProjectFolderPath } from '../utils/config';
 import logger from '../utils/logger';
-import ERRORS from '../utils/errors';
+import { getError } from '../utils/errors';
 
 const router = Router();
 
@@ -44,10 +44,35 @@ router.post('/recent-scenes', async (request, response) => {
   return response.json(scenes);
 });
 
-export const loadRecentScenesList = ({ amount }) => {
+export const loadOneProjectFile = (projectFolder) => {
+  if (!projectFolder) {
+    const error = getError('projectFolderParamMissing');
+    logger.error(error.errorMsg);
+    return { ...error, error: true };
+  }
+  const projectsPath = getProjectFolderPath();
+  const projectFilePath = `${projectsPath}/${projectFolder}/project.json`;
+  try {
+    const rawdata = fs.readFileSync(projectFilePath);
+    return JSON.parse(rawdata);
+  } catch (err) {
+    const error = getError('couldNotFindOrReadProjectFile', { path: projectFilePath });
+    logger.error(error.errorMsg, err);
+    return { ...error, error: true };
+  }
+};
+
+export const loadRecentScenesList = ({ amount, projectFolder }) => {
   if (!amount || amount < 1) amount = Infinity;
   const projectsPath = getProjectFolderPath();
-  const projects = loadRecentProjectsList({ amount: 0 });
+  let projects = [];
+  if (projectFolder) {
+    // Load scenes from one project
+    projects = [loadOneProjectFile(projectFolder)];
+  } else {
+    // Load scenes from all projects
+    projects = loadRecentProjectsList({ amount: Infinity });
+  }
   let scenes = [];
   for (let i = 0; i < projects.length; i++) {
     const prj = projects[i];
@@ -60,10 +85,9 @@ export const loadRecentScenesList = ({ amount }) => {
         const rawdata = fs.readFileSync(sceneFilePath);
         sceneParams = JSON.parse(rawdata);
       } catch (err) {
-        const error = ERRORS.couldNotFindOrReadSceneFile;
-        const errorMsg = error.errorMsg.replace('${path}', sceneFilePath);
+        const error = getError('couldNotFindOrReadSceneFile', { path: sceneFilePath });
         logger.error(error.errorMsg, err);
-        return { error: true, errorCode: error.errorCode, errorMsg };
+        return { ...error, error: true };
       }
       scenes.push({
         sceneId,

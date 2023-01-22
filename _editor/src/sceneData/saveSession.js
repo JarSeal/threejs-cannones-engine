@@ -29,7 +29,9 @@ export const getSceneStates = () => {
 };
 
 export const saveSceneId = (id) => LS.setItem('sceneId', id);
+export const getSceneId = () => LS.getItem('sceneId');
 export const saveProjectFolder = (name) => LS.setItem('projectFolder', name);
+export const getProjectFolder = () => LS.getItem('projectFolder');
 export const removeProjectFolderAndSceneId = () =>
   LS.removeItem('sceneId') && LS.removeItem('projectFolder');
 export const clearProjectData = () => {
