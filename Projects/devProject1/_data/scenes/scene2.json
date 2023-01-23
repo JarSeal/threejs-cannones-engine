@@ -1,66 +1,61 @@
 {
-  "sceneId": "scene1",
-  "name": "Development scene 1",
-  "dateCreated": 1663229534337,
-  "dateSaved": 1674471067992,
+  "sceneId": "scene2",
+  "name": "Scene 2",
+  "dateCreated": 1674480471413,
+  "dateSaved": 1674480884203,
   "axesHelper": false,
   "axesHelperLength": 100,
-  "rendererClearColor": "#030320",
-  "grid": false,
+  "rendererClearColor": "#cccccc",
+  "grid": true,
   "gridSize": 26,
   "shadowType": null,
   "lights": [
     {
-      "id": "5d6910ad-9d91-4061-8f07-ea0b183715e6",
-      "type": "ambient",
-      "color": "#ffffff",
+      "color": 16777215,
       "intensity": 0.2,
-      "disabled": false,
+      "id": "ambient",
+      "type": "ambient",
       "paramType": "light",
       "index": 0
     },
     {
-      "id": "f15041a4-54bb-4f38-ab10-58ca6d96b9c4",
-      "type": "hemisphere",
-      "colorTop": "#ffffbb",
-      "colorBottom": "#080820",
+      "colorTop": 16777147,
+      "colorBottom": 526368,
       "intensity": 0.25,
-      "disabled": false,
+      "id": "hemi",
+      "type": "hemisphere",
       "paramType": "light",
       "index": 1
     }
   ],
   "cameras": [
     {
-      "id": "editor-main",
       "name": "Editor main camera",
       "type": "perspectiveTarget",
+      "paramType": "camera",
+      "orthoViewSize": 1,
       "fov": 45,
       "near": 0.1,
       "far": 256,
       "position": [
-        -14.903559485285548,
-        10.20488697125931,
-        -0.1978007821356802
+        -12.141118245429276,
+        12.222483777717654,
+        -15.41241116312273
       ],
-      "target": [
-        0.28757241543547124,
-        2.9784816363605877,
-        1.073755097860744
-      ],
-      "orbitControls": true,
-      "showHelper": false,
-      "paramType": "camera",
-      "orthoViewSize": 1,
       "rotation": [
-        -1.7449729922775863,
-        -1.1208352576706346,
-        -1.7637745443735853
+        -0.4849112429005657,
+        -0.5525647199574875,
+        -0.2697963686669189
       ],
       "scale": [
         1,
         1,
         1
+      ],
+      "target": [
+        0.167933035038782,
+        0.8546326973027628,
+        0.27071235600623655
       ],
       "defaultPosition": [
         5,
@@ -82,20 +77,25 @@
         0,
         0
       ],
+      "orbitControls": true,
+      "showHelper": true,
+      "id": "editor-main",
       "isTargetingCamera": true,
       "isTargetingObject": true,
       "index": 0,
       "quaternion": [
-        -0.148616243761854,
-        -0.7180524737828975,
-        -0.1615757106867886,
-        0.6604597994582545
+        0.08368499664818412,
+        0.9136068694064244,
+        0.2421670892596009,
+        -0.3157125439207611
       ],
       "lookAt": null
     },
     {
-      "id": "editor-main2",
+      "name": "",
       "type": "perspectiveTarget",
+      "paramType": "camera",
+      "orthoViewSize": 1,
       "fov": 45,
       "near": 0.1,
       "far": 256,
@@ -104,15 +104,6 @@
         5,
         10
       ],
-      "target": [
-        0,
-        0,
-        0
-      ],
-      "showHelper": true,
-      "name": "",
-      "paramType": "camera",
-      "orthoViewSize": 1,
       "rotation": [
         -0.4636476090008061,
         0.7297276562269661,
@@ -122,6 +113,11 @@
         1,
         1,
         1
+      ],
+      "target": [
+        0,
+        0,
+        0
       ],
       "defaultPosition": [
         5,
@@ -144,6 +140,8 @@
         0
       ],
       "orbitControls": false,
+      "showHelper": true,
+      "id": "game-cam",
       "isTargetingCamera": true,
       "isTargetingObject": true,
       "index": 1
@@ -152,82 +150,27 @@
   "curCameraIndex": 0,
   "elements": [
     {
-      "type": "shape3D",
-      "id": "my-blue-box",
-      "shapeParams": {
-        "shape3D": "box",
-        "size": [
-          1,
-          1,
-          1
-        ]
-      },
-      "position": [
-        0.6378513592514672,
-        2,
-        2.0000000000000004
-      ],
-      "rotation": [
-        0,
-        0.7000000000000001,
-        0
-      ],
-      "material": {
-        "type": "lambert",
-        "color": "#00ffff"
-      },
-      "name": "Blue box",
-      "paramType": "element",
-      "scale": [
-        0.9999999999999999,
-        1,
-        0.9999999999999999
-      ],
-      "defaultPosition": [
-        0,
-        0,
-        0
-      ],
-      "defaultRotation": [
-        0,
-        0,
-        0
-      ],
-      "defaultScale": [
-        1,
-        1,
-        1
-      ],
-      "castShadow": false,
-      "receiveShadow": false
-    },
-    {
-      "type": "shape3D",
-      "id": "my-other-box",
-      "shapeParams": {
-        "shape3D": "box",
-        "size": [
-          1,
-          1,
-          1
-        ]
-      },
-      "position": [
-        -1.5,
-        0.5,
-        -2.5
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "material": {
-        "type": "lambert",
-        "color": "#ff2233"
-      },
       "name": "",
+      "type": "shape3D",
+      "shapeParams": {
+        "size": [
+          1,
+          1,
+          1
+        ],
+        "shape3D": "box"
+      },
       "paramType": "element",
+      "position": [
+        0,
+        0.5,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
       "scale": [
         1,
         1,
@@ -235,7 +178,7 @@
       ],
       "defaultPosition": [
         0,
-        0,
+        0.5,
         0
       ],
       "defaultRotation": [
@@ -249,12 +192,16 @@
         1
       ],
       "castShadow": false,
-      "receiveShadow": false
+      "receiveShadow": false,
+      "material": {
+        "type": "lambert",
+        "color": "#999999"
+      },
+      "id": "default-cube"
     },
     {
       "type": "shape3D",
-      "id": "ground",
-      "shape3D": "box",
+      "id": "default-ground",
       "shapeParams": {
         "shape3D": "box",
         "size": [
@@ -286,7 +233,7 @@
       ],
       "defaultPosition": [
         0,
-        0,
+        0.5,
         0
       ],
       "defaultRotation": [
@@ -305,7 +252,7 @@
   ],
   "projectFolder": "devProject1",
   "selection": [
-    "my-blue-box"
+    "default-cube"
   ],
   "orbiterMoving": false
 }

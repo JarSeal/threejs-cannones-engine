@@ -1,5 +1,5 @@
 import { Component } from '../../../LIGHTER';
-import { getHasUnsavedChanges, getProjectFolder } from '../../sceneData/saveSession';
+import { getProjectFolder } from '../../sceneData/saveSession';
 import { getSceneItem } from '../../sceneData/sceneItems';
 import { DEFAULT_SCENE } from '../../utils/defaultSceneValues';
 import { createNewScene } from '../../utils/toolsForFS';

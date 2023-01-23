@@ -3,8 +3,9 @@
   "name": "",
   "rootScene": "scene1",
   "dateCreated": 1663229534337,
-  "dateSaved": 1674334338569,
+  "dateSaved": 1674480884203,
   "scenes": [
-    "scene1"
+    "scene1",
+    "scene2"
   ]
 }

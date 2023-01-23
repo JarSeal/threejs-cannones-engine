@@ -2,11 +2,11 @@
   "sceneId": "scene1",
   "name": "Development scene 1",
   "dateCreated": 1663229534337,
-  "dateSaved": 1674425066436,
+  "dateSaved": 1674479912480,
   "axesHelper": false,
   "axesHelperLength": 100,
   "rendererClearColor": "#cdcdcd",
-  "grid": false,
+  "grid": true,
   "gridSize": 26,
   "shadowType": null,
   "lights": [
@@ -41,9 +41,9 @@
       "near": 0.1,
       "far": 256,
       "position": [
-        10.819917360815941,
-        13.568814859323185,
-        -13.520276517774725
+        18.23569615086898,
+        14.628003654960606,
+        -0.05768656879761036
       ],
       "target": [
         2.285890578735144,
@@ -55,9 +55,9 @@
       "paramType": "camera",
       "orthoViewSize": 1,
       "rotation": [
-        -2.7245639865708022,
-        0.6616468056387097,
-        2.875836156564812
+        -2.512631842681471,
+        0.448607917571314,
+        2.835944522704936
       ],
       "scale": [
         1,
@@ -88,10 +88,10 @@
       "isTargetingObject": true,
       "index": 0,
       "quaternion": [
-        -0.07313762324692365,
-        0.926803006762765,
-        0.26585924444974973,
-        0.2549626185578929
+        -0.21088460944987372,
+        0.6911920391288623,
+        0.22276217511306085,
+        0.6543380318160924
       ],
       "lookAt": null,
       "referenceId": "scene1"
@@ -167,14 +167,14 @@
         ]
       },
       "position": [
-        2,
-        2,
-        2.0000000000000004
+        2.5,
+        0.5,
+        2.5
       ],
       "rotation": [
+        3.4863055968420984e-32,
         0,
-        0.7000000000000001,
-        0
+        1.04780645521217e-47
       ],
       "material": {
         "type": "lambert",
@@ -220,7 +220,7 @@
       "position": [
         -2.5,
         0.5,
-        -2.5
+        -1.5
       ],
       "rotation": [
         0,
@@ -311,8 +311,6 @@
     }
   ],
   "projectFolder": "devProject2",
-  "selection": [
-    "my-blue-box"
-  ],
+  "selection": [],
   "orbiterMoving": false
 }

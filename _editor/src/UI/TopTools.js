@@ -1,6 +1,6 @@
 import { Component } from '../../LIGHTER';
 import { getSceneItem } from '../sceneData/sceneItems';
-import { getSceneParam } from '../sceneData/sceneParams';
+import { getSceneParam, getSceneParams } from '../sceneData/sceneParams';
 import { changeCurCamera, newCameraDialog } from '../utils/toolsForCamera';
 import { newSceneDialog, saveScene } from '../utils/toolsForFS';
 import { closeProject, printName } from '../utils/utils';
@@ -14,6 +14,7 @@ class TopTools extends Component {
     data.class = [styles.topTools];
     this.mainButtonsWrapper = null;
     this.undoRedoButtonsWrapper = null;
+    this.allScenes = getSceneItem('allProjectScenes');
   }
 
   paint = () => {
@@ -69,7 +70,7 @@ class TopTools extends Component {
         options: [
           {
             // ADD MENU: ADD SCENE
-            icon: new SvgIcon({ id: this.id + '-add-camera-icon', icon: 'camera', width: 18 }),
+            icon: new SvgIcon({ id: this.id + '-add-camera-icon', icon: 'camera', width: 18 }), // @TODO: change icon
             text: 'Add Scene',
             onClick: () => newSceneDialog(),
           },
@@ -80,6 +81,18 @@ class TopTools extends Component {
             onClick: () => newCameraDialog(),
           },
         ],
+      },
+      {
+        // SCENE SELECTOR
+        type: 'sceneSelector',
+        btn: this.addChild(
+          new Button({
+            id: this.id + '-btn-change-scene-menu-button',
+            class: ['menuButton', 'sceneSelector'],
+            icon: new SvgIcon({ id: this.id + '-change-scene-icon', icon: 'camera', width: 18 }), // @TODO: change icon
+            ...this._menuButtonListeners,
+          })
+        ),
       },
       {
         // CAMERA SELECTOR
@@ -118,6 +131,28 @@ class TopTools extends Component {
               })
             );
           }
+        }
+      } else if (button.type === 'sceneSelector') {
+        // @TODO: CHANGE LOGIC HERE
+        button.btn.draw({
+          attach: buttonWrapperId,
+          appendHtml: `<span class="curSceneName">${printName(getSceneParams())}</span>`,
+        });
+        const buttonMenu = button.btn.addChildDraw({
+          id: button.btn.data.id + '-menu-wrapper',
+          class: ['menuWrapper'],
+        });
+        for (let j = 0; j < this.allScenes.length; j++) {
+          buttonMenu.addChildDraw(
+            new Button({
+              id: button.btn.data.id + '-scenes-' + j,
+              class: getSceneParam('sceneId') === this.allScenes[j].sceneId ? 'current' : [],
+              text: printName(this.allScenes[j]),
+              onClick: () => {
+                console.log('CHANGE SCENE', this.allScenes[j].sceneId);
+              },
+            })
+          );
         }
       } else if (button.type === 'cameraSelector') {
         const cams = getSceneParam('cameras');

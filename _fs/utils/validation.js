@@ -6,7 +6,7 @@ import { getProjectFolderPath } from './config';
 import APP_CONFIG from '../../APP_CONFIG';
 
 export const validateProjectFolderAndSceneId = (props) => {
-  const { projectFolder, sceneId } = props;
+  const { projectFolder, sceneId, checkExistence } = props;
   let validation = validateProjectFolder(projectFolder);
   if (validation.error) {
     logger.error(validation.errorMsg);
@@ -17,13 +17,15 @@ export const validateProjectFolderAndSceneId = (props) => {
     logger.error(validation.errorMsg);
     return { error: true, ...validation };
   }
-  const folderPath = getProjectFolderPath(projectFolder);
-  if (!fs.existsSync(folderPath)) {
-    const error = getError('couldNotFindProjectFolder', { path: folderPath });
-    logger.error(error.errorMsg);
-    return { error: true, ...error };
+  if (checkExistence) {
+    const folderPath = getProjectFolderPath(projectFolder);
+    if (!fs.existsSync(folderPath)) {
+      const error = getError('couldNotFindProjectFolder', { path: folderPath });
+      logger.error(error.errorMsg);
+      return { error: true, ...error };
+    }
   }
-  return false;
+  return { error: false };
 };
 
 export const validateProjectFolder = (projectFolder) => {

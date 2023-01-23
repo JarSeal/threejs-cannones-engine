@@ -19,6 +19,24 @@
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
+      text-align: left;
+    }
+    :global(.ui-icon) {
+      position: absolute;
+      left: 1rem;
+    }
+  }
+  :global(button.sceneSelector) {
+    width: 14rem;
+    :global(.curSceneName) {
+      display: block;
+      width: 100%;
+      padding-left: 3.4rem;
+      @include heading-font;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      text-align: left;
     }
     :global(.ui-icon) {
       position: absolute;

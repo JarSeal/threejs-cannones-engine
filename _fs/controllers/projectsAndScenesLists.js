@@ -5,6 +5,7 @@ import APP_CONFIG from '../../APP_CONFIG';
 import { getProjectFolderPath } from '../utils/config';
 import logger from '../utils/logger';
 import { getError } from '../utils/errors';
+import { validateProjectFolder } from '../utils/validation';
 
 const router = Router();
 
@@ -22,8 +23,9 @@ export const loadRecentProjectsList = ({ amount }) => {
     .map((dirent) => dirent.name);
   const projects = directories
     .map((dir) => {
+      const projectFilePath = `${projectsPath}/${dir}/project.json`;
       try {
-        const rawdata = fs.readFileSync(`${projectsPath}/${dir}/project.json`);
+        const rawdata = fs.readFileSync(projectFilePath);
         return JSON.parse(rawdata);
       } catch (err) {
         return false;
@@ -45,11 +47,11 @@ router.post('/recent-scenes', async (request, response) => {
 });
 
 export const loadOneProjectFile = (projectFolder) => {
-  if (!projectFolder) {
-    const error = getError('projectFolderParamMissing');
-    logger.error(error.errorMsg);
-    return { ...error, error: true };
+  const validation = validateProjectFolder(projectFolder);
+  if (validation.error) {
+    return validation;
   }
+
   const projectsPath = getProjectFolderPath();
   const projectFilePath = `${projectsPath}/${projectFolder}/project.json`;
   try {

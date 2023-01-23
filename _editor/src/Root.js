@@ -73,12 +73,6 @@ class Root {
         curScene = { ...curScene, ...sessionParams };
       }
 
-      // Load the scene
-      const hasUnsavedChanges = getHasUnsavedChanges();
-      sceneLoaderView.updateText('Creating scene...');
-      new SceneLoader(curScene, true);
-      if (hasUnsavedChanges !== 'true') unsetHasUnsavedChanges();
-
       // Create loader for all the scenes list for this project
       const getAllProjectScenes = async () => {
         const projectFolder = curScene.projectFolder;
@@ -88,6 +82,14 @@ class Root {
         return responseAllProjectScenes;
       };
       setSceneItem('getAllProjectScenes', getAllProjectScenes);
+      const allProjectScenes = await getAllProjectScenes();
+      setSceneItem('allProjectScenes', allProjectScenes);
+
+      // Load the scene
+      const hasUnsavedChanges = getHasUnsavedChanges();
+      sceneLoaderView.updateText('Creating scene...');
+      new SceneLoader(curScene, true);
+      if (hasUnsavedChanges !== 'true') unsetHasUnsavedChanges();
 
       // Start the show...
       setSceneItem('looping', true);

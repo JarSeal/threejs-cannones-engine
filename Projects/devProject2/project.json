@@ -3,6 +3,8 @@
   "name": "My dev project 2",
   "rootScene": "scene1",
   "dateCreated": 1663229534337,
-  "dateSaved": 1674426686053,
-  "scenes": ["scene1"]
+  "dateSaved": 1674479912480,
+  "scenes": [
+    "scene1"
+  ]
 }

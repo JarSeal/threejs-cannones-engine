@@ -24,7 +24,6 @@ export const createProject = (params) => {
 
   const validation = validateProjectFolderAndSceneId({ projectFolder, sceneId });
   if (validation.error) {
-    logger.error(validation.errorMsg);
     return { error: true, ...validation };
   }
 

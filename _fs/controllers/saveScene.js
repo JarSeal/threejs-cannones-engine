@@ -19,7 +19,11 @@ export const saveSceneData = (sceneParams) => {
   const folderPath = getProjectFolderPath(projectFolder);
   const sceneFilePath = `${folderPath}/${APP_CONFIG.SINGLE_PROJECT_SCENE_FILES_FOLDER}/${sceneId}.json`;
 
-  const validation = validateProjectFolderAndSceneId({ projectFolder, sceneId });
+  const validation = validateProjectFolderAndSceneId({
+    projectFolder,
+    sceneId,
+    checkExistence: true,
+  });
   if (validation.error) {
     logger.error(validation.errorMsg);
     return { error: true, ...validation };

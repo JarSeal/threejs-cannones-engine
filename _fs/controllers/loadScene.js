@@ -17,9 +17,15 @@ router.post('/', async (request, response) => {
 export const loadSceneData = ({ projectFolder, sceneId }) => {
   const folderPath = getProjectFolderPath(projectFolder);
   const sceneFilePath = `${folderPath}/${APP_CONFIG.SINGLE_PROJECT_SCENE_FILES_FOLDER}/${sceneId}.json`;
-  const hasMissingProps = validateProjectFolderAndSceneId({ projectFolder, sceneId });
+  const validation = validateProjectFolderAndSceneId({
+    projectFolder,
+    sceneId,
+    checkExistence: true,
+  });
 
-  if (hasMissingProps) return hasMissingProps;
+  if (validation.error) {
+    return validation;
+  }
 
   let data = {};
   try {

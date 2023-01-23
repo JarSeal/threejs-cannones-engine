@@ -19,10 +19,9 @@ router.post('/', async (request, response) => {
 export const createNewScene = (params) => {
   const { projectFolder, sceneId, sceneParams } = params;
 
-  let validation = validateProjectFolderAndSceneId({ projectFolder, sceneId });
+  const validation = validateProjectFolderAndSceneId({ projectFolder, sceneId });
   if (validation.error) {
-    logger.error(validation.errorMsg);
-    return { error: true, ...validation };
+    return validation;
   }
 
   const folderPath = getProjectFolderPath(projectFolder);

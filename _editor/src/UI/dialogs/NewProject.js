@@ -156,7 +156,7 @@ class NewProject extends Component {
             name: this.newProjectParams.name,
             sceneId: this.newProjectParams.sceneId,
             sceneName: this.newProjectParams.sceneName,
-            sceneParams: DEFAULT_SCENE,
+            sceneParams: { ...DEFAULT_SCENE },
           };
           const response = await createProjectApi(params);
           getSceneItem('dialog').unlock();
