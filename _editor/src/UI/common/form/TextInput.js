@@ -16,6 +16,7 @@ import { Component } from '../../../../LIGHTER';
 // - doNotSelectOnFocus = boolean whether to select all content or not [Boolean]
 // - doNotBlurOnEnter = boolean whether to blur from the input field when Enter key is pressed [Boolean]
 // - focus = boolean whether the input should have focus after initiation or not [Boolean]
+// - autoComplete = boolean for the input autocomplete attribute (default is true)
 class TextInput extends Component {
   constructor(data) {
     super(data);
@@ -35,6 +36,7 @@ class TextInput extends Component {
                         value="${data.value || ''}"
                         ${data.maxlength ? 'maxlength="' + data.maxlength + '"' : ''}
                         ${data.disabled ? 'disabled' : ''}
+                        autocomplete=${data.autoComplete === false ? 'off' : 'on'}
                     />
                 </label>
             </div>

@@ -187,10 +187,17 @@ $buttonHeight: 3.4rem;
         &:before {
           background-color: transparent;
         }
+        &.current {
+          border-top-right-radius: 0.6rem;
+        }
       }
       &:last-child {
         &:after {
           background-color: transparent;
+        }
+        &.current {
+          border-bottom-left-radius: 0.6rem;
+          border-bottom-right-radius: 0.6rem;
         }
       }
       &:after {

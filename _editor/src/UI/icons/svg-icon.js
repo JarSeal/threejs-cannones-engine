@@ -10,6 +10,7 @@ import gearIcon from './svg/gear.svg?raw';
 import globeIcon from './svg/globe.svg?raw';
 import infoIcon from './svg/info.svg?raw';
 import moveArrowsIcon from './svg/arrows-up-down-left-right.svg?raw';
+import mountainIcon from './svg/mountain-sun.svg?raw';
 import plusIcon from './svg/plus.svg?raw';
 import pointerIcon from './svg/arrow-pointer.svg?raw';
 import redoIcon from './svg/rotate-right.svg?raw';
@@ -61,6 +62,8 @@ class SvgIcon extends Component {
         return infoIcon;
       case 'moveArrows':
         return moveArrowsIcon;
+      case 'scene':
+        return mountainIcon;
       case 'plus':
         return plusIcon;
       case 'pointer':
