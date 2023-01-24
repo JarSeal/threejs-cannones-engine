@@ -2,16 +2,16 @@
   "sceneId": "scene2",
   "name": "Scene 2",
   "dateCreated": 1674480471413,
-  "dateSaved": 1674480884203,
+  "dateSaved": 1674498410941,
   "axesHelper": false,
   "axesHelperLength": 100,
-  "rendererClearColor": "#cccccc",
+  "rendererClearColor": "#ceeffd",
   "grid": true,
   "gridSize": 26,
   "shadowType": null,
   "lights": [
     {
-      "color": 16777215,
+      "color": "#c9e5f1",
       "intensity": 0.2,
       "id": "ambient",
       "type": "ambient",
@@ -19,8 +19,8 @@
       "index": 0
     },
     {
-      "colorTop": 16777147,
-      "colorBottom": 526368,
+      "colorTop": "#e7e8c1",
+      "colorBottom": "#392828",
       "intensity": 0.25,
       "id": "hemi",
       "type": "hemisphere",
@@ -38,14 +38,14 @@
       "near": 0.1,
       "far": 256,
       "position": [
-        -12.141118245429276,
-        12.222483777717654,
-        -15.41241116312273
+        -4.27691512364884,
+        11.370502328833716,
+        20.179528384760655
       ],
       "rotation": [
-        -0.4849112429005657,
-        -0.5525647199574875,
-        -0.2697963686669189
+        -0.4859535672885038,
+        -0.19490725837212097,
+        -0.10194510712414623
       ],
       "scale": [
         1,
@@ -84,10 +84,10 @@
       "isTargetingObject": true,
       "index": 0,
       "quaternion": [
-        0.08368499664818412,
-        0.9136068694064244,
-        0.2421670892596009,
-        -0.3157125439207611
+        -0.2343286164583502,
+        -0.1065188854220899,
+        -0.025840053282678636,
+        0.9659586524295433
       ],
       "lookAt": null
     },

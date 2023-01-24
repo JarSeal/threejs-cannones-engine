@@ -5,18 +5,18 @@ export const SMALL_STATS_CONTAINER_ID = 'smallStats-container';
 export const SMALL_STATS_ID = 'smallStats';
 
 export const AMBIENT_LIGHT = {
-  color: 0xffffff,
+  color: '#ffffff',
   intensity: 0.2,
 };
 
 export const HEMI_LIGHT = {
-  colorTop: 0xffffbb,
-  colorBottom: 0x080820,
+  colorTop: '#ffffbb',
+  colorBottom: '#080820',
   intensity: 0.25,
 };
 
 export const POINT_LIGHT = {
-  color: 0xffffff,
+  color: '#ffffff',
   intensity: 1,
   distance: 10,
   decay: 5,

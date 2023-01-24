@@ -1,8 +1,8 @@
 {
-  "sceneId": "scene1",
-  "name": "joku toinen",
+  "sceneId": "scene6",
+  "name": "Some scene",
   "dateCreated": 1674498237023,
-  "dateSaved": 1674578264559,
+  "dateSaved": 1674498481849,
   "axesHelper": false,
   "axesHelperLength": 100,
   "rendererClearColor": "#2e0101",
@@ -11,16 +11,15 @@
   "shadowType": null,
   "lights": [
     {
-      "id": "5d6910ad-9d91-4061-8f07-ea0b183715e6",
-      "type": "ambient",
       "color": "#ffffff",
       "intensity": 0.2,
-      "disabled": false,
+      "id": "ambient",
+      "type": "ambient",
       "paramType": "light",
       "index": 0
     },
     {
-      "id": "f15041a4-54bb-4f38-ab10-58ca6d96b9c4",
+      "id": "f36e42a3-abd9-474c-9e8e-2aa01a7b7b61",
       "type": "hemisphere",
       "colorTop": "#ffffbb",
       "colorBottom": "#080820",
@@ -45,9 +44,9 @@
         19.605987572041656
       ],
       "rotation": [
-        -0.39748856358560863,
-        -0.06264031107981441,
-        -0.026275413197705655
+        -0.6115354002806497,
+        0.6670829598280672,
+        0.4093296416809362
       ],
       "scale": [
         1,

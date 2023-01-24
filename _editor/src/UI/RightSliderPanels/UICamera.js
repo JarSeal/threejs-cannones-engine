@@ -116,7 +116,6 @@ class UICamera extends Component {
           id: 'infoType-' + index + '-' + this.id,
           label: 'Type',
           content: CAMERA_TYPES.find((type) => type.value === c.type).label,
-          // content: c.type,
           attach: contentId,
         })
       );

@@ -1,31 +1,29 @@
 {
-  "sceneId": "scene1",
-  "name": "joku toinen",
-  "dateCreated": 1674498237023,
-  "dateSaved": 1674578264559,
-  "axesHelper": false,
+  "sceneId": "scene4",
+  "name": "My fourth scene",
+  "dateCreated": 1674497522359,
+  "dateSaved": 1674498320955,
+  "axesHelper": true,
   "axesHelperLength": 100,
-  "rendererClearColor": "#2e0101",
-  "grid": false,
+  "rendererClearColor": "#fedfff",
+  "grid": true,
   "gridSize": 26,
   "shadowType": null,
   "lights": [
     {
-      "id": "5d6910ad-9d91-4061-8f07-ea0b183715e6",
-      "type": "ambient",
-      "color": "#ffffff",
+      "color": "#c6daec",
       "intensity": 0.2,
-      "disabled": false,
+      "id": "ambient",
+      "type": "ambient",
       "paramType": "light",
       "index": 0
     },
     {
-      "id": "f15041a4-54bb-4f38-ab10-58ca6d96b9c4",
-      "type": "hemisphere",
-      "colorTop": "#ffffbb",
-      "colorBottom": "#080820",
+      "colorTop": "#ace9f1",
+      "colorBottom": "#311f1f",
       "intensity": 0.25,
-      "disabled": false,
+      "id": "hemi",
+      "type": "hemisphere",
       "paramType": "light",
       "index": 1
     }
@@ -40,14 +38,14 @@
       "near": 0.1,
       "far": 256,
       "position": [
-        -3.6286571951069257,
-        8.794788328807432,
-        19.605987572041656
+        14.609262812707634,
+        3.721052042877175,
+        2.1303596071195763
       ],
       "rotation": [
-        -0.39748856358560863,
-        -0.06264031107981441,
-        -0.026275413197705655
+        -1.0508312928934955,
+        1.2853188035604695,
+        1.0328333668194842
       ],
       "scale": [
         1,
@@ -55,9 +53,9 @@
         1
       ],
       "target": [
-        -2.263836527540858,
-        0.3715184508063037,
-        -0.4572517577679241
+        0,
+        0,
+        0
       ],
       "defaultPosition": [
         5,
@@ -86,10 +84,10 @@
       "isTargetingObject": true,
       "index": 0,
       "quaternion": [
-        -0.1969213281312325,
-        -0.03328850038217236,
-        -0.006690148214923353,
-        0.9798311631021949
+        -0.09314010278375187,
+        0.6491260086195371,
+        0.08054324391269166,
+        0.7506484743520907
       ],
       "lookAt": null
     },
@@ -142,7 +140,7 @@
         0
       ],
       "orbitControls": false,
-      "showHelper": false,
+      "showHelper": true,
       "id": "game-cam",
       "isTargetingCamera": true,
       "isTargetingObject": true,
@@ -253,8 +251,6 @@
     }
   ],
   "projectFolder": "devProject1",
-  "selection": [
-    "default-cube"
-  ],
+  "selection": [],
   "orbiterMoving": false
 }

@@ -146,7 +146,12 @@ export const closeProject = (beforeInitAppFn) => {
     resetSceneParams();
     document.getElementById(CANVAS_ELEM_ID).remove();
     if (beforeInitAppFn) beforeInitAppFn();
-    getSceneItem('root').initApp();
+    setTimeout(() => {
+      // This small timeout is to make sure that the canvas and the smallStats have
+      // been removed. Otherwise the smallStats are sometimes not fully removed
+      // and the FPS goes to 120 (counting double frames).
+      getSceneItem('root').initApp();
+    }, 50);
   };
   const hasUnsavedChanges = getHasUnsavedChanges();
   if (hasUnsavedChanges === 'true') {

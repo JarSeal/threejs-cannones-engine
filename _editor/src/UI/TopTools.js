@@ -154,7 +154,6 @@ class TopTools extends Component {
             label: 'Search scenes:',
             class: 'filterInput',
             autoComplete: false,
-            // @TODO: add a clear text functionality (an X at the end of the input)
             changeFn: (e) => {
               const value = e.target.value;
               this.filterString = value;

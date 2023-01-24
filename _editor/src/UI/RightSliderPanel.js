@@ -6,6 +6,7 @@ import { saveEditorState } from '../sceneData/saveSession';
 import UIWorld from './RightSliderPanels/UIWorld';
 import UICamera from './RightSliderPanels/UICamera';
 import SvgIcon from './icons/svg-icon';
+import UIScene from './RightSliderPanels/UIScene';
 
 class RightSidePanel extends Component {
   constructor(data) {
@@ -89,7 +90,6 @@ class RightSidePanel extends Component {
   _tabs = [
     {
       id: 'UICamera',
-      icon: 'camera',
       btn: this.addChild(
         new Button({
           id: 'btn-UICamera' + this.id,
@@ -103,7 +103,6 @@ class RightSidePanel extends Component {
     },
     {
       id: 'UIWorld',
-      icon: 'globe',
       btn: this.addChild(
         new Button({
           id: 'btn-UIWorld' + this.id,
@@ -112,6 +111,17 @@ class RightSidePanel extends Component {
         })
       ),
       content: this.addChild(new UIWorld({ id: 'ui-tab-world-' + this.id })),
+    },
+    {
+      id: 'UIScene',
+      btn: this.addChild(
+        new Button({
+          id: 'btn-UIScene' + this.id,
+          onClick: () => this.togglePanel('UIScene'),
+          icon: new SvgIcon({ id: this.id + '-scene-icon', icon: 'scene', width: 22 }),
+        })
+      ),
+      content: this.addChild(new UIScene({ id: 'ui-tab-scene-' + this.id })),
     },
   ];
 }

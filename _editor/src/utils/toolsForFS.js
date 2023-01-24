@@ -1,8 +1,8 @@
 import { createSceneApi } from '../api/createScene';
 import { saveSceneApi } from '../api/saveScene';
-import { unsetHasUnsavedChanges } from '../sceneData/saveSession';
+import { saveSceneState, unsetHasUnsavedChanges } from '../sceneData/saveSession';
 import { getSceneItem } from '../sceneData/sceneItems';
-import { getSceneParams } from '../sceneData/sceneParams';
+import { getSceneParam, getSceneParams, setSceneParam } from '../sceneData/sceneParams';
 import NewSceneDialog from '../UI/dialogs/NewScene';
 import { changeScene } from './utils';
 
@@ -35,3 +35,15 @@ export const newSceneDialog = () =>
     component: NewSceneDialog,
     title: 'Add new scene',
   });
+
+export const updateSceneName = (newVal) => {
+  const prevVal = getSceneParam('name');
+  setSceneParam('name', newVal);
+  saveSceneState({ name: newVal });
+  getSceneItem('rightSidePanel').updatePanel();
+  getSceneItem('undoRedo').addAction({
+    type: 'updateSceneName',
+    prevVal,
+    newVal,
+  });
+};
