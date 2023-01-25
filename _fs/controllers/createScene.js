@@ -32,10 +32,7 @@ export const createNewScene = (params) => {
   if (fs.existsSync(sceneFilePath)) {
     const error = getError('sceneFileAlreadyExists', { sceneId });
     logger.error(error.errorMsg);
-    return {
-      ...error,
-      error: true,
-    };
+    return { ...error, error: true };
   }
 
   const curProject = loadOneProjectFile(projectFolder);
@@ -53,11 +50,7 @@ export const createNewScene = (params) => {
   } catch (err) {
     const error = getError('couldNotCreateSceneFile', { path: sceneFilePath });
     logger.error(error.errorMsg, err, sceneParams);
-    return {
-      ...error,
-      error: true,
-      sceneParams,
-    };
+    return { ...error, error: true, sceneParams };
   }
 
   try {
@@ -69,11 +62,7 @@ export const createNewScene = (params) => {
   } catch (err) {
     const error = getError('couldNotUpdateProjectFile', { projectFolder });
     logger.error(error.errorMsg, err, sceneParams);
-    return {
-      ...error,
-      error: true,
-      sceneParams,
-    };
+    return { ...error, error: true, sceneParams };
   }
 
   return { createComplete: true, sceneParams: { ...sceneParams, projectFolder } };

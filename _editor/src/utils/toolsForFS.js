@@ -3,6 +3,7 @@ import { saveSceneApi } from '../api/saveScene';
 import { saveSceneState, unsetHasUnsavedChanges } from '../sceneData/saveSession';
 import { getSceneItem } from '../sceneData/sceneItems';
 import { getSceneParam, getSceneParams, setSceneParam } from '../sceneData/sceneParams';
+import DeleteSceneDialog from '../UI/dialogs/DeleteScene';
 import NewSceneDialog from '../UI/dialogs/NewScene';
 import { changeScene } from './utils';
 
@@ -34,6 +35,13 @@ export const newSceneDialog = () =>
   getSceneItem('dialog').appear({
     component: NewSceneDialog,
     title: 'Add new scene',
+  });
+
+export const deleteSceneDialog = (projectFolder, sceneId) =>
+  getSceneItem('dialog').appear({
+    component: DeleteSceneDialog,
+    componentData: { projectFolder, sceneId },
+    title: 'Delete scene',
   });
 
 export const updateSceneName = (newVal) => {

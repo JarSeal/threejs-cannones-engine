@@ -66,6 +66,10 @@ const ERRORS = {
     errorCode: 500,
     errorMsg: 'Error: Could not create scene file at "$[path]".',
   },
+  couldNotDeleteSceneFile: {
+    errorCode: 500,
+    errorMsg: 'Error: Could not delete scene file at "$[path]".',
+  },
 };
 
 export const getError = (key, replacersO, additionalMsg) => {

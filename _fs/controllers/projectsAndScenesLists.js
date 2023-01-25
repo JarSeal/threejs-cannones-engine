@@ -33,7 +33,7 @@ export const loadRecentProjectsList = ({ amount }) => {
     })
     .filter((p) => p)
     .sort((a, b) => b.dateSaved - a.dateSaved)
-    .filter((p, index) => index < amount);
+    .filter((_, index) => index < amount);
   return projects;
 };
 
@@ -98,10 +98,9 @@ export const loadRecentScenesList = ({ amount, projectFolder }) => {
         projectName: prj.name,
         dateSaved: sceneParams.dateSaved,
       });
-      if (scenes.length === amount) break;
     }
-    if (scenes.length === amount) break;
   }
+  scenes = scenes.sort((a, b) => b.dateSaved - a.dateSaved).filter((_, index) => index < amount);
   return { scenes };
 };
 

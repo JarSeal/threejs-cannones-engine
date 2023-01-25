@@ -47,9 +47,7 @@ class UICamera extends Component {
       })
     );
     const actionButtonsWrapperId = this.id + '-actions-wrapper';
-    this.addChildDraw(
-      new Component({ id: actionButtonsWrapperId, class: 'panelTopActionButtons' })
-    );
+    this.addChildDraw({ id: actionButtonsWrapperId, class: 'panelTopActionButtons' });
     this.addChildDraw(
       new Button({
         id: this.id + '-add-new-camera-action',

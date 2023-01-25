@@ -35,10 +35,7 @@ export const createProject = (params) => {
   } catch (err) {
     const error = getError('couldNotCreateProjectsBaseFolder', { path: baseFolder });
     logger.error(error.errorMsg, err);
-    return {
-      ...error,
-      error: true,
-    };
+    return { ...error, error: true };
   }
 
   // Check if projectFolder exists and fail if it does
@@ -60,10 +57,7 @@ export const createProject = (params) => {
       projectFolder,
     });
     logger.error(error.errorMsg);
-    return {
-      ...error,
-      error: true,
-    };
+    return { ...error, error: true };
   }
 
   // Create project.json file
@@ -84,10 +78,7 @@ export const createProject = (params) => {
       projectFolder,
     });
     logger.error(error.errorMsg);
-    return {
-      ...error,
-      error: true,
-    };
+    return { ...error, error: true };
   }
 
   // Create main scene file (default scene params)
@@ -105,18 +96,11 @@ export const createProject = (params) => {
       path: sceneFilePath,
     });
     logger.error(error.errorMsg);
-    return {
-      ...error,
-      error: true,
-    };
+    return { ...error, error: true };
   }
 
   // Return success
-  return {
-    projectCreated: true,
-    projectFolder,
-    sceneId,
-  };
+  return { projectCreated: true, projectFolder, sceneId };
 };
 
 export default router;

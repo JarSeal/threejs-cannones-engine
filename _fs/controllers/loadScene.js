@@ -3,7 +3,7 @@ import fs from 'fs';
 
 import logger from '../utils/logger';
 import { getProjectFolderPath } from '../utils/config';
-import ERRORS from '../utils/errors';
+import { getError } from '../utils/errors';
 import { validateProjectFolderAndSceneId } from '../utils/validation';
 import APP_CONFIG from '../../APP_CONFIG';
 
@@ -32,10 +32,9 @@ export const loadSceneData = ({ projectFolder, sceneId }) => {
     const rawdata = fs.readFileSync(sceneFilePath);
     data = JSON.parse(rawdata);
   } catch (err) {
-    const error = ERRORS.couldNotFindOrReadSceneFile;
-    const errorMsg = error.errorMsg.replace('${path}', sceneFilePath);
+    const error = getError('couldNotFindOrReadSceneFile', { path: sceneFilePath });
     logger.error(error.errorMsg, err);
-    return { error: true, errorCode: error.errorCode, errorMsg };
+    return { ...error, error: true };
   }
   return { ...data, projectFolder };
 };

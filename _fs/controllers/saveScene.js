@@ -45,11 +45,7 @@ export const saveSceneData = (sceneParams) => {
     sceneParams.dateSaved = recentDateSaved;
     const error = getError('couldNotFindOrWriteSceneFile', { path: sceneFilePath });
     logger.error(error.errorMsg, err, sceneParams);
-    return {
-      ...error,
-      error: true,
-      sceneParams,
-    };
+    return { ...error, error: true, sceneParams };
   }
 
   try {
@@ -58,11 +54,7 @@ export const saveSceneData = (sceneParams) => {
   } catch (err) {
     const error = getError('couldNotUpdateProjectFile', { projectFolder });
     logger.error(error.errorMsg, err, sceneParams);
-    return {
-      ...error,
-      error: true,
-      sceneParams,
-    };
+    return { ...error, error: true, sceneParams };
   }
 
   return { saveComplete: true, sceneParams: { ...sceneParams, projectFolder } };

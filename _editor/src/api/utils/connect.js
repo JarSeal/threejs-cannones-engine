@@ -10,7 +10,10 @@ export const postRequest = async (urlId, payload) => {
   try {
     response = await axios.post(url, payload);
   } catch (err) {
-    const errorMsg = `${APP_DEFAULTS.APP_NAME}: Could not get a response from url ${url}. Is the FS server running?`;
+    let errorMsg = `${APP_DEFAULTS.APP_NAME}: Could not get a response from url ${url}. Is the FS server running?`;
+    if (err.response.status === 404) {
+      errorMsg = `${APP_DEFAULTS.APP_NAME}: Unknown endpoint "${url}" (404).`;
+    }
     console.error(errorMsg, err);
     getSceneItem('toaster').addToast({
       type: 'error',

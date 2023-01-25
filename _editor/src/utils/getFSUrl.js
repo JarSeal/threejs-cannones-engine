@@ -15,6 +15,8 @@ export const getFSUrl = (target) => {
       return baseUrl + '/api/save-scene';
     case 'createScene':
       return baseUrl + '/api/create-scene';
+    case 'deleteScene':
+      return baseUrl + '/api/delete-scene';
     default:
       console.error(`The target param for getFSURL was unknown: ${target}`);
       return '';

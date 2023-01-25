@@ -5,8 +5,14 @@
   width: 100%;
   z-index: 30;
   padding: 0 2rem;
+  display: flex;
+  gap: 0.4rem;
+  .delete-button {
+    margin-left: auto;
+  }
 }
 .panelActionButtons {
+  width: 100%;
   margin-top: -0.7rem;
 }
 .panelActionButton {
@@ -27,6 +33,7 @@
   }
   &.delete-button {
     background-color: $error;
+    margin-left: auto;
     &:hover {
       background-color: darken($error, 10%);
     }
