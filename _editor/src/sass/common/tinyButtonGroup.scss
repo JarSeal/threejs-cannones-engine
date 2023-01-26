@@ -1,0 +1,40 @@
+.tinyButtonGroup {
+  display: inline-block;
+  height: 2rem;
+  min-width: 2rem;
+  width: auto;
+  border-radius: 0.4rem;
+  background-color: $light-grey7;
+  border: 0.1rem solid $mid-grey5;
+  > button {
+    width: 1.8rem;
+    height: 1.8rem;
+    outline: none;
+    border: 0.1rem solid $light-grey7;
+    background: none;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+    transition: background-color 0.15s ease-in-out;
+    &:first-child {
+      border-top-left-radius: 0.4rem;
+      border-bottom-left-radius: 0.4rem;
+    }
+    &:last-child {
+      border-top-right-radius: 0.4rem;
+      border-bottom-right-radius: 0.4rem;
+    }
+    &:hover,
+    &:focus {
+      background-color: $light-grey6;
+    }
+    &:active {
+      .ui-icon {
+        margin-top: 0.1rem;
+      }
+    }
+    &.selected {
+      background-color: $light-grey4;
+    }
+  }
+}

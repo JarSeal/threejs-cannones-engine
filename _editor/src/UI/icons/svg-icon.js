@@ -6,6 +6,7 @@ import caretUpIcon from './svg/caret-up.svg?raw';
 import caretDownIcon from './svg/caret-down.svg?raw';
 import cubeIcon from './svg/cube.svg?raw';
 import cubesIcon from './svg/cubes.svg?raw';
+import fileImage from './svg/file-image.svg?raw';
 import gearIcon from './svg/gear.svg?raw';
 import globeIcon from './svg/globe.svg?raw';
 import infoIcon from './svg/info.svg?raw';
@@ -54,6 +55,8 @@ class SvgIcon extends Component {
         return cubeIcon;
       case 'cubes':
         return cubesIcon;
+      case 'fileImage':
+        return fileImage;
       case 'gear':
         return gearIcon;
       case 'globe':

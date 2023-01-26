@@ -10,6 +10,7 @@ import {
   changeWorldAmbientColor,
   changeWorldAmbientIntensity,
   changeWorldBackgroundColor,
+  changeWorldBackgroundType,
   changeWorldHemiColors,
   changeWorldHemiIntensity,
   setWorldGridHelperSize,
@@ -18,6 +19,9 @@ import {
   toggleWorldGridHelper,
   toggleWorldHemiLight,
 } from '../../utils/toolsForWorld';
+import Dropdown from '../common/form/Dropdown';
+import { BACKGROUND_TYPES } from '../../utils/defaultSceneValues';
+import Texture from '../common/form/Texture';
 
 class UIWorld extends Component {
   constructor(data) {
@@ -39,11 +43,13 @@ class UIWorld extends Component {
         class: 'mainTabIcon',
       })
     );
-    this._basicHelpers();
+    this._worldSettings();
   };
 
-  _basicHelpers = () => {
+  _worldSettings = () => {
     const scene = getSceneItem('scene');
+
+    // Helpers
     let gridHelper = scene.children.find((item) => item.type === 'GridHelper');
     const axesHelper = scene.children.find((item) => item.type === 'AxesHelper');
     const helpersContentId = 'panel-basic-helpers-content-' + this.id;
@@ -114,6 +120,7 @@ class UIWorld extends Component {
       class: ['panelTitle'],
       text: 'Scene background and skybox:',
     });
+    // Background color
     this.addChildDraw(
       new ColorPicker({
         id: this.id + '-env-back-color',
@@ -123,6 +130,30 @@ class UIWorld extends Component {
         onChangeColor: (newColor) => changeWorldBackgroundColor(newColor.hex),
       })
     );
+    // Background type dropdown
+    this.addChildDraw(
+      new Dropdown({
+        id: this.id + '-env-back-type',
+        label: 'Background type',
+        attach: envContentId,
+        selected: getSceneParam('backgroundType', BACKGROUND_TYPES[0].value),
+        options: BACKGROUND_TYPES,
+        changeFn: (e) => {
+          const value = e.target.value;
+          changeWorldBackgroundType(value);
+        },
+      })
+    );
+    // Background texture
+    this.addChildDraw(
+      new Texture({
+        id: this.id + '-env-back-texture',
+        label: 'Background image',
+        attach: envContentId,
+      })
+    );
+
+    // Background cubetexture
 
     this.addChildDraw({
       id: this.id + '-env-title-lighting',

@@ -17,6 +17,7 @@ import Toaster from './UI/Toaster';
 import InitView from './UI/views/InitView';
 import SceneLoaderView from './UI/views/SceneLoaderView';
 import { loadRecentScenesApi } from './api/loadRecentScenes';
+import { DEFAULT_SCENE } from './utils/defaultSceneValues';
 
 class Root {
   constructor() {
@@ -70,7 +71,7 @@ class Root {
       }
       // @TODO: we need to compare also the dateSaved values here
       if (curScene.sceneId === sessionParams.sceneId) {
-        curScene = { ...curScene, ...sessionParams };
+        curScene = { ...DEFAULT_SCENE, ...curScene, ...sessionParams };
       }
 
       // Create loader for all the scenes list for this project

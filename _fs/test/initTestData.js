@@ -6,6 +6,7 @@ export const BASIC_SCENE1 = {
   axesHelper: true,
   axesHelperLength: 100,
   rendererClearColor: '#cccccc',
+  backgroundType: 'color',
   grid: true,
   gridSize: 26,
   shadowType: null,

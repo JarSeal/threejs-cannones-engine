@@ -10,6 +10,7 @@
 @import './form/dropdown';
 @import './form/infoField';
 @import './form/actionButtons';
+@import './form/texture';
 
 @import 'alwan/dist/css/alwan.min.css';
 @import './editorTools/smallStats';
@@ -17,6 +18,7 @@
 @import './editorTools/elemTool';
 
 @import './common/spinner';
+@import './common/tinyButtonGroup';
 
 @import './views/initView';
 @import './views/sceneLoaderView';

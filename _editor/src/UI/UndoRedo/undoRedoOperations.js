@@ -54,6 +54,10 @@ const undoRedoOperations = {
     worldTools.changeWorldBackgroundColor(isUndo ? action.prevVal : action.newVal);
     getSceneItem('rightSidePanel').updatePanel();
   },
+  changeWorldBackgroundType: (action, isUndo) => {
+    worldTools.changeWorldBackgroundType(isUndo ? action.prevVal : action.newVal);
+    getSceneItem('rightSidePanel').updatePanel();
+  },
   toggleWorldAmbientLight: () => {
     worldTools.toggleWorldAmbientLight();
     getSceneItem('rightSidePanel').updatePanel();

@@ -78,6 +78,12 @@ export const CAMERA_TYPES = [
   { value: 'orthographicFree', label: 'Free orthographic camera (TODO)', disabled: true },
 ];
 
+export const BACKGROUND_TYPES = [
+  { label: 'Color only', value: 'color' },
+  { label: 'Texture', value: 'texture' },
+  { label: 'Skybox', value: 'cubemap' },
+];
+
 export const DEFAULT_PROJECT_VALUES = {
   // projectFolder must be unique and is always validated when new project is created
   name: '',
@@ -97,6 +103,7 @@ export const DEFAULT_SCENE = {
   axesHelper: true,
   axesHelperLength: 100,
   rendererClearColor: '#cccccc',
+  backgroundType: BACKGROUND_TYPES[0].value,
   grid: true,
   gridSize: 26,
   shadowType: null,

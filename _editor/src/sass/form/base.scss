@@ -3,7 +3,8 @@
 .inputColor,
 .inputText,
 .dropdown,
-.infoField {
+.infoField,
+.texture {
   width: 10.2rem;
   height: 3.6rem;
   border-radius: 0.4rem;
@@ -18,7 +19,8 @@
 .inputColor,
 .inputText,
 .dropdown,
-.infoField {
+.infoField,
+.texture {
   background-color: $white;
   border: 0.1rem solid $mid-grey3;
   position: relative;

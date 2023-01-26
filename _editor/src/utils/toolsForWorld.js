@@ -67,6 +67,26 @@ export const changeWorldBackgroundColor = (newColorHex) => {
   });
 };
 
+export const changeWorldBackgroundType = (newVal) => {
+  const prevVal = getSceneParam('backgroundType');
+  if (newVal === prevVal) return;
+  setSceneParam('backgroundType', newVal);
+  const scene = getSceneItem('scene');
+  if (newVal === 'texture') {
+    scene.background = null; // @TODO: set new texture here
+  } else if (newVal === 'cubeMap') {
+    scene.background = null; // @TODO: set new cubemap texture here
+  } else {
+    scene.background = null;
+  }
+  saveSceneState();
+  getSceneItem('undoRedo').addAction({
+    type: 'changeWorldBackgroundType',
+    prevVal,
+    newVal,
+  });
+};
+
 export const toggleWorldAmbientLight = () => {
   const scene = getSceneItem('scene');
   const ambientParams = getSceneParam('lights').find((l) => l.type === 'ambient');
@@ -244,6 +264,7 @@ export default {
   toggleWorldGridHelper,
   setWorldGridHelperSize,
   changeWorldBackgroundColor,
+  changeWorldBackgroundType,
   toggleWorldAmbientLight,
   changeWorldAmbientColor,
   changeWorldAmbientIntensity,

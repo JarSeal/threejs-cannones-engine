@@ -1,0 +1,38 @@
+.texture {
+  width: 100%;
+  position: relative;
+  .form-elem__label {
+    margin-left: 3.2rem;
+  }
+  .mainImageWrapper {
+    width: 3rem;
+    height: 3rem;
+    margin: 0.2rem;
+    border-radius: 0.2rem;
+    border: 0.1rem solid $light-grey6;
+    overflow: hidden;
+    position: relative;
+    .ui-icon {
+      margin: 0.2rem 0 0 0.5rem;
+      position: absolute;
+      z-index: 0;
+    }
+  }
+  &.noTexture {
+    .mainImageWrapper {
+      border-color: transparent;
+    }
+  }
+  .textureTypeAndUseCases {
+    position: absolute;
+    left: 3.7rem;
+    bottom: -0.1rem;
+    font-size: 1rem;
+    color: $mid-grey4;
+  }
+  .textureButtons {
+    position: absolute;
+    top: 0.7rem;
+    right: 1.8rem;
+  }
+}
