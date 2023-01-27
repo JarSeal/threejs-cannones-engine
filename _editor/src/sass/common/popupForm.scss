@@ -1,0 +1,12 @@
+.popupFormWrapper {
+  width: 23.6rem;
+  min-height: 10rem;
+  border-radius: 0.4rem;
+  background-color: $white;
+  border: 0.1rem solid $mid-grey3;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate3d(-50%, -50%, 0);
+  z-index: 20;
+}

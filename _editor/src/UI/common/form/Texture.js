@@ -1,5 +1,7 @@
 import { Component } from '../../../../LIGHTER';
 import SvgIcon from '../../icons/svg-icon';
+import NewTexturePopup from '../../popupsForms/NewTexturePopup';
+import PopupForm from '../../popupsForms/PopupForm';
 import TinyButtonGroup from '../TinyButtonGroup';
 
 // Attributes:
@@ -10,6 +12,7 @@ class Texture extends Component {
     this.mainImageWrapperId = this.id + '-main-image-wrapper';
     this.textureType = 'Texture';
     this.textureId = data.textureId;
+    this.popupForm = new PopupForm({ id: this.id + '-popup-form' });
     this.template = `
       <div class="form-elem form-elem--texture texture ${
         !this.textureId ? 'noTexture' : 'hasTexture'
@@ -40,8 +43,34 @@ class Texture extends Component {
         class: ['textureButtons'],
         buttons: [
           {
-            icon: new SvgIcon({ id: this.id + '-add-button', icon: 'plus', width: 8 }),
-            onClick: () => console.log('Add new texture'),
+            icon: new SvgIcon({ id: this.id + '-add-button', icon: 'plus', width: 10, height: 10 }),
+            onClick: () => {
+              console.log('Add new texture', this.popupForm.data.text);
+              this.popupForm.data.title = 'Add new texture';
+              this.popupForm.data.component = new NewTexturePopup({
+                id: this.id + '-new-texture-popup',
+                text: 'testing...',
+              });
+              this.addChildDraw(this.popupForm);
+            },
+          },
+          {
+            icon: new SvgIcon({
+              id: this.id + '-select-button',
+              icon: 'plus',
+              width: 10,
+              height: 10,
+            }),
+            onClick: () => console.log('Select texture'),
+          },
+          {
+            icon: new SvgIcon({
+              id: this.id + '-library-button',
+              icon: 'plus',
+              width: 10,
+              height: 10,
+            }),
+            onClick: () => console.log('Select texture from library'),
           },
         ],
       })

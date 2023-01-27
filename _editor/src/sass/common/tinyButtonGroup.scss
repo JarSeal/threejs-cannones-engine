@@ -6,23 +6,36 @@
   border-radius: 0.4rem;
   background-color: $light-grey7;
   border: 0.1rem solid $mid-grey5;
+  display: flex;
   > button {
     width: 1.8rem;
     height: 1.8rem;
     outline: none;
     border: 0.1rem solid $light-grey7;
+    border-right-color: $light-grey8;
+    border-left-color: $light-grey1;
     background: none;
     margin: 0;
     padding: 0;
     cursor: pointer;
     transition: background-color 0.15s ease-in-out;
+    position: relative;
+    .ui-icon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate3d(-50%, -50%, 0);
+      line-height: 0;
+    }
     &:first-child {
       border-top-left-radius: 0.4rem;
       border-bottom-left-radius: 0.4rem;
+      border-left-color: $light-grey7;
     }
     &:last-child {
       border-top-right-radius: 0.4rem;
       border-bottom-right-radius: 0.4rem;
+      border-right-color: $light-grey7;
     }
     &:hover,
     &:focus {
