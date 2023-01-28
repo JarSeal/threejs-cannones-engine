@@ -91,6 +91,7 @@ class Texture extends Component {
   };
 
   update = (id) => {
+    // @Consider: whether the whole updating should be here or just rerender the whole parent of this Texture component
     const textureNameElem = document.getElementById(this.textureNameId);
     if (!id) {
       this.textureId = null;
