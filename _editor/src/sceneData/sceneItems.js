@@ -16,6 +16,8 @@ const emptyItems = {
   orbitControls: null,
   looping: false,
   editorIcons: [],
+  textures: [],
+  cubetextures: [],
 };
 
 let sceneItems = { ...emptyItems };

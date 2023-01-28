@@ -32,7 +32,7 @@ class SimpleIDInput extends Component {
     this.inputComponent = null;
     this.returnOriginalValueButton = null;
     this.timeout = null;
-    this.groups = ['lights', 'cameras', 'scenes', 'elements'];
+    this.groups = ['lights', 'cameras', 'scenes', 'elements', 'textures', 'cubetextures'];
     this.regex = new RegExp(APP_CONFIG.SIMPLE_ID_REGEX);
     this.focus = data.focus;
     this.afterSuccessBlur = data.afterSuccessBlur;
@@ -124,7 +124,7 @@ class SimpleIDInput extends Component {
         getSceneItem('topTools')?.updateTools();
         if (!this.newId) this.returnOriginalValueButton.discard();
         const rightSidePanel = getSceneItem('rightSidePanel');
-        if (rightSidePanel) rightSidePanel.updatePanel();
+        if (rightSidePanel && !this.newId) rightSidePanel.updatePanel();
         // @TODO: update possible selectionIds (getSceneParam('selection'))
         if (!this.newId) updateCamUserDataHelpersAndIcon(null, this.curId);
         const nextElemId = document.activeElement.id;

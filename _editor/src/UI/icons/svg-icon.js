@@ -1,11 +1,13 @@
 import { Component } from '../../../LIGHTER';
 
 import barsMenuIcon from './svg/bars.svg?raw';
+import bookOpenIcon from './svg/book-open.svg?raw';
 import cameraIcon from './svg/video.svg?raw';
 import caretUpIcon from './svg/caret-up.svg?raw';
 import caretDownIcon from './svg/caret-down.svg?raw';
 import cubeIcon from './svg/cube.svg?raw';
 import cubesIcon from './svg/cubes.svg?raw';
+import file from './svg/file.svg?raw';
 import fileImage from './svg/file-image.svg?raw';
 import gearIcon from './svg/gear.svg?raw';
 import globeIcon from './svg/globe.svg?raw';
@@ -45,6 +47,8 @@ class SvgIcon extends Component {
     switch (icon) {
       case 'bars':
         return barsMenuIcon;
+      case 'bookOpen':
+        return bookOpenIcon;
       case 'camera':
         return cameraIcon;
       case 'caretUp':
@@ -55,6 +59,8 @@ class SvgIcon extends Component {
         return cubeIcon;
       case 'cubes':
         return cubesIcon;
+      case 'file':
+        return file;
       case 'fileImage':
         return fileImage;
       case 'gear':

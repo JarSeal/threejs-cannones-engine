@@ -94,6 +94,8 @@ export const BASIC_SCENE1 = {
       },
     },
   ],
+  textures: [],
+  cubetextures: [],
 };
 
 // The "scenesData" property is only to setup the test data

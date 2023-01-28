@@ -14,6 +14,8 @@ const emptyScene = {
   lights: [],
   elements: [],
   selection: [],
+  textures: [],
+  cubetextures: [],
 };
 
 let sceneParams = { ...emptyScene };

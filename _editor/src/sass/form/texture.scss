@@ -2,7 +2,7 @@
   width: 100%;
   position: relative;
   overflow: visible;
-  .form-elem__label {
+  > label > .form-elem__label {
     margin-left: 3.2rem;
   }
   .mainImageWrapper {
@@ -24,11 +24,19 @@
       border-color: transparent;
     }
   }
+  .textureName {
+    position: absolute;
+    left: 3.65rem;
+    top: 1.2rem;
+    font-size: 1rem;
+    color: $dark-grey2;
+    @include basetext-font-bold;
+  }
   .textureTypeAndUseCases {
     position: absolute;
-    left: 3.7rem;
+    left: 3.65rem;
     bottom: -0.1rem;
-    font-size: 1rem;
+    font-size: 0.9rem;
     color: $mid-grey4;
   }
   .textureButtons {

@@ -26,6 +26,9 @@
       left: 50%;
       transform: translate3d(-50%, -50%, 0);
       line-height: 0;
+      path {
+        fill: $mid-grey1;
+      }
     }
     &:first-child {
       border-top-left-radius: 0.4rem;

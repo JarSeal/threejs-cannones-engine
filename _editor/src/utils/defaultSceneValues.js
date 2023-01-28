@@ -1,3 +1,5 @@
+import * as THREE from 'three';
+
 export const CAMERA_TARGET_ID = '__camera-target';
 export const SELECTION_GROUP_ID = '__selection-group';
 export const CANVAS_ELEM_ID = 'main-stage';
@@ -95,6 +97,21 @@ export const DEFAULT_PROJECT_VALUES = {
 export const DEFAULT_NEW_PROJECT_SCENE_ID = 'root-scene';
 export const DEFAULT_NEW_PROJECT_SCENE_NAME = 'Root scene';
 
+export const DEFAULT_TEXTURE = {
+  name: '',
+  image: null,
+  flipY: true,
+  wrapS: THREE.ClampToEdgeWrapping,
+  wrapT: THREE.ClampToEdgeWrapping,
+  wrapSTimes: 1,
+  wrapTTimes: 1,
+  offsetU: 0,
+  offsetV: 0,
+  centerU: 0.5,
+  centerV: 0.5,
+  rotation: 0,
+};
+
 export const DEFAULT_SCENE = {
   sceneId: null,
   name: '',
@@ -154,4 +171,6 @@ export const DEFAULT_SCENE = {
       },
     },
   ],
+  textures: [],
+  cubetextures: [],
 };
