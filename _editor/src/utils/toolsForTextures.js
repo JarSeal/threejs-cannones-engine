@@ -19,11 +19,9 @@ export const createNewTexture = (id, name) => {
   newTextureItem.offset = new THREE.Vector2(DEFAULT_TEXTURE.offsetU, DEFAULT_TEXTURE.offsetV);
   newTextureItem.center = new THREE.Vector2(DEFAULT_TEXTURE.centerU, DEFAULT_TEXTURE.centerV);
   newTextureItem.rotation = DEFAULT_TEXTURE.rotation;
-  newTextureItem.wrapT = DEFAULT_TEXTURE.wrapT;
   newTextureItem.userData = newTextureParams;
   const textureItems = getSceneItem('textures');
   setSceneItem('textures', [...textureItems, newTextureItem]);
-  console.log('createNewTexture', id, name, textures);
 };
 
 export const deleteTexture = (id) => {

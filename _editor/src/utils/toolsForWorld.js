@@ -87,6 +87,32 @@ export const changeWorldBackgroundType = (newVal) => {
   });
 };
 
+export const changeWorldBackgroundTexture = (textureId) => {
+  const scene = getSceneItem('scene');
+  const prevVal = getSceneParam('backgroundTexture');
+  if (!textureId) {
+    setSceneParam('backgroundTexture', null);
+    scene.background = null;
+  } else {
+    const texture = getSceneItem('textures').find((tex) => tex.userData.id === textureId);
+    if (texture) {
+      setSceneParam('backgroundTexture', textureId);
+      scene.background = texture;
+    } else {
+      console.warn(`Could not find texture with texture ID "${textureId}"`);
+      setSceneParam('backgroundTexture', null);
+      scene.background = null;
+    }
+  }
+  saveSceneState();
+  getSceneItem('rightSidePanel').updatePanel();
+  getSceneItem('undoRedo').addAction({
+    type: 'changeWorldBackgroundTexture',
+    prevVal,
+    newVal: textureId,
+  });
+};
+
 export const toggleWorldAmbientLight = () => {
   const scene = getSceneItem('scene');
   const ambientParams = getSceneParam('lights').find((l) => l.type === 'ambient');

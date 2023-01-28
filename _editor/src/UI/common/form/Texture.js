@@ -8,7 +8,7 @@ import TinyButtonGroup from '../TinyButtonGroup';
 
 // Attributes:
 // - textureId = string | null | undefined
-// - onUpdate = function that is executed when the texture changes, its params change, or when it is removed
+// - onChange = function that is executed when the texture changes, its params change, or when it is removed
 class Texture extends Component {
   constructor(data) {
     super(data);
@@ -16,6 +16,11 @@ class Texture extends Component {
     this.textureNameId = this.id + '-texture-name';
     this.textureType = 'Texture';
     this.textureId = data.textureId;
+    if (this.textureId) {
+      this.params = getSceneParam('textures').find((tex) => tex.id === this.textureId);
+    } else {
+      this.params = {};
+    }
     this.popupForm = new PopupForm({ id: this.id + '-popup-form' });
     this.template = `
       <div class="form-elem form-elem--texture texture ${
@@ -25,7 +30,9 @@ class Texture extends Component {
         <label>
           <span class="form-elem__label">${data.label}</span>
         </label>
-        <span class="textureName" id="${this.textureNameId}"></span>
+        <span class="textureName" id="${this.textureNameId}">${
+      this.textureId ? printName(this.params) : ''
+    }</span>
         <span class="textureTypeAndUseCases">${this.textureType}</span>
       </div>
     `;
@@ -84,16 +91,20 @@ class Texture extends Component {
   };
 
   update = (id) => {
+    const textureNameElem = document.getElementById(this.textureNameId);
     if (!id) {
       this.textureId = null;
       this.params = {};
+      textureNameElem.textContent = '';
     } else {
       const foundParams = this._getParams(id);
       if (foundParams) {
-        const textureNameElem = document.getElementById(this.textureNameId);
         textureNameElem.textContent = printName(this.params);
+      } else {
+        console.warn(`Could not find texture params with texture ID: "${id}".*`);
       }
     }
+    if (this.data.onChange) this.data.onChange(this.textureId);
   };
 
   _getParams = (id) => {

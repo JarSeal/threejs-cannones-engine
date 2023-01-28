@@ -121,6 +121,8 @@ export const DEFAULT_SCENE = {
   axesHelperLength: 100,
   rendererClearColor: '#cccccc',
   backgroundType: BACKGROUND_TYPES[0].value,
+  backgroundTexture: null,
+  backgroundSkybox: null,
   grid: true,
   gridSize: 26,
   shadowType: null,

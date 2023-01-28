@@ -10,6 +10,7 @@ import {
   changeWorldAmbientColor,
   changeWorldAmbientIntensity,
   changeWorldBackgroundColor,
+  changeWorldBackgroundTexture,
   changeWorldBackgroundType,
   changeWorldHemiColors,
   changeWorldHemiIntensity,
@@ -149,7 +150,9 @@ class UIWorld extends Component {
       new Texture({
         id: this.id + '-env-back-texture',
         label: 'Background image',
+        textureId: getSceneParam('backgroundTexture'),
         attach: envContentId,
+        onChange: (textureId) => changeWorldBackgroundTexture(textureId),
       })
     );
 

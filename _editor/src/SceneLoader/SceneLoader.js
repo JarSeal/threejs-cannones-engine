@@ -13,6 +13,7 @@ import { saveStateByKey } from '../sceneData/saveSession';
 import {
   AMBIENT_LIGHT,
   CANVAS_ELEM_ID,
+  DEFAULT_TEXTURE,
   HEMI_LIGHT,
   NEW_CAMERA_DEFAULT_PARAMS,
   NEW_ELEM_DEFAULT_PARAMS,
@@ -68,9 +69,28 @@ class SceneLoader {
     document.body.appendChild(renderer.domElement);
     setSceneItem('renderer', renderer);
 
+    // Create textures (sceneItems)
+    this._createTextures(sceneParams.textures);
+
     // Create three.js Scene object
     this.scene = new THREE.Scene();
     setSceneItem('scene', this.scene);
+
+    // Set scene texture or skybox
+    if (sceneParams.backgroundSkybox) {
+      // @TODO: Set skybox here...
+    } else if (sceneParams.backgroundTexture) {
+      const backgroundTexture = getSceneItem('textures').find(
+        (tex) => tex.userData.id === sceneParams.backgroundTexture
+      );
+      if (backgroundTexture) {
+        this.scene.background = backgroundTexture;
+      } else {
+        console.warn(
+          `Could not find backgroundTexture from textures (sceneItems) with ID: "${sceneParams.backgroundTexture}".`
+        );
+      }
+    }
 
     // Create entities according to params
     this._createCameras(sceneParams.cameras, sceneParams);
@@ -333,6 +353,32 @@ class SceneLoader {
     axesHelper.position.set(0, 0.001, 0);
     if (!sceneParams.axesHelper) axesHelper.visible = false;
     this.scene.add(axesHelper);
+  };
+
+  _createTextures = (textures) => {
+    const newTextureItems = [];
+    textures.forEach((tex) => {
+      const newTextureItem = new THREE.Texture();
+      newTextureItem.flipY = tex.flipY || DEFAULT_TEXTURE.flipY;
+      newTextureItem.wrapS = tex.wrapS || DEFAULT_TEXTURE.wrapS;
+      newTextureItem.wrapT = tex.wrapT || DEFAULT_TEXTURE.wrapT;
+      newTextureItem.repeating = new THREE.Vector2(
+        tex.wrapSTimes || DEFAULT_TEXTURE.wrapSTimes,
+        tex.wrapTTimes || DEFAULT_TEXTURE.wrapTTimes
+      );
+      newTextureItem.offset = new THREE.Vector2(
+        tex.offsetU || DEFAULT_TEXTURE.offsetU,
+        tex.offsetV || DEFAULT_TEXTURE.offsetV
+      );
+      newTextureItem.center = new THREE.Vector2(
+        tex.centerU || DEFAULT_TEXTURE.centerU,
+        tex.centerV || DEFAULT_TEXTURE.centerV
+      );
+      newTextureItem.rotation = tex.rotation || DEFAULT_TEXTURE.rotation;
+      newTextureItem.userData = tex;
+      newTextureItems.push(newTextureItem);
+    });
+    setSceneItem('textures', newTextureItems);
   };
 }
 

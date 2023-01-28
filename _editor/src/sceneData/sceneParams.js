@@ -1,7 +1,12 @@
+import { BACKGROUND_TYPES } from '../utils/defaultSceneValues';
+
 const emptyScene = {
   sceneId: null,
   name: '',
   rendererClearColor: '#000000',
+  backgroundType: BACKGROUND_TYPES[0].value,
+  backgroundTexture: null,
+  backgroundSkybox: null,
   grid: false,
   gridSize: 26,
   axesHelper: false,
