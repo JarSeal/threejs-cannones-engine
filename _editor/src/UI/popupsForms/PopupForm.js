@@ -13,11 +13,13 @@ class PopupForm extends Component {
 
   paint = () => {
     this.elem.classList.add('popupFormWrapper');
-    this.addChildDraw({
-      id: this.id + '-title',
-      text: this.data.title,
-      tag: 'h5',
-    });
+    if (this.data.title) {
+      this.addChildDraw({
+        id: this.id + '-title',
+        text: this.data.title,
+        tag: 'h5',
+      });
+    }
     this.addChildDraw(
       new Button({
         id: this.id + '-closeBtn',

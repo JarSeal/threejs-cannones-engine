@@ -73,7 +73,16 @@ export const changeWorldBackgroundType = (newVal) => {
   setSceneParam('backgroundType', newVal);
   const scene = getSceneItem('scene');
   if (newVal === 'texture') {
-    scene.background = null; // @TODO: set new texture here
+    const textureId = getSceneParam('backgroundTexture');
+    const texture = getSceneItem('textures').find((tex) => tex.userData.id === textureId);
+    if (texture) {
+      setSceneParam('backgroundTexture', textureId);
+      scene.background = texture;
+    } else {
+      console.warn(`Could not find texture with texture ID "${textureId}"`);
+      setSceneParam('backgroundTexture', null);
+      scene.background = null;
+    }
   } else if (newVal === 'cubeMap') {
     scene.background = null; // @TODO: set new cubemap texture here
   } else {
@@ -291,6 +300,7 @@ export default {
   setWorldGridHelperSize,
   changeWorldBackgroundColor,
   changeWorldBackgroundType,
+  changeWorldBackgroundTexture,
   toggleWorldAmbientLight,
   changeWorldAmbientColor,
   changeWorldAmbientIntensity,

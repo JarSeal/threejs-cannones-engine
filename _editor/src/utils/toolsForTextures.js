@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { saveAllTexturesState } from '../sceneData/saveSession';
 
 import { getSceneItem, setSceneItem } from '../sceneData/sceneItems';
 import { getSceneParam, setSceneParam } from '../sceneData/sceneParams';
@@ -8,6 +9,7 @@ export const createNewTexture = (id, name) => {
   const textures = getSceneParam('textures');
   const newTextureParams = { ...DEFAULT_TEXTURE, id, name };
   setSceneParam('textures', [...textures, newTextureParams]);
+  saveAllTexturesState();
   const newTextureItem = new THREE.Texture();
   newTextureItem.flipY = DEFAULT_TEXTURE.flipY;
   newTextureItem.wrapS = DEFAULT_TEXTURE.wrapS;

@@ -2,17 +2,19 @@
   "sceneId": "scene1",
   "name": "some scene",
   "dateCreated": 1674498237023,
-  "dateSaved": 1674771579197,
+  "dateSaved": 1674990949693,
   "axesHelper": false,
   "axesHelperLength": 100,
   "rendererClearColor": "#2e0101",
   "backgroundType": "texture",
+  "backgroundTexture": "mun2",
+  "backgroundSkybox": null,
   "grid": false,
   "gridSize": 26,
   "shadowType": null,
   "lights": [
     {
-      "id": "5d6910ad-9d91-4061-8f07-ea0b183715e6",
+      "id": "3366e51c-78ac-4b4f-be8f-25cc6b458c35",
       "type": "ambient",
       "color": "#ffffff",
       "intensity": 0.2,
@@ -21,7 +23,7 @@
       "index": 0
     },
     {
-      "id": "f15041a4-54bb-4f38-ab10-58ca6d96b9c4",
+      "id": "55b3a42b-56d0-426c-b896-df1ba965f6a2",
       "type": "hemisphere",
       "colorTop": "#ffffbb",
       "colorBottom": "#080820",
@@ -41,14 +43,14 @@
       "near": 0.1,
       "far": 256,
       "position": [
-        -0.28449561167823634,
-        8.266207639214075,
-        -26.93522704412616
+        15.884613291716343,
+        12.840366164900251,
+        -19.60945285597334
       ],
       "rotation": [
-        -2.843824912396907,
-        -0.010097067073725586,
-        -3.1384940063234685
+        -2.5118645077271613,
+        0.6859751739675475,
+        2.7091523460888234
       ],
       "scale": [
         1,
@@ -56,9 +58,9 @@
         1
       ],
       "target": [
-        0,
-        0,
-        0
+        -1.963195357389966,
+        -9.100453247665875e-7,
+        -1.9884914119478727
       ],
       "defaultPosition": [
         5,
@@ -87,10 +89,10 @@
       "isTargetingObject": true,
       "index": 0,
       "quaternion": [
-        0.0007832963900359215,
-        0.988924624809972,
-        0.14832463952656075,
-        -0.005222470731119265
+        -0.09038712344453623,
+        0.8969496406642125,
+        0.2162552445543026,
+        0.37489355720060186
       ],
       "lookAt": null
     },
@@ -253,6 +255,54 @@
       "receiveShadow": false
     }
   ],
+  "textures": [
+    {
+      "name": "Mun Tekstuuri",
+      "image": null,
+      "flipY": true,
+      "wrapS": 1001,
+      "wrapT": 1001,
+      "wrapSTimes": 1,
+      "wrapTTimes": 1,
+      "offsetU": 0,
+      "offsetV": 0,
+      "centerU": 0.5,
+      "centerV": 0.5,
+      "rotation": 0,
+      "id": "joku-id"
+    },
+    {
+      "name": "Jotain",
+      "image": null,
+      "flipY": true,
+      "wrapS": 1001,
+      "wrapT": 1001,
+      "wrapSTimes": 1,
+      "wrapTTimes": 1,
+      "offsetU": 0,
+      "offsetV": 0,
+      "centerU": 0.5,
+      "centerV": 0.5,
+      "rotation": 0,
+      "id": "mun1"
+    },
+    {
+      "name": "jotain2",
+      "image": null,
+      "flipY": true,
+      "wrapS": 1001,
+      "wrapT": 1001,
+      "wrapSTimes": 1,
+      "wrapTTimes": 1,
+      "offsetU": 0,
+      "offsetV": 0,
+      "centerU": 0.5,
+      "centerV": 0.5,
+      "rotation": 0,
+      "id": "mun2"
+    }
+  ],
+  "cubetextures": [],
   "projectFolder": "devProject1",
   "selection": [],
   "orbiterMoving": false

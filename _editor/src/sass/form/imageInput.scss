@@ -1,0 +1,55 @@
+.imageInput {
+  width: 100%;
+  position: relative;
+  overflow: visible;
+  > label > .form-elem__label {
+    left: 3.6rem;
+    top: 0.3rem;
+  }
+  .mainImageWrapper {
+    width: 3rem;
+    height: 3rem;
+    margin: 0.2rem;
+    border-radius: 0.2rem;
+    border: 0.1rem solid $light-grey6;
+    overflow: hidden;
+    position: relative;
+    .ui-icon {
+      margin: 0.2rem 0 0 0.5rem;
+      position: absolute;
+      z-index: 0;
+    }
+  }
+  &.noImage {
+    .mainImageWrapper {
+      border-color: transparent;
+    }
+  }
+  .openChangeImagePopoverBtn {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    border-radius: 0.4rem;
+    cursor: pointer;
+    transition: background-color 0.15s ease-in-out;
+    &:hover,
+    &:focus {
+      background-color: rgba(0, 0, 0, 0.08);
+    }
+    &:active {
+      background-color: transparent;
+    }
+  }
+
+  // Popover
+  .menuButtons {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+  }
+}

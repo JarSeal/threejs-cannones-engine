@@ -1,10 +1,13 @@
 import { Component } from '../../../../LIGHTER';
-import { getSceneParam } from '../../../sceneData/sceneParams';
+import { saveEditorState } from '../../../sceneData/saveSession';
+import { getSceneParam, getSceneParamR, setSceneParamR } from '../../../sceneData/sceneParams';
 import { printName } from '../../../utils/utils';
 import SvgIcon from '../../icons/svg-icon';
 import NewTexturePopup from '../../popupsForms/NewTexturePopup';
 import PopupForm from '../../popupsForms/PopupForm';
+import Button from '../Button';
 import TinyButtonGroup from '../TinyButtonGroup';
+import ImageInput from './ImageInput';
 
 // Attributes:
 // - textureId = string | null | undefined
@@ -14,6 +17,9 @@ class Texture extends Component {
     super(data);
     this.mainImageWrapperId = this.id + '-main-image-wrapper';
     this.textureNameId = this.id + '-texture-name';
+    this.textureParamsWrapperId = this.id + '-texture-params';
+    this.textureParamsContentId = this.id + '-texture-params-content';
+    this.textureParamsOpen = getSceneParamR(`editor.show.${this.id}`, false);
     this.textureType = 'Texture';
     this.textureId = data.textureId;
     if (this.textureId) {
@@ -23,17 +29,24 @@ class Texture extends Component {
     }
     this.popupForm = new PopupForm({ id: this.id + '-popup-form' });
     this.template = `
-      <div class="form-elem form-elem--texture texture ${
-        !this.textureId ? 'noTexture' : 'hasTexture'
-      }">
-        <div class="mainImageWrapper" id="${this.mainImageWrapperId}"></div>
-        <label>
-          <span class="form-elem__label">${data.label}</span>
-        </label>
-        <span class="textureName" id="${this.textureNameId}">${
+      <div class="texture ${this.textureId ? 'hasTexture' : 'noTexture'} ${
+      this.image ? 'hasImage' : 'noImage'
+    }">
+        <div class="form-elem form-elem--texture textureInput">
+          <div class="mainImageWrapper" id="${this.mainImageWrapperId}"></div>
+          <label>
+            <span class="form-elem__label">${data.label}</span>
+          </label>
+          <span class="textureName" id="${this.textureNameId}">${
       this.textureId ? printName(this.params) : ''
     }</span>
-        <span class="textureTypeAndUseCases">${this.textureType}</span>
+          <span class="textureTypeAndUseCases">${this.textureType}</span>
+        </div>
+        <div class="textureParamsWrapper" id="${this.textureParamsWrapperId}">
+          <div class="textureParamsContents ${this.textureParamsOpen ? 'show' : 'hide'}" id="${
+      this.textureParamsContentId
+    }"></div>
+        </div>
       </div>
     `;
   }
@@ -53,6 +66,7 @@ class Texture extends Component {
       new TinyButtonGroup({
         id: this.id + '-texture-buttons',
         class: ['textureButtons'],
+        prepend: true,
         buttons: [
           {
             icon: new SvgIcon({ id: this.id + '-add-button', icon: 'plus', width: 10, height: 10 }),
@@ -87,7 +101,33 @@ class Texture extends Component {
       })
     );
 
-    // @TODO: render remove texture button (X on the top right corner) here...
+    this.addChildDraw(
+      new Button({
+        id: this.id + '-remove-texture-btn',
+        icon: new SvgIcon({ id: this.id + '-remove-texture-btn-icon', icon: 'xMark', width: 10 }),
+        class: 'removeTextureBtn',
+        prepend: true,
+        onClick: () => this.data.onChange(null),
+      })
+    );
+
+    this.addChildDraw(
+      new ImageInput({
+        id: this.id + '-file-input',
+        label: 'Image',
+        file: this.params.image || null,
+        attach: this.textureParamsContentId,
+      })
+    );
+
+    this.paramsToggler = this.addChildDraw(
+      new Button({
+        id: this.id + '-toggle-params-content',
+        class: ['toggleParamsContent', this.textureParamsOpen ? 'show' : 'hide'],
+        attach: this.textureParamsWrapperId,
+        onClick: () => this.toggleParams(),
+      })
+    );
   };
 
   update = (id) => {
@@ -119,6 +159,29 @@ class Texture extends Component {
       this.params = {};
       return false;
     }
+  };
+
+  toggleParams = () => {
+    if (this.textureParamsOpen) {
+      document.getElementById(this.textureParamsContentId).classList.add('hide');
+      this.paramsToggler.elem.classList.add('hide');
+    } else {
+      document.getElementById(this.textureParamsContentId).classList.remove('hide');
+      this.paramsToggler.elem.classList.remove('hide');
+    }
+    this.textureParamsOpen = !this.textureParamsOpen;
+    setSceneParamR(`editor.show.${this.id}`, this.textureParamsOpen);
+    saveEditorState({ show: { [this.id]: this.textureParamsOpen } });
+  };
+
+  openParams = () => {
+    if (this.textureParamsOpen) return;
+    this.toggleParams();
+  };
+
+  closeParams = () => {
+    if (!this.textureParamsOpen) return;
+    this.toggleParams();
   };
 }
 

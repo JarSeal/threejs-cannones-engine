@@ -114,6 +114,12 @@ export const saveAllLightsState = () => {
   setHasUnsavedChanges();
 };
 
+export const saveAllTexturesState = () => {
+  const lights = getSceneParam('textures');
+  if (lights?.length) LS.setItem('textures', JSON.stringify(lights));
+  setHasUnsavedChanges();
+};
+
 export const saveEditorState = (values) => {
   if (values === undefined) return;
   const editorParams = getSceneParam('editor');

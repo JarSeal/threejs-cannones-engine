@@ -379,6 +379,7 @@ class SceneLoader {
       newTextureItems.push(newTextureItem);
     });
     setSceneItem('textures', newTextureItems);
+    saveStateByKey('textures', textures);
   };
 }
 

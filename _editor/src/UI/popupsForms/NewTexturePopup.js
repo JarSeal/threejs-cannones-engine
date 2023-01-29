@@ -56,7 +56,7 @@ class NewTexturePopup extends Component {
 
           createNewTexture(this.newTextureParams.id, this.newTextureParams.name);
           const parentComp = this.data.textureInputComponent;
-          parentComp.update(this.newTextureParams.id);
+          if (parentComp && parentComp.update) parentComp.update(this.newTextureParams.id);
           this.closePopup();
         },
       })

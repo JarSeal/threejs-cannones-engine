@@ -9,6 +9,7 @@ import { changeScene } from './utils';
 
 export const saveScene = async () => {
   const sceneParams = { ...getSceneParams() };
+  console.log('Scene params');
   delete sceneParams.editor;
   const response = await saveSceneApi(sceneParams);
   if (!response.error) {
@@ -54,4 +55,8 @@ export const updateSceneName = (newVal) => {
     prevVal,
     newVal,
   });
+};
+
+export const uploadFile = async (file) => {
+  console.log('FILE', file);
 };
