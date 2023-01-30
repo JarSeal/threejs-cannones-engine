@@ -1,5 +1,6 @@
 import { createSceneApi } from '../api/createScene';
 import { saveSceneApi } from '../api/saveScene';
+import { uploadImageApi } from '../api/uploadImage';
 import { saveSceneState, unsetHasUnsavedChanges } from '../sceneData/saveSession';
 import { getSceneItem } from '../sceneData/sceneItems';
 import { getSceneParam, getSceneParams, setSceneParam } from '../sceneData/sceneParams';
@@ -57,6 +58,8 @@ export const updateSceneName = (newVal) => {
   });
 };
 
-export const uploadFile = async (file) => {
-  console.log('FILE', file);
+export const uploadImage = async (params) => {
+  console.log('FILE', params);
+  const response = await uploadImageApi(params);
+  return response;
 };

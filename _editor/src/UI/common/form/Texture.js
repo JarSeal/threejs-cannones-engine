@@ -1,12 +1,15 @@
 import { Component } from '../../../../LIGHTER';
 import { saveEditorState } from '../../../sceneData/saveSession';
 import { getSceneParam, getSceneParamR, setSceneParamR } from '../../../sceneData/sceneParams';
+import { WRAP_OPTIONS } from '../../../utils/defaultSceneValues';
 import { printName } from '../../../utils/utils';
 import SvgIcon from '../../icons/svg-icon';
 import NewTexturePopup from '../../popupsForms/NewTexturePopup';
 import PopupForm from '../../popupsForms/PopupForm';
 import Button from '../Button';
 import TinyButtonGroup from '../TinyButtonGroup';
+import Checkbox from './Checbox';
+import Dropdown from './Dropdown';
 import ImageInput from './ImageInput';
 
 // Attributes:
@@ -117,6 +120,47 @@ class Texture extends Component {
         label: 'Image',
         file: this.params.image || null,
         attach: this.textureParamsContentId,
+      })
+    );
+
+    this.addChildDraw(
+      new Checkbox({
+        id: this.id + '-flipY',
+        attach: this.textureParamsContentId,
+        label: 'Flip Y',
+        class: 'flipY',
+        changeFn: () => console.log('Flip Y'),
+        value: this.params.flipY,
+      })
+    );
+
+    this.addChildDraw(
+      new Dropdown({
+        id: this.id + '-wrapS',
+        label: 'Wrap S',
+        class: 'wrapping',
+        attach: this.textureParamsContentId,
+        selected: this.params.wrapS,
+        options: WRAP_OPTIONS,
+        changeFn: (e) => {
+          const value = e.target.value;
+          console.log('Change wrapS', value);
+        },
+      })
+    );
+
+    this.addChildDraw(
+      new Dropdown({
+        id: this.id + '-wrapT',
+        label: 'Wrap T',
+        class: 'wrapping',
+        attach: this.textureParamsContentId,
+        selected: this.params.wrapT,
+        options: WRAP_OPTIONS,
+        changeFn: (e) => {
+          const value = e.target.value;
+          console.log('Change wrapT', value);
+        },
       })
     );
 

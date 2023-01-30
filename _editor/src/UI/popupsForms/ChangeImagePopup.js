@@ -1,4 +1,5 @@
 import { Component } from '../../../LIGHTER';
+import { uploadImage } from '../../utils/toolsForFS';
 import Button from '../common/Button';
 import FileUploader from '../common/form/FileUploader';
 import SimpleIDInput from '../common/form/SimpleIDInput';
@@ -12,10 +13,13 @@ class ChangeImagePopup extends Component {
     this.currentTab = 'new';
     this.newImageParams = {
       file: null,
+      fileName: null,
+      fileSize: null,
       id: '',
       name: '',
     };
-    this.formHasErrors = false;
+    this.imageIdMissing = true;
+    this.imageFileMissing = true;
   }
 
   paint = () => {
@@ -37,11 +41,22 @@ class ChangeImagePopup extends Component {
     this._getMenu();
 
     // Uploda image component here
-    this.addChildDraw(
+    const fileUploader = this.addChildDraw(
       new FileUploader({
         id: this.id + '-file-uploader',
-        accept: ['png'],
-        label: 'Upload image',
+        accept: '.png',
+        label: 'Import image file',
+        required: true,
+        onValidationErrors: () => (this.imageFileMissing = true),
+        onValidationSuccess: () => (this.imageFileMissing = false),
+        onChange: (file) => {
+          if (!file) return;
+          this.newImageParams.file = file;
+          this.newImageParams.fileName = file.name;
+          this.newImageParams.fileSize = file.size;
+          // @TODO: Check here for if the filename (in images) already exists and display warning that the existing file will be overwritten.
+          // fileUploader.setWarning('Same filename already exists and will be overwritten!');
+        },
       })
     );
 
@@ -53,8 +68,8 @@ class ChangeImagePopup extends Component {
         curId: this.newImageParams.id,
         newId: true,
         focus: true,
-        onValidationErrors: () => (this.formHasErrors = true),
-        onValidationSuccess: () => (this.formHasErrors = false),
+        onValidationErrors: () => (this.imageIdMissing = true),
+        onValidationSuccess: () => (this.imageIdMissing = false),
         afterSuccessBlur: (id) => (this.newImageParams.id = id),
       })
     );
@@ -77,17 +92,20 @@ class ChangeImagePopup extends Component {
         id: this.id + '-confirmBtn',
         class: 'confirmBtn',
         text: 'Confirm',
-        onClick: () => {
-          if (!this.newImageParams.id) {
-            const texutureIdError = imageIdInput._validate(imageIdInput.inputComponent.value);
-            if (texutureIdError.hasError) imageIdInput.inputComponent.error(texutureIdError);
+        onClick: async () => {
+          if (this.imageIdMissing) {
+            const imageIdError = imageIdInput._validate(imageIdInput.inputComponent.value);
+            if (imageIdError.hasError) imageIdInput.inputComponent.error(imageIdError);
           }
-          if (this.formHasErrors) return;
+          if (this.imageFileMissing) fileUploader.validate();
+          if (this.imageIdMissing || this.imageFileMissing) return;
 
-          // @TODO: call create new image here
-          const parentComp = this.data.imageInputComponent;
-          if (parentComp && parentComp.update) parentComp.update(this.newImageParams.id);
-          this.closePopup();
+          const response = await uploadImage(this.newImageParams);
+          if (response.imageUploaded) {
+            const parentComp = this.data.imageInputComponent;
+            if (parentComp && parentComp.update) parentComp.update(this.newImageParams.id);
+            this.closePopup();
+          }
         },
       })
     );

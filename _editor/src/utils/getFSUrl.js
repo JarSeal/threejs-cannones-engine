@@ -5,6 +5,10 @@ export const getFSUrl = (target) => {
   switch (target) {
     case 'createProject':
       return baseUrl + '/api/create-project';
+    case 'createScene':
+      return baseUrl + '/api/create-scene';
+    case 'deleteScene':
+      return baseUrl + '/api/delete-scene';
     case 'loadScene':
       return baseUrl + '/api/load-scene';
     case 'recentProjects':
@@ -13,10 +17,8 @@ export const getFSUrl = (target) => {
       return baseUrl + '/api/projects-and-scenes-lists/recent-scenes';
     case 'saveScene':
       return baseUrl + '/api/save-scene';
-    case 'createScene':
-      return baseUrl + '/api/create-scene';
-    case 'deleteScene':
-      return baseUrl + '/api/delete-scene';
+    case 'uploadImage':
+      return baseUrl + '/api/upload-image';
     default:
       console.error(`The target param for getFSURL was unknown: ${target}`);
       return '';

@@ -100,9 +100,27 @@
       display: none;
     }
   }
+  $gap: 0.4rem;
   .textureParamsContents {
+    padding: $gap;
+    display: flex;
+    gap: $gap;
+    flex-wrap: wrap;
     &.hide {
       display: none;
+    }
+    .imageInput {
+      width: calc(75% - ($gap / 2));
+      border-color: $light-grey7;
+      margin-bottom: 0;
+    }
+    .flipY {
+      width: calc(25% - ($gap / 2));
+      margin-bottom: 0;
+    }
+    .wrapping {
+      width: calc(50% - ($gap / 2));
+      margin-bottom: 0;
     }
   }
   .toggleParamsContent {

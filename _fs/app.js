@@ -1,4 +1,5 @@
 import express from 'express';
+import fileupload from 'express-fileupload';
 import 'express-async-errors';
 import cors from 'cors';
 
@@ -10,9 +11,13 @@ import projectsAndScenesListsRouter from './controllers/projectsAndScenesLists.j
 import createProjectRouter from './controllers/createProject.js';
 import createSceneRouter from './controllers/createScene.js';
 import deleteSceneRouter from './controllers/deleteScene.js';
+import uploadImageRouter from './controllers/uploadImage';
+
+process.env.TZ = 'Europe/London'; // @TODO: add ForThree setting for this
 
 const app = express();
-process.env.TZ = 'Europe/London'; // @TODO: add ForThree setting for this
+app.use(fileupload());
+app.use(express.urlencoded({ extended: true }));
 
 app.use(
   cors({
@@ -29,6 +34,7 @@ app.use('/api/projects-and-scenes-lists', projectsAndScenesListsRouter);
 app.use('/api/create-project', createProjectRouter);
 app.use('/api/create-scene', createSceneRouter);
 app.use('/api/delete-scene', deleteSceneRouter);
+app.use('/api/upload-image', uploadImageRouter);
 
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);

@@ -97,6 +97,12 @@ export const DEFAULT_PROJECT_VALUES = {
 export const DEFAULT_NEW_PROJECT_SCENE_ID = 'root-scene';
 export const DEFAULT_NEW_PROJECT_SCENE_NAME = 'Root scene';
 
+export const WRAP_OPTIONS = [
+  { label: 'Clamp to edge', value: THREE.ClampToEdgeWrapping },
+  { label: 'Repeat', value: THREE.RepeatWrapping },
+  { label: 'Mirrored repeat', value: THREE.MirroredRepeatWrapping },
+];
+
 export const DEFAULT_TEXTURE = {
   name: '',
   image: null,

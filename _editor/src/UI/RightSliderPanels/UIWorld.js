@@ -149,7 +149,7 @@ class UIWorld extends Component {
     this.addChildDraw(
       new Texture({
         id: this.id + '-env-back-texture',
-        label: 'Background image',
+        label: 'Background image texture',
         textureId: getSceneParam('backgroundTexture'),
         attach: envContentId,
         onChange: (textureId) => changeWorldBackgroundTexture(textureId),

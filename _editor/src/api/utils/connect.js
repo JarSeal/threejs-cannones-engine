@@ -4,11 +4,11 @@ import { APP_DEFAULTS } from '../../../../APP_CONFIG';
 import { getSceneItem } from '../../sceneData/sceneItems';
 import { getFSUrl } from '../../utils/getFSUrl';
 
-export const postRequest = async (urlId, payload) => {
+export const postRequest = async (urlId, payload, headers) => {
   let response;
   const url = getFSUrl(urlId);
   try {
-    response = await axios.post(url, payload);
+    response = await axios.post(url, payload, headers);
   } catch (err) {
     let errorMsg = `${APP_DEFAULTS.APP_NAME}: Could not get a response from url ${url}. Is the FS server running?`;
     if (err.response.status === 404) {

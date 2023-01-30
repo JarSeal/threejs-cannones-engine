@@ -1,0 +1,77 @@
+.fileUploader {
+  width: 100%;
+  position: relative;
+  overflow: visible;
+  &:focus-within {
+    border-color: $dark-grey1;
+  }
+  &.error {
+    border-color: $error;
+  }
+  .form-elem__label {
+    top: 0.3rem;
+  }
+  .fileInputElem {
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 0.4rem;
+    opacity: 0;
+  }
+  .chooseFileBtn {
+    width: 100%;
+    height: 100%;
+    border-radius: 0.4rem;
+    border: none;
+    outline: none;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 20;
+    cursor: pointer;
+    background-color: transparent;
+    transition: background-color 0.15s ease-in-out;
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.08);
+    }
+  }
+  .fileName {
+    display: inline-block;
+    padding: 1.2rem 0.5rem 0 0.5rem;
+    word-break: break-all;
+    line-height: 1rem;
+  }
+  .fileSize {
+    position: absolute;
+    right: 0;
+    bottom: 0.1rem;
+    z-index: 10;
+    padding: 0 0.2rem;
+    border-radius: 0 0 0.4rem 0;
+    background: $white;
+    color: $light-grey1;
+    font-size: 1rem;
+    line-height: 1.1rem;
+  }
+  .errorMsg,
+  .warningMsg {
+    font-size: 1rem;
+    font-style: italic;
+    width: 100%;
+    position: absolute;
+    top: 100%;
+    padding-right: 0.2rem;
+    text-align: right;
+  }
+  .errorMsg {
+    color: $error;
+  }
+  .warningMsg {
+    color: $warning;
+  }
+}

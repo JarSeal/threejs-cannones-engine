@@ -1,4 +1,5 @@
 import { Component } from '../../../../LIGHTER';
+import SvgIcon from '../../icons/svg-icon';
 import ChangeImagePopup from '../../popupsForms/ChangeImagePopup';
 import PopupForm from '../../popupsForms/PopupForm';
 import Button from '../Button';
@@ -11,7 +12,9 @@ class ImageInput extends Component {
     this.fileNameId = this.id + '-file-name';
     this.popupForm = new PopupForm({ id: this.id + '-popup-form' });
     this.template = `
-      <div class="form-elem form-elem--fileInput imageInput ${this.image ? 'hasImage' : 'noImage'}">
+      <div class="form-elem form-elem--imageInput imageInput ${
+        this.image ? 'hasImage' : 'noImage'
+      }">
         <div class="mainImageWrapper" id="${this.mainImageWrapperId}"></div>
         <label>
           <span class="form-elem__label">${data.label}</span>
@@ -22,6 +25,15 @@ class ImageInput extends Component {
   }
 
   paint = () => {
+    this.emptyImageIcon = this.addChildDraw(
+      new SvgIcon({
+        id: this.id + '-empty-image-icon',
+        icon: 'fileImage',
+        width: 19,
+        attach: this.mainImageWrapperId,
+      })
+    );
+
     this.addChildDraw(
       new Button({
         id: this.id + '-open-change-image-btn',
