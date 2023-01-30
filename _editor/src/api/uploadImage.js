@@ -1,3 +1,4 @@
+import { getSceneParam } from '../sceneData/sceneParams';
 import { postRequest } from './utils/connect';
 
 export const uploadImageApi = async (params) => {
@@ -7,6 +8,7 @@ export const uploadImageApi = async (params) => {
   formData.append('fileSize', params.fileSize);
   formData.append('id', params.id);
   formData.append('name', params.name);
+  formData.append('projectFolder', getSceneParam('projectFolder'));
   const response = await postRequest('uploadImage', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   });

@@ -44,7 +44,7 @@ class ChangeImagePopup extends Component {
     const fileUploader = this.addChildDraw(
       new FileUploader({
         id: this.id + '-file-uploader',
-        accept: '.png',
+        accept: '.png .jpg',
         label: 'Import image file',
         required: true,
         onValidationErrors: () => (this.imageFileMissing = true),

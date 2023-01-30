@@ -12,6 +12,10 @@ export const writeJsonFile = (path, data) => {
   });
 };
 
+export const writeImageFile = (path, file) => {
+  fs.writeFileSync(path, file);
+};
+
 export const updateProjectFile = (projectFolder, data) => {
   const folderPath = getProjectFolderPath(projectFolder);
   const projectFilePath = `${folderPath}/project.json`;
@@ -30,10 +34,14 @@ export const updateProjectFile = (projectFolder, data) => {
   );
 };
 
+export const createFolder = (folderPath) => {
+  fs.mkdirSync(folderPath, { recursive: true });
+};
+
 export const createProjectFolderStructure = (folderPath) => {
   const allFolderPaths = APP_CONFIG.SINGLE_PROJECT_CHILD_FOLDERS;
   for (let i = 0; i < allFolderPaths.length; i++) {
     const path = `${folderPath}/${allFolderPaths[i]}`;
-    fs.mkdirSync(path, { recursive: true });
+    createFolder(path);
   }
 };

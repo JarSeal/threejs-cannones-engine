@@ -70,6 +70,14 @@ const ERRORS = {
     errorCode: 500,
     errorMsg: 'Error: Could not delete scene file at "$[path]".',
   },
+  couldNotWriteImageFile: {
+    errorCode: 500,
+    errorMsg: `Error: Could not write image file at "$[path]".`,
+  },
+  noImageFileUploaded: {
+    errorCode: 400,
+    errorMsg: `Error: No image file was uploaded`,
+  },
 };
 
 export const getError = (key, replacersO, additionalMsg) => {
