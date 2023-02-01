@@ -86,10 +86,11 @@ class ImageInput extends Component {
         id: this.id + '-open-change-image-btn',
         class: 'openChangeImagePopoverBtn',
         onClick: () => {
-          this.popupForm.data.componentData = { imageInputComponent: this };
           this.popupForm.data.component = new ChangeImagePopup({
             id: this.id + '-change-image-popup',
             class: 'changeImagePopover',
+            selectedId: this.imageId,
+            imageInputComponent: this,
           });
           this.addChildDraw(this.popupForm);
         },

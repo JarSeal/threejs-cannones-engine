@@ -272,43 +272,6 @@
     }
   ],
   "cubetextures": [],
-  "images": [
-    {
-      "fileName": "Acoustic_Foam_002_normal.jpg",
-      "fileSize": "246825",
-      "id": "munid",
-      "name": "Eka kuva, toivottavasti toimii...",
-      "projectFolder": "devProject1",
-      "extension": "jpg",
-      "dateSaved": 1675171783772
-    },
-    {
-      "fileName": "Acoustic_Foam_002_height.png",
-      "fileSize": "368043",
-      "id": "test",
-      "name": "",
-      "projectFolder": "devProject1",
-      "type": "png",
-      "dateSaved": 1675200168392,
-      "dimensions": {
-        "width": 1024,
-        "height": 1024
-      }
-    },
-    {
-      "fileName": "Material_1567.jpg",
-      "fileSize": "60262",
-      "id": "munid2",
-      "name": "",
-      "projectFolder": "devProject1",
-      "type": "jpg",
-      "dateSaved": 1675200786828,
-      "dimensions": {
-        "width": 600,
-        "height": 800
-      }
-    }
-  ],
   "allProjectScenes": [
     {
       "sceneId": "scene2",

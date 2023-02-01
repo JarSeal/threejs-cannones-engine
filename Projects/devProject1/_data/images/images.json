@@ -33,5 +33,18 @@
       "width": 600,
       "height": 800
     }
+  },
+  {
+    "fileName": "IMG_20210115_205628.jpg",
+    "fileSize": "529514",
+    "id": "munid3",
+    "name": "Me",
+    "projectFolder": "devProject1",
+    "type": "jpg",
+    "dateSaved": 1675272416642,
+    "dimensions": {
+      "width": 3456,
+      "height": 3456
+    }
   }
 ]

@@ -1,33 +1,18 @@
 {
   "sceneId": "scene4",
   "name": "My fourth scene",
-  "dateCreated": 1674497522359,
-  "dateSaved": 1674498320955,
-  "axesHelper": true,
-  "axesHelperLength": 100,
   "rendererClearColor": "#fedfff",
+  "backgroundType": "color",
+  "backgroundTexture": "My-texture1",
+  "backgroundSkybox": null,
   "grid": true,
   "gridSize": 26,
+  "axesHelper": true,
+  "axesHelperLength": 100,
   "shadowType": null,
-  "lights": [
-    {
-      "color": "#c6daec",
-      "intensity": 0.2,
-      "id": "ambient",
-      "type": "ambient",
-      "paramType": "light",
-      "index": 0
-    },
-    {
-      "colorTop": "#ace9f1",
-      "colorBottom": "#311f1f",
-      "intensity": 0.25,
-      "id": "hemi",
-      "type": "hemisphere",
-      "paramType": "light",
-      "index": 1
-    }
-  ],
+  "cameraIndex": 0,
+  "aspectRatio": 0,
+  "pixelRatio": 0,
   "cameras": [
     {
       "name": "Editor main camera",
@@ -38,9 +23,9 @@
       "near": 0.1,
       "far": 256,
       "position": [
-        14.609262812707634,
-        3.721052042877175,
-        2.1303596071195763
+        14.903556090129126,
+        2.9939095016964195,
+        0.8577540767819981
       ],
       "rotation": [
         -1.0508312928934955,
@@ -84,10 +69,10 @@
       "isTargetingObject": true,
       "index": 0,
       "quaternion": [
-        -0.09314010278375187,
-        0.6491260086195371,
-        0.08054324391269166,
-        0.7506484743520907
+        -0.07184301875191931,
+        0.6831326400093766,
+        0.06782707952780073,
+        0.7235798947546568
       ],
       "lookAt": null
     },
@@ -147,7 +132,25 @@
       "index": 1
     }
   ],
-  "curCameraIndex": 0,
+  "lights": [
+    {
+      "color": "#c6daec",
+      "intensity": 0.2,
+      "id": "ambient",
+      "type": "ambient",
+      "paramType": "light",
+      "index": 0
+    },
+    {
+      "colorTop": "#ace9f1",
+      "colorBottom": "#311f1f",
+      "intensity": 0.25,
+      "id": "hemi",
+      "type": "hemisphere",
+      "paramType": "light",
+      "index": 1
+    }
+  ],
   "elements": [
     {
       "name": "",
@@ -250,7 +253,125 @@
       "receiveShadow": false
     }
   ],
-  "projectFolder": "devProject1",
   "selection": [],
+  "textures": [
+    {
+      "name": "My texture 1",
+      "image": "munid3",
+      "flipY": true,
+      "wrapS": 1001,
+      "wrapT": 1001,
+      "wrapSTimes": 1,
+      "wrapTTimes": 1,
+      "offsetU": 0,
+      "offsetV": 0,
+      "centerU": 0.5,
+      "centerV": 0.5,
+      "rotation": 0,
+      "id": "My-texture1"
+    }
+  ],
+  "cubetextures": [],
+  "images": [
+    {
+      "fileName": "Acoustic_Foam_002_normal.jpg",
+      "fileSize": "246825",
+      "id": "munid",
+      "name": "Eka kuva, toivottavasti toimii...",
+      "projectFolder": "devProject1",
+      "extension": "jpg",
+      "dateSaved": 1675171783772,
+      "printName": "Eka kuva, toivottavasti toimii..."
+    },
+    {
+      "fileName": "Acoustic_Foam_002_height.png",
+      "fileSize": "368043",
+      "id": "test",
+      "name": "",
+      "projectFolder": "devProject1",
+      "type": "png",
+      "dateSaved": 1675200168392,
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
+      "printName": "[ test ]"
+    },
+    {
+      "fileName": "Material_1567.jpg",
+      "fileSize": "60262",
+      "id": "munid2",
+      "name": "",
+      "projectFolder": "devProject1",
+      "type": "jpg",
+      "dateSaved": 1675200786828,
+      "dimensions": {
+        "width": 600,
+        "height": 800
+      },
+      "printName": "[ munid2 ]"
+    },
+    {
+      "fileName": "IMG_20210115_205628.jpg",
+      "fileSize": "529514",
+      "id": "munid3",
+      "name": "Me",
+      "projectFolder": "devProject1",
+      "type": "jpg",
+      "dateSaved": 1675272416642,
+      "dimensions": {
+        "width": 3456,
+        "height": 3456
+      }
+    }
+  ],
+  "allProjectScenes": [
+    {
+      "sceneId": "scene3",
+      "sceneName": "My third scene",
+      "projectFolder": "devProject1",
+      "projectName": "",
+      "dateSaved": 1675201082683
+    },
+    {
+      "sceneId": "scene2",
+      "sceneName": "Scene 2",
+      "projectFolder": "devProject1",
+      "projectName": "",
+      "dateSaved": 1675200228462
+    },
+    {
+      "sceneId": "scene1",
+      "sceneName": "some scene",
+      "projectFolder": "devProject1",
+      "projectName": "",
+      "dateSaved": 1675199226139
+    },
+    {
+      "sceneId": "scene6",
+      "sceneName": "Some scene",
+      "projectFolder": "devProject1",
+      "projectName": "",
+      "dateSaved": 1675180481002
+    },
+    {
+      "sceneId": "scene4",
+      "sceneName": "My fourth scene",
+      "projectFolder": "devProject1",
+      "projectName": "",
+      "dateSaved": 1674498320955
+    },
+    {
+      "sceneId": "scene5",
+      "sceneName": "New scene",
+      "projectFolder": "devProject1",
+      "projectName": "",
+      "dateSaved": 1674498295650
+    }
+  ],
+  "dateCreated": 1674497522359,
+  "dateSaved": 1675272433710,
+  "curCameraIndex": 0,
+  "projectFolder": "devProject1",
   "orbiterMoving": false
 }

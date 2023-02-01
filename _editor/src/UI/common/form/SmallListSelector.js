@@ -13,6 +13,7 @@ import Button from '../Button';
 class SmallListSelector extends Component {
   constructor(data) {
     super(data);
+    console.log('list', data.list.length);
     this.list = data.list.map((item) => {
       item.printName = printName(item);
       return item;
@@ -36,8 +37,7 @@ class SmallListSelector extends Component {
     }
     this.searchInputId = this.id + '-search-input';
     this.actionButtonsId = this.id + '-action-buttons';
-    this.listWrapperId = this.id + '-list-wrapper';
-    this.paginationWrapperId = this.id + '-pagination-wrapper';
+    this.listOuterWrapperId = this.id + '-list-outer-wrapper';
     this.template = `<div class="smallListSelector">
       <div class="topBar">
         <div class="searchBar">
@@ -45,67 +45,103 @@ class SmallListSelector extends Component {
         </div>
         <div class="actionButtons" id="${this.actionButtonsId}"></div>
       </div>
-      <div class="listWrapper" id="${this.listWrapperId}"></div>
-      <div class="paginationWrapper" id="${this.paginationWrapperId}"></div>
+      <div class="listOuterWrapper" id="${this.listOuterWrapperId}"></div>
     </div>`;
-    console.log('LIST', this.list);
   }
 
   addListeners = () => {
     if (this.onChange && this.list.length) {
       this.addListener({
-        id: 'list-button-listener',
+        id: this.id + '-list-button-listener',
         target: this.elem.querySelector(`#${this.listWrapperId} ul`),
         type: 'click',
         fn: (e) => {
           if (e.target.nodeName !== 'BUTTON') return;
           const id = e.target.id;
+          console.log('HUUT');
           if (this.onChange) this.onChange(id);
         },
       });
     }
+    this.addListener({
+      id: this.id + '-search-input-change',
+      target: this.elem.querySelector(`#${this.searchInputId}`),
+      type: 'keyup',
+      fn: (e) => {
+        const value = e.target.value.toLowerCase();
+        if (value) {
+          this.list = this.allItemsList.filter((item) => {
+            if (
+              item.printName.toLowerCase().includes(value) ||
+              item.id.toLowerCase().includes(value)
+            )
+              return true;
+            return false;
+          });
+        } else {
+          this.list = this.allItemsList;
+        }
+        this.page = 1;
+        this.updateList();
+      },
+    });
   };
 
-  paint = () => {
-    // Create list and items
-    this.elem.querySelector('#' + this.listWrapperId).innerHTML = '';
-    this.addChildDraw({
-      id: this.id + '-list-elem',
-      attach: this.listWrapperId,
+  updateList = () => {
+    const listElemId = this.id + '-list-elem';
+    const prevButtonId = this.id + '-prev-page';
+    const pageIndicatorId = this.id + '-page-indicator';
+    const nextButtonId = this.id + '-next-page';
+
+    // List
+    this.listWrapper.discardChild(listElemId);
+    this.listWrapper.addChildDraw({
+      id: listElemId,
       template: this._createListTemplate(),
     });
 
     // Pagination
-    this.elem.querySelector('#' + this.paginationWrapperId).innerHTML = '';
-    this.addChildDraw(
+    this.listWrapper.discardChild(prevButtonId);
+    this.listWrapper.addChildDraw(
       new Button({
-        id: this.id + '-prev-page',
+        id: prevButtonId,
         text: 'prev',
         class: ['paginationBtn', 'paginationPrevBtn'],
         disabled: this.page === 1,
         onClick: () => {
           this.page--;
-          this.reDrawSelf();
+          this.updateList();
         },
       })
     );
     const totalPages = Math.ceil(this.list.length / this.itemsPerPage);
-    this.addChildDraw({
-      id: this.id + '-page-indicator',
-      text: this.page + ' / ' + totalPages,
+    this.listWrapper.discardChild(pageIndicatorId);
+    this.listWrapper.addChildDraw({
+      id: pageIndicatorId,
+      text: this.page + ' / ' + (totalPages || 1),
       class: 'currentPageIndicator',
     });
-    this.addChildDraw(
+    this.listWrapper.discardChild(nextButtonId);
+    this.listWrapper.addChildDraw(
       new Button({
-        id: this.id + '-next-page',
+        id: nextButtonId,
         text: 'next',
         disabled: this.page === totalPages,
         onClick: () => {
           this.page++;
-          this.reDrawSelf();
+          this.updateList();
         },
       })
     );
+  };
+
+  paint = () => {
+    // Create list and pagination
+    this.listWrapper = this.addChildDraw({
+      id: this.id + '-list-wrapper',
+      attach: this.listOuterWrapperId,
+    });
+    this.updateList();
   };
 
   _createListTemplate = () => {
@@ -140,10 +176,8 @@ class SmallListSelector extends Component {
     return template;
   };
 
-  _imageItemTemplate = (item) => {
-    // @TODO: missing template
-    return this._defaultItemTemplate(item);
-  };
+  // @TODO: missing template
+  _imageItemTemplate = (item) => this._defaultItemTemplate(item);
 }
 
 export default SmallListSelector;

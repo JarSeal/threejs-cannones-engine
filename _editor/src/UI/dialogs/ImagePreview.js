@@ -23,6 +23,7 @@ class ImagePreviewDialog extends Component {
               imageParams.dimensions?.height || 0
             }</span>
           <span>Filesize: ${getFileSizeString(imageParams.fileSize)}</span>
+          <span>Type: ${imageParams.type}</span>
           <span>Imported: ${getDateString(imageParams.dateSaved)}</span>`
           : 'Image data was not found...'
       }

@@ -24,6 +24,9 @@ class ChangeImagePopup extends Component {
     };
     this.imageIdMissing = true;
     this.imageFileMissing = true;
+    this.selectedId = data.selectedId;
+    const selectedParams = getSceneParam('images').find((img) => img.id === this.selectedId);
+    this.selectedFileName = selectedParams?.fileName || '';
   }
 
   paint = () => {
@@ -129,7 +132,16 @@ class ChangeImagePopup extends Component {
     });
     this._getMenu();
 
-    // Selected image indicator
+    // @TODO: selected image indicator here
+    const selectedImageNameId = this.id + '-sel-img-name';
+    const selectedImageIdId = this.id + '-sel-img-id';
+    this.addChildDraw({
+      id: this.id + '-sel-image-indicator',
+      template: `<div class="selectedImageIndicator">
+        <span class="selectedImageName" id="${selectedImageNameId}">${this.selectedFileName}</span>
+        <span class="selectedImageName" id="${selectedImageIdId}">${this.selectedId}</span>
+      </div>`,
+    });
 
     // Images list
     this.addChildDraw(
@@ -139,7 +151,27 @@ class ChangeImagePopup extends Component {
         type: 'images',
         itemsPerPage: 2,
         onChange: (id) => {
-          console.log('ID', id);
+          this.selectedId = id;
+          const selectedParams = getSceneParam('images').find((img) => img.id === id);
+          this.selectedFileName = selectedParams?.fileName || '';
+          this.elem.querySelector('#' + selectedImageIdId).textContent = this.selectedId;
+          this.elem.querySelector('#' + selectedImageNameId).textContent = this.selectedFileName;
+        },
+      })
+    );
+
+    // Confirm button (NEW IMAGE)
+    this.addChildDraw(
+      new Button({
+        id: this.id + '-confirmBtn',
+        class: 'confirmBtn',
+        text: 'Confirm',
+        onClick: async () => {
+          if (!this.selectedId) return;
+
+          const parentComp = this.data.imageInputComponent;
+          if (parentComp && parentComp.update) parentComp.update(this.selectedId);
+          this.closePopup();
         },
       })
     );

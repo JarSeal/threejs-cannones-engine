@@ -306,17 +306,6 @@
     }
   ],
   "cubetextures": [],
-  "images": [
-    {
-      "fileName": "Acoustic_Foam_002_normal.jpg",
-      "fileSize": "246825",
-      "id": "munid",
-      "name": "Eka kuva, toivottavasti toimii...",
-      "projectFolder": "devProject1",
-      "extension": "jpg",
-      "dateSaved": 1675171783772
-    }
-  ],
   "allProjectScenes": [
     {
       "sceneId": "scene1",
