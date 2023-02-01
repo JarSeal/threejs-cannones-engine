@@ -118,7 +118,7 @@ export const changeWorldBackgroundTexture = (textureId) => {
     const filteredTextures = getSceneItem('textures').filter(
       (tex) => tex.userData.id !== textureId
     );
-    setSceneItem('textures', filteredTextures);
+    setSceneItem('textures', [...filteredTextures, newTexture]);
     setSceneParam('backgroundTexture', textureId);
     scene.background = newTexture;
     // const texture = getSceneItem('textures').find((tex) => tex.userData.id === textureId);

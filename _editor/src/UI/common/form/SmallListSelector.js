@@ -13,7 +13,6 @@ import Button from '../Button';
 class SmallListSelector extends Component {
   constructor(data) {
     super(data);
-    console.log('list', data.list.length);
     this.list = data.list.map((item) => {
       item.printName = printName(item);
       return item;
@@ -50,19 +49,6 @@ class SmallListSelector extends Component {
   }
 
   addListeners = () => {
-    if (this.onChange && this.list.length) {
-      this.addListener({
-        id: this.id + '-list-button-listener',
-        target: this.elem.querySelector(`#${this.listWrapperId} ul`),
-        type: 'click',
-        fn: (e) => {
-          if (e.target.nodeName !== 'BUTTON') return;
-          const id = e.target.id;
-          console.log('HUUT');
-          if (this.onChange) this.onChange(id);
-        },
-      });
-    }
     this.addListener({
       id: this.id + '-search-input-change',
       target: this.elem.querySelector(`#${this.searchInputId}`),
@@ -88,20 +74,18 @@ class SmallListSelector extends Component {
   };
 
   updateList = () => {
-    const listElemId = this.id + '-list-elem';
+    this.listElemId = this.id + '-list-elem';
     const prevButtonId = this.id + '-prev-page';
     const pageIndicatorId = this.id + '-page-indicator';
     const nextButtonId = this.id + '-next-page';
 
     // List
-    this.listWrapper.discardChild(listElemId);
     this.listWrapper.addChildDraw({
-      id: listElemId,
+      id: this.listElemId,
       template: this._createListTemplate(),
     });
 
     // Pagination
-    this.listWrapper.discardChild(prevButtonId);
     this.listWrapper.addChildDraw(
       new Button({
         id: prevButtonId,
@@ -115,24 +99,36 @@ class SmallListSelector extends Component {
       })
     );
     const totalPages = Math.ceil(this.list.length / this.itemsPerPage);
-    this.listWrapper.discardChild(pageIndicatorId);
     this.listWrapper.addChildDraw({
       id: pageIndicatorId,
       text: this.page + ' / ' + (totalPages || 1),
       class: 'currentPageIndicator',
     });
-    this.listWrapper.discardChild(nextButtonId);
     this.listWrapper.addChildDraw(
       new Button({
         id: nextButtonId,
         text: 'next',
-        disabled: this.page === totalPages,
+        disabled: this.page >= totalPages,
         onClick: () => {
           this.page++;
           this.updateList();
         },
       })
     );
+
+    if (this.onChange && this.list.length) {
+      const clickListenerId = this.id + '-list-button-listener';
+      this.addListener({
+        id: clickListenerId,
+        target: this.elem.querySelector(`#${this.listElemId}`),
+        type: 'click',
+        fn: (e) => {
+          if (e.target.nodeName !== 'BUTTON') return;
+          const id = e.target.id;
+          if (this.onChange) this.onChange(id);
+        },
+      });
+    }
   };
 
   paint = () => {
@@ -148,10 +144,14 @@ class SmallListSelector extends Component {
     const startItem = (this.page - 1) * this.itemsPerPage;
     const endItemPlusOne = startItem + this.itemsPerPage;
     let template = '<ul>';
-    for (let i = startItem; i < endItemPlusOne; i++) {
-      const item = this.list[i];
-      if (!item) break;
-      template += this._getItemTemplate(item);
+    if (!this.list.length) {
+      template += `<li class="emptyState">No images found...</li>`;
+    } else {
+      for (let i = startItem; i < endItemPlusOne; i++) {
+        const item = this.list[i];
+        if (!item) break;
+        template += this._getItemTemplate(item);
+      }
     }
     template += '</ul>';
     return template;

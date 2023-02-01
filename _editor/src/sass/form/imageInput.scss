@@ -24,8 +24,12 @@
       z-index: 0;
     }
     img {
-      width: 100%;
+      width: 2.8rem;
       height: auto;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate3d(-50%, -50%, 0);
     }
     &.clickable {
       cursor: pointer;
@@ -80,6 +84,7 @@
   }
 }
 
+// The image preview dialog
 .imagePreviewWrapper {
   width: 100%;
   padding-bottom: 4rem;

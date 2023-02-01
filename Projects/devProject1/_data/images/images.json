@@ -6,7 +6,12 @@
     "name": "Eka kuva, toivottavasti toimii...",
     "projectFolder": "devProject1",
     "extension": "jpg",
-    "dateSaved": 1675171783772
+    "type": "png",
+    "dateSaved": 1675171783772,
+    "dimensions": {
+      "width": 1024,
+      "height": 1024
+    }
   },
   {
     "fileName": "Acoustic_Foam_002_height.png",
