@@ -25,22 +25,36 @@
     outline: none;
     width: 2.4rem;
     height: 2.4rem;
-    background-color: $white;
+    background-color: transparent;
     border: none;
     border-radius: 50%;
     cursor: pointer;
     position: absolute;
-    top: 0;
-    right: 0;
-    transform: translate3d(50%, -50%, 0);
-    transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+    top: -1.2rem;
+    right: -1.2rem;
+    &:before {
+      display: block;
+      content: '';
+      width: 2.4rem;
+      height: 2.4rem;
+      background-color: $white;
+      border: 0.1rem solid $mid-grey3;
+      border-bottom-color: transparent;
+      border-radius: 50%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      transform: rotate(45deg);
+      transition: background-color 0.15s ease-in-out;
+    }
     .ui-icon {
       transform: translateY(0.1rem);
     }
     &:hover,
     &:focus {
-      background-color: $light-grey6;
-      border-color: $mid-grey1;
+      &:before {
+        background-color: $light-grey6;
+      }
     }
     &:active {
       .ui-icon {

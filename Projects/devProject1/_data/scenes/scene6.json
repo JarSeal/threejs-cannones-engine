@@ -1,34 +1,18 @@
 {
   "sceneId": "scene6",
   "name": "Some scene",
-  "dateCreated": 1674498237023,
-  "dateSaved": 1674498481849,
-  "axesHelper": false,
-  "axesHelperLength": 100,
   "rendererClearColor": "#2e0101",
+  "backgroundType": "color",
+  "backgroundTexture": "uusitextuuri",
+  "backgroundSkybox": null,
   "grid": false,
   "gridSize": 26,
+  "axesHelper": false,
+  "axesHelperLength": 100,
   "shadowType": null,
-  "lights": [
-    {
-      "color": "#ffffff",
-      "intensity": 0.2,
-      "id": "ambient",
-      "type": "ambient",
-      "paramType": "light",
-      "index": 0
-    },
-    {
-      "id": "f36e42a3-abd9-474c-9e8e-2aa01a7b7b61",
-      "type": "hemisphere",
-      "colorTop": "#ffffbb",
-      "colorBottom": "#080820",
-      "intensity": 0.25,
-      "disabled": false,
-      "paramType": "light",
-      "index": 1
-    }
-  ],
+  "cameraIndex": 0,
+  "aspectRatio": 0,
+  "pixelRatio": 0,
   "cameras": [
     {
       "name": "Editor main camera",
@@ -44,9 +28,9 @@
         19.605987572041656
       ],
       "rotation": [
-        -0.6115354002806497,
-        0.6670829598280672,
-        0.4093296416809362
+        -0.39748856358560863,
+        -0.06264031107981441,
+        -0.026275413197705655
       ],
       "scale": [
         1,
@@ -148,7 +132,26 @@
       "index": 1
     }
   ],
-  "curCameraIndex": 0,
+  "lights": [
+    {
+      "color": "#ffffff",
+      "intensity": 0.2,
+      "id": "ambient",
+      "type": "ambient",
+      "paramType": "light",
+      "index": 0
+    },
+    {
+      "id": "f36e42a3-abd9-474c-9e8e-2aa01a7b7b61",
+      "type": "hemisphere",
+      "colorTop": "#ffffbb",
+      "colorBottom": "#080820",
+      "intensity": 0.25,
+      "disabled": false,
+      "paramType": "light",
+      "index": 1
+    }
+  ],
   "elements": [
     {
       "name": "",
@@ -251,9 +254,85 @@
       "receiveShadow": false
     }
   ],
-  "projectFolder": "devProject1",
   "selection": [
     "default-cube"
   ],
+  "textures": [
+    {
+      "name": "",
+      "image": null,
+      "flipY": true,
+      "wrapS": 1001,
+      "wrapT": 1001,
+      "wrapSTimes": 1,
+      "wrapTTimes": 1,
+      "offsetU": 0,
+      "offsetV": 0,
+      "centerU": 0.5,
+      "centerV": 0.5,
+      "rotation": 0,
+      "id": "uusitextuuri"
+    }
+  ],
+  "cubetextures": [],
+  "images": [
+    {
+      "fileName": "Acoustic_Foam_002_normal.jpg",
+      "fileSize": "246825",
+      "id": "munid",
+      "name": "Eka kuva, toivottavasti toimii...",
+      "projectFolder": "devProject1",
+      "extension": "jpg",
+      "dateSaved": 1675171783772
+    }
+  ],
+  "allProjectScenes": [
+    {
+      "sceneId": "scene1",
+      "sceneName": "some scene",
+      "projectFolder": "devProject1",
+      "projectName": "",
+      "dateSaved": 1675180308594
+    },
+    {
+      "sceneId": "scene6",
+      "sceneName": "Some scene",
+      "projectFolder": "devProject1",
+      "projectName": "",
+      "dateSaved": 1674498481849
+    },
+    {
+      "sceneId": "scene2",
+      "sceneName": "Scene 2",
+      "projectFolder": "devProject1",
+      "projectName": "",
+      "dateSaved": 1674498410941
+    },
+    {
+      "sceneId": "scene3",
+      "sceneName": "My third scene",
+      "projectFolder": "devProject1",
+      "projectName": "",
+      "dateSaved": 1674498336523
+    },
+    {
+      "sceneId": "scene4",
+      "sceneName": "My fourth scene",
+      "projectFolder": "devProject1",
+      "projectName": "",
+      "dateSaved": 1674498320955
+    },
+    {
+      "sceneId": "scene5",
+      "sceneName": "New scene",
+      "projectFolder": "devProject1",
+      "projectName": "",
+      "dateSaved": 1674498295650
+    }
+  ],
+  "dateCreated": 1674498237023,
+  "dateSaved": 1675180481002,
+  "curCameraIndex": 0,
+  "projectFolder": "devProject1",
   "orbiterMoving": false
 }

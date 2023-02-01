@@ -1,38 +1,18 @@
 {
   "sceneId": "scene1",
   "name": "some scene",
-  "dateCreated": 1674498237023,
-  "dateSaved": 1674990949693,
-  "axesHelper": false,
-  "axesHelperLength": 100,
   "rendererClearColor": "#2e0101",
   "backgroundType": "texture",
   "backgroundTexture": "mun2",
   "backgroundSkybox": null,
   "grid": false,
   "gridSize": 26,
+  "axesHelper": false,
+  "axesHelperLength": 100,
   "shadowType": null,
-  "lights": [
-    {
-      "id": "3366e51c-78ac-4b4f-be8f-25cc6b458c35",
-      "type": "ambient",
-      "color": "#ffffff",
-      "intensity": 0.2,
-      "disabled": false,
-      "paramType": "light",
-      "index": 0
-    },
-    {
-      "id": "55b3a42b-56d0-426c-b896-df1ba965f6a2",
-      "type": "hemisphere",
-      "colorTop": "#ffffbb",
-      "colorBottom": "#080820",
-      "intensity": 0.25,
-      "disabled": false,
-      "paramType": "light",
-      "index": 1
-    }
-  ],
+  "cameraIndex": 0,
+  "aspectRatio": 0,
+  "pixelRatio": 0,
   "cameras": [
     {
       "name": "Editor main camera",
@@ -43,14 +23,14 @@
       "near": 0.1,
       "far": 256,
       "position": [
-        15.884613291716343,
-        12.840366164900251,
-        -19.60945285597334
+        10.372860613943239,
+        13.35309038164978,
+        11.359800025867152
       ],
       "rotation": [
-        -2.5118645077271613,
-        0.6859751739675475,
-        2.7091523460888234
+        -2.7980883546552793,
+        0.6496533406543058,
+        2.928510142899248
       ],
       "scale": [
         1,
@@ -58,9 +38,9 @@
         1
       ],
       "target": [
-        -1.963195357389966,
-        -9.100453247665875e-7,
-        -1.9884914119478727
+        -1.290634316770653,
+        2.207070042298769,
+        0.0946832037740159
       ],
       "defaultPosition": [
         5,
@@ -89,10 +69,10 @@
       "isTargetingObject": true,
       "index": 0,
       "quaternion": [
-        -0.09038712344453623,
-        0.8969496406642125,
-        0.2162552445543026,
-        0.37489355720060186
+        -0.27299964349463035,
+        0.3731171508925698,
+        0.11586853383367375,
+        0.8791070863261489
       ],
       "lookAt": null
     },
@@ -152,7 +132,27 @@
       "index": 1
     }
   ],
-  "curCameraIndex": 0,
+  "lights": [
+    {
+      "id": "75bae93c-5efe-4f0d-8432-9453dd539db0",
+      "type": "ambient",
+      "color": "#ffffff",
+      "intensity": 0.2,
+      "disabled": false,
+      "paramType": "light",
+      "index": 0
+    },
+    {
+      "id": "8268bb78-561e-4b55-b03d-85f5edb065d7",
+      "type": "hemisphere",
+      "colorTop": "#ffffbb",
+      "colorBottom": "#080820",
+      "intensity": 0.25,
+      "disabled": false,
+      "paramType": "light",
+      "index": 1
+    }
+  ],
   "elements": [
     {
       "name": "",
@@ -255,6 +255,9 @@
       "receiveShadow": false
     }
   ],
+  "selection": [
+    "default-cube"
+  ],
   "textures": [
     {
       "name": "Mun Tekstuuri",
@@ -288,7 +291,7 @@
     },
     {
       "name": "jotain2",
-      "image": null,
+      "image": "munid",
       "flipY": true,
       "wrapS": 1001,
       "wrapT": 1001,
@@ -303,7 +306,64 @@
     }
   ],
   "cubetextures": [],
+  "images": [
+    {
+      "fileName": "Acoustic_Foam_002_normal.jpg",
+      "fileSize": "246825",
+      "id": "munid",
+      "name": "Eka kuva, toivottavasti toimii...",
+      "projectFolder": "devProject1",
+      "extension": "jpg",
+      "dateSaved": 1675171783772
+    }
+  ],
+  "allProjectScenes": [
+    {
+      "sceneId": "scene1",
+      "sceneName": "some scene",
+      "projectFolder": "devProject1",
+      "projectName": "",
+      "dateSaved": 1674990949693
+    },
+    {
+      "sceneId": "scene6",
+      "sceneName": "Some scene",
+      "projectFolder": "devProject1",
+      "projectName": "",
+      "dateSaved": 1674498481849
+    },
+    {
+      "sceneId": "scene2",
+      "sceneName": "Scene 2",
+      "projectFolder": "devProject1",
+      "projectName": "",
+      "dateSaved": 1674498410941
+    },
+    {
+      "sceneId": "scene3",
+      "sceneName": "My third scene",
+      "projectFolder": "devProject1",
+      "projectName": "",
+      "dateSaved": 1674498336523
+    },
+    {
+      "sceneId": "scene4",
+      "sceneName": "My fourth scene",
+      "projectFolder": "devProject1",
+      "projectName": "",
+      "dateSaved": 1674498320955
+    },
+    {
+      "sceneId": "scene5",
+      "sceneName": "New scene",
+      "projectFolder": "devProject1",
+      "projectName": "",
+      "dateSaved": 1674498295650
+    }
+  ],
+  "dateCreated": 1674498237023,
+  "dateSaved": 1675199226139,
+  "curCameraIndex": 0,
   "projectFolder": "devProject1",
-  "selection": [],
   "orbiterMoving": false
 }

@@ -6,6 +6,7 @@ import { uploadImage } from '../../utils/toolsForFS';
 import Button from '../common/Button';
 import FileUploader from '../common/form/FileUploader';
 import SimpleIDInput from '../common/form/SimpleIDInput';
+import SmallListSelector from '../common/form/SmallListSelector';
 import TextInput from '../common/form/TextInput';
 import TinyButtonGroup from '../common/TinyButtonGroup';
 import SvgIcon from '../icons/svg-icon';
@@ -13,7 +14,7 @@ import SvgIcon from '../icons/svg-icon';
 class ChangeImagePopup extends Component {
   constructor(data) {
     super(data);
-    this.currentTab = 'new';
+    this.currentTab = 'select';
     this.newImageParams = {
       file: null,
       fileName: null,
@@ -127,6 +128,21 @@ class ChangeImagePopup extends Component {
       text: 'Select image',
     });
     this._getMenu();
+
+    // Selected image indicator
+
+    // Images list
+    this.addChildDraw(
+      new SmallListSelector({
+        id: this.id + '-select-images-list',
+        list: getSceneParam('images'),
+        type: 'images',
+        itemsPerPage: 2,
+        onChange: (id) => {
+          console.log('ID', id);
+        },
+      })
+    );
   };
 
   _selectFromLibrary = () => {
