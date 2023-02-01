@@ -59,7 +59,12 @@ export const updateSceneName = (newVal) => {
 };
 
 export const uploadImage = async (params) => {
-  console.log('FILE', params);
   const response = await uploadImageApi(params);
+  if (!response.error) {
+    getSceneItem('toaster').addToast({
+      type: 'success',
+      content: 'Image imported to project!',
+    });
+  }
   return response;
 };

@@ -3,19 +3,20 @@ import { saveSceneState } from '../sceneData/saveSession';
 
 import { getSceneItem, setSceneItem } from '../sceneData/sceneItems';
 import { getSceneParam, setSceneParam, setSceneParamR } from '../sceneData/sceneParams';
+import { CANVAS_ELEM_ID } from '../utils/defaultSceneValues';
 
 let rayClicker;
 const mouseClickStart = { x: 0, y: 0 };
 
 export const registerStageClick = () => {
   rayClicker = new THREE.Raycaster();
-  document.getElementById('main-stage').addEventListener('mouseup', _mouseUpOnStage);
-  document.getElementById('main-stage').addEventListener('mousedown', _mouseDownOnStage);
+  document.getElementById(CANVAS_ELEM_ID).addEventListener('mouseup', _mouseUpOnStage);
+  document.getElementById(CANVAS_ELEM_ID).addEventListener('mousedown', _mouseDownOnStage);
 };
 
 export const unregisterStageClick = () => {
-  document.getElementById('main-stage').removeEventListener('mouseup', _mouseUpOnStage);
-  document.getElementById('main-stage').removeEventListener('mousedown', _mouseDownOnStage);
+  document.getElementById(CANVAS_ELEM_ID).removeEventListener('mouseup', _mouseUpOnStage);
+  document.getElementById(CANVAS_ELEM_ID).removeEventListener('mousedown', _mouseDownOnStage);
 };
 
 const _mouseDownOnStage = (e) => {

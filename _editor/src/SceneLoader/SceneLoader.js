@@ -13,7 +13,6 @@ import { saveStateByKey } from '../sceneData/saveSession';
 import {
   AMBIENT_LIGHT,
   CANVAS_ELEM_ID,
-  DEFAULT_TEXTURE,
   HEMI_LIGHT,
   NEW_CAMERA_DEFAULT_PARAMS,
   NEW_ELEM_DEFAULT_PARAMS,
@@ -24,7 +23,7 @@ import {
 } from '../utils/defaultSceneValues';
 import { addCamera } from '../utils/toolsForCamera';
 import TextureLoader from '../loaders/TextureLoader';
-import { getScreenResolution } from '../utils/utils';
+import { createTexture, getScreenResolution } from '../utils/utils';
 import styleVariables from '../sass/variables.scss?raw';
 import SmallStats from '../UI/stats/SmallStats.js';
 import { registerStageClick, selectObjects } from '../controls/stageClick.js';
@@ -47,7 +46,7 @@ class SceneLoader {
   _createScene = (sceneParams) => {
     setSceneParams(sceneParams);
 
-    // Setup textureLoader @TODO: create TextureLoader class
+    // Setup textureLoader
     const textureLoader = new TextureLoader();
     setSceneItem('textureLoader', textureLoader);
 
@@ -123,7 +122,7 @@ class SceneLoader {
       editorOutlinePass.hiddenEdgeColor.set('#ff4500');
       editorOutlinePass.overlayMaterial.blending = THREE.NormalBlending;
       const textureData = textureLoader.loadTexture(
-        'src/UI/textures/multiselect-stripe-pattern.png'
+        '_editor/src/UI/textures/multiselect-stripe-pattern.png'
       );
       textureData.texture.wrapS = THREE.RepeatWrapping;
       textureData.texture.wrapT = THREE.RepeatWrapping;
@@ -358,24 +357,7 @@ class SceneLoader {
   _createTextures = (textures) => {
     const newTextureItems = [];
     textures.forEach((tex) => {
-      const newTextureItem = new THREE.Texture();
-      newTextureItem.flipY = tex.flipY || DEFAULT_TEXTURE.flipY;
-      newTextureItem.wrapS = tex.wrapS || DEFAULT_TEXTURE.wrapS;
-      newTextureItem.wrapT = tex.wrapT || DEFAULT_TEXTURE.wrapT;
-      newTextureItem.repeating = new THREE.Vector2(
-        tex.wrapSTimes || DEFAULT_TEXTURE.wrapSTimes,
-        tex.wrapTTimes || DEFAULT_TEXTURE.wrapTTimes
-      );
-      newTextureItem.offset = new THREE.Vector2(
-        tex.offsetU || DEFAULT_TEXTURE.offsetU,
-        tex.offsetV || DEFAULT_TEXTURE.offsetV
-      );
-      newTextureItem.center = new THREE.Vector2(
-        tex.centerU || DEFAULT_TEXTURE.centerU,
-        tex.centerV || DEFAULT_TEXTURE.centerV
-      );
-      newTextureItem.rotation = tex.rotation || DEFAULT_TEXTURE.rotation;
-      newTextureItem.userData = tex;
+      const newTextureItem = createTexture(tex);
       newTextureItems.push(newTextureItem);
     });
     setSceneItem('textures', newTextureItems);

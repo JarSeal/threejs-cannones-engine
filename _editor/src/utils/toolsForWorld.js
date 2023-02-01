@@ -1,10 +1,10 @@
 import * as THREE from 'three';
 
 import { saveAllLightsState, saveSceneState } from '../sceneData/saveSession';
-import { getSceneItem } from '../sceneData/sceneItems';
+import { getSceneItem, setSceneItem } from '../sceneData/sceneItems';
 import { getSceneParam, setSceneParam } from '../sceneData/sceneParams';
 import { AMBIENT_LIGHT, HEMI_LIGHT } from './defaultSceneValues';
-import { removeMeshFromScene } from './utils';
+import { createTexture, removeMeshFromScene } from './utils';
 
 export const toggleWorldAxesHelper = () => {
   const scene = getSceneItem('scene');
@@ -103,15 +103,33 @@ export const changeWorldBackgroundTexture = (textureId) => {
     setSceneParam('backgroundTexture', null);
     scene.background = null;
   } else {
-    const texture = getSceneItem('textures').find((tex) => tex.userData.id === textureId);
-    if (texture) {
-      setSceneParam('backgroundTexture', textureId);
-      scene.background = texture;
-    } else {
-      console.warn(`Could not find texture with texture ID "${textureId}"`);
-      setSceneParam('backgroundTexture', null);
-      scene.background = null;
-    }
+    const textureParams = getSceneParam('textures').find((tex) => tex.id === textureId);
+    const newTexture = createTexture(textureParams);
+    // if (textureParams.image) {
+    //   const textureLoader = getSceneItem('textureLoader');
+    //   const imageParams = getSceneParam('images').find((img) => textureParams.image === img.id);
+    //   const imagePath = `../../${APP_CONFIG.PROJECTS_FOLDER_NAME}/${getSceneParam(
+    //     'projectsFolder'
+    //   )}/${APP_CONFIG.SINGLE_PROJECT_IMAGES_FOLDER}/${imageParams.id}/${imageParams.fileName}`;
+    //   newTexture = textureLoader.loadTexture(imagePath);
+    // } else {
+    //   newTexture = setTextureParams(textureParams);
+    // }
+    const filteredTextures = getSceneItem('textures').filter(
+      (tex) => tex.userData.id !== textureId
+    );
+    setSceneItem('textures', filteredTextures);
+    setSceneParam('backgroundTexture', textureId);
+    scene.background = newTexture;
+    // const texture = getSceneItem('textures').find((tex) => tex.userData.id === textureId);
+    // if (texture) {
+    //   setSceneParam('backgroundTexture', textureId);
+    //   scene.background = texture;
+    // } else {
+    //   console.warn(`Could not find texture with texture ID "${textureId}"`);
+    //   setSceneParam('backgroundTexture', null);
+    //   scene.background = null;
+    // }
   }
   saveSceneState();
   getSceneItem('rightSidePanel').updatePanel();

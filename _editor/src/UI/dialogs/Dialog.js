@@ -85,6 +85,11 @@ class Dialog extends Component {
   appear = (dialogData) => {
     if (this.isShowing) this.disappear();
     if (this.isTransitioning) return;
+    if (dialogData.large) {
+      this.data.class.push('large');
+    } else {
+      this.data.class = this.data.class.filter((c) => c !== 'large');
+    }
     this.isTransitioning = true;
     this.hasChanges = false;
     this.compoToShow = this.addChild(new dialogData.component(dialogData.componentData));

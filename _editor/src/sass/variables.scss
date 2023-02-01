@@ -59,3 +59,7 @@ $rightPanelButtonHeight: 3.8rem;
   background: rgb(129, 129, 129);
   background: radial-gradient(circle, $mid-grey1 0%, $dark-grey2 100%);
 }
+@mixin checker-background {
+  background: center center
+    url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 20 20"><path fill="%23d1d3d4" d="M0 0h10v10H0Z"/><path fill="%23fff" d="M0 10h10v10H0Z"/><path fill="%23d1d3d4" d="M10 10h10v10H10Z"/><path fill="%23fff" d="M10 0h10v10H10Z"/></svg>');
+}

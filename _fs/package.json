@@ -18,7 +18,8 @@
     "dotenv": "^16.0.1",
     "express": "^4.17.1",
     "express-async-errors": "^3.1.1",
-    "express-fileupload": "^1.4.0"
+    "express-fileupload": "^1.4.0",
+    "image-size": "^1.0.2"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.18.2",

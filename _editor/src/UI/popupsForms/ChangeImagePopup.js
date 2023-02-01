@@ -1,4 +1,7 @@
+import { APP_DEFAULTS } from '../../../../APP_CONFIG';
 import { Component } from '../../../LIGHTER';
+import { getSceneItem } from '../../sceneData/sceneItems';
+import { getSceneParam, setSceneParam } from '../../sceneData/sceneParams';
 import { uploadImage } from '../../utils/toolsForFS';
 import Button from '../common/Button';
 import FileUploader from '../common/form/FileUploader';
@@ -44,7 +47,7 @@ class ChangeImagePopup extends Component {
     const fileUploader = this.addChildDraw(
       new FileUploader({
         id: this.id + '-file-uploader',
-        accept: '.png .jpg',
+        accept: '.png, .jpg',
         label: 'Import image file',
         required: true,
         onValidationErrors: () => (this.imageFileMissing = true),
@@ -54,8 +57,6 @@ class ChangeImagePopup extends Component {
           this.newImageParams.file = file;
           this.newImageParams.fileName = file.name;
           this.newImageParams.fileSize = file.size;
-          // @TODO: Check here for if the filename (in images) already exists and display warning that the existing file will be overwritten.
-          // fileUploader.setWarning('Same filename already exists and will be overwritten!');
         },
       })
     );
@@ -101,10 +102,18 @@ class ChangeImagePopup extends Component {
           if (this.imageIdMissing || this.imageFileMissing) return;
 
           const response = await uploadImage(this.newImageParams);
-          if (response.imageUploaded) {
+          if (response?.imageUploaded && response?.imageParams) {
+            const newImageParams = [...getSceneParam('images'), response.imageParams];
+            setSceneParam('images', newImageParams);
             const parentComp = this.data.imageInputComponent;
             if (parentComp && parentComp.update) parentComp.update(this.newImageParams.id);
             this.closePopup();
+          } else {
+            getSceneItem('toaster').addToast({
+              type: 'error',
+              delay: 0,
+              content: `${APP_DEFAULTS.APP_NAME}: Image upload response or response imageParams is missing.`,
+            });
           }
         },
       })

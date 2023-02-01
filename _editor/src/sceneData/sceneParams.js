@@ -21,6 +21,8 @@ const emptyScene = {
   selection: [],
   textures: [],
   cubetextures: [],
+  images: [],
+  allProjectScenes: [],
 };
 
 let sceneParams = { ...emptyScene };
@@ -55,6 +57,7 @@ export const setSceneParamR = (keys, value) => {
   }, sceneParams);
 };
 
-export const setSceneParams = (params) => (sceneParams = params);
+export const setSceneParams = (params, asNew) =>
+  (sceneParams = asNew ? params : { ...emptyScene, ...(sceneParams || {}), ...params });
 
 export const resetSceneParams = () => (sceneParams = { ...emptyScene });

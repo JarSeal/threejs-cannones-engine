@@ -1,3 +1,6 @@
+import * as THREE from 'three';
+import APP_CONFIG, { APP_DEFAULTS } from '../../../APP_CONFIG';
+
 import {
   clearProjectData,
   getHasUnsavedChanges,
@@ -7,7 +10,12 @@ import {
 import { getSceneItem, resetSceneItems, setSceneItem } from '../sceneData/sceneItems';
 import { getSceneParam, resetSceneParams } from '../sceneData/sceneParams';
 import SaveBeforeCloseDialog from '../UI/dialogs/SaveBeforeClose';
-import { CANVAS_ELEM_ID, SMALL_STATS_CONTAINER_ID, SMALL_STATS_ID } from './defaultSceneValues';
+import {
+  CANVAS_ELEM_ID,
+  DEFAULT_TEXTURE,
+  SMALL_STATS_CONTAINER_ID,
+  SMALL_STATS_ID,
+} from './defaultSceneValues';
 import { saveScene } from './toolsForFS';
 
 export const getScreenResolution = () => ({
@@ -199,5 +207,53 @@ export const getFileSizeString = (number) => {
     return `${(number / 1024).toFixed(1)} KB`;
   } else if (number >= 1048576) {
     return `${(number / 1048576).toFixed(1)} MB`;
+  } else if (number >= 1073741824) {
+    return `${(number / 1073741824).toFixed(1)} GB`;
   }
+};
+
+export const getDateString = (date) => {
+  // @TODO: this needs more work...
+  return new Date(date).toString();
+};
+
+export const getImagePath = (imageParams) =>
+  `${APP_CONFIG.PROJECTS_FOLDER_NAME}/${getSceneParam('projectFolder')}/${
+    APP_CONFIG.SINGLE_PROJECT_IMAGES_FOLDER
+  }/${imageParams.id}/${imageParams.fileName}`;
+
+export const createTexture = (params) => {
+  let textureItem;
+  if (params.image) {
+    const textureLoader = getSceneItem('textureLoader');
+    const imageParams = getSceneParam('images').find((img) => params.image === img.id);
+    if (imageParams) {
+      const imagePath = getImagePath(imageParams);
+      const loadTexture = textureLoader.loadTexture(imagePath);
+      textureItem = loadTexture.texture;
+    } else {
+      console.warn(
+        `${APP_DEFAULTS.APP_NAME}: Could not find image params for image ID: "${params.image}".`
+      );
+    }
+  }
+  if (!textureItem) textureItem = new THREE.Texture();
+  textureItem.flipY = params.flipY || DEFAULT_TEXTURE.flipY;
+  textureItem.wrapS = params.wrapS || DEFAULT_TEXTURE.wrapS;
+  textureItem.wrapT = params.wrapT || DEFAULT_TEXTURE.wrapT;
+  textureItem.repeating = new THREE.Vector2(
+    params.wrapSTimes || DEFAULT_TEXTURE.wrapSTimes,
+    params.wrapTTimes || DEFAULT_TEXTURE.wrapTTimes
+  );
+  textureItem.offset = new THREE.Vector2(
+    params.offsetU || DEFAULT_TEXTURE.offsetU,
+    params.offsetV || DEFAULT_TEXTURE.offsetV
+  );
+  textureItem.center = new THREE.Vector2(
+    params.centerU || DEFAULT_TEXTURE.centerU,
+    params.centerV || DEFAULT_TEXTURE.centerV
+  );
+  textureItem.rotation = params.rotation || DEFAULT_TEXTURE.rotation;
+  textureItem.userData = params;
+  return textureItem;
 };

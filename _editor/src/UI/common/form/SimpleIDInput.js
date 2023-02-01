@@ -32,7 +32,7 @@ class SimpleIDInput extends Component {
     this.inputComponent = null;
     this.returnOriginalValueButton = null;
     this.timeout = null;
-    this.groups = ['lights', 'cameras', 'scenes', 'elements', 'textures', 'cubetextures'];
+    this.groups = ['lights', 'cameras', 'scenes', 'elements', 'textures', 'cubetextures', 'images'];
     this.regex = new RegExp(APP_CONFIG.SIMPLE_ID_REGEX);
     this.focus = data.focus;
     this.afterSuccessBlur = data.afterSuccessBlur;

@@ -15,7 +15,7 @@ class TopTools extends Component {
     data.class = [styles.topTools];
     this.mainButtonsWrapper = null;
     this.undoRedoButtonsWrapper = null;
-    this.allScenes = getSceneItem('allProjectScenes').map((scn) => ({
+    this.allScenes = getSceneParam('allProjectScenes').map((scn) => ({
       ...scn,
       printName: printName(scn),
     }));

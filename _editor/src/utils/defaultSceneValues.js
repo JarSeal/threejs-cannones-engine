@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 export const CAMERA_TARGET_ID = '__camera-target';
 export const SELECTION_GROUP_ID = '__selection-group';
-export const CANVAS_ELEM_ID = 'main-stage';
+export const CANVAS_ELEM_ID = '__main-stage__';
 export const SMALL_STATS_CONTAINER_ID = 'smallStats-container';
 export const SMALL_STATS_ID = 'smallStats';
 

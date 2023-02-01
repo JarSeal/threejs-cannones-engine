@@ -1,11 +1,12 @@
 import { Router } from 'express';
+import sizeOf from 'image-size';
 
 import APP_CONFIG from '../../APP_CONFIG';
 import { getProjectFolderPath } from '../utils/config';
 import { getError } from '../utils/errors';
 import logger from '../utils/logger';
 import { validateProjectFolder } from '../utils/validation';
-import { createFolder, writeImageFile } from '../utils/writeFile';
+import { createFolder, updateAllImagesData, writeImageFile } from '../utils/writeFile';
 
 const router = Router();
 
@@ -15,9 +16,6 @@ router.post('/', async (request, response) => {
 });
 
 export const saveImageData = (imageFile, imageParams) => {
-  console.log('imageParams', imageParams);
-  console.log('imageFile', imageFile);
-
   if (!imageFile.file) {
     const error = getError('noImageFileUploaded');
     logger.error(error.errorMsg, imageParams);
@@ -35,6 +33,7 @@ export const saveImageData = (imageFile, imageParams) => {
   }
 
   try {
+    // Copy file to images/[imageId] folder
     createFolder(imageFilesFolder);
     writeImageFile(imageFilePath, imageFile.file.data);
   } catch (err) {
@@ -43,7 +42,23 @@ export const saveImageData = (imageFile, imageParams) => {
     return { ...error, error: true, imageParams };
   }
 
-  // @TODO: update images.json (and load and combine the images json data with the project.json load)
+  try {
+    // Update all images file
+    const timeNow = new Date().getTime();
+    const dimensions = sizeOf(imageFile.file.data);
+    const splitFilename = imageParams.fileName.split('.');
+    imageParams.type = dimensions?.type || splitFilename[splitFilename.length - 1];
+    imageParams.dateSaved = timeNow;
+    imageParams.dimensions = {
+      width: dimensions?.width || 0,
+      height: dimensions?.height || 0,
+    };
+    updateAllImagesData(imageParams.projectFolder, imageParams);
+  } catch (err) {
+    const error = getError('couldNotUpdateAllImagesFile');
+    logger.error(error.errorMsg, err, imageParams);
+    return { ...error, error: true, imageParams };
+  }
 
   return { imageUploaded: true, imageParams };
 };

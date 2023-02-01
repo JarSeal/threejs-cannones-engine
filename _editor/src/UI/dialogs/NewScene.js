@@ -21,7 +21,8 @@ class NewSceneDialog extends Component {
   }
 
   paint = async () => {
-    const currentScenes = await getSceneItem('getAllProjectScenes')();
+    const currentScenesData = await getSceneItem('getAllProjectScenes')();
+    const currentScenes = currentScenesData.scenes;
 
     this.sceneIdInput = this.addChildDraw(
       new SimpleIDInput({

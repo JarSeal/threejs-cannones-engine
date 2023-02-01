@@ -78,6 +78,14 @@ const ERRORS = {
     errorCode: 400,
     errorMsg: `Error: No image file was uploaded`,
   },
+  couldNotUpdateAllImagesFile: {
+    errorCode: 500,
+    errorMsg: `Error: Could not update all images file.`,
+  },
+  couldNotFindOrReadImagesFile: {
+    errorCode: 404,
+    errorMsg: `Error: Could not find or read all images file at "$[path]".`,
+  },
 };
 
 export const getError = (key, replacersO, additionalMsg) => {

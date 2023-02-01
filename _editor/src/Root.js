@@ -69,7 +69,8 @@ class Root {
         this.initApp();
         return;
       }
-      // @TODO: we need to compare also the dateSaved values here
+      // @TODO: we need to compare also the dateSaved values here and promt the user if they want
+      // save even if there is a newer version saved (cancel, saveAs.., save)
       if (curScene.sceneId === sessionParams.sceneId) {
         curScene = { ...DEFAULT_SCENE, ...curScene, ...sessionParams };
       }
@@ -78,13 +79,20 @@ class Root {
       const getAllProjectScenes = async () => {
         const projectFolder = curScene.projectFolder;
         const responseAllProjectScenes = await loadRecentScenesApi({
-          projectFolder: projectFolder,
+          projectFolder,
+          loadImagesData: true,
         });
         return responseAllProjectScenes;
       };
       setSceneItem('getAllProjectScenes', getAllProjectScenes);
       const allProjectScenes = await getAllProjectScenes();
-      setSceneItem('allProjectScenes', allProjectScenes);
+
+      // All project scenes list
+      setSceneParam('allProjectScenes', allProjectScenes.scenes);
+
+      // All project images list
+      const imagesData = allProjectScenes.images[curScene.projectFolder] || [];
+      setSceneParam('images', imagesData);
 
       // Load the scene
       const hasUnsavedChanges = getHasUnsavedChanges();

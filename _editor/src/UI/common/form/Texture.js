@@ -1,8 +1,13 @@
 import { Component } from '../../../../LIGHTER';
-import { saveEditorState } from '../../../sceneData/saveSession';
-import { getSceneParam, getSceneParamR, setSceneParamR } from '../../../sceneData/sceneParams';
+import { saveEditorState, saveStateByKey } from '../../../sceneData/saveSession';
+import {
+  getSceneParam,
+  getSceneParamR,
+  setSceneParam,
+  setSceneParamR,
+} from '../../../sceneData/sceneParams';
 import { WRAP_OPTIONS } from '../../../utils/defaultSceneValues';
-import { printName } from '../../../utils/utils';
+import { getImagePath, printName } from '../../../utils/utils';
 import SvgIcon from '../../icons/svg-icon';
 import NewTexturePopup from '../../popupsForms/NewTexturePopup';
 import PopupForm from '../../popupsForms/PopupForm';
@@ -10,6 +15,7 @@ import Button from '../Button';
 import TinyButtonGroup from '../TinyButtonGroup';
 import Checkbox from './Checbox';
 import Dropdown from './Dropdown';
+import ImageComponent from './ImageComponent';
 import ImageInput from './ImageInput';
 
 // Attributes:
@@ -33,7 +39,7 @@ class Texture extends Component {
     this.popupForm = new PopupForm({ id: this.id + '-popup-form' });
     this.template = `
       <div class="texture ${this.textureId ? 'hasTexture' : 'noTexture'} ${
-      this.image ? 'hasImage' : 'noImage'
+      this.params.image ? 'hasImage' : 'noImage'
     }">
         <div class="form-elem form-elem--texture textureInput">
           <div class="mainImageWrapper" id="${this.mainImageWrapperId}"></div>
@@ -52,17 +58,32 @@ class Texture extends Component {
         </div>
       </div>
     `;
+    this.onChange = data.onChange;
   }
 
   paint = () => {
-    this.emptyImageIcon = this.addChildDraw(
-      new SvgIcon({
-        id: this.id + '-empty-image-icon',
-        icon: 'fileImage',
-        width: 19,
-        attach: this.mainImageWrapperId,
-      })
-    );
+    if (this.params.image) {
+      const imageParams = getSceneParam('images').find((img) => this.params.image === img.id);
+      const imagePath = getImagePath(imageParams);
+      this.addChildDraw(
+        new ImageComponent({
+          id: this.id + '-texture-image',
+          imagePath,
+          attach: this.mainImageWrapperId,
+          alt: printName(imageParams),
+        })
+      );
+    } else {
+      // Empty image icon
+      this.addChildDraw(
+        new SvgIcon({
+          id: this.id + '-empty-image-icon',
+          icon: 'fileImage',
+          width: 19,
+          attach: this.mainImageWrapperId,
+        })
+      );
+    }
 
     // New, select, and library buttons
     this.addChildDraw(
@@ -104,25 +125,42 @@ class Texture extends Component {
       })
     );
 
+    // Remove texture button
     this.addChildDraw(
       new Button({
         id: this.id + '-remove-texture-btn',
         icon: new SvgIcon({ id: this.id + '-remove-texture-btn-icon', icon: 'xMark', width: 10 }),
         class: 'removeTextureBtn',
         prepend: true,
-        onClick: () => this.data.onChange(null),
+        onClick: () => this.onChange(null),
       })
     );
 
+    // Texture settings:
+    // *****************
+
+    // Image
     this.addChildDraw(
       new ImageInput({
-        id: this.id + '-file-input',
+        id: this.id + '-image-input',
         label: 'Image',
-        file: this.params.image || null,
+        imageId: this.params.image || null,
         attach: this.textureParamsContentId,
+        showBigImageOnClick: true,
+        onChange: (newId) => {
+          this.params.image = newId;
+          const filteredTextureParams = getSceneParam('textures').filter(
+            (tex) => this.params.id !== tex.id
+          );
+          const newTextureParams = [...filteredTextureParams, this.params];
+          setSceneParam('textures', newTextureParams);
+          saveStateByKey('textures', newTextureParams);
+          this.onChange(this.params.id);
+        },
       })
     );
 
+    // FlipY
     this.addChildDraw(
       new Checkbox({
         id: this.id + '-flipY',
@@ -134,6 +172,7 @@ class Texture extends Component {
       })
     );
 
+    // WrapS
     this.addChildDraw(
       new Dropdown({
         id: this.id + '-wrapS',
@@ -149,6 +188,7 @@ class Texture extends Component {
       })
     );
 
+    // WrapT
     this.addChildDraw(
       new Dropdown({
         id: this.id + '-wrapT',
@@ -164,6 +204,7 @@ class Texture extends Component {
       })
     );
 
+    // Show/hide params toggler
     this.paramsToggler = this.addChildDraw(
       new Button({
         id: this.id + '-toggle-params-content',

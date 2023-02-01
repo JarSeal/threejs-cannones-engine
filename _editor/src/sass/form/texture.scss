@@ -13,23 +13,29 @@
       left: 3.6rem;
       top: 0.3rem;
     }
-  }
-  .mainImageWrapper {
-    width: 3rem;
-    height: 3rem;
-    margin: 0.2rem;
-    border-radius: 0.2rem;
-    border: 0.1rem solid $light-grey6;
-    overflow: hidden;
-    position: relative;
-    .ui-icon {
-      margin: 0.2rem 0 0 0.5rem;
-      position: absolute;
-      z-index: 0;
+    > .mainImageWrapper {
+      @include checker-background;
+      width: 3rem;
+      height: 3rem;
+      margin: 0.2rem;
+      border-radius: 0.2rem;
+      border: 0.1rem solid $light-grey6;
+      overflow: hidden;
+      position: relative;
+      .ui-icon {
+        margin: 0.2rem 0 0 0.5rem;
+        position: absolute;
+        z-index: 0;
+      }
+      img {
+        width: 100%;
+        height: auto;
+      }
     }
   }
   &.noImage {
-    .mainImageWrapper {
+    .textureInput > .mainImageWrapper {
+      background: none;
       border-color: transparent;
     }
   }

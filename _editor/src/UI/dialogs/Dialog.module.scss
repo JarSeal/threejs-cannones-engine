@@ -171,6 +171,21 @@ $sidePadding: 4rem;
       margin-top: 0;
     }
   }
+
+  &:global(.large) {
+    .dialogBox {
+      width: auto;
+      min-width: 32rem;
+      max-width: 94vw;
+      height: 94vh;
+      overflow: hidden;
+      padding-top: 4rem !important;
+    }
+    .innerBox {
+      padding-top: 0;
+      padding-right: 2rem;
+    }
+  }
 }
 
 .dialogLocked {

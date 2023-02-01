@@ -160,14 +160,17 @@ export const saveSceneState = (values) => {
   delete sceneParams.editor;
   delete sceneParams.textures;
   delete sceneParams.cubetextures;
+  delete sceneParams.images;
   const newParams = { ...sceneParams, ...values };
-  if (newParams) LS.setItem('sceneState', JSON.stringify(newParams));
+  LS.setItem('sceneState', JSON.stringify(newParams));
   setHasUnsavedChanges();
 };
 
 export const saveStateByKey = (key, values) => {
-  if (LSKeysJson.includes(key)) LS.setItem(key, JSON.stringify(values));
-  setHasUnsavedChanges();
+  if (LSKeysJson.includes(key)) {
+    LS.setItem(key, JSON.stringify(values));
+    setHasUnsavedChanges();
+  }
 };
 
 export const getHasUnsavedChanges = () => LS.getItem('hasUnsavedChanges', false);

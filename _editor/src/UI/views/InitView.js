@@ -123,7 +123,7 @@ class InitView extends Component {
 
   _getRecentScenesButtons = async () => {
     const response = await loadRecentScenesApi({ amount: 5 });
-    return response.map((scene, index) =>
+    return response.scenes.map((scene, index) =>
       this.addChild(
         new Button({
           id: this.id + '-recent-scene-btn-' + index,
