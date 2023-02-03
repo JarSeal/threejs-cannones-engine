@@ -2,8 +2,11 @@
 **/node_modules
 **/dist
 .env
-**/mongo/database
 .vscode
 **/coverage
 yarn-error.log
-back/front
+
+# When the "Projects/**" line is uncomments, then run:
+# "git rm -r --cached ." and
+# "git add ."
+# Projects/**

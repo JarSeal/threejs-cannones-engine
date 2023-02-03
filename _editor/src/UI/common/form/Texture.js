@@ -1,3 +1,5 @@
+import * as THREE from 'three';
+
 import { Component } from '../../../../LIGHTER';
 import { saveEditorState, saveStateByKey } from '../../../sceneData/saveSession';
 import {
@@ -7,6 +9,7 @@ import {
   setSceneParamR,
 } from '../../../sceneData/sceneParams';
 import { WRAP_OPTIONS } from '../../../utils/defaultSceneValues';
+import { updateTextureImage } from '../../../utils/toolsForTextures';
 import { getImagePath, printName } from '../../../utils/utils';
 import SvgIcon from '../../icons/svg-icon';
 import NewTexturePopup from '../../popupsForms/NewTexturePopup';
@@ -17,10 +20,12 @@ import Checkbox from './Checbox';
 import Dropdown from './Dropdown';
 import ImageComponent from './ImageComponent';
 import ImageInput from './ImageInput';
+import NumberInput from './NumberInput';
 
 // Attributes:
 // - textureId = string | null | undefined
 // - onChange = function that is executed when the texture changes, its params change, or when it is removed
+// - targetItemKey = string (the item key for getSceneParamR('scene.background'))
 class Texture extends Component {
   constructor(data) {
     super(data);
@@ -59,6 +64,7 @@ class Texture extends Component {
       </div>
     `;
     this.onChange = data.onChange;
+    this.targetItemKey = data.targetItemKey;
   }
 
   paint = () => {
@@ -148,14 +154,15 @@ class Texture extends Component {
         attach: this.textureParamsContentId,
         showBigImageOnClick: true,
         onChange: (newId) => {
+          const prevVal = this.params.image;
           this.params.image = newId;
-          const filteredTextureParams = getSceneParam('textures').filter(
-            (tex) => this.params.id !== tex.id
-          );
-          const newTextureParams = [...filteredTextureParams, this.params];
-          setSceneParam('textures', newTextureParams);
-          saveStateByKey('textures', newTextureParams);
-          this.onChange(this.params.id);
+          updateTextureImage({
+            textureId: this.textureId,
+            imageId: newId,
+            prevImageId: prevVal,
+            targetItemKey: this.targetItemKey,
+          });
+          // this.changeTexture();
         },
       })
     );
@@ -167,7 +174,10 @@ class Texture extends Component {
         attach: this.textureParamsContentId,
         label: 'Flip Y',
         class: 'flipY',
-        changeFn: () => console.log('Flip Y'),
+        changeFn: (e) => {
+          this.params.flipY = e.target.checked;
+          this.changeTexture();
+        },
         value: this.params.flipY,
       })
     );
@@ -182,8 +192,10 @@ class Texture extends Component {
         selected: this.params.wrapS,
         options: WRAP_OPTIONS,
         changeFn: (e) => {
-          const value = e.target.value;
-          console.log('Change wrapS', value);
+          const value = parseInt(e.target.value);
+          if (this.params.wrapS === value) return;
+          this.params.wrapS = value;
+          this.changeTexture();
         },
       })
     );
@@ -198,8 +210,52 @@ class Texture extends Component {
         selected: this.params.wrapT,
         options: WRAP_OPTIONS,
         changeFn: (e) => {
-          const value = e.target.value;
-          console.log('Change wrapT', value);
+          const value = parseInt(e.target.value);
+          if (this.params.wrapT === value) return;
+          this.params.wrapT = value;
+          this.changeTexture();
+        },
+      })
+    );
+
+    // WrapSTimes
+    this.addChildDraw(
+      new NumberInput({
+        id: this.id + '-wrapSTimes',
+        label: 'Wrap S times',
+        class: 'oneFourthWidth',
+        attach: this.textureParamsContentId,
+        step: 0.5,
+        min: 0,
+        max: 200000,
+        precision: 10,
+        value: this.params.wrapSTimes,
+        disabled: this.params.wrapS === THREE.ClampToEdgeWrapping,
+        changeFn: (value) => {
+          if (this.params.wrapSTimes === value) return;
+          this.params.wrapSTimes = value;
+          this.changeTexture();
+        },
+      })
+    );
+
+    // WrapTTimes
+    this.addChildDraw(
+      new NumberInput({
+        id: this.id + '-wrapTTimes',
+        label: 'Wrap T times',
+        class: 'oneFourthWidth',
+        attach: this.textureParamsContentId,
+        step: 0.5,
+        min: 0,
+        max: 200000,
+        precision: 10,
+        value: this.params.wrapTTimes,
+        disabled: this.params.wrapT === THREE.ClampToEdgeWrapping,
+        changeFn: (value) => {
+          if (this.params.wrapTTimes === value) return;
+          this.params.wrapTTimes = value;
+          this.changeTexture();
         },
       })
     );
@@ -267,6 +323,16 @@ class Texture extends Component {
   closeParams = () => {
     if (!this.textureParamsOpen) return;
     this.toggleParams();
+  };
+
+  changeTexture = () => {
+    const filteredTextureParams = getSceneParam('textures').filter(
+      (tex) => this.params.id !== tex.id
+    );
+    const newTextureParams = [...filteredTextureParams, this.params];
+    setSceneParam('textures', newTextureParams);
+    saveStateByKey('textures', newTextureParams);
+    this.onChange(this.params.id);
   };
 }
 

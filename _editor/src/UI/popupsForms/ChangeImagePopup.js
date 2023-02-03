@@ -128,16 +128,16 @@ class ChangeImagePopup extends Component {
     this.addChildDraw({
       id: this.id + '-main-title',
       tag: 'h5',
-      text: 'Select image',
+      text: 'Select project image',
     });
     this._getMenu();
 
-    // @TODO: selected image indicator here
     const selectedImageNameId = this.id + '-sel-img-name';
     const selectedImageIdId = this.id + '-sel-img-id';
     this.addChildDraw({
       id: this.id + '-sel-image-indicator',
       template: `<div class="selectedImageIndicator">
+        <span class="label">Selected:</span>
         <span class="selectedImageName" id="${selectedImageNameId}">${this.selectedFileName}</span>
         <span class="selectedImageName" id="${selectedImageIdId}">${this.selectedId}</span>
       </div>`,
@@ -149,7 +149,9 @@ class ChangeImagePopup extends Component {
         id: this.id + '-select-images-list',
         list: getSceneParam('images'),
         type: 'images',
+        selectedId: this.selectedId,
         itemsPerPage: 2,
+        addSearchKeys: ['fileName'],
         onChange: (id) => {
           this.selectedId = id;
           const selectedParams = getSceneParam('images').find((img) => img.id === id);

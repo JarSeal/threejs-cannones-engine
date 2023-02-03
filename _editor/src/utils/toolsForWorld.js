@@ -105,31 +105,13 @@ export const changeWorldBackgroundTexture = (textureId) => {
   } else {
     const textureParams = getSceneParam('textures').find((tex) => tex.id === textureId);
     const newTexture = createTexture(textureParams);
-    // if (textureParams.image) {
-    //   const textureLoader = getSceneItem('textureLoader');
-    //   const imageParams = getSceneParam('images').find((img) => textureParams.image === img.id);
-    //   const imagePath = `../../${APP_CONFIG.PROJECTS_FOLDER_NAME}/${getSceneParam(
-    //     'projectsFolder'
-    //   )}/${APP_CONFIG.SINGLE_PROJECT_IMAGES_FOLDER}/${imageParams.id}/${imageParams.fileName}`;
-    //   newTexture = textureLoader.loadTexture(imagePath);
-    // } else {
-    //   newTexture = setTextureParams(textureParams);
-    // }
     const filteredTextures = getSceneItem('textures').filter(
       (tex) => tex.userData.id !== textureId
     );
     setSceneItem('textures', [...filteredTextures, newTexture]);
     setSceneParam('backgroundTexture', textureId);
     scene.background = newTexture;
-    // const texture = getSceneItem('textures').find((tex) => tex.userData.id === textureId);
-    // if (texture) {
-    //   setSceneParam('backgroundTexture', textureId);
-    //   scene.background = texture;
-    // } else {
-    //   console.warn(`Could not find texture with texture ID "${textureId}"`);
-    //   setSceneParam('backgroundTexture', null);
-    //   scene.background = null;
-    // }
+    if (newTexture.image) newTexture.needsUpdate = true;
   }
   saveSceneState();
   getSceneItem('rightSidePanel').updatePanel();

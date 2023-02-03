@@ -1,0 +1,35 @@
+[
+  {
+    "fileName": "UVCheckerMap06-1024.png",
+    "fileSize": "56092",
+    "id": "UV-checker-map-06-1024",
+    "name": "UV checker map 06 (1024 x 1024)",
+    "type": "png",
+    "dimensions": {
+      "width": 1024,
+      "height": 1024
+    }
+  },
+  {
+    "fileName": "UVCheckerMap08-1024.png",
+    "fileSize": "34226",
+    "id": "UV-checker-map-08-1024",
+    "name": "UV checker map 08 (1024 x 1024)",
+    "type": "png",
+    "dimensions": {
+      "width": 1024,
+      "height": 1024
+    }
+  },
+  {
+    "fileName": "UVCheckerMap02-1024.png",
+    "fileSize": "26445",
+    "id": "UV-checker-map-02-1024",
+    "name": "UV checker map 02 (1024 x 1024)",
+    "type": "png",
+    "dimensions": {
+      "width": 1024,
+      "height": 1024
+    }
+  }
+]

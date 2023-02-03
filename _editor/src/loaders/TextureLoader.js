@@ -16,7 +16,7 @@ class TextureLoader {
     this.textures = {};
   }
 
-  loadTexture = (url, forceNew) => {
+  loadTexture = (url, forceNew, onLoad) => {
     this.allTexturesLoaded = false;
     this.texturesLoading = true;
     this.loadingCounts.loading += 1;
@@ -36,6 +36,7 @@ class TextureLoader {
       (texture) => {
         // Texture loaded successfully
         returnObject.thisTextureLoading = false;
+        texture.needsUpdate = true;
         this.loadingCounts.loading -= 1;
         this.loadingCounts.loaded += 1;
         this.loadingCounts.loadingUrls = this.loadingCounts.loadingUrls.filter((u) => u !== url);

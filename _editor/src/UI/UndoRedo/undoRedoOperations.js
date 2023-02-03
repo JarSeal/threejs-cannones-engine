@@ -4,6 +4,7 @@ import { selectObjects } from '../../controls/stageClick';
 import { getSceneItem, setSceneItem } from '../../sceneData/sceneItems';
 import worldTools from '../../utils/toolsForWorld';
 import cameraTools, { changeCurCamera } from '../../utils/toolsForCamera';
+import textureTools from '../../utils/toolsForTextures';
 import { getSceneParam, setSceneParam } from '../../sceneData/sceneParams';
 import { saveAllCamerasState } from '../../sceneData/saveSession';
 import { updateElemTranslation } from '../../controls/transformControls';
@@ -219,6 +220,9 @@ const undoRedoOperations = {
   },
   // Scenes
   updateSceneName: (action, isUndo) => updateSceneName(isUndo ? action.prevVal : action.newVal),
+  // Textures
+  updateTextureImage: (action, isUndo) =>
+    textureTools.updateTextureImage(isUndo ? action.prevVal : action.newVal),
 };
 
 export default undoRedoOperations;

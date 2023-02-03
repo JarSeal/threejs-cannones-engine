@@ -10,8 +10,9 @@ import { changeScene } from './utils';
 
 export const saveScene = async () => {
   const sceneParams = { ...getSceneParams() };
-  console.log('Scene params');
   delete sceneParams.editor;
+  delete sceneParams.images;
+  delete sceneParams.cubemaps; // @TODO: check if this is actually the param to be used (writing this when this hasn't been implemented yet)
   const response = await saveSceneApi(sceneParams);
   if (!response.error) {
     getSceneItem('toaster').addToast({

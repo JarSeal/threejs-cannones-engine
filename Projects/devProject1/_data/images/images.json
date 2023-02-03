@@ -51,5 +51,57 @@
       "width": 3456,
       "height": 3456
     }
+  },
+  {
+    "fileName": "UVCheckerMap06-1024.png",
+    "fileSize": "56092",
+    "id": "UV-checker-06-1024",
+    "name": "UV Checker map 06 1024",
+    "projectFolder": "devProject1",
+    "type": "png",
+    "dateSaved": 1675294368710,
+    "dimensions": {
+      "width": 1024,
+      "height": 1024
+    }
+  },
+  {
+    "fileName": "UVCheckerMap08-1024.png",
+    "fileSize": "34226",
+    "id": "uv-checker-08-1024",
+    "name": "",
+    "projectFolder": "devProject1",
+    "type": "png",
+    "dateSaved": 1675294428218,
+    "dimensions": {
+      "width": 1024,
+      "height": 1024
+    }
+  },
+  {
+    "fileName": "UVCheckerMap02-1024.png",
+    "fileSize": "26445",
+    "id": "uv-checker-02-1024",
+    "name": "",
+    "projectFolder": "devProject1",
+    "type": "png",
+    "dateSaved": 1675294454613,
+    "dimensions": {
+      "width": 1024,
+      "height": 1024
+    }
+  },
+  {
+    "fileName": "CustomUVChecker_byValle_2K.png",
+    "fileSize": "593215",
+    "id": "another-uv-checker",
+    "name": "",
+    "projectFolder": "devProject1",
+    "type": "png",
+    "dateSaved": 1675321061210,
+    "dimensions": {
+      "width": 2048,
+      "height": 2048
+    }
   }
 ]

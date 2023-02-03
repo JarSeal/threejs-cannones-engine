@@ -10,6 +10,8 @@ import Button from '../Button';
 // - sortBy = string (the key of the property to sort by, the default value is 'dateSaved')
 // - sortOrder = string ('asc' [default] or 'desc')
 // - itemsPerPage = number (default is 10)
+// - addSearchKeys = string[] (keys of properties to add to default search keys, which are printName and id, in this order)
+// - startSearchLength = number (default is 0, and this means that the search starts when the search string length is over or equal to this number)
 class SmallListSelector extends Component {
   constructor(data) {
     super(data);
@@ -30,6 +32,8 @@ class SmallListSelector extends Component {
 
     this.onChange = data.onChange;
     this.selectedId = data.selectedId;
+    this.addSearchKeys = data.addSearchKeys;
+    this.startSearchLength = data.startSearchLength;
     this.selectedParams = null;
     if (this.selectedId) {
       this.selectedParams = this.list.find((item) => item.id === this.selectedId);
@@ -55,13 +59,23 @@ class SmallListSelector extends Component {
       type: 'keyup',
       fn: (e) => {
         const value = e.target.value.toLowerCase();
-        if (value) {
+        if (value && value.length >= (this.startSearchLength || 0)) {
           this.list = this.allItemsList.filter((item) => {
             if (
               item.printName.toLowerCase().includes(value) ||
               item.id.toLowerCase().includes(value)
-            )
+            ) {
               return true;
+            }
+            if (this.addSearchKeys && this.addSearchKeys.length) {
+              for (let i = 0; i < this.addSearchKeys.length; i++) {
+                if (
+                  item[this.addSearchKeys[i]] &&
+                  item[this.addSearchKeys[i]].toLowerCase().includes(value)
+                )
+                  return true;
+              }
+            }
             return false;
           });
         } else {
@@ -115,6 +129,14 @@ class SmallListSelector extends Component {
         },
       })
     );
+    this.listWrapper.addChildDraw({
+      id: this.id + '-search-total',
+      class: 'searchTotal',
+      text:
+        this.allItemsList.length === this.list.length
+          ? `total: ${this.list.length} items`
+          : `search: ${this.list.length} / ${this.allItemsList.length} items`,
+    });
 
     if (this.onChange && this.list.length) {
       const clickListenerId = this.id + '-list-button-listener';
@@ -129,6 +151,8 @@ class SmallListSelector extends Component {
         },
       });
     }
+
+    this.elem.querySelector(`#${this.searchInputId}`).focus();
   };
 
   paint = () => {
@@ -168,7 +192,7 @@ class SmallListSelector extends Component {
 
   _defaultItemTemplate = (item) => {
     const template = `<li>
-      <button id="${item.id}">
+      <button id="${item.id}"${this.selectedId === item.id ? ' class="selected"' : ''}>
         <span class="printName" style="pointer-events:none;">${item.printName}</span>
         <span class="dateSaved" style="pointer-events:none;">${getDateString(item.dateSaved)}</span>
       </button>

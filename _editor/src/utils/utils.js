@@ -213,8 +213,9 @@ export const getFileSizeString = (number) => {
 };
 
 export const getDateString = (date) => {
-  // @TODO: this needs more work...
-  return new Date(date).toString();
+  // @TODO: this needs more design & work...
+  const dateObject = new Date(date);
+  return `${dateObject.getDate()}.${dateObject.getMonth()}.${dateObject.getFullYear()}`;
 };
 
 export const getImagePath = (imageParams) =>
@@ -238,10 +239,10 @@ export const createTexture = (params) => {
     }
   }
   if (!textureItem) textureItem = new THREE.Texture();
-  textureItem.flipY = params.flipY || DEFAULT_TEXTURE.flipY;
+  textureItem.flipY = params.flipY !== undefined ? params.flipY : DEFAULT_TEXTURE.flipY;
   textureItem.wrapS = params.wrapS || DEFAULT_TEXTURE.wrapS;
   textureItem.wrapT = params.wrapT || DEFAULT_TEXTURE.wrapT;
-  textureItem.repeating = new THREE.Vector2(
+  textureItem.repeat = new THREE.Vector2(
     params.wrapSTimes || DEFAULT_TEXTURE.wrapSTimes,
     params.wrapTTimes || DEFAULT_TEXTURE.wrapTTimes
   );

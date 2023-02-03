@@ -152,6 +152,7 @@ class UIWorld extends Component {
         label: 'Background image texture',
         textureId: getSceneParam('backgroundTexture'),
         attach: envContentId,
+        targetItemKey: 'scene.background',
         onChange: (textureId) => changeWorldBackgroundTexture(textureId),
       })
     );
