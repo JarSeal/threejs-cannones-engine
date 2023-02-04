@@ -258,3 +258,54 @@ export const createTexture = (params) => {
   textureItem.userData = params;
   return textureItem;
 };
+
+export const setValueToSceneItem = ({ targetItemKey, value, itemIndex }) => {
+  if (!targetItemKey) {
+    const errorMsg = `${APP_DEFAULTS.APP_NAME}: targetItemKey missing (targetItemKey: "${targetItemKey}").`;
+    console.error(errorMsg);
+    getSceneItem('toaster').addToast({
+      type: 'error',
+      delay: 0,
+      content: errorMsg,
+    });
+    return;
+  }
+  const splitTargets = targetItemKey.split('.');
+  let sceneItem = getSceneItem(splitTargets[0]);
+  if (Array.isArray(sceneItem) && itemIndex === undefined) {
+    const errorMsg = `${APP_DEFAULTS.APP_NAME}: the sceneItem "${splitTargets[0]}" is an array, but no itemIndex was provided (targetItemKey: "${targetItemKey}").`;
+    console.error(errorMsg);
+    getSceneItem('toaster').addToast({
+      type: 'error',
+      delay: 0,
+      content: errorMsg,
+    });
+    return;
+  }
+  if (itemIndex !== undefined) sceneItem = sceneItem[itemIndex];
+  if (splitTargets.length === 2) {
+    sceneItem[splitTargets[1]] = value;
+  } else if (splitTargets.length === 3) {
+    sceneItem[splitTargets[1]][splitTargets[2]] = value;
+  } else if (splitTargets.length === 4) {
+    sceneItem[splitTargets[1]][splitTargets[2]][splitTargets[3]] = value;
+  } else if (splitTargets.length === 5) {
+    sceneItem[splitTargets[1]][splitTargets[2]][splitTargets[3]][splitTargets[4]] = value;
+  } else if (splitTargets.length === 6) {
+    sceneItem[splitTargets[1]][splitTargets[2]][splitTargets[3]][splitTargets[4]][splitTargets[5]] =
+      value;
+  } else if (splitTargets.length === 7) {
+    sceneItem[splitTargets[1]][splitTargets[2]][splitTargets[3]][splitTargets[4]][splitTargets[5]][
+      splitTargets[6]
+    ] = value;
+  } else {
+    const errorMsg = `${APP_DEFAULTS.APP_NAME}: targetItemKey not valid (targetItemKey: "${targetItemKey}").`;
+    console.error(errorMsg);
+    getSceneItem('toaster').addToast({
+      type: 'error',
+      delay: 0,
+      content: errorMsg,
+    });
+    return;
+  }
+};

@@ -1,18 +1,23 @@
 import * as THREE from 'three';
 import { APP_DEFAULTS } from '../../../APP_CONFIG';
-import { saveAllTexturesState, saveSceneState } from '../sceneData/saveSession';
+import { saveAllTexturesState } from '../sceneData/saveSession';
 
 import { getSceneItem, setSceneItem } from '../sceneData/sceneItems';
 import { getSceneParam, setSceneParam } from '../sceneData/sceneParams';
 import { DEFAULT_TEXTURE } from './defaultSceneValues';
-import { createTexture } from './utils';
+import { createTexture, setValueToSceneItem } from './utils';
 
 // @TODO: change this to changeTextureParam (also for undo/redo) and add paramName parameter, and create a new texture every time
-export const updateTextureImage = async ({ textureId, imageId, prevImageId, targetItemKey }) => {
-  let errorMsg;
+export const updateTextureImage = async ({
+  textureId,
+  imageId,
+  prevImageId,
+  targetItemKey,
+  itemIndex,
+}) => {
   const textureParams = getSceneParam('textures').find((tex) => tex.id === textureId);
   if (!textureParams) {
-    errorMsg = `${APP_DEFAULTS.APP_NAME}: Could not find textureParams for texture ID "${textureId}".`;
+    const errorMsg = `${APP_DEFAULTS.APP_NAME}: Could not find textureParams for texture ID "${textureId}".`;
     console.error(errorMsg);
     getSceneItem('toaster').addToast({
       type: 'error',
@@ -37,42 +42,9 @@ export const updateTextureImage = async ({ textureId, imageId, prevImageId, targ
   const filteredParams = getSceneParam('textures').filter((param) => param.id !== textureId);
   setSceneParam('textures', [...filteredParams, { ...textureParams, image: imageId }]);
 
-  if (targetItemKey) {
-    // @TODO: move this to utils
-    const splitTargets = targetItemKey.split('.');
-    const sceneItem = getSceneItem(splitTargets[0]);
-    if (Array.isArray(sceneItem)) {
-      // @TODO: parseInt the splitTargets[1]
-    } else {
-      if (splitTargets.length === 2) {
-        sceneItem[splitTargets[1]] = newTexture;
-      } else if (splitTargets.length === 3) {
-        sceneItem[splitTargets[1]][splitTargets[2]] = newTexture;
-      } else if (splitTargets.length === 4) {
-        sceneItem[splitTargets[1]][splitTargets[2]][splitTargets[3]] = newTexture;
-      } else if (splitTargets.length === 5) {
-        sceneItem[splitTargets[1]][splitTargets[2]][splitTargets[3]][splitTargets[4]] = newTexture;
-      } else if (splitTargets.length === 6) {
-        sceneItem[splitTargets[1]][splitTargets[2]][splitTargets[3]][splitTargets[4]][
-          splitTargets[5]
-        ] = newTexture;
-      } else if (splitTargets.length === 7) {
-        sceneItem[splitTargets[1]][splitTargets[2]][splitTargets[3]][splitTargets[4]][
-          splitTargets[5]
-        ][splitTargets[6]] = newTexture;
-      } else {
-        errorMsg = `${APP_DEFAULTS.APP_NAME}: targetItemKey not valid ("${targetItemKey}").`;
-        console.error(errorMsg);
-        getSceneItem('toaster').addToast({
-          type: 'error',
-          delay: 0,
-          content: errorMsg,
-        });
-        return;
-      }
-    }
-  }
-  saveSceneState();
+  setValueToSceneItem({ targetItemKey, value: newTexture, itemIndex });
+
+  saveAllTexturesState();
   getSceneItem('rightSidePanel').updatePanel();
   getSceneItem('undoRedo').addAction({
     type: 'updateTextureImage',
@@ -85,8 +57,52 @@ export const updateTextureImage = async ({ textureId, imageId, prevImageId, targ
   });
 };
 
-export const updateTextureParam = () => {
-  // @TODO: implement this by only changing the texture item values (should do the trick), and also update the sceneParams('textures')
+export const updateTextureParam = ({
+  textureId,
+  params,
+  targetItemKey,
+  targetParamKey,
+  newVal,
+  prevVal,
+}) => {
+  let textureItemIndex;
+  const textureItem = getSceneItem('textures').find((tex, index) => {
+    textureItemIndex = index;
+    return tex.userData.id === textureId;
+  });
+  if (!textureItem) {
+    const errorMsg = `${APP_DEFAULTS.APP_NAME}: Could not find textureItem for texture ID "${textureId}".`;
+    console.error(errorMsg);
+    getSceneItem('toaster').addToast({
+      type: 'error',
+      delay: 0,
+      content: errorMsg,
+    });
+    return;
+  }
+
+  // Set texture params
+  const filteredParams = getSceneParam('textures').filter((param) => param.id !== textureId);
+  setSceneParam('textures', [...filteredParams, { ...params, [targetParamKey]: newVal }]);
+
+  setValueToSceneItem({ targetItemKey, value: newVal, itemIndex: textureItemIndex });
+  textureItem.needsUpdate = true;
+
+  saveAllTexturesState();
+  getSceneItem('rightSidePanel').updatePanel();
+  const prevParams = { ...params, [targetParamKey]: prevVal };
+  getSceneItem('undoRedo').addAction({
+    type: 'updateTextureParam',
+    prevVal: {
+      textureId,
+      params: prevParams,
+      targetItemKey,
+      targetParamKey,
+      newVal: prevVal,
+      prevVal: newVal,
+    },
+    newVal: { textureId, params, targetItemKey, targetParamKey, newVal, prevVal },
+  });
 };
 
 export const createNewTexture = (id, name) => {
@@ -116,4 +132,5 @@ export const deleteTexture = (id) => {
 
 export default {
   updateTextureImage,
+  updateTextureParam,
 };

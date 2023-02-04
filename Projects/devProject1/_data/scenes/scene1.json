@@ -23,14 +23,14 @@
       "near": 0.1,
       "far": 256,
       "position": [
-        14.89377311667851,
-        6.0546836054978925,
-        10.60575877009548
+        14.893773116678496,
+        6.054683605497887,
+        10.605758770095465
       ],
       "rotation": [
-        -0.351408334222171,
-        0.9549194335772356,
-        0.290781623333788
+        -0.35140833422217105,
+        0.9549194335772361,
+        0.2907816233337881
       ],
       "scale": [
         1,
@@ -69,8 +69,8 @@
       "isTargetingObject": true,
       "index": 0,
       "quaternion": [
-        -0.08806409684948192,
-        0.47016872026275763,
+        -0.08806409684948188,
+        0.47016872026275774,
         0.04721735995148182,
         0.8769017107132236
       ],
@@ -134,7 +134,7 @@
   ],
   "lights": [
     {
-      "id": "75bae93c-5efe-4f0d-8432-9453dd539db0",
+      "id": "053e1d25-4998-4989-9b32-d2828a7784ce",
       "type": "ambient",
       "color": "#ffffff",
       "intensity": 0.2,
@@ -256,7 +256,7 @@
     }
   ],
   "selection": [
-    "default-cube"
+    "default-ground"
   ],
   "textures": [
     {
@@ -293,10 +293,10 @@
       "name": "jotain2",
       "image": "uv-checker-02-1024",
       "flipY": true,
-      "wrapS": 1001,
-      "wrapT": 1001,
-      "wrapSTimes": 1,
-      "wrapTTimes": 1,
+      "wrapS": 1000,
+      "wrapT": 1000,
+      "wrapSTimes": 3,
+      "wrapTTimes": 2,
       "offsetU": 0,
       "offsetV": 0,
       "centerU": 0.5,
@@ -351,7 +351,7 @@
     }
   ],
   "dateCreated": 1674498237023,
-  "dateSaved": 1675296155961,
+  "dateSaved": 1675520906421,
   "curCameraIndex": 0,
   "projectFolder": "devProject1",
   "orbiterMoving": false

@@ -9,7 +9,6 @@ import { getSceneParam, setSceneParam } from '../../sceneData/sceneParams';
 import { saveAllCamerasState } from '../../sceneData/saveSession';
 import { updateElemTranslation } from '../../controls/transformControls';
 import { updateElemProperty, updateElemTransforms } from '../../utils/toolsForElems';
-import { updateSceneName } from '../../utils/toolsForFS';
 
 const undoRedoOperations = {
   // ID
@@ -219,10 +218,13 @@ const undoRedoOperations = {
     getSceneItem('elemTool').updateTool();
   },
   // Scenes
-  updateSceneName: (action, isUndo) => updateSceneName(isUndo ? action.prevVal : action.newVal),
+  updateSceneName: (action, isUndo) =>
+    textureTools.updateSceneName(isUndo ? action.prevVal : action.newVal),
   // Textures
   updateTextureImage: (action, isUndo) =>
     textureTools.updateTextureImage(isUndo ? action.prevVal : action.newVal),
+  updateTextureParam: (action, isUndo) =>
+    textureTools.updateTextureParam(isUndo ? action.prevVal : action.newVal),
 };
 
 export default undoRedoOperations;

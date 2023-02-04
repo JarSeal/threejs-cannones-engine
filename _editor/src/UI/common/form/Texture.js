@@ -9,7 +9,7 @@ import {
   setSceneParamR,
 } from '../../../sceneData/sceneParams';
 import { WRAP_OPTIONS } from '../../../utils/defaultSceneValues';
-import { updateTextureImage } from '../../../utils/toolsForTextures';
+import { updateTextureImage, updateTextureParam } from '../../../utils/toolsForTextures';
 import { getImagePath, printName } from '../../../utils/utils';
 import SvgIcon from '../../icons/svg-icon';
 import NewTexturePopup from '../../popupsForms/NewTexturePopup';
@@ -25,7 +25,8 @@ import NumberInput from './NumberInput';
 // Attributes:
 // - textureId = string | null | undefined
 // - onChange = function that is executed when the texture changes, its params change, or when it is removed
-// - targetItemKey = string (the item key for getSceneParamR('scene.background'))
+// - targetItemKey = string (the item like "scene.background" or "elements.material.map")
+// - itemIndex = number (if the first key, "elements" is an array, then an itemIndex needs to be present)
 class Texture extends Component {
   constructor(data) {
     super(data);
@@ -65,6 +66,7 @@ class Texture extends Component {
     `;
     this.onChange = data.onChange;
     this.targetItemKey = data.targetItemKey;
+    this.itemIndex = data.itemIndex;
   }
 
   paint = () => {
@@ -161,6 +163,7 @@ class Texture extends Component {
             imageId: newId,
             prevImageId: prevVal,
             targetItemKey: this.targetItemKey,
+            itemIndex: this.itemIndex,
           });
           // this.changeTexture();
         },
@@ -175,8 +178,16 @@ class Texture extends Component {
         label: 'Flip Y',
         class: 'flipY',
         changeFn: (e) => {
+          const prevVal = this.params.flipY;
           this.params.flipY = e.target.checked;
-          this.changeTexture();
+          updateTextureParam({
+            textureId: this.textureId,
+            params: this.params,
+            targetItemKey: 'textures.flipY',
+            targetParamKey: 'flipY',
+            newVal: e.target.checked,
+            prevVal,
+          });
         },
         value: this.params.flipY,
       })
@@ -194,8 +205,16 @@ class Texture extends Component {
         changeFn: (e) => {
           const value = parseInt(e.target.value);
           if (this.params.wrapS === value) return;
+          const prevVal = this.params.wrapS;
           this.params.wrapS = value;
-          this.changeTexture();
+          updateTextureParam({
+            textureId: this.textureId,
+            params: this.params,
+            targetItemKey: 'textures.wrapS',
+            targetParamKey: 'wrapS',
+            newVal: value,
+            prevVal,
+          });
         },
       })
     );
@@ -212,8 +231,16 @@ class Texture extends Component {
         changeFn: (e) => {
           const value = parseInt(e.target.value);
           if (this.params.wrapT === value) return;
+          const prevVal = this.params.wrapT;
           this.params.wrapT = value;
-          this.changeTexture();
+          updateTextureParam({
+            textureId: this.textureId,
+            params: this.params,
+            targetItemKey: 'textures.wrapT',
+            targetParamKey: 'wrapT',
+            newVal: value,
+            prevVal,
+          });
         },
       })
     );
@@ -233,8 +260,16 @@ class Texture extends Component {
         disabled: this.params.wrapS === THREE.ClampToEdgeWrapping,
         changeFn: (value) => {
           if (this.params.wrapSTimes === value) return;
+          const prevVal = this.params.wrapSTimes;
           this.params.wrapSTimes = value;
-          this.changeTexture();
+          updateTextureParam({
+            textureId: this.textureId,
+            params: this.params,
+            targetItemKey: 'textures.repeat.x',
+            targetParamKey: 'wrapSTimes',
+            newVal: value,
+            prevVal,
+          });
         },
       })
     );
@@ -254,8 +289,16 @@ class Texture extends Component {
         disabled: this.params.wrapT === THREE.ClampToEdgeWrapping,
         changeFn: (value) => {
           if (this.params.wrapTTimes === value) return;
+          const prevVal = this.params.wrapTTimes;
           this.params.wrapTTimes = value;
-          this.changeTexture();
+          updateTextureParam({
+            textureId: this.textureId,
+            params: this.params,
+            targetItemKey: 'textures.repeat.y',
+            targetParamKey: 'wrapTTimes',
+            newVal: value,
+            prevVal,
+          });
         },
       })
     );
