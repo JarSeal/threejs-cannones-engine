@@ -23,9 +23,9 @@
       "near": 0.1,
       "far": 256,
       "position": [
-        14.893773116678496,
-        6.054683605497887,
-        10.605758770095465
+        14.28586559502821,
+        5.18614358593752,
+        11.727477940755177
       ],
       "rotation": [
         -0.35140833422217105,
@@ -69,10 +69,10 @@
       "isTargetingObject": true,
       "index": 0,
       "quaternion": [
-        -0.08806409684948188,
-        0.47016872026275774,
-        0.04721735995148182,
-        0.8769017107132236
+        -0.06954101678541133,
+        0.4421247111495484,
+        0.03440699532150744,
+        0.8935915988013345
       ],
       "lookAt": null
     },
@@ -291,11 +291,11 @@
     },
     {
       "name": "jotain2",
-      "image": "uv-checker-02-1024",
+      "image": "another-uv-checker",
       "flipY": true,
       "wrapS": 1000,
       "wrapT": 1000,
-      "wrapSTimes": 3,
+      "wrapSTimes": 3.5,
       "wrapTTimes": 2,
       "offsetU": 0,
       "offsetV": 0,
@@ -351,7 +351,7 @@
     }
   ],
   "dateCreated": 1674498237023,
-  "dateSaved": 1675520906421,
+  "dateSaved": 1675555793937,
   "curCameraIndex": 0,
   "projectFolder": "devProject1",
   "orbiterMoving": false

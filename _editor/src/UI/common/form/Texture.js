@@ -303,6 +303,144 @@ class Texture extends Component {
       })
     );
 
+    // OffsetU
+    this.addChildDraw(
+      new NumberInput({
+        id: this.id + '-offsetU',
+        label: 'Offset U',
+        class: 'oneFourthWidth',
+        attach: this.textureParamsContentId,
+        step: 0.05,
+        min: 0,
+        max: 1,
+        precision: 10,
+        value: this.params.offsetU,
+        changeFn: (value) => {
+          if (this.params.offsetU === value) return;
+          const prevVal = this.params.offsetU;
+          this.params.offsetU = value;
+          updateTextureParam({
+            textureId: this.textureId,
+            params: this.params,
+            targetItemKey: 'textures.offset.x',
+            targetParamKey: 'offsetU',
+            newVal: value,
+            prevVal,
+          });
+        },
+      })
+    );
+
+    // OffsetV
+    this.addChildDraw(
+      new NumberInput({
+        id: this.id + '-offsetV',
+        label: 'Offset V',
+        class: 'oneFourthWidth',
+        attach: this.textureParamsContentId,
+        step: 0.05,
+        min: 0,
+        max: 1,
+        precision: 10,
+        value: this.params.offsetV,
+        changeFn: (value) => {
+          if (this.params.offsetV === value) return;
+          const prevVal = this.params.offsetV;
+          this.params.offsetV = value;
+          updateTextureParam({
+            textureId: this.textureId,
+            params: this.params,
+            targetItemKey: 'textures.offset.y',
+            targetParamKey: 'offsetV',
+            newVal: value,
+            prevVal,
+          });
+        },
+      })
+    );
+
+    // CenterU
+    this.addChildDraw(
+      new NumberInput({
+        id: this.id + '-centerU',
+        label: 'Center U',
+        class: 'oneFourthWidth',
+        attach: this.textureParamsContentId,
+        step: 0.05,
+        min: 0,
+        max: 1,
+        precision: 10,
+        value: this.params.centerU,
+        changeFn: (value) => {
+          if (this.params.centerU === value) return;
+          const prevVal = this.params.centerU;
+          this.params.centerU = value;
+          updateTextureParam({
+            textureId: this.textureId,
+            params: this.params,
+            targetItemKey: 'textures.center.x',
+            targetParamKey: 'centerU',
+            newVal: value,
+            prevVal,
+          });
+        },
+      })
+    );
+
+    // CenterV
+    this.addChildDraw(
+      new NumberInput({
+        id: this.id + '-centerV',
+        label: 'Center V',
+        class: 'oneFourthWidth',
+        attach: this.textureParamsContentId,
+        step: 0.05,
+        min: 0,
+        max: 1,
+        precision: 10,
+        value: this.params.centerV,
+        changeFn: (value) => {
+          if (this.params.centerV === value) return;
+          const prevVal = this.params.centerV;
+          this.params.centerV = value;
+          updateTextureParam({
+            textureId: this.textureId,
+            params: this.params,
+            targetItemKey: 'textures.center.y',
+            targetParamKey: 'centerV',
+            newVal: value,
+            prevVal,
+          });
+        },
+      })
+    );
+
+    // Rotation
+    this.addChildDraw(
+      new NumberInput({
+        id: this.id + '-rotation',
+        label: 'Rotation',
+        class: 'oneFourthWidth',
+        attach: this.textureParamsContentId,
+        step: Math.PI / 8,
+        precision: 10,
+        value: this.params.rotation,
+        changeFn: (value) => {
+          if (this.params.rotation === value) return;
+          const prevVal = this.params.rotation;
+          this.params.rotation = value;
+          updateTextureParam({
+            textureId: this.textureId,
+            params: this.params,
+            targetItemKey: 'textures.rotation',
+            targetParamKey: 'rotation',
+            newVal: value,
+            prevVal,
+          });
+        },
+      })
+    );
+
     // Show/hide params toggler
     this.paramsToggler = this.addChildDraw(
       new Button({

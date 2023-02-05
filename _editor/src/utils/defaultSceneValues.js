@@ -113,8 +113,8 @@ export const DEFAULT_TEXTURE = {
   wrapTTimes: 1,
   offsetU: 0,
   offsetV: 0,
-  centerU: 0.5,
-  centerV: 0.5,
+  centerU: 0,
+  centerV: 0,
   rotation: 0,
 };
 
