@@ -215,7 +215,7 @@ export const getFileSizeString = (number) => {
 export const getDateString = (date) => {
   // @TODO: this needs more design & work...
   const dateObject = new Date(date);
-  return `${dateObject.getDate()}.${dateObject.getMonth()}.${dateObject.getFullYear()}`;
+  return `${dateObject.getDate()}.${dateObject.getMonth() + 1}.${dateObject.getFullYear()}`;
 };
 
 export const getImagePath = (imageParams) =>

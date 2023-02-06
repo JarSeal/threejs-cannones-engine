@@ -4,6 +4,7 @@ import { saveAllTexturesState } from '../sceneData/saveSession';
 
 import { getSceneItem, setSceneItem } from '../sceneData/sceneItems';
 import { getSceneParam, setSceneParam } from '../sceneData/sceneParams';
+import ConfirmationDialog from '../UI/dialogs/Confirmation';
 import { DEFAULT_TEXTURE } from './defaultSceneValues';
 import { createTexture, setValueToSceneItem } from './utils';
 
@@ -130,7 +131,33 @@ export const deleteTexture = (id) => {
   console.log('deleteTexture', id);
 };
 
+export const destroyTexture = (params, destroyWithoutDialogAndUndo) => {
+  const removeTexture = () => {
+    console.log('destroy texture');
+  };
+  if (!destroyWithoutDialogAndUndo) {
+    const textureTextToDestroy = params.name ? `${params.name} (id: "${params.id})"` : params.id;
+    getSceneItem('dialog').appear({
+      component: ConfirmationDialog,
+      componentData: {
+        id: 'destroy-texture-dialog',
+        confirmButtonClasses: ['confirmButtonDelete'],
+        confirmButtonText: 'Destroy!',
+        message: `Are you sure you want to destroy this texture completely: ${textureTextToDestroy}? This will NOT destroy the image used in this texture.`,
+        confirmButtonFn: () => {
+          removeTexture();
+          getSceneItem('dialog').disappear();
+        },
+      },
+      title: 'Are you sure?',
+    });
+  } else {
+    removeTexture();
+  }
+};
+
 export default {
   updateTextureImage,
   updateTextureParam,
+  destroyTexture,
 };

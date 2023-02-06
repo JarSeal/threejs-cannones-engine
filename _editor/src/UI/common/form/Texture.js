@@ -9,7 +9,11 @@ import {
   setSceneParamR,
 } from '../../../sceneData/sceneParams';
 import { WRAP_OPTIONS } from '../../../utils/defaultSceneValues';
-import { updateTextureImage, updateTextureParam } from '../../../utils/toolsForTextures';
+import {
+  destroyTexture,
+  updateTextureImage,
+  updateTextureParam,
+} from '../../../utils/toolsForTextures';
 import { getImagePath, printName } from '../../../utils/utils';
 import SvgIcon from '../../icons/svg-icon';
 import NewTexturePopup from '../../popupsForms/NewTexturePopup';
@@ -437,6 +441,23 @@ class Texture extends Component {
             newVal: value,
             prevVal,
           });
+        },
+      })
+    );
+
+    // Delete texture button
+    this.addChildDraw(
+      new Button({
+        id: this.id + '-destroy-texture',
+        icon: new SvgIcon({
+          id: this.id + '-destroy-texture-icon',
+          icon: 'trash',
+          width: 12,
+        }),
+        attach: this.textureParamsContentId,
+        class: ['panelActionButton', 'delete-button'],
+        onClick: () => {
+          destroyTexture(this.params);
         },
       })
     );
