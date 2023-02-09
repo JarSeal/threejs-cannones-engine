@@ -12,6 +12,7 @@ import Button from '../Button';
 // - itemsPerPage = number (default is 10)
 // - addSearchKeys = string[] (keys of properties to add to default search keys, which are printName and id, in this order)
 // - startSearchLength = number (default is 0, and this means that the search starts when the search string length is over or equal to this number)
+// - staticHeight = number (optional, if set, the component gets a static height and the contents become scrollable)
 class SmallListSelector extends Component {
   constructor(data) {
     super(data);
@@ -34,6 +35,7 @@ class SmallListSelector extends Component {
     this.selectedId = data.selectedId;
     this.addSearchKeys = data.addSearchKeys;
     this.startSearchLength = data.startSearchLength;
+    this.staticHeight = data.staticHeight;
     this.selectedParams = null;
     if (this.selectedId) {
       this.selectedParams = this.list.find((item) => item.id === this.selectedId);
@@ -41,7 +43,9 @@ class SmallListSelector extends Component {
     this.searchInputId = this.id + '-search-input';
     this.actionButtonsId = this.id + '-action-buttons';
     this.listOuterWrapperId = this.id + '-list-outer-wrapper';
-    this.template = `<div class="smallListSelector">
+    this.template = `<div class="smallListSelector${this.staticHeight ? ' staticHeight' : ''}"${
+      this.staticHeight ? ` style="height: ${this.staticHeight}px;"` : ''
+    }>
       <div class="topBar">
         <div class="searchBar">
           <input type="text" placeholder="Search..." id="${this.searchInputId}" />
