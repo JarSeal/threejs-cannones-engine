@@ -16,7 +16,7 @@ class TextureLoader {
     this.textures = {};
   }
 
-  loadTexture = (url, forceNew, onLoad) => {
+  loadTexture = (url, forceNew, onLoad, onError) => {
     this.allTexturesLoaded = false;
     this.texturesLoading = true;
     this.loadingCounts.loading += 1;
@@ -45,6 +45,7 @@ class TextureLoader {
           this.allTexturesLoaded = true;
         }
         this.textures[url] = texture;
+        if (onLoad) onLoad(this);
       },
       undefined, // onProgress callback currently not supported
       (error) => {
@@ -64,6 +65,7 @@ class TextureLoader {
           this.allTexturesLoaded = true;
         }
         this.disposeTextureFromCache(url);
+        if (onError) onError(this);
       }
     );
     return returnObject;
