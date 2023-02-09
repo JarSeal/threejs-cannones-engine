@@ -1,2 +1,29 @@
 .changeImagePopover {
+  .selectedImageIndicator {
+    width: 100%;
+    font-size: 1.1rem;
+    @include basetext-font;
+    font-size: 1.2rem;
+    .label {
+      color: $mid-grey3;
+      font-style: italic;
+    }
+    .selectedImageId {
+      @include basetext-font-bold;
+      &:after {
+        display: block;
+        content: '';
+        width: 100%;
+      }
+    }
+    .selectedImageFileName {
+      display: block;
+      width: 100%;
+      @include basetext-font-bold;
+      font-size: 1.2rem;
+      height: 3.5rem;
+      margin-top: -0.2rem;
+      word-break: break-all;
+    }
+  }
 }

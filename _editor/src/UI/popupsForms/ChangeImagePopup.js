@@ -132,14 +132,14 @@ class ChangeImagePopup extends Component {
     });
     this._getMenu();
 
-    const selectedImageNameId = this.id + '-sel-img-name';
+    const selectedImageFileNameId = this.id + '-sel-img-name';
     const selectedImageIdId = this.id + '-sel-img-id';
     this.addChildDraw({
       id: this.id + '-sel-image-indicator',
       template: `<div class="selectedImageIndicator">
         <span class="label">Selected:</span>
-        <span class="selectedImageName" id="${selectedImageNameId}">${this.selectedFileName}</span>
-        <span class="selectedImageName" id="${selectedImageIdId}">${this.selectedId}</span>
+        <span class="selectedImageId" id="${selectedImageIdId}">${this.selectedId}</span>
+        <span class="selectedImageFileName" id="${selectedImageFileNameId}">${this.selectedFileName}</span>
       </div>`,
     });
 
@@ -157,12 +157,13 @@ class ChangeImagePopup extends Component {
           const selectedParams = getSceneParam('images').find((img) => img.id === id);
           this.selectedFileName = selectedParams?.fileName || '';
           this.elem.querySelector('#' + selectedImageIdId).textContent = this.selectedId;
-          this.elem.querySelector('#' + selectedImageNameId).textContent = this.selectedFileName;
+          this.elem.querySelector('#' + selectedImageFileNameId).textContent =
+            this.selectedFileName;
         },
       })
     );
 
-    // Confirm button (NEW IMAGE)
+    // Confirm button (SELECT IMAGE)
     this.addChildDraw(
       new Button({
         id: this.id + '-confirmBtn',
