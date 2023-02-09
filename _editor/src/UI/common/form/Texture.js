@@ -70,7 +70,7 @@ class Texture extends Component {
     `;
     this.onChange = data.onChange;
     this.targetItemKey = data.targetItemKey;
-    this.itemIndex = data.itemIndex;
+    this.itemId = data.itemId;
   }
 
   paint = () => {
@@ -167,7 +167,7 @@ class Texture extends Component {
             imageId: newId,
             prevImageId: prevVal,
             targetItemKey: this.targetItemKey,
-            itemIndex: this.itemIndex,
+            itemId: this.itemId,
           });
           // this.changeTexture();
         },

@@ -12,7 +12,7 @@ export const saveScene = async () => {
   const sceneParams = { ...getSceneParams() };
   delete sceneParams.editor;
   delete sceneParams.images;
-  delete sceneParams.cubemaps; // @TODO: check if this is actually the param to be used (writing this when this hasn't been implemented yet)
+  delete sceneParams.allProjectScenes;
   const response = await saveSceneApi(sceneParams);
   if (!response.error) {
     getSceneItem('toaster').addToast({

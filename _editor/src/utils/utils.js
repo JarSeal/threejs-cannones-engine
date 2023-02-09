@@ -6,9 +6,10 @@ import {
   getHasUnsavedChanges,
   saveProjectFolder,
   saveSceneId,
+  saveSceneState,
 } from '../sceneData/saveSession';
 import { getSceneItem, resetSceneItems, setSceneItem } from '../sceneData/sceneItems';
-import { getSceneParam, resetSceneParams } from '../sceneData/sceneParams';
+import { getSceneParam, resetSceneParams, setSceneParam } from '../sceneData/sceneParams';
 import SaveBeforeCloseDialog from '../UI/dialogs/SaveBeforeClose';
 import {
   CANVAS_ELEM_ID,
@@ -259,7 +260,9 @@ export const createTexture = (params) => {
   return textureItem;
 };
 
-export const setValueToSceneItem = ({ targetItemKey, value, itemIndex }) => {
+// If the "targetItemKey" is an array (eg. textures, material, etc.), the itemId is required.
+// This can also set value to a scene param when the switch "isParam" is set to true.
+export const setValueToSceneItem = ({ targetItemKey, value, itemId, isParam }) => {
   if (!targetItemKey) {
     const errorMsg = `${APP_DEFAULTS.APP_NAME}: targetItemKey missing (targetItemKey: "${targetItemKey}").`;
     console.error(errorMsg);
@@ -271,9 +274,9 @@ export const setValueToSceneItem = ({ targetItemKey, value, itemIndex }) => {
     return;
   }
   const splitTargets = targetItemKey.split('.');
-  let sceneItem = getSceneItem(splitTargets[0]);
-  if (Array.isArray(sceneItem) && itemIndex === undefined) {
-    const errorMsg = `${APP_DEFAULTS.APP_NAME}: the sceneItem "${splitTargets[0]}" is an array, but no itemIndex was provided (targetItemKey: "${targetItemKey}").`;
+  let sceneItem = isParam ? getSceneParam(splitTargets[0]) : getSceneItem(splitTargets[0]);
+  if (Array.isArray(sceneItem) && (itemId === undefined || itemId === null)) {
+    const errorMsg = `${APP_DEFAULTS.APP_NAME}: the sceneItem "${splitTargets[0]}" is an array, but no itemId was provided (targetItemKey: "${targetItemKey}").`;
     console.error(errorMsg);
     getSceneItem('toaster').addToast({
       type: 'error',
@@ -282,8 +285,19 @@ export const setValueToSceneItem = ({ targetItemKey, value, itemIndex }) => {
     });
     return;
   }
-  if (itemIndex !== undefined) sceneItem = sceneItem[itemIndex];
-  if (splitTargets.length === 2) {
+
+  if (isParam) {
+    if (itemId !== undefined && itemId !== null)
+      sceneItem = sceneItem.find((item) => item.id === itemId);
+  } else {
+    if (itemId !== undefined && itemId !== null)
+      sceneItem = sceneItem.find((item) => item.userData.id === itemId);
+  }
+
+  if (splitTargets.length === 1 && isParam) {
+    setSceneParam(splitTargets[0], value);
+    saveSceneState();
+  } else if (splitTargets.length === 2) {
     sceneItem[splitTargets[1]] = value;
   } else if (splitTargets.length === 3) {
     sceneItem[splitTargets[1]][splitTargets[2]] = value;

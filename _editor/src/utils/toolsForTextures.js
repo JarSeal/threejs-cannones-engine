@@ -1,11 +1,11 @@
 import * as THREE from 'three';
 import { APP_DEFAULTS } from '../../../APP_CONFIG';
-import { saveAllTexturesState } from '../sceneData/saveSession';
+import { saveAllTexturesState, saveSceneState } from '../sceneData/saveSession';
 
 import { getSceneItem, setSceneItem } from '../sceneData/sceneItems';
 import { getSceneParam, setSceneParam } from '../sceneData/sceneParams';
 import ConfirmationDialog from '../UI/dialogs/Confirmation';
-import { DEFAULT_TEXTURE } from './defaultSceneValues';
+import { DEFAULT_TEXTURE, MATERIAL_TEXTURE_KEYS } from './defaultSceneValues';
 import { createTexture, setValueToSceneItem } from './utils';
 
 // @TODO: change this to changeTextureParam (also for undo/redo) and add paramName parameter, and create a new texture every time
@@ -14,7 +14,7 @@ export const updateTextureImage = async ({
   imageId,
   prevImageId,
   targetItemKey,
-  itemIndex,
+  itemId,
 }) => {
   const textureParams = getSceneParam('textures').find((tex) => tex.id === textureId);
   if (!textureParams) {
@@ -43,10 +43,11 @@ export const updateTextureImage = async ({
   const filteredParams = getSceneParam('textures').filter((param) => param.id !== textureId);
   setSceneParam('textures', [...filteredParams, { ...textureParams, image: imageId }]);
 
-  setValueToSceneItem({ targetItemKey, value: newTexture, itemIndex });
+  setValueToSceneItem({ targetItemKey, value: newTexture, itemId });
 
   saveAllTexturesState();
   getSceneItem('rightSidePanel').updatePanel();
+  getSceneItem('elemTool').updateTool();
   getSceneItem('undoRedo').addAction({
     type: 'updateTextureImage',
     prevVal,
@@ -66,11 +67,7 @@ export const updateTextureParam = ({
   newVal,
   prevVal,
 }) => {
-  let textureItemIndex;
-  const textureItem = getSceneItem('textures').find((tex, index) => {
-    textureItemIndex = index;
-    return tex.userData.id === textureId;
-  });
+  const textureItem = getSceneItem('textures').find((tex) => tex.userData.id === textureId);
   if (!textureItem) {
     const errorMsg = `${APP_DEFAULTS.APP_NAME}: Could not find textureItem for texture ID "${textureId}".`;
     console.error(errorMsg);
@@ -86,11 +83,10 @@ export const updateTextureParam = ({
   const filteredParams = getSceneParam('textures').filter((param) => param.id !== textureId);
   setSceneParam('textures', [...filteredParams, { ...params, [targetParamKey]: newVal }]);
 
-  setValueToSceneItem({ targetItemKey, value: newVal, itemIndex: textureItemIndex });
+  setValueToSceneItem({ targetItemKey, value: newVal, itemId: textureId });
   textureItem.needsUpdate = true;
 
   saveAllTexturesState();
-  getSceneItem('rightSidePanel').updatePanel();
   const prevParams = { ...params, [targetParamKey]: prevVal };
   getSceneItem('undoRedo').addAction({
     type: 'updateTextureParam',
@@ -127,13 +123,68 @@ export const createNewTexture = (id, name) => {
   setSceneItem('textures', [...textureItems, newTextureItem]);
 };
 
-export const deleteTexture = (id) => {
-  console.log('deleteTexture', id);
-};
-
 export const destroyTexture = (params, destroyWithoutDialogAndUndo) => {
   const removeTexture = () => {
-    console.log('destroy texture');
+    console.log('destroy texture', params);
+
+    const prevValKeys = []; // This is used for the undo/redo
+    const scene = getSceneItem('scene');
+
+    // Remove root level param keys (scene.background)
+    const backgroundTexId = getSceneParam('backgroundTexture');
+    if (backgroundTexId === params.id) {
+      setSceneParam('backgroundTexture', null);
+      scene.background = null;
+      prevValKeys.push({
+        targetItemKey: 'scene.background',
+        targetParamKey: 'backgroundTexture',
+        itemId: null,
+      });
+      saveSceneState();
+    }
+
+    // Remove material params' textures and set prevValKeys (for undo)
+    getSceneParam('materials', []).forEach((mat) => {
+      MATERIAL_TEXTURE_KEYS.forEach((key) => {
+        if (mat[key] === params.id) {
+          mat[key] = null;
+          prevValKeys.push({
+            targetItemKey: 'materials.' + key,
+            targetParamKey: 'materials.' + key,
+            itemId: mat.id,
+          });
+        }
+      });
+    });
+    // Remove material items' textures
+    getSceneItem('materials', []).forEach((mat) => {
+      MATERIAL_TEXTURE_KEYS.forEach((key) => {
+        if (mat[key]?.userData?.id === params.id) {
+          mat[key] = null;
+        }
+      });
+    });
+
+    // @TODO: remove possible spot light maps
+
+    // Filter texture params
+    const filteredParams = getSceneParam('textures').filter((tex) => tex.id !== params.id);
+    setSceneParam('textures', filteredParams);
+
+    // Filter texture items
+    const filteredItems = getSceneItem('textures').filter((tex) => tex.userData !== params.id);
+    setSceneItem('textures', filteredItems);
+
+    saveAllTexturesState();
+    getSceneItem('rightSidePanel').updatePanel();
+    getSceneItem('elemTool').updateTool();
+
+    // Add undo/redo action
+    getSceneItem('undoRedo').addAction({
+      type: 'destroyTexture',
+      prevVal: { ...params, prevValKeys },
+      newVal: params,
+    });
   };
   if (!destroyWithoutDialogAndUndo) {
     const textureTextToDestroy = params.name ? `${params.name} (id: "${params.id})"` : params.id;
@@ -143,7 +194,7 @@ export const destroyTexture = (params, destroyWithoutDialogAndUndo) => {
         id: 'destroy-texture-dialog',
         confirmButtonClasses: ['confirmButtonDelete'],
         confirmButtonText: 'Destroy!',
-        message: `Are you sure you want to destroy this texture completely: ${textureTextToDestroy}? This will NOT destroy the image used in this texture.`,
+        message: `Are you sure you want to destroy this texture completely: "${textureTextToDestroy}"? This will remove all references to this texture in the scene/materials. This will NOT, however, destroy the image used in this texture.`,
         confirmButtonFn: () => {
           removeTexture();
           getSceneItem('dialog').disappear();

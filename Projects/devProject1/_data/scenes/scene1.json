@@ -3,7 +3,7 @@
   "name": "some scene",
   "rendererClearColor": "#ffccda",
   "backgroundType": "texture",
-  "backgroundTexture": "mun2",
+  "backgroundTexture": "be-gone",
   "backgroundSkybox": null,
   "grid": false,
   "gridSize": 26,
@@ -28,9 +28,9 @@
         11.727477940755177
       ],
       "rotation": [
-        -0.35140833422217105,
-        0.9549194335772361,
-        0.2907816233337881
+        -0.2525985471356899,
+        0.9032975873973452,
+        0.2000036633456861
       ],
       "scale": [
         1,
@@ -291,7 +291,7 @@
     },
     {
       "name": "jotain2",
-      "image": "another-uv-checker",
+      "image": "uv-checker-02-1024",
       "flipY": true,
       "wrapS": 1000,
       "wrapT": 1000,
@@ -303,55 +303,26 @@
       "centerV": 0.5,
       "rotation": 0,
       "id": "mun2"
+    },
+    {
+      "name": "Destroy me",
+      "image": "another-uv-checker",
+      "flipY": true,
+      "wrapS": 1000,
+      "wrapT": 1000,
+      "wrapSTimes": 3,
+      "wrapTTimes": 2.5,
+      "offsetU": 0,
+      "offsetV": 0,
+      "centerU": 0,
+      "centerV": 0,
+      "rotation": 0.3926990817,
+      "id": "be-gone"
     }
   ],
   "cubetextures": [],
-  "allProjectScenes": [
-    {
-      "sceneId": "scene1",
-      "sceneName": "some scene",
-      "projectFolder": "devProject1",
-      "projectName": "",
-      "dateSaved": 1674990949693
-    },
-    {
-      "sceneId": "scene6",
-      "sceneName": "Some scene",
-      "projectFolder": "devProject1",
-      "projectName": "",
-      "dateSaved": 1674498481849
-    },
-    {
-      "sceneId": "scene2",
-      "sceneName": "Scene 2",
-      "projectFolder": "devProject1",
-      "projectName": "",
-      "dateSaved": 1674498410941
-    },
-    {
-      "sceneId": "scene3",
-      "sceneName": "My third scene",
-      "projectFolder": "devProject1",
-      "projectName": "",
-      "dateSaved": 1674498336523
-    },
-    {
-      "sceneId": "scene4",
-      "sceneName": "My fourth scene",
-      "projectFolder": "devProject1",
-      "projectName": "",
-      "dateSaved": 1674498320955
-    },
-    {
-      "sceneId": "scene5",
-      "sceneName": "New scene",
-      "projectFolder": "devProject1",
-      "projectName": "",
-      "dateSaved": 1674498295650
-    }
-  ],
   "dateCreated": 1674498237023,
-  "dateSaved": 1675555793937,
+  "dateSaved": 1675947891588,
   "curCameraIndex": 0,
   "projectFolder": "devProject1",
   "orbiterMoving": false

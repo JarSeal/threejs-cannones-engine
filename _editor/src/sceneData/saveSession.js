@@ -158,9 +158,11 @@ export const saveSceneState = (values) => {
   delete sceneParams.elements;
   delete sceneParams.lights;
   delete sceneParams.editor;
+  delete sceneParams.materials;
   delete sceneParams.textures;
   delete sceneParams.cubetextures;
   delete sceneParams.images;
+  delete sceneParams.allProjectScenes;
   const newParams = { ...sceneParams, ...values };
   LS.setItem('sceneState', JSON.stringify(newParams));
   setHasUnsavedChanges();

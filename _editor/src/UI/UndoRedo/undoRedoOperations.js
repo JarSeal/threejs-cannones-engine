@@ -3,12 +3,14 @@ import * as THREE from 'three';
 import { selectObjects } from '../../controls/stageClick';
 import { getSceneItem, setSceneItem } from '../../sceneData/sceneItems';
 import worldTools from '../../utils/toolsForWorld';
-import cameraTools, { changeCurCamera } from '../../utils/toolsForCamera';
+import cameraTools from '../../utils/toolsForCamera';
 import textureTools from '../../utils/toolsForTextures';
 import { getSceneParam, setSceneParam } from '../../sceneData/sceneParams';
-import { saveAllCamerasState } from '../../sceneData/saveSession';
+import { saveAllCamerasState, saveAllTexturesState } from '../../sceneData/saveSession';
 import { updateElemTranslation } from '../../controls/transformControls';
 import { updateElemProperty, updateElemTransforms } from '../../utils/toolsForElems';
+import { createTexture, setValueToSceneItem } from '../../utils/utils';
+import toolsForTextures from '../../utils/toolsForTextures';
 
 const undoRedoOperations = {
   // ID
@@ -129,7 +131,8 @@ const undoRedoOperations = {
     cameraTools.toggleShowCameraHelper(isUndo ? action.prevVal : action.newVal, action.cameraIndex);
     getSceneItem('rightSidePanel').updatePanel();
   },
-  changeCurCamera: (action, isUndo) => changeCurCamera(isUndo ? action.prevVal : action.newVal),
+  changeCurCamera: (action, isUndo) =>
+    cameraTools.changeCurCamera(isUndo ? action.prevVal : action.newVal),
   resetCameraTransforms: (action, isUndo) => {
     if (isUndo) {
       cameraTools.updateCameraTransforms('position', action.prevVal.pos[0], 0, action.cameraIndex);
@@ -223,8 +226,41 @@ const undoRedoOperations = {
   // Textures
   updateTextureImage: (action, isUndo) =>
     textureTools.updateTextureImage(isUndo ? action.prevVal : action.newVal),
-  updateTextureParam: (action, isUndo) =>
-    textureTools.updateTextureParam(isUndo ? action.prevVal : action.newVal),
+  updateTextureParam: (action, isUndo) => {
+    textureTools.updateTextureParam(isUndo ? action.prevVal : action.newVal);
+    getSceneItem('rightSidePanel').updatePanel();
+    getSceneItem('elemTool').updateTool();
+  },
+  destroyTexture: (action, isUndo) => {
+    if (isUndo) {
+      // @TODO: check and test properly for destroying textures from materials (also that it destroys textures that are used in multiple materials, and then undoes the destroying).
+      // (this implementation was written when it was only possible to set a texture for scene.background)
+      const prevParams = { ...action.prevVal };
+      delete prevParams.prevValKeys;
+      const prevTextureItem = createTexture(prevParams);
+      setSceneItem('textures', [...getSceneItem('textures'), prevTextureItem]);
+      setSceneParam('textures', [...getSceneParam('textures'), prevParams]);
+      saveAllTexturesState();
+      const keys = action.prevVal.prevValKeys;
+      for (let i = 0; i < keys.length; i++) {
+        setValueToSceneItem({
+          targetItemKey: keys[i].targetItemKey,
+          value: prevTextureItem,
+          itemId: keys[i].itemId,
+        });
+        setValueToSceneItem({
+          targetItemKey: keys[i].targetParamKey,
+          value: action.prevVal.id,
+          itemId: keys[i].itemId,
+          isParam: true,
+        });
+      }
+      getSceneItem('rightSidePanel').updatePanel();
+      getSceneItem('elemTool').updateTool();
+    } else {
+      toolsForTextures.destroyTexture(action.newVal, true);
+    }
+  },
 };
 
 export default undoRedoOperations;

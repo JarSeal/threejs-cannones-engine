@@ -29,11 +29,6 @@ export const NEW_SHAPE_BOX = {
   shape3D: 'box',
 };
 
-export const NEW_MATERIAL = {
-  type: 'basic',
-  color: '#ff0000',
-};
-
 export const NEW_ELEM_DEFAULT_PARAMS = {
   name: '',
   type: 'shape3D',
@@ -182,3 +177,96 @@ export const DEFAULT_SCENE = {
   textures: [],
   cubetextures: [],
 };
+
+export const MATERIAL_TEXTURE_KEYS = [
+  'alphaMap',
+  'aoMap',
+  'lightMap',
+  'map',
+  'specularMap',
+  'displacementMap',
+  'bumpMap',
+  'emissiveMap',
+  'lightMap',
+  'normalMap',
+  'matcap',
+  'clearcoatMap',
+  'clearcoatNormalMap',
+  'clearcoatRoughnessMap',
+  'sheenRoughnessMap',
+  'sheenColorMap',
+  'specularIntensityMap',
+  'specularColorMap',
+  'thicknessMap',
+  'transmissionMap',
+  'metalnessMap',
+  'roughnessMap',
+  'gradientMap',
+];
+
+export const MATERIAL_TYPES = [
+  {
+    value: 'basic',
+    label: 'Basic material',
+  },
+  {
+    value: 'lambert',
+    label: 'Lambert material',
+  },
+  {
+    value: 'phong',
+    label: 'Phong material',
+  },
+  {
+    value: 'physical',
+    label: 'Physical material',
+  },
+  {
+    value: 'standard',
+    label: 'Standard material',
+  },
+  {
+    value: 'matcap',
+    label: 'Matcap material',
+  },
+  {
+    value: 'toon',
+    label: 'Toon material',
+  },
+  {
+    value: 'normal',
+    label: 'Normal material',
+  },
+  {
+    value: 'Depth',
+    label: 'Depth material',
+  },
+  {
+    value: 'distance',
+    label: 'Distance material',
+  },
+  {
+    value: 'custom',
+    label: 'Custom material',
+  },
+];
+
+export const DEFAULT_BASIC_MATERIAL = {
+  type: 'basic',
+  color: '#ff0000',
+  alphaMap: null,
+  aoMap: null,
+  aoMapIntensity: 1,
+  envMap: null,
+  combine: THREE.MultiplyOperation,
+  fog: true,
+  lightMap: null,
+  lightMapIntensity: 1,
+  map: null,
+  reflectivity: 1,
+  refractionRatio: 0.98,
+  specularMap: null,
+  wireframe: false,
+};
+
+export const NEW_MATERIAL = DEFAULT_BASIC_MATERIAL;
