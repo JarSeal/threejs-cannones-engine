@@ -106,7 +106,7 @@
     padding: 0;
     display: block;
     border: 0.1rem solid $mid-grey3;
-    background-color: $mid-grey1;
+    background-color: $light-grey8;
     width: 100%;
     &.staticHeight {
       overflow: hidden;
@@ -181,7 +181,7 @@
       overflow-y: auto;
       &.scrollbar {
         scrollbar-width: 1rem;
-        scrollbar-color: $dark-grey3 transparent;
+        scrollbar-color: $light-grey8 transparent;
         &::-webkit-scrollbar {
           width: 1rem;
         }
@@ -190,10 +190,10 @@
           border-radius: 0;
         }
         &::-webkit-scrollbar-thumb {
-          background-color: $light-grey7;
-          border-radius: 0;
-          border-left: 0.5rem solid $mid-grey1;
-          border-right: 0.4rem solid $mid-grey1;
+          background-color: $mid-grey3;
+          border-radius: 0.5rem;
+          border-left: 0.3rem solid $light-grey8;
+          border-right: 0.3rem solid $light-grey8;
         }
       }
     }
@@ -254,7 +254,7 @@
     .lowerRight {
       width: 100%;
       line-height: 0.8rem;
-      bottom: -0.4rem;
+      bottom: -0.2rem;
     }
     .fileName {
       position: absolute;

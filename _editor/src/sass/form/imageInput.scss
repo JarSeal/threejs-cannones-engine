@@ -64,6 +64,30 @@
       background-color: transparent;
     }
   }
+  .removeImageBtn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+    outline: none;
+    border-radius: none;
+    background: transparent;
+    cursor: pointer;
+    width: 1.6rem;
+    height: 1.6rem;
+    path {
+      fill: $mid-grey3;
+      transition: fill 0.15s ease-in-out;
+    }
+    &:hover,
+    &:focus {
+      path {
+        fill: $mid-grey1;
+      }
+    }
+  }
   > .fileName {
     position: absolute;
     left: 3.6rem;

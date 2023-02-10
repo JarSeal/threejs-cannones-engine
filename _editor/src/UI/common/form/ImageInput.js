@@ -96,6 +96,17 @@ class ImageInput extends Component {
         },
       })
     );
+
+    if (this.imageId) {
+      this.addChildDraw(
+        new Button({
+          id: this.id + '-remove-image-btn',
+          class: 'removeImageBtn',
+          icon: new SvgIcon({ id: this.id + '-remove-image-icon', icon: 'xMark', width: 10 }),
+          onClick: () => this.update(null),
+        })
+      );
+    }
   };
 
   update = (id) => {
