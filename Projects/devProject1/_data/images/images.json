@@ -103,5 +103,18 @@
       "width": 2048,
       "height": 2048
     }
+  },
+  {
+    "fileName": "UVCheckerMap16-1024.png",
+    "fileSize": "197777",
+    "id": "Uv-checkRg-15-1024",
+    "name": "",
+    "projectFolder": "devProject1",
+    "type": "png",
+    "dateSaved": 1675988767801,
+    "dimensions": {
+      "width": 1024,
+      "height": 1024
+    }
   }
 ]

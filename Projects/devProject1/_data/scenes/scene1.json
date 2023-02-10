@@ -23,14 +23,14 @@
       "near": 0.1,
       "far": 256,
       "position": [
-        14.28586559502821,
-        5.18614358593752,
-        11.727477940755177
+        14.907022662503312,
+        6.684161524063489,
+        10.33297694164125
       ],
       "rotation": [
-        -0.2525985471356899,
-        0.9032975873973452,
-        0.2000036633456861
+        -0.2948690769840547,
+        0.9301858680707485,
+        0.2388558093140788
       ],
       "scale": [
         1,
@@ -69,10 +69,10 @@
       "isTargetingObject": true,
       "index": 0,
       "quaternion": [
-        -0.06954101678541133,
-        0.4421247111495484,
-        0.03440699532150744,
-        0.8935915988013345
+        -0.1020759556615898,
+        0.4746851524832768,
+        0.05553774633665562,
+        0.872450608355308
       ],
       "lookAt": null
     },
@@ -256,7 +256,7 @@
     }
   ],
   "selection": [
-    "default-ground"
+    "default-cube"
   ],
   "textures": [
     {
@@ -306,11 +306,11 @@
     },
     {
       "name": "Destroy me",
-      "image": "another-uv-checker",
+      "image": "Uv-checkRg-15-1024",
       "flipY": true,
       "wrapS": 1000,
       "wrapT": 1000,
-      "wrapSTimes": 3,
+      "wrapSTimes": 3.5,
       "wrapTTimes": 2.5,
       "offsetU": 0,
       "offsetV": 0,
@@ -322,7 +322,7 @@
   ],
   "cubetextures": [],
   "dateCreated": 1674498237023,
-  "dateSaved": 1675947891588,
+  "dateSaved": 1675988812383,
   "curCameraIndex": 0,
   "projectFolder": "devProject1",
   "orbiterMoving": false
