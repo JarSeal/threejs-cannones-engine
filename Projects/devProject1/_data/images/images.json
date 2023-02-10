@@ -116,5 +116,31 @@
       "width": 1024,
       "height": 1024
     }
+  },
+  {
+    "fileName": "cubemap_day_clouds_sea.png",
+    "fileSize": "1206153",
+    "id": "cubemap-test",
+    "name": "",
+    "projectFolder": "devProject1",
+    "type": "png",
+    "dateSaved": 1675988881856,
+    "dimensions": {
+      "width": 2048,
+      "height": 1536
+    }
+  },
+  {
+    "fileName": "UVCheckerMap17-1024.png",
+    "fileSize": "55606",
+    "id": "dark-uv-tight",
+    "name": "Tight- Pants",
+    "projectFolder": "devProject1",
+    "type": "png",
+    "dateSaved": 1675988929948,
+    "dimensions": {
+      "width": 1024,
+      "height": 1024
+    }
   }
 ]
