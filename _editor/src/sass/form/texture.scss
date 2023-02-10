@@ -124,12 +124,12 @@
       border-color: $light-grey7;
       margin-bottom: 0;
     }
-    .flipY {
-      width: calc(25% - ($gap / 2));
+    .halfWidth {
+      width: calc(50% - ($gap / 2));
       margin-bottom: 0;
     }
-    .wrapping {
-      width: calc(50% - ($gap / 2));
+    .oneFourthWidth {
+      width: calc(25% - $gap + 0.1rem);
       margin-bottom: 0;
     }
   }

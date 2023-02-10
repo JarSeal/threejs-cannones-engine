@@ -180,7 +180,7 @@ class Texture extends Component {
         id: this.id + '-flipY',
         attach: this.textureParamsContentId,
         label: 'Flip Y',
-        class: 'flipY',
+        class: 'oneFourthWidth',
         changeFn: (e) => {
           const prevVal = this.params.flipY;
           this.params.flipY = e.target.checked;
@@ -202,7 +202,7 @@ class Texture extends Component {
       new Dropdown({
         id: this.id + '-wrapS',
         label: 'Wrap S',
-        class: 'wrapping',
+        class: 'halfWidth',
         attach: this.textureParamsContentId,
         selected: this.params.wrapS,
         options: WRAP_OPTIONS,
@@ -228,7 +228,7 @@ class Texture extends Component {
       new Dropdown({
         id: this.id + '-wrapT',
         label: 'Wrap T',
-        class: 'wrapping',
+        class: 'halfWidth',
         attach: this.textureParamsContentId,
         selected: this.params.wrapT,
         options: WRAP_OPTIONS,
