@@ -1,5 +1,6 @@
 import { Component } from '../../../../LIGHTER';
-import { getDateString, printName } from '../../../utils/utils';
+import { getDateString, getImagePath, printName } from '../../../utils/utils';
+import SvgIcon from '../../icons/svg-icon';
 import Button from '../Button';
 
 // Attributes:
@@ -31,6 +32,7 @@ class SmallListSelector extends Component {
     this.list = this.list.sort(sortMethod);
     this.allItemsList = [...this.list];
 
+    this.type = data.type;
     this.onChange = data.onChange;
     this.selectedId = data.selectedId;
     this.addSearchKeys = data.addSearchKeys;
@@ -40,17 +42,16 @@ class SmallListSelector extends Component {
     if (this.selectedId) {
       this.selectedParams = this.list.find((item) => item.id === this.selectedId);
     }
+    this.searchBarId = this.id + '-search-bar';
     this.searchInputId = this.id + '-search-input';
     this.actionButtonsId = this.id + '-action-buttons';
     this.listOuterWrapperId = this.id + '-list-outer-wrapper';
-    this.template = `<div class="smallListSelector${this.staticHeight ? ' staticHeight' : ''}"${
-      this.staticHeight ? ` style="height: ${this.staticHeight}px;"` : ''
-    }>
+    this.template = `<div class="smallListSelector${this.staticHeight ? ' staticHeight' : ''}">
       <div class="topBar">
-        <div class="searchBar">
+        <div class="searchBar" id="${this.searchBarId}">
           <input type="text" placeholder="Search..." id="${this.searchInputId}" />
         </div>
-        <div class="actionButtons" id="${this.actionButtonsId}"></div>
+        <div class="viewSelectors" id="${this.actionButtonsId}"></div>
       </div>
       <div class="listOuterWrapper" id="${this.listOuterWrapperId}"></div>
     </div>`;
@@ -97,6 +98,31 @@ class SmallListSelector extends Component {
     const pageIndicatorId = this.id + '-page-indicator';
     const nextButtonId = this.id + '-next-page';
 
+    // Search icon and reset search button
+    const searchInputElem = this.elem.querySelector(`#${this.searchInputId}`);
+    this.listWrapper.addChildDraw(
+      new SvgIcon({
+        id: this.id + '-search-icon',
+        attach: this.searchBarId,
+        class: ['searchIcon', searchInputElem.value ? 'hide' : 'show'],
+        icon: 'search',
+      })
+    );
+    this.listWrapper.addChildDraw(
+      new Button({
+        id: this.id + '-reset-search',
+        attach: this.searchBarId,
+        class: ['resetSearch', searchInputElem.value ? 'show' : 'hide'],
+        icon: new SvgIcon({ id: this.id + '-reset-search-icon', icon: 'xMark', width: 10 }),
+        onClick: () => {
+          this.page = 1;
+          this.list = this.allItemsList;
+          searchInputElem.value = '';
+          this.updateList();
+        },
+      })
+    );
+
     // List
     this.listWrapper.addChildDraw({
       id: this.listElemId,
@@ -107,7 +133,7 @@ class SmallListSelector extends Component {
     this.listWrapper.addChildDraw(
       new Button({
         id: prevButtonId,
-        text: 'prev',
+        icon: new SvgIcon({ id: this.id + '-prev-page-icon', icon: 'caretLeft', width: 10 }),
         class: ['paginationBtn', 'paginationPrevBtn'],
         disabled: this.page === 1,
         onClick: () => {
@@ -125,7 +151,8 @@ class SmallListSelector extends Component {
     this.listWrapper.addChildDraw(
       new Button({
         id: nextButtonId,
-        text: 'next',
+        icon: new SvgIcon({ id: this.id + '-next-page-icon', icon: 'caretRight', width: 10 }),
+        class: ['paginationBtn', 'paginationNextBtn'],
         disabled: this.page >= totalPages,
         onClick: () => {
           this.page++;
@@ -171,9 +198,11 @@ class SmallListSelector extends Component {
   _createListTemplate = () => {
     const startItem = (this.page - 1) * this.itemsPerPage;
     const endItemPlusOne = startItem + this.itemsPerPage;
-    let template = '<ul>';
+    let template = `<ul${
+      this.staticHeight ? ` class="scrollbar" style="height: ${this.staticHeight}px;"` : ''
+    }>`;
     if (!this.list.length) {
-      template += `<li class="emptyState">No images found...</li>`;
+      template += `<li class="emptyState">No items found...</li>`;
     } else {
       for (let i = startItem; i < endItemPlusOne; i++) {
         const item = this.list[i];
@@ -195,17 +224,33 @@ class SmallListSelector extends Component {
   };
 
   _defaultItemTemplate = (item) => {
-    const template = `<li>
+    const template = `<li class="template--default">
       <button id="${item.id}"${this.selectedId === item.id ? ' class="selected"' : ''}>
         <span class="printName" style="pointer-events:none;">${item.printName}</span>
-        <span class="dateSaved" style="pointer-events:none;">${getDateString(item.dateSaved)}</span>
+        <span class="lowerRight" style="pointer-events:none;">${getDateString(
+          item.dateSaved
+        )}</span>
       </button>
     </li>`;
     return template;
   };
 
-  // @TODO: missing template
-  _imageItemTemplate = (item) => this._defaultItemTemplate(item);
+  _imageItemTemplate = (item) => {
+    const imagePath = getImagePath(item);
+    const template = `<li class="template--image">
+      <button id="${item.id}"${this.selectedId === item.id ? ' class="selected"' : ''}>
+        <div class="imageWrapper">
+          <img class="image" alt="${item.fileName}" src="${imagePath}" />
+        </div>
+        <span class="fileName" style="pointer-events:none;">${item.fileName}</span>
+        <span class="printName" style="pointer-events:none;">${item.printName}</span>
+        ${
+          item.name ? `<span class="lowerRight" style="pointer-events:none;">${item.id}</span>` : ''
+        }
+      </button>
+    </li>`;
+    return template;
+  };
 }
 
 export default SmallListSelector;

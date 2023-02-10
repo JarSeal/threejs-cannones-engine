@@ -3,8 +3,10 @@ import { Component } from '../../../LIGHTER';
 import barsMenuIcon from './svg/bars.svg?raw';
 import bookOpenIcon from './svg/book-open.svg?raw';
 import cameraIcon from './svg/video.svg?raw';
-import caretUpIcon from './svg/caret-up.svg?raw';
 import caretDownIcon from './svg/caret-down.svg?raw';
+import caretLeftIcon from './svg/caret-left.svg?raw';
+import caretRightIcon from './svg/caret-right.svg?raw';
+import caretUpIcon from './svg/caret-up.svg?raw';
 import cubeIcon from './svg/cube.svg?raw';
 import cubesIcon from './svg/cubes.svg?raw';
 import file from './svg/file.svg?raw';
@@ -12,6 +14,7 @@ import fileImage from './svg/file-image.svg?raw';
 import gearIcon from './svg/gear.svg?raw';
 import globeIcon from './svg/globe.svg?raw';
 import infoIcon from './svg/info.svg?raw';
+import searchIcon from './svg/magnifying-glass.svg?raw';
 import moveArrowsIcon from './svg/arrows-up-down-left-right.svg?raw';
 import mountainIcon from './svg/mountain-sun.svg?raw';
 import plusIcon from './svg/plus.svg?raw';
@@ -51,10 +54,14 @@ class SvgIcon extends Component {
         return bookOpenIcon;
       case 'camera':
         return cameraIcon;
-      case 'caretUp':
-        return caretUpIcon;
       case 'caretDown':
         return caretDownIcon;
+      case 'caretLeft':
+        return caretLeftIcon;
+      case 'caretRight':
+        return caretRightIcon;
+      case 'caretUp':
+        return caretUpIcon;
       case 'cube':
         return cubeIcon;
       case 'cubes':
@@ -71,6 +78,8 @@ class SvgIcon extends Component {
         return infoIcon;
       case 'moveArrows':
         return moveArrowsIcon;
+      case 'search':
+        return searchIcon;
       case 'scene':
         return mountainIcon;
       case 'plus':

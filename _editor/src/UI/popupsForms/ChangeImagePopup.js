@@ -128,7 +128,7 @@ class ChangeImagePopup extends Component {
     this.addChildDraw({
       id: this.id + '-main-title',
       tag: 'h5',
-      text: 'Select project image',
+      text: 'Select image',
     });
     this._getMenu();
 
@@ -150,8 +150,9 @@ class ChangeImagePopup extends Component {
         list: getSceneParam('images'),
         type: 'images',
         selectedId: this.selectedId,
-        itemsPerPage: 2,
+        itemsPerPage: 10,
         addSearchKeys: ['fileName'],
+        staticHeight: 120,
         onChange: (id) => {
           this.selectedId = id;
           const selectedParams = getSceneParam('images').find((img) => img.id === id);
@@ -171,7 +172,6 @@ class ChangeImagePopup extends Component {
         text: 'Confirm',
         onClick: async () => {
           if (!this.selectedId) return;
-
           const parentComp = this.data.imageInputComponent;
           if (parentComp && parentComp.update) parentComp.update(this.selectedId);
           this.closePopup();
