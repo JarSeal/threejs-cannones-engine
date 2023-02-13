@@ -17,7 +17,9 @@ import Toaster from './UI/Toaster';
 import InitView from './UI/views/InitView';
 import SceneLoaderView from './UI/views/SceneLoaderView';
 import { loadRecentScenesApi } from './api/loadRecentScenes';
+import { loadProjectGlobalsApi } from './api/loadProjectGlobals';
 import { DEFAULT_SCENE } from './utils/defaultSceneValues';
+import { getProjectGlobals } from '../../_fs/controllers/getProjectGlobals';
 
 class Root {
   constructor() {
@@ -85,6 +87,14 @@ class Root {
         return responseAllProjectScenes;
       };
       setSceneItem('getAllProjectScenes', getAllProjectScenes);
+
+      // @TODO: Start
+      // Create an API that retrieves all necessary data for scene / project
+      // (all project scenes list, images list, models list, global textures, global materials, and maybe even more)
+      // **************************************************************************************
+      const projectGlobals = await getProjectGlobals({ projectFolder: curScene.projectFolder });
+      console.log('PROEJCT GKdLOBALG', projectGlobals);
+
       const allProjectScenes = await getAllProjectScenes();
 
       // All project scenes list
@@ -93,6 +103,8 @@ class Root {
       // All project images list
       const imagesData = allProjectScenes.images[curScene.projectFolder] || [];
       setSceneParam('images', imagesData);
+      // **************************************************************************************
+      // @TODO: End
 
       // Load the scene
       const hasUnsavedChanges = getHasUnsavedChanges();
