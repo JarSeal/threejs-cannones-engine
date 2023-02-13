@@ -86,6 +86,18 @@ const ERRORS = {
     errorCode: 404,
     errorMsg: `Error: Could not find or read all images file at "$[path]".`,
   },
+  couldNotFindOrReadTexturesFile: {
+    errorCode: 404,
+    errorMsg: `Error: Could not find or read all textures file at "$[path]".`,
+  },
+  couldNotFindOrReadMaterialsFile: {
+    errorCode: 404,
+    errorMsg: `Error: Could not find or read all materials file at "$[path]".`,
+  },
+  couldNotFindOrReadModelsFile: {
+    errorCode: 404,
+    errorMsg: `Error: Could not find or read all models file at "$[path]".`,
+  },
 };
 
 export const getError = (key, replacersO, additionalMsg) => {

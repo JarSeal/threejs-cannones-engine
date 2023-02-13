@@ -64,7 +64,14 @@ export const loadOneProjectFile = (projectFolder) => {
   }
 };
 
-export const loadRecentScenesList = ({ amount, projectFolder, loadImagesData }) => {
+export const loadRecentScenesList = ({
+  amount,
+  projectFolder,
+  loadImagesData,
+  loadTexturesData,
+  loadMaterialsData,
+  loadModelsData,
+}) => {
   if (!amount || amount < 1) amount = Infinity;
   const projectsPath = getProjectFolderPath();
   let projects = [];
@@ -77,6 +84,9 @@ export const loadRecentScenesList = ({ amount, projectFolder, loadImagesData }) 
   }
   let scenes = [];
   let images = {};
+  let textures = {};
+  let materials = {};
+  let models = {};
   for (let i = 0; i < projects.length; i++) {
     const prj = projects[i];
     if (!prj.scenes) continue;
@@ -105,7 +115,7 @@ export const loadRecentScenesList = ({ amount, projectFolder, loadImagesData }) 
       if (fs.existsSync(imagesFilePath)) {
         try {
           const rawdata = fs.readFileSync(imagesFilePath);
-          images[prj.projectFolder] = JSON.parse(rawdata);
+          images[prj.projectFolder] = JSON.parse(rawdata).sort((a, b) => b.dateSaved - a.dateSaved);
         } catch (err) {
           const error = getError('couldNotFindOrReadImagesFile', { path: imagesFilePath });
           logger.error(error.errorMsg, err);
@@ -113,9 +123,52 @@ export const loadRecentScenesList = ({ amount, projectFolder, loadImagesData }) 
         }
       }
     }
+    if (loadTexturesData) {
+      const texturesFilePath = `${projectsPath}/${prj.projectFolder}/${APP_CONFIG.SINGLE_PROJECT_TEXTURES_FOLDER}/textures.json`;
+      if (fs.existsSync(texturesFilePath)) {
+        try {
+          const rawdata = fs.readFileSync(texturesFilePath);
+          textures[prj.projectFolder] = JSON.parse(rawdata).sort(
+            (a, b) => b.dateSaved - a.dateSaved
+          );
+        } catch (err) {
+          const error = getError('couldNotFindOrReadTexturesFile', { path: texturesFilePath });
+          logger.error(error.errorMsg, err);
+          return { ...error, error: true };
+        }
+      }
+    }
+    if (loadMaterialsData) {
+      const materialsFilePath = `${projectsPath}/${prj.projectFolder}/${APP_CONFIG.SINGLE_PROJECT_MATERIALS_FOLDER}/materials.json`;
+      if (fs.existsSync(materialsFilePath)) {
+        try {
+          const rawdata = fs.readFileSync(materialsFilePath);
+          materials[prj.projectFolder] = JSON.parse(rawdata).sort(
+            (a, b) => b.dateSaved - a.dateSaved
+          );
+        } catch (err) {
+          const error = getError('couldNotFindOrReadMaterialsFile', { path: materialsFilePath });
+          logger.error(error.errorMsg, err);
+          return { ...error, error: true };
+        }
+      }
+    }
+    if (loadModelsData) {
+      const modelsFilePath = `${projectsPath}/${prj.projectFolder}/${APP_CONFIG.SINGLE_PROJECT_MODELS_FOLDER}/models.json`;
+      if (fs.existsSync(modelsFilePath)) {
+        try {
+          const rawdata = fs.readFileSync(modelsFilePath);
+          models[prj.projectFolder] = JSON.parse(rawdata).sort((a, b) => b.dateSaved - a.dateSaved);
+        } catch (err) {
+          const error = getError('couldNotFindOrReadModelsFile', { path: modelsFilePath });
+          logger.error(error.errorMsg, err);
+          return { ...error, error: true };
+        }
+      }
+    }
   }
   scenes = scenes.sort((a, b) => b.dateSaved - a.dateSaved).filter((_, index) => index < amount);
-  return { scenes, images };
+  return { scenes, images, textures, materials, models };
 };
 
 export default router;

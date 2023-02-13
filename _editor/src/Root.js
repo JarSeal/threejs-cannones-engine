@@ -19,7 +19,6 @@ import SceneLoaderView from './UI/views/SceneLoaderView';
 import { loadRecentScenesApi } from './api/loadRecentScenes';
 import { loadProjectGlobalsApi } from './api/loadProjectGlobals';
 import { DEFAULT_SCENE } from './utils/defaultSceneValues';
-import { getProjectGlobals } from '../../_fs/controllers/getProjectGlobals';
 
 class Root {
   constructor() {
@@ -77,34 +76,42 @@ class Root {
         curScene = { ...DEFAULT_SCENE, ...curScene, ...sessionParams };
       }
 
-      // Create loader for all the scenes list for this project
-      const getAllProjectScenes = async () => {
+      // Create loader for all the scenes list (and project globals, with params) for this project
+      const getAllProjectScenes = async (params) => {
+        if (!params) params = {};
         const projectFolder = curScene.projectFolder;
-        const responseAllProjectScenes = await loadRecentScenesApi({
-          projectFolder,
-          loadImagesData: true,
-        });
+        const responseAllProjectScenes = await loadRecentScenesApi(
+          {
+            ...{
+              projectFolder,
+              loadImagesData: false,
+              loadTexturesData: false,
+              loadMaterialsData: false,
+              loadModelsData: false,
+            },
+          },
+          ...params
+        );
         return responseAllProjectScenes;
       };
       setSceneItem('getAllProjectScenes', getAllProjectScenes);
 
-      // @TODO: Start
-      // Create an API that retrieves all necessary data for scene / project
-      // (all project scenes list, images list, models list, global textures, global materials, and maybe even more)
-      // **************************************************************************************
-      const projectGlobals = await getProjectGlobals({ projectFolder: curScene.projectFolder });
-      console.log('PROEJCT GKdLOBALG', projectGlobals);
+      const projectGlobals = await loadProjectGlobalsApi({ projectFolder: curScene.projectFolder });
 
-      const allProjectScenes = await getAllProjectScenes();
+      // Project scenes list
+      setSceneParam('allProjectScenes', projectGlobals.scenes);
 
-      // All project scenes list
-      setSceneParam('allProjectScenes', allProjectScenes.scenes);
+      // Project images
+      setSceneParam('images', projectGlobals.images);
 
-      // All project images list
-      const imagesData = allProjectScenes.images[curScene.projectFolder] || [];
-      setSceneParam('images', imagesData);
-      // **************************************************************************************
-      // @TODO: End
+      // Project global textures
+      setSceneParam('globalTextures', projectGlobals.globalTextures);
+
+      // Project global materials
+      setSceneParam('globalMaterials', projectGlobals.globalMaterials);
+
+      // Project global models
+      setSceneParam('globalModels', projectGlobals.globalMaterials);
 
       // Load the scene
       const hasUnsavedChanges = getHasUnsavedChanges();

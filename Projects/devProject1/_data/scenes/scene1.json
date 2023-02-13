@@ -23,14 +23,14 @@
       "near": 0.1,
       "far": 256,
       "position": [
-        14.907022662503312,
-        6.684161524063489,
-        10.33297694164125
+        18.44790761530177,
+        2.738849140405425,
+        1.3638880193734657
       ],
       "rotation": [
-        -0.4117998852974653,
-        0.9560860364169237,
-        0.34273526601827076
+        -0.395326006971779,
+        1.4919529545847845,
+        0.39422141943268485
       ],
       "scale": [
         1,
@@ -69,10 +69,10 @@
       "isTargetingObject": true,
       "index": 0,
       "quaternion": [
-        -0.1020759556615898,
-        0.4746851524832768,
-        0.05553774633665562,
-        0.872450608355308
+        -0.01110828795806054,
+        0.6808326911323862,
+        0.010327833491573329,
+        0.7322819050607791
       ],
       "lookAt": null
     },
@@ -255,9 +255,7 @@
       "receiveShadow": false
     }
   ],
-  "selection": [
-    "default-cube"
-  ],
+  "selection": [],
   "textures": [
     {
       "name": "Mun Tekstuuri",
@@ -308,22 +306,22 @@
       "name": "Destroy me",
       "image": "Uv-checkRg-15-1024",
       "flipY": true,
-      "wrapS": 1002,
-      "wrapT": 1002,
+      "wrapS": 1000,
+      "wrapT": 1000,
       "wrapSTimes": 3.5,
       "wrapTTimes": 2.5,
       "offsetU": 0,
       "offsetV": 0,
       "centerU": 0,
       "centerV": 0,
-      "rotation": 0.3926990817,
+      "rotation": 0,
       "id": "be-gone",
       "global": true
     }
   ],
   "cubetextures": [],
   "dateCreated": 1674498237023,
-  "dateSaved": 1676284271677,
+  "dateSaved": 1676302773571,
   "curCameraIndex": 0,
   "projectFolder": "devProject1",
   "orbiterMoving": false
