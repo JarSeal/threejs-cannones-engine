@@ -169,7 +169,6 @@ class Texture extends Component {
             targetItemKey: this.targetItemKey,
             itemId: this.itemId,
           });
-          // this.changeTexture();
         },
       })
     );
@@ -424,7 +423,7 @@ class Texture extends Component {
       new NumberInput({
         id: this.id + '-rotation',
         label: 'Rotation',
-        class: 'oneFourthWidth',
+        class: 'halfWidth',
         attach: this.textureParamsContentId,
         step: Math.PI / 8,
         precision: 10,
@@ -442,6 +441,29 @@ class Texture extends Component {
             prevVal,
           });
         },
+      })
+    );
+
+    // Global
+    this.addChildDraw(
+      new Checkbox({
+        id: this.id + '-global',
+        attach: this.textureParamsContentId,
+        label: 'Global',
+        class: 'oneFourthWidth',
+        changeFn: (e) => {
+          const prevVal = this.params.global || false;
+          this.params.global = e.target.checked;
+          updateTextureParam({
+            textureId: this.textureId,
+            params: this.params,
+            targetItemKey: 'textures.global',
+            targetParamKey: 'global',
+            newVal: e.target.checked,
+            prevVal,
+          });
+        },
+        value: this.params.global || false,
       })
     );
 

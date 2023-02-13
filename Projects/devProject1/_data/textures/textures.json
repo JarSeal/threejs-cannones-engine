@@ -1,0 +1,18 @@
+[
+  {
+    "id": "my-first-g-texture",
+    "name": "My first global texture",
+    "image": null,
+    "flipY": true,
+    "wrapS": 1001,
+    "wrapT": 1001,
+    "wrapSTimes": 1,
+    "wrapTTimes": 1,
+    "offsetU": 0,
+    "offsetV": 0,
+    "centerU": 0,
+    "centerV": 0,
+    "rotation": 0,
+    "global": true
+  }
+]

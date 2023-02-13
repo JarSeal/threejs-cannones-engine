@@ -111,6 +111,7 @@ export const DEFAULT_TEXTURE = {
   centerU: 0,
   centerV: 0,
   rotation: 0,
+  global: false,
 };
 
 export const DEFAULT_SCENE = {
