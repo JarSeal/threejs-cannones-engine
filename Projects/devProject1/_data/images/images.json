@@ -142,5 +142,31 @@
       "width": 1024,
       "height": 1024
     }
+  },
+  {
+    "fileName": "kisspng-pink-circle-computer-pattern-glow-png-picture-5a71eac6cdf196.0717885415174151108436.png",
+    "fileSize": "208108",
+    "id": "my-glow",
+    "name": "",
+    "projectFolder": "devProject1",
+    "type": "png",
+    "dateSaved": 1676367352023,
+    "dimensions": {
+      "width": 595,
+      "height": 472
+    }
+  },
+  {
+    "fileName": "badlands.png",
+    "fileSize": "1912631",
+    "id": "badlands",
+    "name": "",
+    "projectFolder": "devProject1",
+    "type": "png",
+    "dateSaved": 1676367512983,
+    "dimensions": {
+      "width": 1858,
+      "height": 1009
+    }
   }
 ]

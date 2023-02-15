@@ -1,37 +1,18 @@
 {
   "sceneId": "scene1",
   "name": "Development scene 1",
-  "dateCreated": 1663229534337,
-  "dateSaved": 1674479912480,
-  "axesHelper": false,
-  "axesHelperLength": 100,
   "rendererClearColor": "#cdcdcd",
+  "backgroundType": "color",
+  "backgroundTexture": null,
+  "backgroundSkybox": null,
   "grid": true,
   "gridSize": 26,
+  "axesHelper": false,
+  "axesHelperLength": 100,
   "shadowType": null,
-  "lights": [
-    {
-      "id": "309107e2-b8b9-414d-b2d7-a256d17bb9f3",
-      "type": "ambient",
-      "color": "#ffffff",
-      "intensity": 0.2,
-      "disabled": false,
-      "paramType": "light",
-      "index": 0,
-      "referenceId": "scene2"
-    },
-    {
-      "id": "ba846c06-04bd-4005-89bb-92e65ee7784c",
-      "type": "hemisphere",
-      "colorTop": "#ffffbb",
-      "colorBottom": "#080820",
-      "intensity": 0.25,
-      "disabled": false,
-      "paramType": "light",
-      "index": 1,
-      "referenceId": "scene1"
-    }
-  ],
+  "cameraIndex": 0,
+  "aspectRatio": 0,
+  "pixelRatio": 0,
   "cameras": [
     {
       "id": "editor-main",
@@ -55,9 +36,9 @@
       "paramType": "camera",
       "orthoViewSize": 1,
       "rotation": [
-        -2.512631842681471,
-        0.448607917571314,
-        2.835944522704936
+        -1.6467516388897219,
+        0.9451627426167933,
+        1.6644060301523642
       ],
       "scale": [
         1,
@@ -153,7 +134,29 @@
       "referenceId": "scene1"
     }
   ],
-  "curCameraIndex": 0,
+  "lights": [
+    {
+      "id": "309107e2-b8b9-414d-b2d7-a256d17bb9f3",
+      "type": "ambient",
+      "color": "#ffffff",
+      "intensity": 0.2,
+      "disabled": false,
+      "paramType": "light",
+      "index": 0,
+      "referenceId": "scene2"
+    },
+    {
+      "id": "ba846c06-04bd-4005-89bb-92e65ee7784c",
+      "type": "hemisphere",
+      "colorTop": "#ffffbb",
+      "colorBottom": "#080820",
+      "intensity": 0.25,
+      "disabled": false,
+      "paramType": "light",
+      "index": 1,
+      "referenceId": "scene1"
+    }
+  ],
   "elements": [
     {
       "type": "shape3D",
@@ -310,7 +313,12 @@
       "referenceId": "scene1"
     }
   ],
-  "projectFolder": "devProject2",
   "selection": [],
+  "textures": [],
+  "cubetextures": [],
+  "dateCreated": 1663229534337,
+  "dateSaved": 1676365746296,
+  "curCameraIndex": 0,
+  "projectFolder": "devProject2",
   "orbiterMoving": false
 }

@@ -21,7 +21,7 @@ class NewSceneDialog extends Component {
   }
 
   paint = async () => {
-    const currentScenesData = await getSceneItem('getAllProjectScenes')();
+    const currentScenesData = await getSceneItem('getProjectData')();
     const currentScenes = currentScenesData.scenes;
 
     this.sceneIdInput = this.addChildDraw(
@@ -30,7 +30,7 @@ class NewSceneDialog extends Component {
         label: 'Scene ID',
         curId: this.newSceneParams.id,
         newId: true,
-        isSceneId: true,
+        dontUpdateParam: true,
         focus: true,
         onValidationErrors: () => (this.formHasErrors = true),
         onValidationSuccess: () => (this.formHasErrors = false),
@@ -55,13 +55,13 @@ class NewSceneDialog extends Component {
       })
     );
 
-    const buttonDivId = 'new-cam-buttons-' + this.id;
+    const buttonDivId = 'new-scene-buttons-' + this.id;
     this.addChildDraw({ id: buttonDivId, class: 'buttons' });
 
     // Cancel button
     this.addChildDraw(
       new Button({
-        id: 'new-cam-cancel-' + this.id,
+        id: 'new-scene-cancel-' + this.id,
         class: ['cancelButton'],
         attach: buttonDivId,
         text: 'Cancel',
@@ -74,7 +74,7 @@ class NewSceneDialog extends Component {
     // Create new scene button
     this.addChildDraw(
       new Button({
-        id: 'new-cam-create-' + this.id,
+        id: 'new-scene-create-' + this.id,
         class: ['saveButton'],
         attach: buttonDivId,
         text: 'Create',

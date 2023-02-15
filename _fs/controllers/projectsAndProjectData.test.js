@@ -2,8 +2,8 @@ import { getError } from '../utils/errors';
 import {
   loadOneProjectFile,
   loadRecentProjectsList,
-  loadRecentScenesList,
-} from './projectsAndScenesLists';
+  loadProjectData,
+} from './projectsAndProjectData';
 
 describe('projectsAndScenesLists controller', () => {
   it('should successfully give a list of recent project', async () => {
@@ -18,8 +18,8 @@ describe('projectsAndScenesLists controller', () => {
   });
 
   it('should successfully give a list of recent scene files', async () => {
-    const data1 = loadRecentScenesList({ amount: 5 }).scenes;
-    const data2 = loadRecentScenesList({ amount: 2 }).scenes;
+    const data1 = loadProjectData({ amount: 5 }).scenes;
+    const data2 = loadProjectData({ amount: 2 }).scenes;
     expect(data1.length > 1).toBeTruthy();
     expect(data1.length < 6).toBeTruthy();
     expect(data1[0].sceneId.length > 0).toBeTruthy();
@@ -34,8 +34,8 @@ describe('projectsAndScenesLists controller', () => {
 
   it('should successfully give a list of recent scene files for one project', async () => {
     const projectFolder = 'testProject1';
-    const data1 = loadRecentScenesList({ amount: 1, projectFolder }).scenes;
-    const data2 = loadRecentScenesList({ amount: Infinity, projectFolder }).scenes;
+    const data1 = loadProjectData({ amount: 1, projectFolder }).scenes;
+    const data2 = loadProjectData({ amount: Infinity, projectFolder }).scenes;
     expect(data1.length === 1).toBeTruthy();
     expect(data1[0].sceneId.length > 0).toBeTruthy();
     expect(data2.length >= 2).toBeTruthy();

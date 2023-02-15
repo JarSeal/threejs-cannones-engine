@@ -13,6 +13,9 @@ export const saveScene = async () => {
   delete sceneParams.editor;
   delete sceneParams.images;
   delete sceneParams.allProjectScenes;
+  delete sceneParams.globalTextures;
+  delete sceneParams.globalMaterials;
+  delete sceneParams.globalModels;
   const response = await saveSceneApi(sceneParams);
   if (!response.error) {
     getSceneItem('toaster').addToast({

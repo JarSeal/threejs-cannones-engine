@@ -43,7 +43,7 @@ class NewProject extends Component {
         curId: this.newProjectParams.projectFolder,
         newId: true,
         focus: true,
-        isProjectId: true,
+        dontUpdateParam: true,
         onValidationErrors: () => {
           if (!this.formErrors.includes('projectFolder')) {
             this.formErrors.push('projectFolder');
@@ -91,7 +91,7 @@ class NewProject extends Component {
         label: 'Main scene ID',
         curId: this.newProjectParams.sceneId,
         newId: true,
-        isSceneId: true,
+        dontUpdateParam: true,
         onValidationErrors: () => {
           if (!this.formErrors.includes('sceneId')) {
             this.formErrors.push('sceneId');

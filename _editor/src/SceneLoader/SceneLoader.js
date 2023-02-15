@@ -6,7 +6,7 @@ import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { SMAAPass } from 'three/addons/postprocessing/SMAAPass.js';
 
 import { OutlinePass } from '../postFX/OutlinePass/OutlinePass.js';
-import { setSceneParam, setSceneParams } from '../sceneData/sceneParams';
+import { getSceneParam, setSceneParam, setSceneParams } from '../sceneData/sceneParams';
 import { getSceneItem, setSceneItem } from '../sceneData/sceneItems';
 import ElementLoader from './ElementLoader';
 import { saveStateByKey } from '../sceneData/saveSession';
@@ -70,6 +70,7 @@ class SceneLoader {
 
     // Create textures (sceneItems)
     this._createTextures(sceneParams.textures);
+    this._createGlobalTextures(getSceneParam('globalTextures'));
 
     // Create three.js Scene object
     this.scene = new THREE.Scene();
@@ -355,13 +356,22 @@ class SceneLoader {
   };
 
   _createTextures = (textures) => {
-    const newTextureItems = [];
+    const newTextureItems = getSceneItem('textures', []);
     textures.forEach((tex) => {
       const newTextureItem = createTexture(tex);
       newTextureItems.push(newTextureItem);
     });
     setSceneItem('textures', newTextureItems);
     saveStateByKey('textures', textures);
+  };
+
+  _createGlobalTextures = (globalTextures) => {
+    const newTextureItems = getSceneItem('textures', []);
+    globalTextures.forEach((tex) => {
+      const newTextureItem = createTexture(tex);
+      newTextureItems.push(newTextureItem);
+    });
+    setSceneItem('textures', newTextureItems);
   };
 }
 

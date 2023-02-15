@@ -7,7 +7,7 @@ import { getError } from '../utils/errors';
 import { validateProjectFolderAndSceneId } from '../utils/validation';
 import { updateProjectFile, writeJsonFile } from '../utils/writeFile';
 import APP_CONFIG from '../../APP_CONFIG';
-import { loadOneProjectFile } from './projectsAndScenesLists';
+import { loadOneProjectFile } from './projectsAndProjectData';
 
 const router = Router();
 

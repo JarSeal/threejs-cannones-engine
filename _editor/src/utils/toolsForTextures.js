@@ -207,8 +207,51 @@ export const destroyTexture = (params, destroyWithoutDialogAndUndo) => {
   }
 };
 
+export const makeTextureGlobal = (params) => {
+  console.log('Make texture global', params);
+
+  params.global = true;
+
+  // Remove from local textures
+  const filteredTextureParams = getSceneParam('textures').filter((tex) => tex.id !== params.id);
+  setSceneParam('textures', filteredTextureParams);
+
+  // Update texture item userData
+  const textureItem = getSceneItem('textures').find((tex) => tex.userData.id === params.id);
+  textureItem.userData = params;
+
+  // Add to global textures
+  const globalTextures = getSceneParam('globalTextures');
+  setSceneParam('globalTextures', [...globalTextures, params]);
+
+  // Save all textures to LS
+  saveAllTexturesState();
+
+  // Update UI
+  getSceneItem('rightSidePanel').updatePanel();
+  getSceneItem('elemTool').updateTool();
+
+  // Add undo/redo action
+  getSceneItem('undoRedo').addAction({
+    type: 'makeTextureGlobal',
+    prevVal: { ...params, global: false },
+    newVal: params,
+  });
+};
+
+export const removeGlobalTexture = (params) => {
+  // Only for undo (not to be used in UI)
+  console.log('Remove global material', params);
+
+  // Remove from global textures
+
+  // Add to local textures
+};
+
 export default {
   updateTextureImage,
   updateTextureParam,
   destroyTexture,
+  makeTextureGlobal,
+  removeGlobalTexture,
 };

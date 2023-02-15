@@ -16,8 +16,7 @@ import { loadSceneApi } from './api/loadScene';
 import Toaster from './UI/Toaster';
 import InitView from './UI/views/InitView';
 import SceneLoaderView from './UI/views/SceneLoaderView';
-import { loadRecentScenesApi } from './api/loadRecentScenes';
-import { loadProjectGlobalsApi } from './api/loadProjectGlobals';
+import { loadProjectDataApi } from './api/loadProjectData';
 import { DEFAULT_SCENE } from './utils/defaultSceneValues';
 
 class Root {
@@ -77,26 +76,34 @@ class Root {
       }
 
       // Create loader for all the scenes list (and project globals, with params) for this project
-      const getAllProjectScenes = async (params) => {
+      const getProjectData = async (params) => {
         if (!params) params = {};
         const projectFolder = curScene.projectFolder;
-        const responseAllProjectScenes = await loadRecentScenesApi(
-          {
-            ...{
-              projectFolder,
-              loadImagesData: false,
-              loadTexturesData: false,
-              loadMaterialsData: false,
-              loadModelsData: false,
-            },
+        const responseProjectData = await loadProjectDataApi({
+          ...{
+            projectFolder,
+            loadScenesData: true,
+            loadImagesData: false,
+            loadModelsData: false,
+            loadTexturesData: false,
+            loadCubetexturesData: false,
+            loadMaterialsData: false,
           },
-          ...params
-        );
-        return responseAllProjectScenes;
+          ...params,
+        });
+        return responseProjectData;
       };
-      setSceneItem('getAllProjectScenes', getAllProjectScenes);
+      setSceneItem('getProjectData', getProjectData);
 
-      const projectGlobals = await loadProjectGlobalsApi({ projectFolder: curScene.projectFolder });
+      const projectGlobals = await getProjectData({
+        loadScenesData: true,
+        loadImagesData: true,
+        loadModelsData: true,
+        loadTexturesData: true,
+        loadCubetexturesData: true,
+        loadMaterialsData: true,
+      });
+      console.log('globals', projectGlobals);
 
       // Project scenes list
       setSceneParam('allProjectScenes', projectGlobals.scenes);
@@ -104,14 +111,17 @@ class Root {
       // Project images
       setSceneParam('images', projectGlobals.images);
 
+      // Project models
+      setSceneParam('models', projectGlobals.models);
+
       // Project global textures
       setSceneParam('globalTextures', projectGlobals.globalTextures);
 
+      // Project global cubetextures
+      setSceneParam('globalCubetextures', projectGlobals.globalCubetextures);
+
       // Project global materials
       setSceneParam('globalMaterials', projectGlobals.globalMaterials);
-
-      // Project global models
-      setSceneParam('globalModels', projectGlobals.globalMaterials);
 
       // Load the scene
       const hasUnsavedChanges = getHasUnsavedChanges();

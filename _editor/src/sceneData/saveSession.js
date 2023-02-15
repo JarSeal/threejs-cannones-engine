@@ -11,6 +11,12 @@ const LSKeysJson = [
   'lights',
   'textures',
   'cubetextures',
+  'materials',
+  'models',
+  'globalTextures',
+  'globalCubetextures',
+  'globalMaterials',
+  'globalModels',
 ];
 const LSKeysStrings = ['sceneId', 'projectFolder'];
 
@@ -115,8 +121,10 @@ export const saveAllLightsState = () => {
 };
 
 export const saveAllTexturesState = () => {
-  const lights = getSceneParam('textures');
-  if (lights?.length) LS.setItem('textures', JSON.stringify(lights));
+  const textures = getSceneParam('textures');
+  if (textures?.length) LS.setItem('textures', JSON.stringify(textures));
+  const globalTextures = getSceneParam('globalTextures');
+  if (globalTextures?.length) LS.setItem('globalTextures', JSON.stringify(globalTextures));
   setHasUnsavedChanges();
 };
 

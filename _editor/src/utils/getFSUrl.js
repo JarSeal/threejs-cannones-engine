@@ -11,12 +11,10 @@ export const getFSUrl = (target) => {
       return baseUrl + '/api/delete-scene';
     case 'loadScene':
       return baseUrl + '/api/load-scene';
-    case 'projectGlobals':
-      return baseUrl + '/api/project-globals';
     case 'recentProjects':
       return baseUrl + '/api/projects-and-scenes-lists/recent-projects';
-    case 'recentScenes':
-      return baseUrl + '/api/projects-and-scenes-lists/recent-scenes';
+    case 'projectData':
+      return baseUrl + '/api/projects-and-scenes-lists/project-data';
     case 'saveScene':
       return baseUrl + '/api/save-scene';
     case 'uploadImage':

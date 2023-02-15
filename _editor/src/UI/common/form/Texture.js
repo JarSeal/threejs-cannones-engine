@@ -2,6 +2,7 @@ import * as THREE from 'three';
 
 import { Component } from '../../../../LIGHTER';
 import { saveEditorState, saveStateByKey } from '../../../sceneData/saveSession';
+import { getSceneItem } from '../../../sceneData/sceneItems';
 import {
   getSceneParam,
   getSceneParamR,
@@ -15,6 +16,7 @@ import {
   updateTextureParam,
 } from '../../../utils/toolsForTextures';
 import { getImagePath, printName } from '../../../utils/utils';
+import ToggleGlobalTextureDialog from '../../dialogs/ToggleGlobalTexture';
 import SvgIcon from '../../icons/svg-icon';
 import NewTexturePopup from '../../popupsForms/NewTexturePopup';
 import PopupForm from '../../popupsForms/PopupForm';
@@ -39,12 +41,17 @@ class Texture extends Component {
     this.textureParamsWrapperId = this.id + '-texture-params';
     this.textureParamsContentId = this.id + '-texture-params-content';
     this.textureParamsOpen = getSceneParamR(`editor.show.${this.id}`, false);
-    this.textureType = 'Texture';
     this.textureId = data.textureId;
+    this.textureType = '';
+    this.params = {};
     if (this.textureId) {
       this.params = getSceneParam('textures').find((tex) => tex.id === this.textureId);
-    } else {
-      this.params = {};
+      if (!this.params) {
+        this.params = getSceneParam('globalTextures').find((tex) => tex.id === this.textureId);
+      }
+      if (this.params) {
+        this.textureType = this.params.global ? 'Global texture' : 'Texture';
+      }
     }
     this.popupForm = new PopupForm({ id: this.id + '-popup-form' });
     this.template = `
@@ -444,7 +451,8 @@ class Texture extends Component {
       })
     );
 
-    // Global
+    // Make texture global button
+    // @TODO: remove checkbox when the button implementation is done
     this.addChildDraw(
       new Checkbox({
         id: this.id + '-global',
@@ -464,6 +472,26 @@ class Texture extends Component {
           });
         },
         value: this.params.global || false,
+      })
+    );
+    this.addChildDraw(
+      new Button({
+        id: this.id + '-make-texture-global',
+        icon: new SvgIcon({
+          id: this.id + '-make-texture-global-icon',
+          icon: 'globe',
+          width: 14,
+        }),
+        attach: this.textureParamsContentId,
+        class: ['panelActionButton'],
+        disabled: this.params.global,
+        onClick: () => {
+          getSceneItem('dialog').appear({
+            component: ToggleGlobalTextureDialog,
+            componentData: { textureParams: this.params },
+            title: 'Are you sure?',
+          });
+        },
       })
     );
 

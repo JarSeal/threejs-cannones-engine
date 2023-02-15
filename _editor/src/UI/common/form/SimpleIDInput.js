@@ -17,8 +17,7 @@ import APP_CONFIG from '../../../../../APP_CONFIG';
 // - focus = boolean whether the input should have focus after initiation or not [Boolean]
 // - afterSuccessBlur(value) = function that is run after a successfull blur has been made (before the timeout)
 // - validateOnInit = boolean whether the validation should be performed on component initiation
-// - isProjectId = boolean whether to update other IDs or not after a successfull edit
-// - isSceneId = boolean whether to update other IDs or not after a successfull edit (same as isProjectId)
+// - dontUpdateParam = boolean whether to update the found param value on successfull save (set to true to disable)
 // - additionalValidationFn = function to be run on every validation round
 class SimpleIDInput extends Component {
   constructor(data) {
@@ -32,12 +31,25 @@ class SimpleIDInput extends Component {
     this.inputComponent = null;
     this.returnOriginalValueButton = null;
     this.timeout = null;
-    this.groups = ['lights', 'cameras', 'scenes', 'elements', 'textures', 'cubetextures', 'images'];
+    this.groups = [
+      'lights',
+      'cameras',
+      'scenes',
+      'elements',
+      'textures',
+      'cubetextures',
+      'images',
+      'materials',
+      'models',
+      'globalTextures',
+      'globalCubetextures',
+      'globalMaterials',
+      'globalModels',
+    ];
     this.regex = new RegExp(APP_CONFIG.SIMPLE_ID_REGEX);
     this.focus = data.focus;
     this.afterSuccessBlur = data.afterSuccessBlur;
-    this.isProjectId = data.isProjectId;
-    this.isSceneId = data.isSceneId;
+    this.dontUpdateParam = data.dontUpdateParam;
     setSceneItem('IDComponents', { ...(getSceneItem('IDComponents') || {}), [this.id]: this });
   }
 
@@ -96,7 +108,7 @@ class SimpleIDInput extends Component {
       clearTimeout(this.timeout);
       this.timeout = setTimeout(() => {
         // Loop through all ids and change the matching curId to the new one
-        if (!this.isProjectId && !this.isSceneId) {
+        if (!this.dontUpdateParam) {
           for (let g = 0; g < this.groups.length; g++) {
             const group = this.groups[g];
             const items = getSceneParam(group);
@@ -178,7 +190,7 @@ class SimpleIDInput extends Component {
       for (let i = 0; i < items.length; i++) {
         if (items[i].id === value.trim() && this.curId !== value.trim()) {
           if (this.data.onValidationErrors) this.data.onValidationErrors(value);
-          return { hasError: true, errorMsg: 'ID is already in use' };
+          return this.getAlreadyInUseError();
         }
       }
     }
@@ -192,6 +204,8 @@ class SimpleIDInput extends Component {
     if (this.data.onValidationSuccess) this.data.onValidationSuccess(value);
     return { hasError: false };
   };
+
+  getAlreadyInUseError = () => ({ hasError: true, errorMsg: 'ID is already in use' });
 }
 
 export default SimpleIDInput;

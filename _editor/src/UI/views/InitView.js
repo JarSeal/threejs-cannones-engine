@@ -1,7 +1,7 @@
 import { APP_DEFAULTS } from '../../../../APP_CONFIG';
 import { Component } from '../../../LIGHTER';
 import { loadRecentProjectsApi } from '../../api/loadRecentProjects';
-import { loadRecentScenesApi } from '../../api/loadRecentScenes';
+import { loadProjectDataApi } from '../../api/loadProjectData';
 import { saveProjectFolder, saveSceneId } from '../../sceneData/saveSession';
 import { getSceneItem } from '../../sceneData/sceneItems';
 import { printName, printProjectName } from '../../utils/utils';
@@ -122,7 +122,7 @@ class InitView extends Component {
   };
 
   _getRecentScenesButtons = async () => {
-    const response = await loadRecentScenesApi({ amount: 5 });
+    const response = await loadProjectDataApi({ amount: 5, loadScenesData: true });
     return response.scenes.map((scene, index) =>
       this.addChild(
         new Button({

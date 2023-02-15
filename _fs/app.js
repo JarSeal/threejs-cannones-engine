@@ -7,8 +7,7 @@ import middleware from './utils/middleware.js';
 
 import loadSceneRouter from './controllers/loadScene.js';
 import saveSceneRouter from './controllers/saveScene.js';
-import projectsAndScenesListsRouter from './controllers/projectsAndScenesLists.js';
-import projectGlobals from './controllers/getProjectGlobals.js';
+import projectsAndProjectDataRouter from './controllers/projectsAndProjectData.js';
 import createProjectRouter from './controllers/createProject.js';
 import createSceneRouter from './controllers/createScene.js';
 import deleteSceneRouter from './controllers/deleteScene.js';
@@ -31,8 +30,7 @@ app.use(middleware.requestLogger);
 
 app.use('/api/load-scene', loadSceneRouter);
 app.use('/api/save-scene', saveSceneRouter);
-app.use('/api/projects-and-scenes-lists', projectsAndScenesListsRouter);
-app.use('/api/project-globals', projectGlobals);
+app.use('/api/projects-and-scenes-lists', projectsAndProjectDataRouter);
 app.use('/api/create-project', createProjectRouter);
 app.use('/api/create-scene', createSceneRouter);
 app.use('/api/delete-scene', deleteSceneRouter);

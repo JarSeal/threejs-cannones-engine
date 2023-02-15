@@ -22,46 +22,14 @@
       "fov": 45,
       "near": 0.1,
       "far": 256,
-      "position": [
-        18.44790761530177,
-        2.738849140405425,
-        1.3638880193734657
-      ],
-      "rotation": [
-        -0.395326006971779,
-        1.4919529545847845,
-        0.39422141943268485
-      ],
-      "scale": [
-        1,
-        1,
-        1
-      ],
-      "target": [
-        -1.1676969893839582,
-        2.1420174915521297,
-        -0.06635265793427692
-      ],
-      "defaultPosition": [
-        5,
-        5,
-        5
-      ],
-      "defaultRotation": [
-        0,
-        0,
-        0
-      ],
-      "defaultScale": [
-        1,
-        1,
-        1
-      ],
-      "defaultTarget": [
-        0,
-        0,
-        0
-      ],
+      "position": [13.627286096848835, 6.9316237783117485, 11.989429669039849],
+      "rotation": [-0.378165447932184, 0.8509430908516278, 0.2902831064714075],
+      "scale": [1, 1, 1],
+      "target": [-1.1676969893839582, 2.1420174915521297, -0.06635265793427692],
+      "defaultPosition": [5, 5, 5],
+      "defaultRotation": [0, 0, 0],
+      "defaultScale": [1, 1, 1],
+      "defaultTarget": [0, 0, 0],
       "orbitControls": true,
       "showHelper": false,
       "id": "editor-main",
@@ -69,10 +37,7 @@
       "isTargetingObject": true,
       "index": 0,
       "quaternion": [
-        -0.01110828795806054,
-        0.6808326911323862,
-        0.010327833491573329,
-        0.7322819050607791
+        -0.1107672673192246, 0.4258925244333438, 0.052625688279286216, 0.8964244011937408
       ],
       "lookAt": null
     },
@@ -84,46 +49,14 @@
       "fov": 45,
       "near": 0.1,
       "far": 256,
-      "position": [
-        10,
-        5,
-        10
-      ],
-      "rotation": [
-        -0.4636476090008061,
-        0.7297276562269661,
-        0.3217505543966421
-      ],
-      "scale": [
-        1,
-        1,
-        1
-      ],
-      "target": [
-        0,
-        0,
-        0
-      ],
-      "defaultPosition": [
-        5,
-        5,
-        5
-      ],
-      "defaultRotation": [
-        0,
-        0,
-        0
-      ],
-      "defaultScale": [
-        1,
-        1,
-        1
-      ],
-      "defaultTarget": [
-        0,
-        0,
-        0
-      ],
+      "position": [10, 5, 10],
+      "rotation": [-0.4636476090008061, 0.7297276562269661, 0.3217505543966421],
+      "scale": [1, 1, 1],
+      "target": [0, 0, 0],
+      "defaultPosition": [5, 5, 5],
+      "defaultRotation": [0, 0, 0],
+      "defaultScale": [1, 1, 1],
+      "defaultTarget": [0, 0, 0],
       "orbitControls": false,
       "showHelper": false,
       "id": "game-cam",
@@ -158,44 +91,16 @@
       "name": "",
       "type": "shape3D",
       "shapeParams": {
-        "size": [
-          1,
-          1,
-          1
-        ],
+        "size": [1, 1, 1],
         "shape3D": "box"
       },
       "paramType": "element",
-      "position": [
-        0,
-        0.5,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": [
-        1,
-        1,
-        1
-      ],
-      "defaultPosition": [
-        0,
-        0.5,
-        0
-      ],
-      "defaultRotation": [
-        0,
-        0,
-        0
-      ],
-      "defaultScale": [
-        1,
-        1,
-        1
-      ],
+      "position": [0, 0.5, 0],
+      "rotation": [0, 0, 0],
+      "scale": [1, 1, 1],
+      "defaultPosition": [0, 0.5, 0],
+      "defaultRotation": [0, 0, 0],
+      "defaultScale": [1, 1, 1],
       "castShadow": false,
       "receiveShadow": false,
       "material": {
@@ -209,53 +114,25 @@
       "id": "default-ground",
       "shapeParams": {
         "shape3D": "box",
-        "size": [
-          20,
-          0.125,
-          20
-        ]
+        "size": [20, 0.125, 20]
       },
-      "position": [
-        0,
-        -0.0625,
-        0
-      ],
+      "position": [0, -0.0625, 0],
       "material": {
         "type": "lambert",
         "color": "#cccccc"
       },
       "name": "",
       "paramType": "element",
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "scale": [
-        1,
-        1,
-        1
-      ],
-      "defaultPosition": [
-        0,
-        0.5,
-        0
-      ],
-      "defaultRotation": [
-        0,
-        0,
-        0
-      ],
-      "defaultScale": [
-        1,
-        1,
-        1
-      ],
+      "rotation": [0, 0, 0],
+      "scale": [1, 1, 1],
+      "defaultPosition": [0, 0.5, 0],
+      "defaultRotation": [0, 0, 0],
+      "defaultScale": [1, 1, 1],
       "castShadow": false,
       "receiveShadow": false
     }
   ],
-  "selection": [],
+  "selection": ["default-cube"],
   "textures": [
     {
       "name": "Mun Tekstuuri",
@@ -316,12 +193,12 @@
       "centerV": 0,
       "rotation": 0,
       "id": "be-gone",
-      "global": true
+      "global": false
     }
   ],
   "cubetextures": [],
   "dateCreated": 1674498237023,
-  "dateSaved": 1676302773571,
+  "dateSaved": 1676309493499,
   "curCameraIndex": 0,
   "projectFolder": "devProject1",
   "orbiterMoving": false
