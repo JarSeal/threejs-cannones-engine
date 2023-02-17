@@ -6,19 +6,23 @@ import Button from '../common/Button';
 import SimpleIDInput from '../common/form/SimpleIDInput';
 import TextInput from '../common/form/TextInput';
 
-class ToggleGlobalTextureDialog extends Component {
-  constructor({ textureParams }) {
-    super({ id: 'toggle-global-texture-dialog', class: 'dialog-form' });
+class MakeTextureGlobalDialog extends Component {
+  constructor({ params }) {
+    super({
+      id: 'make-entity-global-dialog',
+      class: ['make-entity-global', 'make-texture-global'],
+    });
     this.formHasErrors = true;
-    this.textureParams = textureParams;
+    this.params = params;
     // Defalt values
+    const defaultParams = DEFAULT_TEXTURE;
     this.newTextureParams = Object.assign({
-      ...DEFAULT_TEXTURE,
+      ...defaultParams,
       id: '',
       name: '',
-      ...textureParams,
+      ...params,
     });
-    this.makeGlobal = !textureParams.global;
+    this.makeGlobal = !params.global;
   }
 
   paint = async () => {
@@ -28,7 +32,8 @@ class ToggleGlobalTextureDialog extends Component {
     });
     const currentGlobalTextures = currentGlobalTexturesData.globalTextures;
 
-    let msg = 'Are you sure you want to make this texture global?';
+    let msg =
+      'Are you sure you want to make this texture global? This means that the texture can be used in other scenes as well.';
     if (!this.makeGlobal) {
       msg =
         'Are you sure you want to copy this texture into a local texture? The global texture will not be removed.';
@@ -114,4 +119,4 @@ class ToggleGlobalTextureDialog extends Component {
   };
 }
 
-export default ToggleGlobalTextureDialog;
+export default MakeTextureGlobalDialog;

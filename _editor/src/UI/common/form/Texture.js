@@ -16,7 +16,7 @@ import {
   updateTextureParam,
 } from '../../../utils/toolsForTextures';
 import { getImagePath, printName } from '../../../utils/utils';
-import ToggleGlobalTextureDialog from '../../dialogs/ToggleGlobalTexture';
+import MakeTextureGlobalDialog from '../../dialogs/MakeTextureGlobal';
 import SvgIcon from '../../icons/svg-icon';
 import NewTexturePopup from '../../popupsForms/NewTexturePopup';
 import PopupForm from '../../popupsForms/PopupForm';
@@ -487,8 +487,8 @@ class Texture extends Component {
         disabled: this.params.global,
         onClick: () => {
           getSceneItem('dialog').appear({
-            component: ToggleGlobalTextureDialog,
-            componentData: { textureParams: this.params },
+            component: MakeTextureGlobalDialog,
+            componentData: { params: this.params },
             title: 'Are you sure?',
           });
         },
